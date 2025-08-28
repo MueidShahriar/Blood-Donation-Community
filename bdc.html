@@ -1,0 +1,1037 @@
+<!DOCTYPE html>
+<html lang="en" class="antialiased">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Blood Donation Community</title>
+    <link rel="shortcut icon" href="image/blood-drop.png" type="image/x-icon">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        /* Custom scrollbar for better aesthetics */
+        body::-webkit-scrollbar {
+            width: 12px;
+        }
+
+        body::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        body::-webkit-scrollbar-thumb {
+            background-color: #ef4444;
+            border-radius: 6px;
+            border: 3px solid #f1f1f1;
+        }
+
+        @keyframes bounce-slow {
+            0%, 100% {
+                transform: translateY(0) scale(1);
+            }
+            50% {
+                transform: translateY(-20px) scale(1.05);
+            }
+        }
+
+        .animate-bounce-slow {
+            animation: bounce-slow 4s ease-in-out infinite;
+        }
+    </style>
+    <meta name="description" content="Community-driven blood donation platform. Register as a donor, search donors by blood group and location.">
+</head>
+
+<body class="bg-gray-50 text-gray-900">
+
+    <script type="module">
+        // Import the functions you need from the SDKs you need
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-analytics.js";
+        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+        import { getDatabase, ref, push, set, onValue } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+        // Your web app's Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyBAxWT9HU2C6OAhre_nUyG8OmOq9yPocVw",
+            authDomain: "blood-donation-community-a1eb2.firebaseapp.com",
+            databaseURL: "https://blood-donation-community-a1eb2-default-rtdb.firebaseio.com",
+            projectId: "blood-donation-community-a1eb2",
+            storageBucket: "blood-donation-community-a1eb2.firebasestorage.app",
+            messagingSenderId: "668392010451",
+            appId: "1:668392010451:web:70e2d1c5e17a37a75dda26",
+            measurementId: "G-4GPWV4MG5Q"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const analytics = getAnalytics(app);
+        const auth = getAuth(app);
+        const database = getDatabase(app);
+
+        // ==== UI & Event Handlers ====
+
+        let donorsList = [];
+        let currentUser = null;
+
+        // Function to open a modal
+        function openModal(modal) {
+            if (!modal) return;
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        // Function to close a modal
+        function closeModal(modal) {
+            if (!modal) return;
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+        
+        // Show message in a modal
+        function showModalMessage(modal, message, title) {
+            const titleEl = modal.querySelector('h3');
+            const messageEl = modal.querySelector('p');
+            if (titleEl) titleEl.textContent = title;
+            if (messageEl) messageEl.textContent = message;
+            openModal(modal);
+        }
+
+        function renderDonorCardFull(d) {
+            const lastDate = d.lastDonateDate ? new Date(d.lastDonateDate).toLocaleDateString() : '—';
+            const email = d.email || '—';
+            const phone = d.phone || '—';
+            return `
+            <div class="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition flex flex-col sm:flex-row sm:items-center gap-4 border-l-4 border-red-500">
+                <div class="flex-1">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <div class="font-bold text-red-700 text-xl">${d.fullName}</div>
+                            <div class="text-sm text-gray-600">${d.bloodGroup} • ${d.location || '—'}</div>
+                        </div>
+                        <div class="text-sm text-gray-500">Last: ${lastDate}</div>
+                    </div>
+                    <div class="mt-2 text-sm text-gray-700">
+                        <span class="inline-flex items-center">
+                            <svg class="w-4 h-4 mr-1 text-red-500" fill="currentColor" viewBox="0 0 24 24"><path d="M16 12H8m8 0a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+                            ${email}
+                        </span>
+                        <span class="inline-flex items-center ml-4">
+                            <svg class="w-4 h-4 mr-1 text-red-500" fill="currentColor" viewBox="0 0 24 24"><path d="M3 5a2 2 0 012-2h2.5a1 1 0 01.95.684l1 3a1 1 0 01-.217.982L7.5 10.5a11 11 0 005 5l2.834-2.834a1 1 0 01.982-.217l3 1A1 1 0 0121 16.5V19a2 2 0 01-2 2H17c-8.284 0-15-6.716-15-15V5z"/></svg>
+                            ${phone}
+                        </span>
+                    </div>
+                    ${d.notes ? `<div class="mt-2 text-xs text-gray-500 italic">Note: ${d.notes}</div>` : ''}
+                </div>
+                <div class="flex-shrink-0 flex flex-col sm:flex-row items-center gap-2">
+                    ${phone !== '—' ? `<a href="tel:${phone}" class="w-full sm:w-auto px-4 py-2 bg-red-600 text-white rounded-md text-sm font-semibold hover:bg-red-700 transition">Call</a>` : ''}
+                </div>
+            </div>
+            `;
+        }
+        
+        // Render search results
+        function renderSearchResults(filteredDonors) {
+            const searchResults = document.getElementById('search-results');
+            if (!searchResults) return;
+
+            if (filteredDonors.length === 0) {
+                searchResults.innerHTML = '<div class="text-gray-500 italic">No donors found matching your criteria.</div>';
+            } else {
+                const header = `<div class="text-sm text-gray-600 mb-2">Found <span class="font-bold text-red-700">${filteredDonors.length}</span> donor(s)</div>`;
+                searchResults.innerHTML = header + filteredDonors.map(renderDonorCardFull).join('');
+            }
+        }
+
+        // Fetch donors from Firebase Realtime Database
+        const donorsRef = ref(database, 'donors');
+        onValue(donorsRef, (snapshot) => {
+            const data = snapshot.val();
+            donorsList = [];
+            for (let key in data) {
+                if (data.hasOwnProperty(key)) {
+                    donorsList.push({ id: key, ...data[key] });
+                }
+            }
+            // Update search results with new data if a search was performed
+            const searchForm = document.getElementById('search-form');
+            if (searchForm) {
+                const blood = document.getElementById('search-blood')?.value?.trim();
+                const location = document.getElementById('search-location')?.value?.trim();
+                const filtered = donorsList.filter(d => 
+                    (!blood || d.bloodGroup === blood) && 
+                    (!location || (d.location || '').toLowerCase().includes(location.toLowerCase()))
+                );
+                renderSearchResults(filtered);
+            }
+        }, (error) => {
+            console.error("Failed to load donors: ", error);
+        });
+        
+        // Update UI based on auth state
+        function updateLoginButtonState() {
+            const loginBtn = document.getElementById('login-btn');
+            const mobileLoginBtn = document.getElementById('mobile-login-btn');
+            if (!loginBtn || !mobileLoginBtn) return;
+            if (currentUser) {
+                loginBtn.textContent = 'Profile';
+                loginBtn.dataset.state = 'loggedin';
+                mobileLoginBtn.textContent = 'Profile';
+            } else {
+                loginBtn.textContent = 'Login';
+                loginBtn.dataset.state = 'loggedout';
+                mobileLoginBtn.textContent = 'Login';
+            }
+        }
+
+        // Firebase Auth State Listener
+        onAuthStateChanged(auth, (user) => {
+            currentUser = user;
+            updateLoginButtonState();
+        });
+
+        window.onload = function() {
+            const successModal = document.getElementById('success-modal');
+            const successClose = document.getElementById('success-close');
+            successClose?.addEventListener('click', () => closeModal(successModal));
+            successModal?.querySelector('.absolute.inset-0')?.addEventListener('click', () => closeModal(successModal));
+            
+            const loginModal = document.getElementById('login-modal');
+            const loginCancel = document.getElementById('login-cancel');
+            loginCancel?.addEventListener('click', () => closeModal(loginModal));
+            loginModal?.querySelector('.absolute.inset-0')?.addEventListener('click', () => closeModal(loginModal));
+
+            const profileModal = document.getElementById('profile-modal');
+            const pfClose = document.getElementById('pf-close');
+            const pfLogout = document.getElementById('pf-logout');
+            const profileForm = document.getElementById('profile-form');
+
+            pfClose?.addEventListener('click', () => closeModal(profileModal));
+            profileModal?.querySelector('.absolute.inset-0')?.addEventListener('click', () => closeModal(profileModal));
+
+            // Mobile menu toggle
+            const menuToggle = document.getElementById('menu-toggle');
+            const mobileMenu = document.getElementById('mobile-menu');
+            menuToggle?.addEventListener('click', (ev) => {
+                if (!mobileMenu) return;
+                mobileMenu.classList.toggle('hidden');
+                ev.stopPropagation();
+            });
+
+            // Close mobile menu when a link inside is clicked
+            mobileMenu?.querySelectorAll('a, button').forEach(a => {
+                a.addEventListener('click', () => {
+                    closeModal(mobileMenu);
+                });
+            });
+
+            // Close mobile menu when clicking outside
+            document.addEventListener('click', (e) => {
+                if (!mobileMenu) return;
+                const isOpen = !mobileMenu.classList.contains('hidden');
+                const clickedInside = mobileMenu.contains(e.target) || menuToggle.contains(e.target);
+                if (isOpen && !clickedInside) {
+                    closeModal(mobileMenu);
+                }
+            });
+
+            // Handle Join form submission
+            const joinForm = document.getElementById('join-form');
+            const joinClear = document.getElementById('join-clear');
+
+            joinForm?.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const fd = new FormData(joinForm);
+                const email = fd.get('email')?.toString().trim();
+                const password = fd.get('password')?.toString();
+                const confirm = fd.get('confirmPassword')?.toString();
+                const donorData = {
+                    fullName: fd.get('fullName')?.toString().trim(),
+                    phone: fd.get('phone')?.toString().trim(),
+                    bloodGroup: fd.get('bloodGroup')?.toString().trim(),
+                    location: fd.get('location')?.toString().trim(),
+                    lastDonateDate: fd.get('lastDonateDate')?.toString() || '',
+                    notes: fd.get('notes')?.toString() || ''
+                };
+                
+                if (!donorData.fullName || !email || !donorData.phone || !donorData.bloodGroup || !donorData.location || !password || !confirm) {
+                    showModalMessage(successModal, 'Please fill all required fields.', 'Error');
+                    return;
+                }
+
+                if (password.length < 6) {
+                    showModalMessage(successModal, 'Password must be at least 6 characters.', 'Error');
+                    return;
+                }
+                if (password !== confirm) {
+                    showModalMessage(successModal, 'Passwords do not match.', 'Error');
+                    return;
+                }
+                
+                createUserWithEmailAndPassword(auth, email, password)
+                    .then((userCredential) => {
+                        const user = userCredential.user;
+                        const donorRef = ref(database, 'donors/' + user.uid);
+                        set(donorRef, {
+                            ...donorData,
+                            email: email,
+                            createdAt: new Date().toISOString()
+                        }).then(() => {
+                            showModalMessage(successModal, `Welcome, ${donorData.fullName}! Your donor profile was created successfully.`, 'Success');
+                            joinForm.reset();
+                        }).catch((error) => {
+                            console.error("Error saving donor data:", error);
+                            showModalMessage(successModal, 'An error occurred while saving your profile data.', 'Error');
+                        });
+                    })
+                    .catch((error) => {
+                        const errorMessage = error.message;
+                        showModalMessage(successModal, `Signup failed: ${errorMessage}`, 'Error');
+                    });
+            });
+
+            joinClear?.addEventListener('click', () => {
+                joinForm.reset();
+            });
+
+            // Handle Search form submission
+            const searchForm = document.getElementById('search-form');
+            const searchBlood = document.getElementById('search-blood');
+            const searchLocation = document.getElementById('search-location');
+            const searchResults = document.getElementById('search-results');
+            const donorsRef = ref(database, 'donors');
+
+            searchForm?.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const blood = searchBlood?.value?.trim();
+                const location = searchLocation?.value?.trim();
+                
+                if (!searchResults) return;
+                searchResults.innerHTML = '<div class="text-gray-500 italic">Searching…</div>';
+
+                onValue(donorsRef, (snapshot) => {
+                    const data = snapshot.val();
+                    let filteredDonors = [];
+                    for (let key in data) {
+                        if (data.hasOwnProperty(key)) {
+                            const donor = data[key];
+                            if ((!blood || donor.bloodGroup === blood) &&
+                                (!location || (donor.location || '').toLowerCase().includes(location.toLowerCase()))) {
+                                filteredDonors.push(donor);
+                            }
+                        }
+                    }
+                    renderSearchResults(filteredDonors);
+                }, { onlyOnce: true });
+            });
+
+            // Login/Profile button click handler
+            const loginBtn = document.getElementById('login-btn');
+            const mobileLoginBtn = document.getElementById('mobile-login-btn');
+            const loginForm = document.getElementById('login-form');
+            
+            function handleLoginClick() {
+                if (currentUser) {
+                    const userRef = ref(database, `donors/${currentUser.uid}`);
+                    onValue(userRef, (snapshot) => {
+                        const userData = snapshot.val();
+                        if (profileModal && userData) {
+                            document.getElementById('profile-fullName').value = userData.fullName || '';
+                            document.getElementById('profile-email').value = userData.email || '';
+                            document.getElementById('profile-phone').value = userData.phone || '';
+                            document.getElementById('profile-bloodGroup').value = userData.bloodGroup || '';
+                            document.getElementById('profile-location').value = userData.location || '';
+                            document.getElementById('profile-lastDonateDate').value = userData.lastDonateDate || '';
+                            document.getElementById('profile-notes').value = userData.notes || '';
+                            
+                            openModal(profileModal);
+                        }
+                    }, { onlyOnce: true });
+                } else {
+                    openModal(loginModal);
+                }
+            }
+            
+            loginBtn?.addEventListener('click', handleLoginClick);
+            mobileLoginBtn?.addEventListener('click', () => {
+                closeModal(mobileMenu);
+                handleLoginClick();
+            });
+
+            loginForm?.addEventListener('submit', (ev) => {
+                ev.preventDefault();
+                const email = document.getElementById('login-email')?.value?.trim();
+                const password = document.getElementById('login-password')?.value;
+
+                signInWithEmailAndPassword(auth, email, password)
+                    .then((userCredential) => {
+                        closeModal(loginModal);
+                        // Open the profile modal after successful login
+                        handleLoginClick();
+                    })
+                    .catch((error) => {
+                        const errorMessage = error.message;
+                        showModalMessage(successModal, `Login failed: ${errorMessage}`, 'Login Failed');
+                    });
+            });
+
+            // Profile form submission handler
+            profileForm?.addEventListener('submit', (e) => {
+                e.preventDefault();
+                if (!currentUser) return;
+
+                const fd = new FormData(profileForm);
+                const updatedData = {
+                    fullName: fd.get('fullName')?.toString().trim(),
+                    phone: fd.get('phone')?.toString().trim(),
+                    bloodGroup: fd.get('bloodGroup')?.toString().trim(),
+                    location: fd.get('location')?.toString().trim(),
+                    lastDonateDate: fd.get('lastDonateDate')?.toString() || '',
+                    notes: fd.get('notes')?.toString() || '',
+                    email: currentUser.email
+                };
+                
+                const userRef = ref(database, 'donors/' + currentUser.uid);
+                set(userRef, updatedData)
+                    .then(() => {
+                        showModalMessage(successModal, 'Your profile has been updated successfully!', 'Success');
+                        closeModal(profileModal);
+                    })
+                    .catch((error) => {
+                        console.error("Error updating profile:", error);
+                        showModalMessage(successModal, `Failed to update profile: ${error.message}`, 'Error');
+                    });
+            });
+            
+            // Logout from profile modal
+            pfLogout?.addEventListener('click', () => {
+                signOut(auth).then(() => {
+                    closeModal(profileModal);
+                    showModalMessage(successModal, 'You have been logged out successfully.', 'Logout Successful');
+                }).catch((error) => {
+                    console.error("Logout failed:", error);
+                    showModalMessage(successModal, 'An error occurred during logout.', 'Logout Failed');
+                });
+            });
+
+            // Global Escape handler closes any open modal
+            document.addEventListener('keydown', (ev) => {
+                if (ev.key === 'Escape') {
+                    [successModal, profileModal, loginModal].forEach(m => closeModal(m));
+                }
+            });
+        };
+    </script>
+
+    <header class="sticky top-0 z-40 bg-white/90 backdrop-blur shadow-lg rounded-b-xl">
+        <nav class="max-w-6xl mx-auto flex items-center justify-between px-4 py-2">
+            <div class="flex items-center gap-3">
+                <img src="image/blood-drop.png" alt="logo" class="h-10 w-10 rounded-full border-2 border-red-600 shadow" />
+                <span class="text-2xl font-extrabold text-red-700 tracking-tight">Blood Donation Community</span>
+            </div>
+            <div class="hidden md:flex items-center gap-4 text-base font-medium">
+                <a href="#about" class="px-3 py-2 rounded hover:bg-red-50 text-red-700">About</a>
+                <a href="#how" class="px-3 py-2 rounded hover:bg-red-50 text-red-700">How to Donate</a>
+                <a href="#events" class="px-3 py-2 rounded hover:bg-red-50 text-red-700">Events</a>
+                <a href="#join" class="px-3 py-2 rounded hover:bg-red-50 text-red-700">Join</a>
+                <a href="#search" class="px-3 py-2 rounded hover:bg-red-50 text-red-700">Search</a>
+                <a href="#contact" class="px-3 py-2 rounded hover:bg-red-50 text-red-700">Contact</a>
+            </div>
+            <div class="flex items-center gap-2">
+                <button id="login-btn" class="hidden md:inline-block bg-red-600 text-white px-4 py-2 rounded-lg font-semibold shadow hover:bg-red-700 transition">Login</button>
+                <button id="menu-toggle" class="md:hidden p-2 rounded-lg bg-red-100 text-red-700 hover:bg-red-200" aria-label="Open menu">
+                    <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                    </svg>
+                </button>
+            </div>
+        </nav>
+        <div id="mobile-menu" class="md:hidden hidden bg-white/95 shadow-lg rounded-b-xl">
+            <div class="px-4 py-4 flex flex-col gap-2 text-red-700">
+                <a href="#about" class="block px-3 py-2 rounded hover:bg-red-50">About</a>
+                <a href="#how" class="block px-3 py-2 rounded hover:bg-red-50">How to Donate</a>
+                <a href="#events" class="block px-3 py-2 rounded hover:bg-red-50">Events</a>
+                <a href="#join" class="block px-3 py-2 rounded hover:bg-red-50">Join</a>
+                <a href="#search" class="block px-3 py-2 rounded hover:bg-red-50">Search</a>
+                <button id="mobile-login-btn" class="w-full text-left px-3 py-2 rounded hover:bg-red-50 text-red-700 font-medium">Login</button>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <section class="relative flex flex-col md:flex-row items-center justify-between py-20 gap-10">
+            <div class="flex-1 flex flex-col items-center justify-center text-center md:items-start md:text-left">
+                <h1 class="text-4xl sm:text-5xl font-extrabold text-red-700 mb-4 tracking-tight break-words leading-tight">
+                    Donate Blood, Save a life
+                </h1>
+                <p class="mb-8 text-lg text-gray-700 max-w-xl mx-auto md:mx-0">Be a hero in your community. Register as a donor, find blood matches, and join our events to help save lives every day.</p>
+                <div class="flex flex-col sm:flex-row gap-4 w-full sm:w-auto items-center justify-center md:justify-start">
+                    <a href="#join" class="w-full sm:w-auto text-center bg-gradient-to-r from-red-600 to-red-400 text-white px-8 py-3 rounded-lg font-semibold shadow-lg hover:scale-105 transition">Become a Donor</a>
+                    <a href="#search" class="w-full sm:w-auto text-center bg-white border-2 border-red-600 text-red-600 px-8 py-3 rounded-lg font-semibold shadow hover:bg-red-50 hover:scale-105 transition">Search Donors</a>
+                </div>
+            </div>
+            <div class="flex-1 flex justify-center items-center">
+                <div class="relative">
+                    <img src="image/blood-drop.png" alt="blood drop" class="w-56 h-56 object-contain drop-shadow-xl animate-bounce-slow" />
+                    <div class="absolute bottom-0 left-1/2 -translate-x-1/2 w-40 h-8 bg-red-200 rounded-full blur-xl opacity-60"></div>
+                </div>
+            </div>
+        </section>
+
+        <section id="about" class="py-12">
+            <div class="bg-white rounded-xl shadow-lg p-8 border-l-8 border-red-600 flex flex-col md:flex-row gap-8 items-start">
+                <div class="flex-shrink-0 flex items-center justify-center w-20 h-20 bg-red-100 rounded-full shadow">
+                    <svg class="w-12 h-12 text-red-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 2C12 2 7 8.5 7 12a5 5 0 0010 0c0-3.5-5-10-5-10z" />
+                    </svg>
+                </div>
+                <div class="flex-1">
+                    <h2 class="text-3xl font-extrabold text-red-700 mb-2 tracking-tight flex items-center gap-2">
+                        About Us
+                        <span class="inline-block bg-red-600 text-white text-xs font-bold px-2 py-1 rounded">Community</span>
+                    </h2>
+                    <p class="text-alignment = jutified">
+                        <span class="font-semibold text-red-700">Blood Donation Community</span> is a passionate, volunteer-driven organization dedicated to saving lives through the power of blood donation. We connect willing donors with patients in urgent need, organize regular blood drives and partner with hospitals and local groups to ensure a safe and reliable blood supply for all.
+                    </p>
+                    <ul class="mt-6 list-disc pl-6 text-gray-700 space-y-2">
+                        <li><span class="font-bold text-red-700">Our Mission:</span> To eliminate blood shortages and make lifesaving blood accessible to everyone, everywhere.</li>
+                        <li><span class="font-bold text-red-700">What We Do:</span> Host donation events, maintain a donor registry, provide emergency matching and raise awareness about the importance of regular blood donation.</li>
+                        <li><span class="font-bold text-red-700">Community Impact:</span> Hundreds of lives saved each year through our network of donors and volunteers. We support hospitals, disaster relief and urgent medical cases.</li>
+                        <li><span class="font-bold text-red-700">Get Involved:</span> Anyone can join as a donor, volunteer or supporter. Together, we build a caring, responsive community that puts compassion into action.</li>
+                    </ul>
+                    <p class="mt-6 text-gray-700 text-base">
+                        <span class="font-semibold text-red-700">Join us to make a difference</span> - your single donation can save up to three lives. Stay connected for upcoming events, success stories and ways to help.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <section id="how" class="py-12">
+            <div class="grid md:grid-cols-3 gap-6">
+                <article class="bg-white rounded-xl shadow-lg p-6 hover:scale-105 transform transition">
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center text-red-600">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 11c1.657 0 3-1.343 3-3S13.657 5 12 5s-3 1.343-3 3 1.343 3 3 3zM19 21v-2a4 4 0 00-4-4H9a4 4 0 00-4 4v2" />
+                            </svg>
+                        </div>
+                        <h4 class="text-lg font-bold text-red-700">Check Eligibility</h4>
+                    </div>
+                    <p class="mt-4 text-gray-600">Before donating, please ensure you meet the basic eligibility criteria: age, health condition, and travel/medication restrictions. We provide guidelines and a brief self-check.</p>
+                    <a href="#" class="mt-4 inline-block text-sm text-red-600 font-medium hover:underline">Learn more →</a>
+                </article>
+
+                <article class="bg-white rounded-xl shadow-lg p-6 hover:scale-105 transform transition">
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center text-red-600">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3M3 11h18M5 21h14a2 2 0 002-2V7H3v12a2 2 0 002 2z" />
+                            </svg>
+                        </div>
+                        <h4 class="text-lg font-bold text-red-700">Register</h4>
+                    </div>
+                    <p class="mt-4 text-gray-600">Sign up quickly using our form. You can register as a donor and optionally create an account to manage your profile and donation history.</p>
+                    <a href="#join" class="mt-4 inline-block text-sm text-red-600 font-medium hover:underline">Register now →</a>
+                </article>
+
+                <article class="bg-white rounded-xl shadow-lg p-6 hover:scale-105 transform transition">
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center text-red-600">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4" />
+                            </svg>
+                        </div>
+                        <h4 class="text-lg font-bold text-red-700">Donate & Save</h4>
+                    </div>
+                    <p class="mt-4 text-gray-600">Find the nearest blood drive or visit a partner blood bank. Our events are run by certified teams ensuring donor safety and comfort.</p>
+                    <a href="#events" class="mt-4 inline-block text-sm text-red-600 font-medium hover:underline">See events →</a>
+                </article>
+            </div>
+
+            <div class="mt-8 bg-white rounded-lg shadow p-6 flex flex-col md:flex-row items-center justify-between gap-6">
+                <div class="flex flex-col sm:flex-row items-center gap-6 w-full md:w-auto">
+                    <div class="text-center">
+                        <div class="text-3xl font-extrabold text-red-700">1,254</div>
+                        <div class="text-sm text-gray-600">Registered Donors</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-3xl font-extrabold text-red-700">842</div>
+                        <div class="text-sm text-gray-600">Lives Helped</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-3xl font-extrabold text-red-700">28</div>
+                        <div class="text-sm text-gray-600">Events This Year</div>
+                    </div>
+                </div>
+                <div class="w-full md:w-auto">
+                    <a href="#join" class="w-full text-center inline-block bg-red-600 text-white px-5 py-2 rounded-md font-semibold">Join Our Donor Network</a>
+                </div>
+            </div>
+        </section>
+
+        <section id="events" class="py-12">
+            <h2 class="text-2xl font-extrabold text-red-700">Upcoming Events</h2>
+            <p class="mt-2 text-gray-600">Join our community drives and help save lives — see the event details and register to participate.</p>
+            <div class="mt-6 grid md:grid-cols-2 gap-6">
+                <article class="bg-white rounded-xl shadow-lg p-4 flex gap-4 items-center flex-col sm:flex-row text-center sm:text-left">
+                    <div class="flex-shrink-0 w-full sm:w-20">
+                        <div class="text-sm font-bold text-red-700">Sept</div>
+                        <div class="text-2xl font-extrabold">30</div>
+                        <div class="text-xs text-gray-500">2025</div>
+                    </div>
+                    <div class="flex-1">
+                        <h3 class="text-lg font-bold">City Blood Drive</h3>
+                        <p class="text-sm text-gray-600">City Hall • 9:00 AM — 4:00 PM</p>
+                        <p class="mt-2 text-gray-700">Community blood drive in partnership with City Health Services. Walk-ins welcome; appointments recommended.</p>
+                        <div class="mt-3 flex gap-2 justify-center sm:justify-start">
+                            <a href="#" class="px-4 py-2 bg-red-600 text-white rounded-md">Register</a>
+                            <a href="#" class="px-4 py-2 border rounded-md">Details</a>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="bg-white rounded-xl shadow-lg p-4 flex gap-4 items-center flex-col sm:flex-row text-center sm:text-left">
+                    <div class="flex-shrink-0 w-full sm:w-20">
+                        <div class="text-sm font-bold text-red-700">Oct</div>
+                        <div class="text-2xl font-extrabold">15</div>
+                        <div class="text-xs text-gray-500">2025</div>
+                    </div>
+                    <div class="flex-1">
+                        <h3 class="text-lg font-bold">University Campus</h3>
+                        <p class="text-sm text-gray-600">BAUET Campus • 10:00 AM — 3:00 PM</p>
+                        <p class="mt-2 text-gray-700">A campus donation drive aimed at students and staff. Bring a photo ID. Refreshments provided.</p>
+                        <div class="mt-3 flex gap-2 justify-center sm:justify-start">
+                            <a href="#" class="px-4 py-2 bg-red-600 text-white rounded-md">Register</a>
+                            <a href="#" class="px-4 py-2 border rounded-md">Details</a>
+                        </div>
+                    </div>
+                </article>
+            </div>
+        </section>
+
+        <section id="search" class="py-12">
+            <div class="bg-gradient-to-r from-red-50 to-white p-6 rounded-xl shadow-lg">
+                <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                    <div>
+                        <h2 class="text-2xl font-extrabold text-red-700">Find Donors</h2>
+                        <p class="mt-1 text-sm text-gray-600 max-w-xl">Search by blood group and location to find nearby donors quickly. Connect directly once you locate a match.</p>
+                    </div>
+                    <div class="w-full md:w-auto">
+                        <form id="search-form" class="flex flex-col sm:flex-row items-center gap-3 bg-white p-3 rounded-2xl shadow-sm w-full">
+                            <select id="search-blood" aria-label="Blood group" class="w-full sm:w-44 h-12 px-4 rounded-lg border border-gray-100 bg-white text-gray-700">
+                                <option value="">All Blood Groups</option>
+                                <option>A+</option>
+                                <option>A-</option>
+                                <option>B+</option>
+                                <option>B-</option>
+                                <option>O+</option>
+                                <option>O-</option>
+                                <option>AB+</option>
+                                <option>AB-</option>
+                            </select>
+                            <div class="flex-1 w-full">
+                                <select id="search-location" aria-label="Location (division/district)" class="w-full h-12 px-4 rounded-lg border border-gray-100 bg-white text-gray-600 focus:border-red-300 focus:ring-0">
+                                    <option value="">Select division / district</option>
+                                    <optgroup label="Dhaka Division">
+                                        <option>Dhaka</option>
+                                        <option>Gazipur</option>
+                                        <option>Narayanganj</option>
+                                        <option>Munshiganj</option>
+                                        <option>Manikganj</option>
+                                        <option>Tangail</option>
+                                        <option>Kishoreganj</option>
+                                        <option>Madaripur</option>
+                                        <option>Shariatpur</option>
+                                    </optgroup>
+                                    <optgroup label="Chattogram Division">
+                                        <option>Chattogram</option>
+                                        <option>Comilla</option>
+                                        <option>Cox's Bazar</option>
+                                        <option>Feni</option>
+                                        <option>Noakhali</option>
+                                        <option>Rangamati</option>
+                                        <option>Bandarban</option>
+                                        <option>Khagrachari</option>
+                                    </optgroup>
+                                    <optgroup label="Rajshahi Division">
+                                        <option>Rajshahi</option>
+                                        <option>Bogra</option>
+                                        <option>Naogaon</option>
+                                        <option>Natore</option>
+                                        <option>Pabna</option>
+                                        <option>Sirajganj</option>
+                                    </optgroup>
+                                    <optgroup label="Khulna Division">
+                                        <option>Khulna</option>
+                                        <option>Jessore</option>
+                                        <option>Kushtia</option>
+                                        <option>Satkhira</option>
+                                        <option>Bagerhat</option>
+                                    </optgroup>
+                                    <optgroup label="Barishal Division">
+                                        <option>Barishal</option>
+                                        <option>Patuakhali</option>
+                                        <option>Barguna</option>
+                                        <option>Bhola</option>
+                                    </optgroup>
+                                    <optgroup label="Sylhet Division">
+                                        <option>Sylhet</option>
+                                        <option>Sunamganj</option>
+                                        <option>Moulvibazar</option>
+                                        <option>Habiganj</option>
+                                    </optgroup>
+                                    <optgroup label="Rangpur Division">
+                                        <option>Rangpur</option>
+                                        <option>Dinajpur</option>
+                                        <option>Kurigram</option>
+                                        <option>Nilphamari</option>
+                                        <option>Lalmonirhat</option>
+                                        <option>Gaibandha</option>
+                                    </optgroup>
+                                    <optgroup label="Mymensingh Division">
+                                        <option>Mymensingh</option>
+                                        <option>Jamalpur</option>
+                                        <option>Sherpur</option>
+                                        <option>Netrokona</option>
+                                    </optgroup>
+                                </select>
+                            </div>
+                            <button type="submit" class="w-full sm:w-auto h-12 px-6 bg-red-600 text-white rounded-lg font-semibold shadow hover:bg-red-700">Search</button>
+                        </form>
+                    </div>
+                </div>
+                <div id="search-results" class="mt-6 flex flex-col gap-4">
+                    <div class="text-gray-500 italic">No results yet. Perform a search to display donor entries here.</div>
+                </div>
+            </div>
+        </section>
+
+        <section id="join" class="py-12">
+            <div class="bg-white rounded-xl shadow-lg p-8 max-w-lg mx-auto">
+                <div class="text-center">
+                    <h2 class="text-2xl font-extrabold text-red-700">Join us as a donor</h2>
+                    <p class="mt-1 text-gray-600">Register to become part of our verified donor network. Add your details and create an account to manage your donations.</p>
+                </div>
+
+                <form id="join-form" class="mt-6 grid grid-cols-1 gap-4">
+                    <div class="relative">
+                        <input name="fullName" id="fullName" type="text" placeholder=" " required class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-4 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
+                        <label for="fullName" class="absolute left-4 top-4 text-gray-400 transition-all peer-placeholder-shown:top-4 peer-placeholder-shown:text-base peer-focus:-top-3 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Full name</label>
+                    </div>
+                    
+                    <div class="relative">
+                        <input name="email" id="email" type="email" placeholder=" " required class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-4 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
+                        <label for="email" class="absolute left-4 top-4 text-gray-400 transition-all peer-placeholder-shown:top-4 peer-placeholder-shown:text-base peer-focus:-top-3 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Email</label>
+                    </div>
+
+                    <div class="relative">
+                        <input name="phone" id="phone" type="tel" placeholder=" " required class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-4 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
+                        <label for="phone" class="absolute left-4 top-4 text-gray-400 transition-all peer-placeholder-shown:top-4 peer-placeholder-shown:text-base peer-focus:-top-3 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Phone number</label>
+                    </div>
+
+                    <div class="flex flex-col">
+                        <label for="bloodGroup" class="text-sm text-gray-600 mb-2">Blood group</label>
+                        <select name="bloodGroup" id="bloodGroup" required class="block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none">
+                            <option value="">Select group</option>
+                            <option>A+</option>
+                            <option>A-</option>
+                            <option>B+</option>
+                            <option>B-</option>
+                            <option>O+</option>
+                            <option>O-</option>
+                            <option>AB+</option>
+                            <option>AB-</option>
+                        </select>
+                    </div>
+
+                    <div class="flex flex-col">
+                        <label for="location" class="text-sm text-gray-600 mb-2">Location</label>
+                        <select name="location" id="location" required class="w-full rounded-lg border-2 border-gray-100 bg-white px-4 py-3 text-gray-700 shadow-sm focus:border-red-300 focus:outline-none">
+                            <option value="">Select division / district</option>
+                            <optgroup label="Dhaka Division">
+                                <option>Dhaka</option>
+                                <option>Gazipur</option>
+                                <option>Narayanganj</option>
+                                <option>Munshiganj</option>
+                                <option>Manikganj</option>
+                                <option>Tangail</option>
+                                <option>Kishoreganj</option>
+                                <option>Madaripur</option>
+                                <option>Shariatpur</option>
+                            </optgroup>
+                            <optgroup label="Chattogram Division">
+                                <option>Chattogram</option>
+                                <option>Comilla</option>
+                                <option>Cox's Bazar</option>
+                                <option>Feni</option>
+                                <option>Noakhali</option>
+                                <option>Rangamati</option>
+                                <option>Bandarban</option>
+                                <option>Khagrachari</option>
+                            </optgroup>
+                            <optgroup label="Rajshahi Division">
+                                <option>Rajshahi</option>
+                                <option>Bogra</option>
+                                <option>Naogaon</option>
+                                <option>Natore</option>
+                                <option>Pabna</option>
+                                <option>Sirajganj</option>
+                            </optgroup>
+                            <optgroup label="Khulna Division">
+                                <option>Khulna</option>
+                                <option>Jessore</option>
+                                <option>Kushtia</option>
+                                <option>Satkhira</option>
+                                <option>Bagerhat</option>
+                            </optgroup>
+                            <optgroup label="Barishal Division">
+                                <option>Barishal</option>
+                                <option>Patuakhali</option>
+                                <option>Barguna</option>
+                                <option>Bhola</option>
+                            </optgroup>
+                            <optgroup label="Sylhet Division">
+                                <option>Sylhet</option>
+                                <option>Sunamganj</option>
+                                <option>Moulvibazar</option>
+                                <option>Habiganj</option>
+                            </optgroup>
+                            <optgroup label="Rangpur Division">
+                                <option>Rangpur</option>
+                                <option>Dinajpur</option>
+                                <option>Kurigram</option>
+                                <option>Nilphamari</option>
+                                <option>Lalmonirhat</option>
+                                <option>Gaibandha</option>
+                            </optgroup>
+                            <optgroup label="Mymensingh Division">
+                                <option>Mymensingh</option>
+                                <option>Jamalpur</option>
+                                <option>Sherpur</option>
+                                <option>Netrokona</option>
+                            </optgroup>
+                        </select>
+                    </div>
+                    
+                    <div class="relative">
+                        <input name="lastDonateDate" id="lastDonateDate" type="date" placeholder=" " class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-4 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
+                        <label for="lastDonateDate" class="absolute left-4 top-4 text-gray-400 transition-all peer-placeholder-shown:top-4 peer-placeholder-shown:text-base peer-focus:-top-3 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Last blood donation</label>
+                    </div>
+
+                    <div class="relative">
+                        <input name="password" id="password" type="password" placeholder=" " required class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-4 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
+                        <label for="password" class="absolute left-4 top-4 text-gray-400 transition-all peer-placeholder-shown:top-4 peer-placeholder-shown:text-base peer-focus:-top-3 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Password</label>
+                    </div>
+
+                    <div class="relative">
+                        <input name="confirmPassword" id="confirmPassword" type="password" placeholder=" " required class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-4 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
+                        <label for="confirmPassword" class="absolute left-4 top-4 text-gray-400 transition-all peer-placeholder-shown:top-4 peer-placeholder-shown:text-base peer-focus:-top-3 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Confirm password</label>
+                    </div>      
+                        <div class="flex gap-3">
+                            <button id="join-submit" type="submit" class="bg-red-600 text-white px-6 py-3 rounded-lg font-semibold shadow hover:bg-red-700 flex-1 md:flex-none">Register</button>
+                            <button id="join-clear" type="button" class="border border-gray-300 px-4 py-3 rounded-lg flex-1 md:flex-none">Clear</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </section>
+
+        <section id="contact" class="py-12">
+            <div class="bg-white p-8 rounded-lg shadow text-center max-w-3xl mx-auto">
+                <h2 class="text-2xl font-extrabold text-red-700">Contact</h2>
+                <p class="mt-3 text-gray-700">Have questions or want to get involved? Reach out to us.</p>
+                <div class="mt-6 flex flex-col sm:flex-row sm:items-center sm:justify-center gap-4">
+                    <a href="mailto:bdc@bloodlife.org" class="flex items-center gap-3 px-4 py-3 rounded-md bg-red-50 hover:bg-red-100">
+                        <svg class="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 12H8m8 0a4 4 0 11-8 0 4 4 0 018 0z" />
+                        </svg>
+                        <span class="text-sm font-medium text-red-700">bdc@bloodlife.org</span>
+                    </a>
+                    <a href="tel:+8801712460423" class="flex items-center gap-3 px-4 py-3 rounded-md bg-red-50 hover:bg-red-100">
+                        <svg class="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h2.5a1 1 0 01.95.684l1 3a1 1 0 01-.217.982L7.5 10.5a11 11 0 005 5l2.834-2.834a1 1 0 01.982-.217l3 1A1 1 0 0121 16.5V19a2 2 0 01-2 2H17c-8.284 0-15-6.716-15-15V5z" />
+                        </svg>
+                        <span class="text-sm font-medium text-red-700">+8801712460423</span>
+                    </a>
+                </div>
+                <div class="mt-6">
+                    <a href="#join" class="inline-block bg-red-600 text-white px-6 py-3 rounded-md font-semibold">Join as a Donor</a>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="mt-12 bg-gray-900 text-gray-200 py-6">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <br>© 2025 Life is Beautiful</br>
+              <br>Developed by Md. Mueid Shahriar </br>
+              CSE, BAUET
+        </div>
+    </footer>
+
+    <div id="success-modal" class="fixed inset-0 hidden items-center justify-center z-50">
+        <div class="absolute inset-0 bg-black opacity-40"></div>
+        <div class="bg-white rounded-lg shadow p-6 max-w-md mx-4 z-10">
+            <h3 class="text-lg font-bold text-red-700">Success!</h3>
+            <p class="mt-2 text-gray-700"></p>
+            <div class="mt-4 text-right">
+                <button id="success-close" class="px-4 py-2 bg-red-600 text-white rounded">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="login-modal" class="fixed inset-0 hidden items-center justify-center z-50">
+        <div class="absolute inset-0 bg-black opacity-40"></div>
+        <div class="bg-white rounded-lg shadow p-6 max-w-md mx-4 z-10">
+            <h3 class="text-lg font-bold text-red-700">Login</h3>
+            <form id="login-form" class="mt-4">
+                <div class="mb-3">
+                    <label for="login-email" class="block text-sm text-gray-600 mb-1">Email</label>
+                    <input id="login-email" type="email" required class="w-full rounded-lg border p-3" />
+                </div>
+                <div class="mb-3">
+                    <label for="login-password" class="block text-sm text-gray-600 mb-1">Password</label>
+                    <input id="login-password" type="password" required class="w-full rounded-lg border p-3" />
+                </div>
+                <div class="text-right">
+                    <button type="submit" class="bg-red-600 text-white px-4 py-2 rounded">Sign in</button>
+                    <button id="login-cancel" type="button" class="ml-2 border px-4 py-2 rounded">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="profile-modal" class="fixed inset-0 hidden items-center justify-center z-50">
+        <div class="absolute inset-0 bg-black opacity-40"></div>
+        <div class="bg-white rounded-lg shadow p-6 max-w-md mx-4 z-10">
+            <h3 class="text-lg font-bold text-red-700 mb-4">Your Profile</h3>
+            <form id="profile-form" class="grid grid-cols-1 gap-4">
+                <div class="relative">
+                    <input name="fullName" id="profile-fullName" type="text" placeholder=" " required class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-4 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
+                    <label for="profile-fullName" class="absolute left-4 top-4 text-gray-400 transition-all peer-placeholder-shown:top-4 peer-placeholder-shown:text-base peer-focus:-top-3 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Full name</label>
+                </div>
+
+                <div class="relative">
+                    <input name="email" id="profile-email" type="email" placeholder=" " readonly class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-4 text-gray-900 shadow-sm focus:border-gray-100 cursor-not-allowed" />
+                    <label for="profile-email" class="absolute left-4 top-4 text-gray-400 transition-all peer-placeholder-shown:top-4 peer-placeholder-shown:text-base peer-focus:-top-3 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Email (cannot be changed)</label>
+                </div>
+
+                <div class="relative">
+                    <input name="phone" id="profile-phone" type="tel" placeholder=" " required class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-4 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
+                    <label for="profile-phone" class="absolute left-4 top-4 text-gray-400 transition-all peer-placeholder-shown:top-4 peer-placeholder-shown:text-base peer-focus:-top-3 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Phone number</label>
+                </div>
+
+                <div class="flex flex-col">
+                    <label for="profile-bloodGroup" class="text-sm text-gray-600 mb-2">Blood group</label>
+                    <select name="bloodGroup" id="profile-bloodGroup" required class="block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none">
+                        <option value="">Select group</option>
+                        <option>A+</option>
+                        <option>A-</option>
+                        <option>B+</option>
+                        <option>B-</option>
+                        <option>O+</option>
+                        <option>O-</option>
+                        <option>AB+</option>
+                        <option>AB-</option>
+                    </select>
+                </div>
+
+                <div class="flex flex-col">
+                    <label for="profile-location" class="text-sm text-gray-600 mb-2">Location</label>
+                    <select name="location" id="profile-location" required class="w-full rounded-lg border-2 border-gray-100 bg-white px-4 py-3 text-gray-700 shadow-sm focus:border-red-300 focus:outline-none">
+                        <option value="">Select division / district</option>
+                        <optgroup label="Dhaka Division">
+                            <option>Dhaka</option>
+                            <option>Gazipur</option>
+                            <option>Narayanganj</option>
+                            <option>Munshiganj</option>
+                            <option>Manikganj</option>
+                            <option>Tangail</option>
+                            <option>Kishoreganj</option>
+                            <option>Madaripur</option>
+                            <option>Shariatpur</option>
+                        </optgroup>
+                        <optgroup label="Chattogram Division">
+                            <option>Chattogram</option>
+                            <option>Comilla</option>
+                            <option>Cox's Bazar</option>
+                            <option>Feni</option>
+                            <option>Noakhali</option>
+                            <option>Rangamati</option>
+                            <option>Bandarban</option>
+                            <option>Khagrachari</option>
+                        </optgroup>
+                        <optgroup label="Rajshahi Division">
+                            <option>Rajshahi</option>
+                            <option>Bogra</option>
+                            <option>Naogaon</option>
+                            <option>Natore</option>
+                            <option>Pabna</option>
+                            <option>Sirajganj</option>
+                        </optgroup>
+                        <optgroup label="Khulna Division">
+                            <option>Khulna</option>
+                            <option>Jessore</option>
+                            <option>Kushtia</option>
+                            <option>Satkhira</option>
+                            <option>Bagerhat</option>
+                        </optgroup>
+                        <optgroup label="Barishal Division">
+                            <option>Barishal</option>
+                            <option>Patuakhali</option>
+                            <option>Barguna</option>
+                            <option>Bhola</option>
+                        </optgroup>
+                        <optgroup label="Sylhet Division">
+                            <option>Sylhet</option>
+                            <option>Sunamganj</option>
+                            <option>Moulvibazar</option>
+                            <option>Habiganj</option>
+                        </optgroup>
+                        <optgroup label="Rangpur Division">
+                            <option>Rangpur</option>
+                            <option>Dinajpur</option>
+                            <option>Kurigram</option>
+                            <option>Nilphamari</option>
+                            <option>Lalmonirhat</option>
+                            <option>Gaibandha</option>
+                        </optgroup>
+                        <optgroup label="Mymensingh Division">
+                            <option>Mymensingh</option>
+                            <option>Jamalpur</option>
+                            <option>Sherpur</option>
+                            <option>Netrokona</option>
+                        </optgroup>
+                    </select>
+                </div>
+
+                <div class="relative col-span-2">
+                    <input name="lastDonateDate" id="profile-lastDonateDate" type="date" placeholder=" " class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-4 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
+                    <label for="profile-lastDonateDate" class="absolute left-4 top-4 text-gray-400 transition-all peer-placeholder-shown:top-4 peer-placeholder-shown:text-base peer-focus:-top-3 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Last blood donation</label>
+                </div>
+
+                <div class="relative col-span-2">
+                    <textarea name="notes" id="profile-notes" rows="4" placeholder=" " class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-4 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none"></textarea>
+                    <label for="profile-notes" class="absolute left-4 top-4 text-gray-400 transition-all peer-placeholder-shown:top-4 peer-placeholder-shown:text-base peer-focus:-top-3 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Any notes (optional)</label>
+                </div>
+
+                <div class="md:col-span-2">
+                    <div class="flex gap-3">
+                        <button type="submit" class="bg-red-600 text-white px-6 py-3 rounded-lg font-semibold shadow hover:bg-red-700 flex-1 md:flex-none">Save Changes</button>
+                    </div>
+                </div>
+            </form>
+            <div class="mt-4 text-right">
+                <button id="pf-logout" class="px-4 py-2 bg-red-600 text-white rounded">Logout</button>
+                <button id="pf-close" class="ml-2 border px-4 py-2 rounded">Close</button>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
