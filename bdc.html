@@ -253,7 +253,6 @@
           bloodGroup: fd.get('bloodGroup')?.toString().trim(),
           location: fd.get('location')?.toString().trim(),
           lastDonateDate: fd.get('lastDonateDate')?.toString() || '',
-          notes: fd.get('notes')?.toString() || ''
         };
 
         if (!donorData.fullName || !email || !donorData.phone || !donorData.bloodGroup || !donorData.location || !password || !confirm) {
@@ -600,7 +599,7 @@
 
     <section id="events" class="py-12">
       <h2 class="text-2xl font-extrabold text-red-700">Upcoming Events</h2>
-      <p class="mt-2 text-gray-600">Join our community drives and help save lives — see the event details and register
+      <p class="mt-2 text-gray-600">Join our community drives and help save lives - see the event details and register
         to participate.</p>
       <div class="mt-6 grid md:grid-cols-2 gap-6">
         <article
