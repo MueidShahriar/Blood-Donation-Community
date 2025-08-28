@@ -103,7 +103,6 @@
 
         function renderDonorCardFull(d) {
             const lastDate = d.lastDonateDate ? new Date(d.lastDonateDate).toLocaleDateString() : '—';
-            const email = d.email || '—';
             const phone = d.phone || '—';
             return `
             <div class="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition flex flex-col sm:flex-row sm:items-center gap-4 border-l-4 border-red-500">
@@ -113,13 +112,10 @@
                             <div class="font-bold text-red-700 text-xl">${d.fullName}</div>
                             <div class="text-sm text-gray-600">${d.bloodGroup} • ${d.location || '—'}</div>
                         </div>
-                        <div class="text-sm text-gray-500">Last: ${lastDate}</div>
+                        <div class="text-sm text-gray-500">Last Donated: ${lastDate}</div>
                     </div>
                     <div class="mt-2 text-sm text-gray-700">
-                        <span class="inline-flex items-center">
-                            <svg class="w-4 h-4 mr-1 text-red-500" fill="currentColor" viewBox="0 0 24 24"><path d="M16 12H8m8 0a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
-                            ${email}
-                        </span>
+                       
                         <span class="inline-flex items-center ml-4">
                             <svg class="w-4 h-4 mr-1 text-red-500" fill="currentColor" viewBox="0 0 24 24"><path d="M3 5a2 2 0 012-2h2.5a1 1 0 01.95.684l1 3a1 1 0 01-.217.982L7.5 10.5a11 11 0 005 5l2.834-2.834a1 1 0 01.982-.217l3 1A1 1 0 0121 16.5V19a2 2 0 01-2 2H17c-8.284 0-15-6.716-15-15V5z"/></svg>
                             ${phone}
