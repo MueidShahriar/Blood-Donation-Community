@@ -326,12 +326,12 @@
           for (let key in data) {
             if (data.hasOwnProperty(key)) {
               const donor = data[key];
-              
+
               // Apply eligibility filter first if the checkbox is checked
               if (showEligibleOnly && !isDonorEligible(donor.lastDonateDate)) {
                 continue; // Skip this donor if they are not eligible
               }
-              
+
               // Then apply the blood group filter
               if (!blood || donor.bloodGroup === blood) {
                 filteredDonors.push(donor);
@@ -699,13 +699,15 @@
                 <option>AB+</option>
                 <option>AB-</option>
               </select>
-              
+
               <button type="submit"
                 class="w-full sm:w-auto h-12 px-6 bg-red-600 text-white rounded-lg font-semibold shadow hover:bg-red-700">Search</button>
             </form>
             <div class="w-full flex justify-center items-center">
-              <input type="checkbox" id="eligible-only" class="h-4 w-4 text-red-600 border-gray-300 rounded focus:ring-red-500">
-              <label for="eligible-only" class="ml-2 text-sm text-gray-700 font-medium whitespace-nowrap">Show only eligible donors</label>
+              <input type="checkbox" id="eligible-only"
+                class="h-4 w-4 text-red-600 border-gray-300 rounded focus:ring-red-500">
+              <label for="eligible-only" class="ml-2 text-sm text-gray-700 font-medium whitespace-nowrap">Show only
+                eligible donors</label>
             </div>
           </div>
         </div>
@@ -767,9 +769,10 @@
             <input name="location" id="location" type="text" placeholder=" " required
               class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-4 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
             <label for="location"
-              class="absolute left-4 top-4 text-gray-400 transition-all peer-placeholder-shown:top-4 peer-placeholder-shown:text-base peer-focus:-top-3 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Current Location</label>
+              class="absolute left-4 top-4 text-gray-400 transition-all peer-placeholder-shown:top-4 peer-placeholder-shown:text-base peer-focus:-top-3 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Current
+              Location</label>
           </div>
-        
+
           <div class="relative">
             <input name="lastDonateDate" id="lastDonateDate" type="date" placeholder=" "
               class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-4 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
@@ -851,6 +854,7 @@
     </div>
   </div>
 
+  <!-- Login Modal -->
   <div id="login-modal" class="fixed inset-0 hidden items-center justify-center z-50">
     <div class="absolute inset-0 bg-black opacity-40"></div>
     <div class="bg-white rounded-lg shadow p-6 max-w-md mx-4 z-10">
@@ -872,117 +876,139 @@
     </div>
   </div>
 
-  
-    <!-- Profile Modal -->
-    <div id="profile-modal" class="fixed inset-0 hidden items-center justify-center z-50 overflow-y-auto">
-        <div class="absolute inset-0 bg-black opacity-40"></div>
-        <div class="bg-white rounded-lg shadow-2xl p-6 max-w-xl mx-auto my-8 z-10">
-            <div class="flex justify-between items-center mb-4">
-                <h3 class="text-lg font-bold text-red-700">My Profile</h3>
-                <button id="pf-close" class="text-gray-400 hover:text-gray-600 transition">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                </button>
-            </div>
-            <p id="profile-userId" class="text-xs text-gray-500 mb-4 break-all"></p>
-            <form id="profile-form" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <!-- Full Name -->
-                <div class="relative">
-                    <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                          <path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                        </svg>
-                    </div>
-                    <input name="fullName" id="profile-fullName" type="text" placeholder=" " required
-                        class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-4 pl-10 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
-                    <label for="profile-fullName"
-                        class="absolute left-10 top-4 text-gray-400 transition-all peer-placeholder-shown:top-4 peer-placeholder-shown:text-base peer-focus:-top-3 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Full
-                        name</label>
-                </div>
-                <!-- Email -->
-                <div class="relative">
-                    <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                          <path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8m-6-3.5h-2a2 2 0 00-2 2V8m0 0a2 2 0 01-2 2h-2a2 2 0 01-2-2V4.5a2 2 0 012-2h6.5" />
-                        </svg>
-                    </div>
-                    <input name="email" id="profile-email" type="email" placeholder=" " required readonly
-                        class="peer block w-full rounded-lg border-2 border-gray-100 bg-gray-100 cursor-not-allowed p-4 pl-10 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
-                    <label for="profile-email"
-                        class="absolute left-10 top-4 text-gray-400 transition-all peer-placeholder-shown:top-4 peer-placeholder-shown:text-base peer-focus:-top-3 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Email</label>
-                </div>
-                <!-- Phone -->
-                <div class="relative">
-                    <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                          <path stroke-linecap="round" stroke-linejoin="round" d="M3 5a2 2 0 012-2h2.5a1 1 0 01.95.684l1 3a1 1 0 01-.217.982L7.5 10.5a11 11 0 005 5l2.834-2.834a1 1 0 01.982-.217l3 1A1 1 0 0121 16.5V19a2 2 0 01-2 2H17c-8.284 0-15-6.716-15-15V5z" />
-                        </svg>
-                    </div>
-                    <input name="phone" id="profile-phone" type="tel" placeholder=" " required
-                        class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-4 pl-10 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
-                    <label for="profile-phone"
-                        class="absolute left-10 top-4 text-gray-400 transition-all peer-placeholder-shown:top-4 peer-placeholder-shown:text-base peer-focus:-top-3 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Phone
-                        number</label>
-                </div>
-                <!-- Blood Group -->
-                <div class="flex flex-col">
-                    <label for="profile-bloodGroup" class="text-sm text-gray-600 mb-2">Blood group</label>
-                    <select name="bloodGroup" id="profile-bloodGroup" required
-                        class="block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none">
-                        <option value="">Select group</option>
-                        <option>A+</option>
-                        <option>A-</option>
-                        <option>B+</option>
-                        <option>B-</option>
-                        <option>O+</option>
-                        <option>O-</option>
-                        <option>AB+</option>
-                        <option>AB-</option>
-                    </select>
-                </div>
-                <!-- Location -->
-                <div class="relative">
-                    <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                          <path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                          <path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                        </svg>
-                    </div>
-                    <input name="location" id="profile-location" type="text" placeholder=" " required
-                        class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-4 pl-10 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
-                    <label for="profile-location"
-                        class="absolute left-10 top-4 text-gray-400 transition-all peer-placeholder-shown:top-4 peer-placeholder-shown:text-base peer-focus:-top-3 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Current Location</label>
-                </div>
-                <!-- Last Donation Date -->
-                <div class="relative">
-                    <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                          <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3M3 11h18M5 21h14a2 2 0 002-2V7H3v12a2 2 0 002 2z" />
-                        </svg>
-                    </div>
-                    <input name="lastDonateDate" id="profile-lastDonateDate" type="date" placeholder=" "
-                        class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-4 pl-10 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
-                    <label for="profile-lastDonateDate"
-                        class="absolute left-10 top-4 text-gray-400 transition-all peer-placeholder-shown:top-4 peer-placeholder-shown:text-base peer-focus:-top-3 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Last
-                        blood donation</label>
-                </div>
-                <!-- Additional Notes -->
-                <div class="relative md:col-span-2">
-                    <textarea name="notes" id="profile-notes" placeholder=" " rows="3"
-                        class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-4 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none"></textarea>
-                    <label for="profile-notes"
-                        class="absolute left-4 top-4 text-gray-400 transition-all peer-placeholder-shown:top-4 peer-placeholder-shown:text-base peer-focus:-top-3 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Additional Notes</label>
-                </div>
-                <div class="flex gap-3 mt-4 md:col-span-2">
-                    <button type="submit"
-                        class="bg-red-600 text-white px-6 py-3 rounded-lg font-semibold shadow hover:bg-red-700 flex-1">Save Changes</button>
-                    <button id="pf-logout" type="button"
-                        class="border border-gray-300 px-4 py-3 rounded-lg flex-1">Logout</button>
-                </div>
-            </form>
+  <!-- Profile Modal -->
+  <div id="profile-modal" class="fixed inset-0 hidden items-center justify-center z-50 overflow-y-auto">
+    <div class="absolute inset-0 bg-black opacity-40"></div>
+    <div class="bg-white rounded-lg shadow-2xl p-6 max-w-xl mx-auto my-8 z-10">
+      <div class="flex justify-between items-center mb-4">
+        <h3 class="text-lg font-bold text-red-700">My Profile</h3>
+        <button id="pf-close" class="text-gray-400 hover:text-gray-600 transition">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+      <p id="profile-userId" class="text-xs text-gray-500 mb-4 break-all"></p>
+      <form id="profile-form" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <!-- Full Name -->
+        <div class="relative">
+          <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-gray-400" fill="none" viewBox="0 0 24 24"
+              stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round"
+                d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+            </svg>
+          </div>
+          <input name="fullName" id="profile-fullName" type="text" placeholder=" " required
+            class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-4 pl-10 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
+          <label for="profile-fullName"
+            class="absolute left-10 top-4 text-gray-400 transition-all peer-placeholder-shown:top-4 peer-placeholder-shown:text-base peer-focus:-top-3 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Full
+            name</label>
         </div>
+        <!-- Email -->
+        <div class="relative">
+          <!-- Envelope Icon -->
+          <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-gray-400" fill="none" viewBox="0 0 24 24"
+              stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round"
+                d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8m-18 8h18V8l-9 6-9-6v8z" />
+            </svg>
+          </div>
+
+          <!-- Input -->
+          <input name="email" id="profile-email" type="email" placeholder=" " required readonly
+            class="peer block w-full rounded-lg border-2 border-gray-100 bg-gray-100 cursor-not-allowed p-4 pl-10 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
+
+          <!-- Floating Label -->
+          <label for="profile-email" class="absolute left-10 top-4 text-gray-400 transition-all 
+           peer-placeholder-shown:top-4 peer-placeholder-shown:text-base 
+           peer-focus:-top-3 peer-focus:text-sm peer-focus:text-red-700 
+           peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 
+           pointer-events-none bg-gray-100 px-1"> Email (cannot be changed)
+          </label>
+        </div>
+
+        <!-- Phone -->
+        <div class="relative">
+          <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-gray-400" fill="none" viewBox="0 0 24 24"
+              stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round"
+                d="M3 5a2 2 0 012-2h2.5a1 1 0 01.95.684l1 3a1 1 0 01-.217.982L7.5 10.5a11 11 0 005 5l2.834-2.834a1 1 0 01.982-.217l3 1A1 1 0 0121 16.5V19a2 2 0 01-2 2H17c-8.284 0-15-6.716-15-15V5z" />
+            </svg>
+          </div>
+          <input name="phone" id="profile-phone" type="tel" placeholder=" " required
+            class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-4 pl-10 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
+          <label for="profile-phone"
+            class="absolute left-10 top-4 text-gray-400 transition-all peer-placeholder-shown:top-4 peer-placeholder-shown:text-base peer-focus:-top-3 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Phone
+            number</label>
+        </div>
+        <!-- Blood Group -->
+        <div class="flex flex-col">
+          <label for="profile-bloodGroup" class="text-sm text-gray-600 mb-2">Blood group</label>
+          <select name="bloodGroup" id="profile-bloodGroup" required
+            class="block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none">
+            <option value="">Select group</option>
+            <option>A+</option>
+            <option>A-</option>
+            <option>B+</option>
+            <option>B-</option>
+            <option>O+</option>
+            <option>O-</option>
+            <option>AB+</option>
+            <option>AB-</option>
+          </select>
+        </div>
+        <!-- Location -->
+        <div class="relative">
+          <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-gray-400" fill="none" viewBox="0 0 24 24"
+              stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round"
+                d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+              <path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+            </svg>
+          </div>
+          <input name="location" id="profile-location" type="text" placeholder=" " required
+            class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-4 pl-10 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
+          <label for="profile-location"
+            class="absolute left-10 top-4 text-gray-400 transition-all peer-placeholder-shown:top-4 peer-placeholder-shown:text-base peer-focus:-top-3 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Current
+            Location</label>
+        </div>
+        <!-- Last Donation Date -->
+        <div class="relative">
+          <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-gray-400" fill="none" viewBox="0 0 24 24"
+              stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round"
+                d="M8 7V3m8 4V3M3 11h18M5 21h14a2 2 0 002-2V7H3v12a2 2 0 002 2z" />
+            </svg>
+          </div>
+          <input name="lastDonateDate" id="profile-lastDonateDate" type="date" placeholder=" "
+            class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-4 pl-10 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
+          <label for="profile-lastDonateDate"
+            class="absolute left-10 top-4 text-gray-400 transition-all peer-placeholder-shown:top-4 peer-placeholder-shown:text-base peer-focus:-top-3 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Last
+            blood donation</label>
+        </div>
+        <!-- Additional Notes -->
+        <div class="relative md:col-span-2">
+          <textarea name="notes" id="profile-notes" placeholder=" " rows="2"
+            class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-4 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none"></textarea>
+          <label for="profile-notes"
+            class="absolute left-4 top-4 text-gray-400 transition-all peer-placeholder-shown:top-4 peer-placeholder-shown:text-base peer-focus:-top-3 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Additional
+            Notes</label>
+        </div>
+        <div class="flex gap-3 mt-4 md:col-span-2">
+          <button type="submit"
+            class="bg-red-600 text-white px-6 py-3 rounded-lg font-semibold shadow hover:bg-red-700 flex-1">Save
+            Changes</button>
+          <button id="pf-logout" type="button"
+            class="border border-gray-300 px-4 py-3 rounded-lg flex-1">Logout</button>
+        </div>
+      </form>
     </div>
+  </div>
 </body>
 
 </html>
