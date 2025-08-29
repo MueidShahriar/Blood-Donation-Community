@@ -109,24 +109,24 @@
       const lastDate = d.lastDonateDate ? new Date(d.lastDonateDate).toLocaleDateString() : '—';
       const phone = d.phone || '—';
       return `
-         <div class="bg-white p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200 flex flex-col sm:flex-row sm:items-center justify-between">
+          <div class="bg-white p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200 flex flex-col sm:flex-row sm:items-center justify-between">
     <div class="flex-1 min-w-0 mb-2 sm:mb-0">
-        <div class="font-bold text-red-700 truncate">${d.fullName}</div>
-        <div class="text-xs text-gray-600 mt-1">
-            <span class="font-bold">Blood Group:</span> <span>${d.bloodGroup}</span>
-        </div>
-        <div class="text-xs text-gray-600">
-            <span class="font-bold">Current Location:</span> <span>${d.location || '—'}</span>
-        </div>
+      <div class="font-bold text-red-700 truncate">${d.fullName}</div>
+      <div class="text-xs text-gray-600 mt-1">
+          <span class="font-bold">Blood Group:</span> <span>${d.bloodGroup}</span>
+      </div>
+      <div class="text-xs text-gray-600">
+          <span class="font-bold">Current Location:</span> <span>${d.location || '—'}</span>
+      </div>
     </div>
     <div class="flex-shrink-0 flex items-center space-x-4">
-        <div class="text-xs text-gray-500">Last Donated: ${lastDate}</div>
-        ${phone !== '—' ? `
-        <a href="tel:${phone}" class="flex items-center text-xs text-gray-500 hover:text-red-700 transition">
-            <svg class="w-4 h-4 mr-1 text-red-500" fill="currentColor" viewBox="0 0 24 24"><path d="M3 5a2 2 0 012-2h2.5a1 1 0 01.95.684l1 3a1 1 0 01-.217.982L7.5 10.5a11 11 0 005 5l2.834-2.834a1 1 0 01.982-.217l3 1A1 1 0 0121 16.5V19a2 2 0 01-2 2H17c-8.284 0-15-6.716-15-15V5z"/></svg>
-            <span>${phone}</span>
-        </a>
-        ` : ''}
+      <div class="text-xs text-gray-500">Last Donated: ${lastDate}</div>
+      ${phone !== '—' ? `
+      <a href="tel:${phone}" class="flex items-center text-xs text-gray-500 hover:text-red-700 transition">
+          <svg class="w-4 h-4 mr-1 text-red-500" fill="currentColor" viewBox="0 0 24 24"><path d="M3 5a2 2 0 012-2h2.5a1 1 0 01.95.684l1 3a1 1 0 01-.217.982L7.5 10.5a11 11 0 005 5l2.834-2.834a1 1 0 01.982-.217l3 1A1 1 0 0121 16.5V19a2 2 0 01-2 2H17c-8.284 0-15-6.716-15-15V5z"/></svg>
+          <span>${phone}</span>
+      </a>
+      ` : ''}
     </div>
 </div>
             `;
@@ -298,14 +298,24 @@
       // Handle Search form submission
       const searchForm = document.getElementById('search-form');
       const searchBlood = document.getElementById('search-blood');
-      const searchLocation = document.getElementById('search-location');
+      const eligibleOnlyCheckbox = document.getElementById('eligible-only');
       const searchResults = document.getElementById('search-results');
-      const donorsRef = ref(database, 'donors');
+
+      // Function to check if a donor is eligible
+      function isDonorEligible(lastDonationDate) {
+        if (!lastDonationDate) {
+          return true; // No last donation date is considered eligible
+        }
+        const today = new Date();
+        const lastDonation = new Date(lastDonationDate);
+        const threeMonthsAgo = new Date(today.setMonth(today.getMonth() - 3));
+        return lastDonation <= threeMonthsAgo;
+      }
 
       searchForm?.addEventListener('submit', (e) => {
         e.preventDefault();
         const blood = searchBlood?.value?.trim();
-        const location = searchLocation?.value?.trim();
+        const showEligibleOnly = eligibleOnlyCheckbox?.checked;
 
         if (!searchResults) return;
         searchResults.innerHTML = '<div class="text-gray-500 italic">Searching…</div>';
@@ -316,8 +326,14 @@
           for (let key in data) {
             if (data.hasOwnProperty(key)) {
               const donor = data[key];
-              if ((!blood || donor.bloodGroup === blood) &&
-                (!location || (donor.location || '').toLowerCase().includes(location.toLowerCase()))) {
+              
+              // Apply eligibility filter first if the checkbox is checked
+              if (showEligibleOnly && !isDonorEligible(donor.lastDonateDate)) {
+                continue; // Skip this donor if they are not eligible
+              }
+              
+              // Then apply the blood group filter
+              if (!blood || donor.bloodGroup === blood) {
                 filteredDonors.push(donor);
               }
             }
@@ -597,51 +613,6 @@
       </div>
     </section>
 
-    <section id="events" class="py-12">
-      <h2 class="text-2xl font-extrabold text-red-700">Upcoming Events</h2>
-      <p class="mt-2 text-gray-600">Join our community drives and help save lives - see the event details and register
-        to participate.</p>
-      <div class="mt-6 grid md:grid-cols-2 gap-6">
-        <article
-          class="bg-white rounded-xl shadow-lg p-4 flex gap-4 items-center flex-col sm:flex-row text-center sm:text-left">
-          <div class="flex-shrink-0 w-full sm:w-20">
-            <div class="text-sm font-bold text-red-700">Sept</div>
-            <div class="text-2xl font-extrabold">30</div>
-            <div class="text-xs text-gray-500">2025</div>
-          </div>
-          <div class="flex-1">
-            <h3 class="text-lg font-bold">City Blood Drive</h3>
-            <p class="text-sm text-gray-600">City Hall • 9:00 AM — 4:00 PM</p>
-            <p class="mt-2 text-gray-700">Community blood drive in partnership with City Health Services. Walk-ins
-              welcome; appointments recommended.</p>
-            <div class="mt-3 flex gap-2 justify-center sm:justify-start">
-              <a href="#" class="px-4 py-2 bg-red-600 text-white rounded-md">Register</a>
-              <a href="#" class="px-4 py-2 border rounded-md">Details</a>
-            </div>
-          </div>
-        </article>
-
-        <article
-          class="bg-white rounded-xl shadow-lg p-4 flex gap-4 items-center flex-col sm:flex-row text-center sm:text-left">
-          <div class="flex-shrink-0 w-full sm:w-20">
-            <div class="text-sm font-bold text-red-700">Oct</div>
-            <div class="text-2xl font-extrabold">15</div>
-            <div class="text-xs text-gray-500">2025</div>
-          </div>
-          <div class="flex-1">
-            <h3 class="text-lg font-bold">University Campus</h3>
-            <p class="text-sm text-gray-600">BAUET Campus • 10:00 AM — 3:00 PM</p>
-            <p class="mt-2 text-gray-700">A campus donation drive aimed at students and staff. Bring a photo ID.
-              Refreshments provided.</p>
-            <div class="mt-3 flex gap-2 justify-center sm:justify-start">
-              <a href="#" class="px-4 py-2 bg-red-600 text-white rounded-md">Register</a>
-              <a href="#" class="px-4 py-2 border rounded-md">Details</a>
-            </div>
-          </div>
-        </article>
-      </div>
-    </section>
-
     <section id="search" class="py-12">
       <div class="bg-gradient-to-r from-red-50 to-white p-6 rounded-xl shadow-lg">
         <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
@@ -650,9 +621,8 @@
             <p class="mt-1 text-sm text-gray-600 max-w-xl">Search by blood group and location to find nearby donors
               quickly. Connect directly once you locate a match.</p>
           </div>
-          <div class="w-full md:w-auto">
-            <form id="search-form"
-              class="flex flex-col sm:flex-row items-center gap-3 bg-white p-3 rounded-2xl shadow-sm w-full">
+          <div class="w-full md:w-auto flex flex-col items-center gap-4 bg-white p-4 rounded-xl shadow-lg">
+            <form id="search-form" class="flex flex-col sm:flex-row items-center gap-3 w-full">
               <select id="search-blood" aria-label="Blood group"
                 class="w-full sm:w-50 h-12 px-4 rounded-lg border border-gray-100 bg-white text-gray-700">
                 <option value="">All Donor(s)</option>
@@ -665,10 +635,14 @@
                 <option>AB+</option>
                 <option>AB-</option>
               </select>
-             
+              
               <button type="submit"
                 class="w-full sm:w-auto h-12 px-6 bg-red-600 text-white rounded-lg font-semibold shadow hover:bg-red-700">Search</button>
             </form>
+            <div class="w-full flex justify-center items-center">
+              <input type="checkbox" id="eligible-only" class="h-4 w-4 text-red-600 border-gray-300 rounded focus:ring-red-500">
+              <label for="eligible-only" class="ml-2 text-sm text-gray-700 font-medium whitespace-nowrap">Show only eligible donors</label>
+            </div>
           </div>
         </div>
         <div id="search-results" class="mt-6 flex flex-col gap-4">
@@ -760,8 +734,7 @@
             <button id="join-clear" type="button"
               class="border border-gray-300 px-4 py-3 rounded-lg flex-1 md:flex-none">Clear</button>
           </div>
-      </div>
-      </form>
+        </form>
       </div>
     </section>
 
@@ -836,7 +809,7 @@
   </div>
 
   <!--profile modal-->
-   <!-- Profile Modal -->
+    <!-- Profile Modal -->
     <div id="profile-modal" class="fixed inset-0 hidden items-center justify-center z-50 overflow-y-auto">
         <div class="absolute inset-0 bg-black opacity-40"></div>
         <div class="bg-white rounded-lg shadow-2xl p-6 max-w-xl mx-auto my-8 z-10">
