@@ -111,6 +111,15 @@
         // Render donor card for public view (hides contact info)
         function renderDonorCardPublic(d) {
             const lastDate = d.lastDonateDate ? new Date(d.lastDonateDate).toLocaleDateString() : '—';
+            const publicComment = d.publicComment ? `<p class="mt-2 text-gray-700">${d.publicComment}</p>` : '';
+            const contactInfo = d.isPhoneHidden ? 
+                `<div class="mt-2 text-xs text-gray-500">${publicComment}</div>` : 
+                `<div class="mt-2 text-xs text-gray-500">
+                    <a href="tel:${d.phone}" class="flex items-center text-xs text-gray-500 hover:text-red-700 transition">
+                        <svg class="w-4 h-4 mr-1 text-red-500" fill="currentColor" viewBox="0 0 24 24"><path d="M3 5a2 2 0 012-2h2.5a1 1 0 01.95.684l1 3a1 1 0 01-.217.982L7.5 10.5a11 11 0 005 5l2.834-2.834a1 1 0 01.982-.217l3 1A1 1 0 0121 16.5V19a2 2 0 01-2 2H17c-8.284 0-15-6.716-15-15V5z"/></svg>
+                        <span>${d.phone}</span>
+                    </a>
+                </div>`;
             return `
                 <div class="bg-white p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200 flex flex-col sm:flex-row sm:items-center justify-between">
                     <div class="flex-1 min-w-0 mb-2 sm:mb-0">
@@ -125,10 +134,7 @@
                     <div class="flex-shrink-0 flex items-center space-x-4">
                         <div class="text-xs text-gray-500">Last Donated: ${lastDate}</div>
                     </div>
-                    <!-- New section for contacting admin -->
-                    <div class="mt-2 text-xs text-gray-500">
-                       <p>To contact this donor, please <a href="#contact" class="text-red-600 hover:underline">contact us</a>.</p>
-                    </div>
+                    ${contactInfo}
                 </div>
             `;
         }
@@ -187,6 +193,8 @@
                         document.getElementById('admin-member-bloodGroup').value = memberData.bloodGroup || '';
                         document.getElementById('admin-member-location').value = memberData.location || '';
                         document.getElementById('admin-member-lastDonateDate').value = memberData.lastDonateDate || '';
+                        document.getElementById('admin-member-hide-phone').checked = memberData.isPhoneHidden || false;
+                        document.getElementById('admin-member-comment').value = memberData.publicComment || '';
                     }
                 });
             });
@@ -654,7 +662,9 @@
                         phone: fd.get('phone'),
                         bloodGroup: fd.get('bloodGroup'),
                         location: fd.get('location'),
-                        lastDonateDate: fd.get('lastDonateDate')
+                        lastDonateDate: fd.get('lastDonateDate'),
+                        isPhoneHidden: fd.get('isPhoneHidden') === 'on',
+                        publicComment: fd.get('publicComment')
                     };
                     if(memberId){
                         update(ref(database, 'donors/' + memberId), updatedData)
@@ -1128,6 +1138,15 @@
                                 class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-4 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
                             <label for="admin-member-phone"
                                 class="absolute left-4 top-4 text-gray-400 transition-all peer-placeholder-shown:top-4 peer-placeholder-shown:text-base peer-focus:-top-3 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Phone number</label>
+                        </div>
+                        <div class="flex items-center gap-2">
+                             <input type="checkbox" id="admin-member-hide-phone" name="isPhoneHidden" class="h-4 w-4 text-red-600 border-gray-300 rounded focus:ring-red-500">
+                             <label for="admin-member-hide-phone" class="text-sm text-gray-700 font-medium">Hide phone number from public</label>
+                        </div>
+                         <div class="relative">
+                            <textarea name="publicComment" id="admin-member-comment" placeholder="Optional comment for public" rows="2"
+                                class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-4 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none"></textarea>
+                            <label for="admin-member-comment" class="absolute left-4 top-4 text-gray-400 transition-all peer-placeholder-shown:top-4 peer-placeholder-shown:text-base peer-focus:-top-3 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Public comment (e.g., "Contact admin")</label>
                         </div>
                         <div class="flex flex-col">
                             <label for="admin-member-bloodGroup" class="text-sm text-gray-600 mb-2">Blood group</label>
