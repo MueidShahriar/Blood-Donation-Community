@@ -418,7 +418,7 @@
                     })
                     .catch((error) => {
                         const errorMessage = error.message;
-                        showModalMessage(successModal, `Failed to send reset email: ${errorMessage}`, 'Password Reset Error');
+                        showModalMessage(successModal, `Failed to send reset email: ${errorMessage}. Please try again later.`, 'Password Reset Error');
                     });
             });
 
