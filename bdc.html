@@ -114,10 +114,10 @@
             const lastDate = d.lastDonateDate ? new Date(d.lastDonateDate).toLocaleDateString() : '—';
             const contactElement = d.isPhoneHidden ?
                 `<a href="#contact" class="text-red-700 font-semibold no-underline">${d.publicComment || 'Contact Admin'}</a>` :
-                `<a href="tel:${d.phone}" class="flex items-center flex-shrink-0 text-xs text-gray-500 hover:text-red-700 transition no-underline">
+                `<div class="flex items-center space-x-1">
                     <svg class="w-4 h-4 mr-1 text-red-500" fill="currentColor" viewBox="0 0 24 24"><path d="M3 5a2 2 0 012-2h2.5a1 1 0 01.95.684l1 3a1 1 0 01-.217.982L7.5 10.5a11 11 0 005 5l2.834-2.834a1 1 0 01.982-.217l3 1A1 1 0 0121 16.5V19a2 2 0 01-2 2H17c-8.284 0-15-6.716-15-15V5z"/></svg>
-                    <span>${d.phone}</span>
-                </a>`;
+                    <span class="text-xs text-gray-500">${d.phone}</span>
+                </div>`;
             return `
                 <div class="bg-white p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200 flex flex-col sm:flex-row sm:items-center justify-between">
                     <div class="flex-1 min-w-0 mb-2 sm:mb-0">
@@ -329,9 +329,29 @@
              if (currentUserRole === 'admin') {
                 renderAdminEventsList();
             }
+            
+            // Update event count on UI
+            const eventCountEl = document.getElementById('event-count');
+            if(eventCountEl) {
+                eventCountEl.textContent = eventsList.length;
+            }
+
         }, (error) => {
             console.error("Failed to load events: ", error);
         });
+        
+        // Listen for "Lives Helped" data
+        const statsRef = ref(database, 'stats');
+        onValue(statsRef, (snapshot) => {
+            const statsData = snapshot.val();
+            const livesHelpedEl = document.getElementById('lives-helped-count');
+            if (livesHelpedEl && statsData && statsData.livesHelped) {
+                livesHelpedEl.textContent = statsData.livesHelped;
+            }
+        }, (error) => {
+            console.error("Failed to load stats: ", error);
+        });
+
 
         // Update UI based on auth state
         function updateLoginButtonState() {
@@ -478,13 +498,17 @@
                 const email = fd.get('email')?.toString().trim();
                 const password = fd.get('password')?.toString();
                 const confirm = fd.get('confirmPassword')?.toString();
+                const gender = fd.get('gender')?.toString();
+                const isPhoneHidden = gender === 'Female';
                 const donorData = {
                     fullName: fd.get('fullName')?.toString().trim(),
                     phone: fd.get('phone')?.toString().trim(),
                     bloodGroup: fd.get('bloodGroup')?.toString().trim(),
                     location: fd.get('location')?.toString().trim(),
                     lastDonateDate: fd.get('lastDonateDate')?.toString() || '',
-                    role: email === ADMIN_EMAIL ? 'admin' : 'member'
+                    role: email === ADMIN_EMAIL ? 'admin' : 'member',
+                    gender: gender || 'Other',
+                    isPhoneHidden: isPhoneHidden
                 };
 
                 if (!donorData.fullName || !email || !donorData.phone || !donorData.bloodGroup || !donorData.location || !password || !confirm) {
@@ -658,6 +682,22 @@
             if (clearEventBtn) {
                 clearEventBtn.addEventListener('click', clearAdminEventForm);
             }
+            
+            const adminStatsForm = document.getElementById('admin-stats-form');
+            if (adminStatsForm) {
+                adminStatsForm.addEventListener('submit', (ev) => {
+                    ev.preventDefault();
+                    const newLivesHelped = document.getElementById('admin-lives-helped-input').value;
+                    if (newLivesHelped) {
+                        update(ref(database, 'stats'), { livesHelped: parseInt(newLivesHelped) })
+                            .then(() => showModalMessage(successModal, 'Lives Helped count updated successfully!', 'Success'))
+                            .catch(error => showModalMessage(successModal, `Failed to update lives helped: ${error.message}`, 'Error'));
+                    } else {
+                        showModalMessage(successModal, 'Please enter a valid number.', 'Error');
+                    }
+                });
+            }
+
 
             const adminMemberForm = document.getElementById('admin-member-form');
             if(adminMemberForm){
@@ -931,11 +971,11 @@
                         <div class="text-sm text-gray-600">Registered Donors</div>
                     </div>
                     <div class="text-center">
-                        <div class="text-3xl font-extrabold text-red-700">10</div>
+                        <div id="lives-helped-count" class="text-3xl font-extrabold text-red-700">0</div>
                         <div class="text-sm text-gray-600">Lives Helped</div>
                     </div>
                     <div class="text-center">
-                        <div class="text-3xl font-extrabold text-red-700">10</div>
+                        <div id="event-count" class="text-3xl font-extrabold text-red-700">0</div>
                         <div class="text-sm text-gray-600">Events This Year</div>
                     </div>
                 </div>
@@ -1019,7 +1059,18 @@
                         <label for="email"
                             class="absolute left-4 top-4 text-gray-400 transition-all peer-placeholder-shown:top-4 peer-placeholder-shown:text-base peer-focus:-top-3 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Email</label>
                     </div>
-
+                    
+                    <div class="flex flex-col">
+                        <label for="gender" class="text-sm text-gray-600 mb-2">Gender</label>
+                        <select name="gender" id="gender" required
+                            class="block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none">
+                            <option value="">Select gender</option>
+                            <option>Male</option>
+                            <option>Female</option>
+                            <option>Other</option>
+                        </select>
+                    </div>
+                    
                     <div class="relative">
                         <input name="phone" id="phone" type="tel" placeholder=" " required
                             class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-4 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
@@ -1092,7 +1143,17 @@
             <div class="mt-6 grid md:grid-cols-2 gap-6">
                 <!-- Event Management Panel -->
                 <div class="bg-white p-6 rounded-xl shadow-lg">
-                    <h3 class="text-xl font-bold text-red-600 mb-4">Event Management</h3>
+                    <h3 class="text-xl font-bold text-red-600 mb-4">Site Statistics</h3>
+                    <form id="admin-stats-form" class="grid grid-cols-1 gap-4 mb-6">
+                        <div class="relative">
+                            <input name="livesHelped" id="admin-lives-helped-input" type="number" placeholder=" " required min="0"
+                                class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-4 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
+                            <label for="admin-lives-helped-input" class="absolute left-4 top-4 text-gray-400 transition-all peer-placeholder-shown:top-4 peer-placeholder-shown:text-base peer-focus:-top-3 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Lives Helped Count</label>
+                        </div>
+                        <button type="submit" class="bg-red-600 text-white px-6 py-3 rounded-lg font-semibold shadow hover:bg-red-700">Update Lives Helped</button>
+                    </form>
+                    <hr class="my-6 border-t-2 border-gray-100" />
+                    <h3 class="text-xl font-bold text-red-600 mb-4">Event Details</h3>
                     <form id="admin-event-form" class="grid grid-cols-1 gap-4">
                         <input type="hidden" id="admin-event-id" name="id" />
                         <div class="relative">
