@@ -5,6 +5,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>Blood Donation Community</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="shortcut icon" href="image/blood-drop.png" type="image/x-icon">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -32,10 +33,12 @@
         }
 
         @keyframes bounce-slow {
+
             0%,
             100% {
                 transform: translateY(0) scale(1);
             }
+
             50% {
                 transform: translateY(-20px) scale(1.05);
             }
@@ -44,19 +47,58 @@
         .animate-bounce-slow {
             animation: bounce-slow 4s ease-in-out infinite;
         }
+
+        /* Custom styles for Bootstrap Carousel to match Tailwind theme */
+        #recentDonorCarousel .carousel-control-prev-icon,
+        #recentDonorCarousel .carousel-control-next-icon {
+            background-color: rgba(239, 68, 68, 0.7); /* red-500 with opacity */
+            border-radius: 50%;
+            padding: 1.5rem; /* Make the background larger */
+            background-size: 50% 50%;
+        }
+        #recentDonorCarousel .carousel-indicators li {
+            background-color: #fca5a5; /* red-300 */
+        }
+        #recentDonorCarousel .carousel-indicators .active {
+            background-color: #ef4444; /* red-500 */
+        }
     </style>
-    <meta name="description"
-        content="Community-driven blood donation platform. Register as a donor, search donors by blood group and location.">
+    <meta name="description" content="Community-driven blood donation platform. Register as a donor, search donors by blood group and location.">
 </head>
 
 <body class="bg-gray-50 text-gray-900">
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
     <script type="module">
         // Import the functions you need from the SDKs you need
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-        import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-analytics.js";
-        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, sendPasswordResetEmail, deleteUser } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-        import { getDatabase, ref, push, set, onValue, remove, update } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+        import {
+            initializeApp
+        } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+        import {
+            getAnalytics
+        } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-analytics.js";
+        import {
+            getAuth,
+            createUserWithEmailAndPassword,
+            signInWithEmailAndPassword,
+            signOut,
+            onAuthStateChanged,
+            sendPasswordResetEmail,
+            deleteUser
+        } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+        import {
+            getDatabase,
+            ref,
+            push,
+            set,
+            onValue,
+            remove,
+            update,
+            query,
+            limitToLast
+        } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
         // Your web app's Firebase configuration
         const firebaseConfig = {
@@ -64,7 +106,7 @@
             authDomain: "blood-donation-community-a1eb2.firebaseapp.com",
             databaseURL: "https://blood-donation-community-a1eb2-default-rtdb.firebaseio.com",
             projectId: "blood-donation-community-a1eb2",
-            storageBucket: "blood-donation-community-a1eb2.firebasestorage.app",
+            storageBucket: "blood-donation-community-a1eb2.appspot.com",
             messagingSenderId: "668392010451",
             appId: "1:668392010451:web:70e2d1c5e17a37a75dda26",
             measurementId: "G-4GPWV4MG5Q"
@@ -138,7 +180,7 @@
                 </div>
             `;
         }
-        
+
         // Render donor card for admin view (shows all info) and admin can edit and delete
         function renderDonorCardAdmin(d) {
             const lastDate = d.lastDonateDate ? new Date(d.lastDonateDate).toLocaleDateString() : '—';
@@ -174,12 +216,12 @@
                 searchResults.innerHTML = header + filteredDonors.map(renderDonorCardPublic).join('');
             }
         }
-        
+
         function renderAdminMembersList() {
             const membersListDiv = document.getElementById('admin-members-list');
             if (!membersListDiv) return;
             membersListDiv.innerHTML = donorsList.map(renderDonorCardAdmin).join('');
-            
+
             // Add event listeners for edit and delete buttons
             membersListDiv.querySelectorAll('.edit-member-btn').forEach(button => {
                 button.addEventListener('click', (ev) => {
@@ -197,7 +239,9 @@
                         document.getElementById('admin-member-comment').value = memberData.publicComment || '';
 
                         // Smoothly navigate to the form
-                        document.getElementById('admin-member-form').scrollIntoView({ behavior: 'smooth' });
+                        document.getElementById('admin-member-form').scrollIntoView({
+                            behavior: 'smooth'
+                        });
                     }
                 });
             });
@@ -212,7 +256,7 @@
                 });
             });
         }
-        
+
         // Render events for admin
         function renderAdminEventsList() {
             const eventsListDiv = document.getElementById('admin-events-list');
@@ -229,7 +273,7 @@
                     </div>
                 </div>
             `).join('');
-        
+
             // Add event listeners for edit and delete buttons
             eventsListDiv.querySelectorAll('.edit-event-btn').forEach(button => {
                 button.addEventListener('click', (ev) => {
@@ -254,7 +298,7 @@
                 });
             });
         }
-        
+
         function clearAdminEventForm() {
             document.getElementById('admin-event-form').reset();
             document.getElementById('admin-event-id').value = '';
@@ -264,7 +308,47 @@
             document.getElementById('admin-member-form').reset();
             document.getElementById('admin-member-id').value = '';
         }
-        
+
+        function renderRecentDonorsCarousel(donors) {
+            const carouselInner = document.querySelector('#recentDonorCarousel .carousel-inner');
+            const carouselIndicators = document.querySelector('#recentDonorCarousel .carousel-indicators');
+            if (!carouselInner || !carouselIndicators) return;
+
+            carouselInner.innerHTML = '';
+            carouselIndicators.innerHTML = '';
+
+            if (donors.length === 0) {
+                carouselInner.innerHTML = '<div class="text-center p-5">No recent donations to show.</div>';
+                return;
+            }
+
+            donors.forEach((d, index) => {
+                const date = d.date ? new Date(d.date).toLocaleDateString() : '—';
+                const itemClass = index === 0 ? 'carousel-item active' : 'carousel-item';
+
+                const carouselItemHTML = `
+                    <div class="${itemClass}">
+                        <div class="relative bg-white p-6 rounded-xl shadow-lg mx-auto max-w-2xl text-center overflow-hidden">
+                            <div class="absolute top-0 left-0 h-full w-2 bg-red-600"></div>
+                            <div class="absolute top-0 right-0 h-full w-2 bg-red-600"></div>
+                            <h3 class="text-xl font-bold text-red-700">Recent Donation</h3>
+                            <p class="mt-4 text-gray-700">A huge thank you to our recent donor, <span class="font-bold text-red-600">${d.name}</span>, who donated blood on <span class="font-semibold">${date}</span>.</p>
+                            <ul class="mt-4 list-none p-0 space-y-1 text-gray-600">
+                                <li><span class="font-bold">Blood Group:</span> ${d.bloodGroup}</li>
+                                <li><span class="font-bold">Location:</span> ${d.location}</li>
+                            </ul>
+                        </div>
+                    </div>
+                `;
+                carouselInner.innerHTML += carouselItemHTML;
+
+                const indicatorClass = index === 0 ? 'active' : '';
+                const indicatorHTML = `<li data-target="#recentDonorCarousel" data-slide-to="${index}" class="${indicatorClass}"></li>`;
+                carouselIndicators.innerHTML += indicatorHTML;
+            });
+        }
+
+
         // Fetch data from Firebase
         const donorsRef = ref(database, 'donors');
         onValue(donorsRef, (snapshot) => {
@@ -272,7 +356,10 @@
             donorsList = [];
             for (let key in data) {
                 if (data.hasOwnProperty(key)) {
-                    donorsList.push({ id: key, ...data[key] });
+                    donorsList.push({
+                        id: key,
+                        ...data[key]
+                    });
                 }
             }
             const searchForm = document.getElementById('search-form');
@@ -303,11 +390,14 @@
             eventsList = [];
             for (let key in data) {
                 if (data.hasOwnProperty(key)) {
-                    eventsList.push({ id: key, ...data[key] });
+                    eventsList.push({
+                        id: key,
+                        ...data[key]
+                    });
                 }
             }
             const publicEventsList = document.getElementById('public-events-list');
-            if(publicEventsList){
+            if (publicEventsList) {
                 publicEventsList.innerHTML = eventsList.map(e => `
                     <article class="bg-white rounded-xl shadow-lg p-4 flex gap-4 items-center flex-col sm:flex-row text-center sm:text-left">
                         <div class="flex-shrink-0 w-full sm:w-20">
@@ -326,20 +416,20 @@
                     </article>
                 `).join('');
             }
-             if (currentUserRole === 'admin') {
+            if (currentUserRole === 'admin') {
                 renderAdminEventsList();
             }
-            
+
             // Update event count on UI
             const eventCountEl = document.getElementById('event-count');
-            if(eventCountEl) {
+            if (eventCountEl) {
                 eventCountEl.textContent = eventsList.length;
             }
 
         }, (error) => {
             console.error("Failed to load events: ", error);
         });
-        
+
         // Listen for "Lives Helped" data
         const statsRef = ref(database, 'stats');
         onValue(statsRef, (snapshot) => {
@@ -352,6 +442,25 @@
             console.error("Failed to load stats: ", error);
         });
 
+        // Listen for "Recent Donor" data
+        const recentDonationsRef = ref(database, 'recentDonations');
+        const recentDonationsQuery = query(recentDonationsRef, limitToLast(3));
+        onValue(recentDonationsQuery, (snapshot) => {
+            const data = snapshot.val();
+            const recentDonors = [];
+            if (data) {
+                for (const key in data) {
+                    recentDonors.push({
+                        id: key,
+                        ...data[key]
+                    });
+                }
+            }
+            renderRecentDonorsCarousel(recentDonors.reverse()); // Reverse to show newest first
+        }, (error) => {
+            console.error("Failed to load recent donations: ", error);
+        });
+
 
         // Update UI based on auth state
         function updateLoginButtonState() {
@@ -360,12 +469,12 @@
             const profileUserId = document.getElementById('profile-userId');
             const adminPanel = document.getElementById('admin-panel');
             if (!loginBtn || !mobileLoginBtn || !adminPanel) return;
-            
+
             if (currentUser) {
                 loginBtn.textContent = 'Profile';
                 loginBtn.dataset.state = 'loggedin';
                 mobileLoginBtn.textContent = 'Profile';
-                if(profileUserId) profileUserId.textContent = `User ID: ${currentUser.uid}`;
+                if (profileUserId) profileUserId.textContent = `User ID: ${currentUser.uid}`;
                 // Check user role
                 const userRef = ref(database, `donors/${currentUser.uid}/role`);
                 onValue(userRef, (snapshot) => {
@@ -377,12 +486,14 @@
                     } else {
                         adminPanel.classList.add('hidden');
                     }
-                }, { onlyOnce: true });
+                }, {
+                    onlyOnce: true
+                });
             } else {
                 loginBtn.textContent = 'Login';
                 loginBtn.dataset.state = 'loggedout';
                 mobileLoginBtn.textContent = 'Login';
-                if(profileUserId) profileUserId.textContent = '';
+                if (profileUserId) profileUserId.textContent = '';
                 adminPanel.classList.add('hidden');
             }
         }
@@ -413,7 +524,7 @@
             }
             clearAdminEventForm();
         }
-        
+
         function deleteEvent(eventId) {
             if (!currentUser || currentUserRole !== 'admin') {
                 showModalMessage(successModal, 'You do not have permission to perform this action.', 'Permission Denied');
@@ -425,7 +536,7 @@
                     .catch(error => showModalMessage(successModal, `Failed to delete event: ${error.message}`, 'Error'));
             }
         }
-        
+
         function deleteMember(memberId, memberEmail) {
             if (!currentUser || currentUserRole !== 'admin') {
                 showModalMessage(successModal, 'You do not have permission to perform this action.', 'Permission Denied');
@@ -440,7 +551,7 @@
             }
         }
 
-        window.onload = function () {
+        window.onload = function() {
             const successModal = document.getElementById('success-modal');
             const successClose = document.getElementById('success-close');
             successClose?.addEventListener('click', () => closeModal(successModal));
@@ -462,7 +573,7 @@
 
             deleteCancelBtn?.addEventListener('click', () => closeModal(deleteConfirmModal));
             deleteConfirmModal?.querySelector('.absolute.inset-0')?.addEventListener('click', () => closeModal(deleteConfirmModal));
-            
+
             pfClose?.addEventListener('click', () => closeModal(profileModal));
             profileModal?.querySelector('.absolute.inset-0')?.addEventListener('click', () => closeModal(profileModal));
 
@@ -562,7 +673,7 @@
                 }
                 const today = new Date();
                 const lastDonation = new Date(lastDonationDate);
-                const threeMonthsAgo = new Date(today.setMonth(today.getMonth() - 3));
+                const threeMonthsAgo = new Date(new Date().setMonth(today.getMonth() - 3));
                 return lastDonation <= threeMonthsAgo;
             }
 
@@ -579,7 +690,10 @@
                     let filteredDonors = [];
                     for (let key in data) {
                         if (data.hasOwnProperty(key)) {
-                            const donor = data[key];
+                            const donor = {
+                                id: key,
+                                ...data[key]
+                            };
                             if (showEligibleOnly && !isDonorEligible(donor.lastDonateDate)) {
                                 continue;
                             }
@@ -589,7 +703,9 @@
                         }
                     }
                     renderSearchResults(filteredDonors);
-                }, { onlyOnce: true });
+                }, {
+                    onlyOnce: true
+                });
             });
 
             const loginBtn = document.getElementById('login-btn');
@@ -613,7 +729,9 @@
 
                             openModal(profileModal);
                         }
-                    }, { onlyOnce: true });
+                    }, {
+                        onlyOnce: true
+                    });
                 } else {
                     openModal(loginModal);
                 }
@@ -640,7 +758,7 @@
                         showModalMessage(successModal, `Login failed: ${errorMessage}`, 'Login Failed');
                     });
             });
-            
+
             const forgotPasswordLink = document.getElementById('forgot-password-link');
             forgotPasswordLink?.addEventListener('click', (ev) => {
                 ev.preventDefault();
@@ -660,9 +778,9 @@
                         showModalMessage(successModal, `Failed to send reset email: ${errorMessage}. Please try again later.`, 'Password Reset Error');
                     });
             });
-            
+
             const adminEventForm = document.getElementById('admin-event-form');
-            if(adminEventForm) {
+            if (adminEventForm) {
                 adminEventForm.addEventListener('submit', (ev) => {
                     ev.preventDefault();
                     const fd = new FormData(adminEventForm);
@@ -677,30 +795,60 @@
                     saveEvent(eventData);
                 });
             }
-            
+
             const clearEventBtn = document.getElementById('clear-event-btn');
             if (clearEventBtn) {
                 clearEventBtn.addEventListener('click', clearAdminEventForm);
             }
-            
-            const adminStatsForm = document.getElementById('admin-stats-form');
-            if (adminStatsForm) {
-                adminStatsForm.addEventListener('submit', (ev) => {
+
+            const adminRecentDonorForm = document.getElementById('admin-recent-donor-form');
+            if (adminRecentDonorForm) {
+                adminRecentDonorForm.addEventListener('submit', (ev) => {
                     ev.preventDefault();
-                    const newLivesHelped = document.getElementById('admin-lives-helped-input').value;
-                    if (newLivesHelped) {
-                        update(ref(database, 'stats'), { livesHelped: parseInt(newLivesHelped) })
-                            .then(() => showModalMessage(successModal, 'Lives Helped count updated successfully!', 'Success'))
-                            .catch(error => showModalMessage(successModal, `Failed to update lives helped: ${error.message}`, 'Error'));
-                    } else {
-                        showModalMessage(successModal, 'Please enter a valid number.', 'Error');
+                    const fd = new FormData(adminRecentDonorForm);
+                    const donorData = {
+                        name: fd.get('donor-name'),
+                        bloodGroup: fd.get('donor-blood-group'),
+                        location: fd.get('donor-location'),
+                        date: fd.get('donation-date')
+                    };
+
+                    if (!donorData.name || !donorData.bloodGroup || !donorData.location || !donorData.date) {
+                        showModalMessage(successModal, 'Please fill all required fields for the recent donor.', 'Error');
+                        return;
                     }
+
+                    // Fetch the current lives helped count once
+                    onValue(statsRef, (snapshot) => {
+                        const statsData = snapshot.val();
+                        const currentLivesHelped = (statsData && statsData.livesHelped) ? Number(statsData.livesHelped) : 0;
+                        const newLivesHelped = currentLivesHelped + 1;
+
+                        // Get a new key for the recent donation
+                        const newDonationRef = push(recentDonationsRef);
+
+                        // Prepare a multi-path update
+                        const updates = {};
+                        updates[`/recentDonations/${newDonationRef.key}`] = donorData;
+                        updates['/stats/livesHelped'] = newLivesHelped;
+
+                        // Atomically update both locations
+                        update(ref(database), updates)
+                            .then(() => {
+                                showModalMessage(successModal, 'Recent donor added and lives helped count incremented!', 'Success');
+                                adminRecentDonorForm.reset();
+                            })
+                            .catch(error => showModalMessage(successModal, `Failed to update data: ${error.message}`, 'Error'));
+
+                    }, {
+                        onlyOnce: true
+                    });
                 });
             }
 
 
             const adminMemberForm = document.getElementById('admin-member-form');
-            if(adminMemberForm){
+            if (adminMemberForm) {
                 adminMemberForm.addEventListener('submit', (ev) => {
                     ev.preventDefault();
                     const fd = new FormData(adminMemberForm);
@@ -714,7 +862,7 @@
                         isPhoneHidden: fd.get('isPhoneHidden') === 'on',
                         publicComment: fd.get('publicComment')
                     };
-                    if(memberId){
+                    if (memberId) {
                         update(ref(database, 'donors/' + memberId), updatedData)
                             .then(() => {
                                 showModalMessage(successModal, 'Member profile updated successfully!', 'Success');
@@ -724,9 +872,9 @@
                     }
                 });
             }
-            
+
             const clearMemberBtn = document.getElementById('clear-member-btn');
-            if(clearMemberBtn) {
+            if (clearMemberBtn) {
                 clearMemberBtn.addEventListener('click', clearAdminMemberForm);
             }
 
@@ -779,7 +927,7 @@
             deleteConfirmBtn?.addEventListener('click', () => {
                 const user = auth.currentUser;
                 const donorRef = ref(database, 'donors/' + user.uid);
-                
+
                 // An admin can delete their own account from the profile modal, but cannot delete others
                 // This is a security feature of Firebase Auth
                 if (user && user.uid === user.uid) {
@@ -829,10 +977,8 @@
                 <a href="#contact" class="px-3 py-2 rounded hover:bg-red-50 text-red-700">Contact</a>
             </div>
             <div class="flex items-center gap-2">
-                <button id="login-btn"
-                    class="hidden md:inline-block bg-red-600 text-white px-4 py-2 rounded-lg font-semibold shadow hover:bg-red-700 transition">Login</button>
-                <button id="menu-toggle" class="md:hidden p-2 rounded-lg bg-red-100 text-red-700 hover:bg-red-200"
-                    aria-label="Open menu">
+                <button id="login-btn" class="hidden md:inline-block bg-red-600 text-white px-4 py-2 rounded-lg font-semibold shadow hover:bg-red-700 transition">Login</button>
+                <button id="menu-toggle" class="md:hidden p-2 rounded-lg bg-red-100 text-red-700 hover:bg-red-200" aria-label="Open menu">
                     <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
                     </svg>
@@ -846,8 +992,7 @@
                 <a href="#events" class="block px-3 py-2 rounded hover:bg-red-50">Events</a>
                 <a href="#join" class="block px-3 py-2 rounded hover:bg-red-50">Join</a>
                 <a href="#search" class="block px-3 py-2 rounded hover:bg-red-50">Search</a>
-                <button id="mobile-login-btn"
-                    class="w-full text-left px-3 py-2 rounded hover:bg-red-50 text-red-700 font-medium">Login</button>
+                <button id="mobile-login-btn" class="w-full text-left px-3 py-2 rounded hover:bg-red-50 text-red-700 font-medium">Login</button>
             </div>
         </div>
     </header>
@@ -861,31 +1006,45 @@
                 <p class="mb-8 text-lg text-gray-700 max-w-xl mx-auto md:mx-0">Be a hero in your community. Register as a donor,
                     find blood matches and join our events to help save lives every day.</p>
                 <div class="flex flex-col sm:flex-row gap-4 w-full sm:w-auto items-center justify-center md:justify-start">
-                    <a href="#join"
-                        class="w-full sm:w-auto text-center bg-gradient-to-r from-red-600 to-red-400 text-white px-8 py-3 rounded-lg font-semibold shadow-lg hover:scale-105 transition">Become
+                    <a href="#join" class="w-full sm:w-auto text-center bg-gradient-to-r from-red-600 to-red-400 text-white px-8 py-3 rounded-lg font-semibold shadow-lg hover:scale-105 transition">Become
                         a Donor</a>
-                    <a href="#search"
-                        class="w-full sm:w-auto text-center bg-white border-2 border-red-600 text-red-600 px-8 py-3 rounded-lg font-semibold shadow hover:bg-red-50 hover:scale-105 transition">Search
+                    <a href="#search" class="w-full sm:w-auto text-center bg-white border-2 border-red-600 text-red-600 px-8 py-3 rounded-lg font-semibold shadow hover:bg-red-50 hover:scale-105 transition">Search
                         Donors</a>
                 </div>
             </div>
             <div class="flex-1 flex justify-center items-center">
                 <div class="relative">
-                    <img src="image/blood-drop.png" alt="blood drop"
-                        class="w-56 h-56 object-contain drop-shadow-xl animate-bounce-slow" />
+                    <img src="image/blood-drop.png" alt="blood drop" class="w-56 h-56 object-contain drop-shadow-xl animate-bounce-slow" />
                     <div class="absolute bottom-0 left-1/2 -translate-x-1/2 w-40 h-8 bg-red-200 rounded-full blur-xl opacity-60">
                     </div>
                 </div>
             </div>
         </section>
 
+        <section id="recent-donor" class="py-12">
+            <div id="recentDonorCarousel" class="carousel slide" data-ride="carousel">
+                <ol class="carousel-indicators">
+                    <!-- Indicators will be generated here -->
+                </ol>
+                <div class="carousel-inner">
+                    <!-- Carousel items will be generated here -->
+                </div>
+                <a class="carousel-control-prev" href="#recentDonorCarousel" role="button" data-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="sr-only">Previous</span>
+                </a>
+                <a class="carousel-control-next" href="#recentDonorCarousel" role="button" data-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="sr-only">Next</span>
+                </a>
+            </div>
+        </section>
+
         <section id="about" class="py-12">
-            <div
-                class="bg-white rounded-xl shadow-lg p-8 border-l-8 border-red-600 flex flex-col md:flex-row gap-8 items-start">
+            <div class="bg-white rounded-xl shadow-lg p-8 border-l-8 border-red-600 flex flex-col md:flex-row gap-8 items-start">
                 <div class="flex-shrink-0 flex items-center justify-center w-20 h-20 bg-red-100 rounded-full shadow">
                     <svg class="w-12 h-12 text-red-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round"
-                            d="M12 2C12 2 7 8.5 7 12a5 5 0 0010 0c0-3.5-5-10-5-10z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 2C12 2 7 8.5 7 12a5 5 0 0010 0c0-3.5-5-10-5-10z" />
                     </svg>
                 </div>
                 <div class="flex-1">
@@ -893,7 +1052,7 @@
                         About Us
                         <span class="inline-block bg-red-600 text-white text-xs font-bold px-2 py-1 rounded">Community</span>
                     </h2>
-                    <p class="text-alignment = jutified">
+                    <p class="text-justify">
                         <span class="font-semibold text-red-700">Blood Donation Community</span> is a passionate, volunteer-driven
                         organization dedicated to saving lives through the power of blood donation. We connect willing donors with
                         patients in urgent need, organize regular blood drives and partner with hospitals and local groups to ensure
@@ -923,8 +1082,7 @@
                     <div class="flex items-center gap-4">
                         <div class="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center text-red-600">
                             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M12 11c1.657 0 3-1.343 3-3S13.657 5 12 5s-3 1.343-3 3 1.343 3 3 3zM19 21v-2a4 4 0 00-4-4H9a4 4 0 00-4 4v2" />
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 11c1.657 0 3-1.343 3-3S13.657 5 12 5s-3 1.343-3 3 1.343 3 3 3zM19 21v-2a4 4 0 00-4-4H9a4 4 0 00-4 4v2" />
                             </svg>
                         </div>
                         <h4 class="text-lg font-bold text-red-700">Check Eligibility</h4>
@@ -938,8 +1096,7 @@
                     <div class="flex items-center gap-4">
                         <div class="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center text-red-600">
                             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M8 7V3m8 4V3M3 11h18M5 21h14a2 2 0 002-2V7H3v12a2 2 0 002 2z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3M3 11h18M5 21h14a2 2 0 002-2V7H3v12a2 2 0 002 2z" />
                             </svg>
                         </div>
                         <h4 class="text-lg font-bold text-red-700">Register</h4>
@@ -980,8 +1137,7 @@
                     </div>
                 </div>
                 <div class="w-full md:w-auto">
-                    <a href="#join"
-                        class="w-full text-center inline-block bg-red-600 text-white px-5 py-2 rounded-md font-semibold">Join Our
+                    <a href="#join" class="w-full text-center inline-block bg-red-600 text-white px-5 py-2 rounded-md font-semibold">Join Our
                         Donor Network</a>
                 </div>
             </div>
@@ -992,7 +1148,7 @@
             <p class="mt-2 text-gray-600">Join our community drives and help save lives - see the event details and register
                 to participate.</p>
             <div id="public-events-list" class="mt-6 grid md:grid-cols-2 gap-6">
-                 <!-- Events will be dynamically loaded here from the database -->
+                <!-- Events will be dynamically loaded here from the database -->
             </div>
         </section>
 
@@ -1006,8 +1162,7 @@
                     </div>
                     <div class="w-full md:w-auto flex flex-col items-center gap-4 bg-white p-4 rounded-xl shadow-lg">
                         <form id="search-form" class="flex flex-col sm:flex-row items-center gap-3 w-full">
-                            <select id="search-blood" aria-label="Blood group"
-                                class="w-full sm:w-50 h-12 px-4 rounded-lg border border-gray-100 bg-white text-gray-700">
+                            <select id="search-blood" aria-label="Blood group" class="w-full sm:w-50 h-10 px-4 rounded-lg border border-gray-100 bg-white text-gray-700">
                                 <option value="">All Donor(s)</option>
                                 <option>A+</option>
                                 <option>A-</option>
@@ -1019,12 +1174,10 @@
                                 <option>AB-</option>
                             </select>
 
-                            <button type="submit"
-                                class="w-full sm:w-auto h-12 px-6 bg-red-600 text-white rounded-lg font-semibold shadow hover:bg-red-700">Search</button>
+                            <button type="submit" class="w-full sm:w-auto h-10 px-6 bg-red-600 text-white rounded-lg font-semibold shadow hover:bg-red-700">Search</button>
                         </form>
                         <div class="w-full flex justify-center items-center">
-                            <input type="checkbox" id="eligible-only"
-                                class="h-4 w-4 text-red-600 border-gray-300 rounded focus:ring-red-500">
+                            <input type="checkbox" id="eligible-only" class="h-4 w-4 text-red-600 border-gray-300 rounded focus:ring-red-500">
                             <label for="eligible-only" class="ml-2 text-sm text-gray-700 font-medium whitespace-nowrap">Show only
                                 eligible donors</label>
                         </div>
@@ -1046,43 +1199,35 @@
 
                 <form id="join-form" class="mt-6 grid grid-cols-1 gap-4">
                     <div class="relative">
-                        <input name="fullName" id="fullName" type="text" placeholder=" " required
-                            class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-4 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
-                        <label for="fullName"
-                            class="absolute left-4 top-4 text-gray-400 transition-all peer-placeholder-shown:top-4 peer-placeholder-shown:text-base peer-focus:-top-3 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Full
+                        <input name="fullName" id="fullName" type="text" placeholder=" " required class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
+                        <label for="fullName" class="absolute left-4 top-3 text-gray-400 transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-focus:-top-3 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Full
                             name</label>
                     </div>
 
                     <div class="relative">
-                        <input name="email" id="email" type="email" placeholder=" " required
-                            class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-4 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
-                        <label for="email"
-                            class="absolute left-4 top-4 text-gray-400 transition-all peer-placeholder-shown:top-4 peer-placeholder-shown:text-base peer-focus:-top-3 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Email</label>
+                        <input name="email" id="email" type="email" placeholder=" " required class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
+                        <label for="email" class="absolute left-4 top-3 text-gray-400 transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-focus:-top-3 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Email</label>
                     </div>
-                    
+
                     <div class="flex flex-col">
                         <label for="gender" class="text-sm text-gray-600 mb-2">Gender</label>
-                        <select name="gender" id="gender" required
-                            class="block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none">
+                        <select name="gender" id="gender" required class="block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none">
                             <option value="">Select gender</option>
                             <option>Male</option>
                             <option>Female</option>
                             <option>Other</option>
                         </select>
                     </div>
-                    
+
                     <div class="relative">
-                        <input name="phone" id="phone" type="tel" placeholder=" " required
-                            class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-4 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
-                        <label for="phone"
-                            class="absolute left-4 top-4 text-gray-400 transition-all peer-placeholder-shown:top-4 peer-placeholder-shown:text-base peer-focus:-top-3 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Phone
+                        <input name="phone" id="phone" type="tel" placeholder=" " required class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
+                        <label for="phone" class="absolute left-4 top-3 text-gray-400 transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-focus:-top-3 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Phone
                             number</label>
                     </div>
 
                     <div class="flex flex-col">
                         <label for="bloodGroup" class="text-sm text-gray-600 mb-2">Blood group</label>
-                        <select name="bloodGroup" id="bloodGroup" required
-                            class="block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none">
+                        <select name="bloodGroup" id="bloodGroup" required class="block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none">
                             <option value="">Select group</option>
                             <option>A+</option>
                             <option>A-</option>
@@ -1096,40 +1241,30 @@
                     </div>
 
                     <div class="relative">
-                        <input name="location" id="location" type="text" placeholder=" " required
-                            class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-4 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
-                        <label for="location"
-                            class="absolute left-4 top-4 text-gray-400 transition-all peer-placeholder-shown:top-4 peer-placeholder-shown:text-base peer-focus:-top-3 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Current
+                        <input name="location" id="location" type="text" placeholder=" " required class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
+                        <label for="location" class="absolute left-4 top-3 text-gray-400 transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-focus:-top-3 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Current
                             Location</label>
                     </div>
 
                     <div class="relative">
-                        <input name="lastDonateDate" id="lastDonateDate" type="date" placeholder=" "
-                            class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-4 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
-                        <label for="lastDonateDate"
-                            class="absolute left-4 top-4 text-gray-400 transition-all peer-placeholder-shown:top-4 peer-placeholder-shown:text-base peer-focus:-top-3 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Last
+                        <input name="lastDonateDate" id="lastDonateDate" type="date" placeholder=" " class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
+                        <label for="lastDonateDate" class="absolute left-4 top-3 text-gray-400 transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-focus:-top-3 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Last
                             blood donation</label>
                     </div>
 
                     <div class="relative">
-                        <input name="password" id="password" type="password" placeholder=" " required
-                            class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-4 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
-                        <label for="password"
-                            class="absolute left-4 top-4 text-gray-400 transition-all peer-placeholder-shown:top-4 peer-placeholder-shown:text-base peer-focus:-top-3 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Password</label>
+                        <input name="password" id="password" type="password" placeholder=" " required class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
+                        <label for="password" class="absolute left-4 top-3 text-gray-400 transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-focus:-top-3 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Password</label>
                     </div>
 
                     <div class="relative">
-                        <input name="confirmPassword" id="confirmPassword" type="password" placeholder=" " required
-                            class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-4 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
-                        <label for="confirmPassword"
-                            class="absolute left-4 top-4 text-gray-400 transition-all peer-placeholder-shown:top-4 peer-placeholder-shown:text-base peer-focus:-top-3 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Confirm
+                        <input name="confirmPassword" id="confirmPassword" type="password" placeholder=" " required class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
+                        <label for="confirmPassword" class="absolute left-4 top-3 text-gray-400 transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-focus:-top-3 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Confirm
                             password</label>
                     </div>
                     <div class="flex gap-3">
-                        <button id="join-submit" type="submit"
-                            class="bg-red-600 text-white px-6 py-3 rounded-lg font-semibold shadow hover:bg-red-700 flex-1 md:flex-none">Register</button>
-                        <button id="join-clear" type="button"
-                            class="border border-gray-300 px-4 py-3 rounded-lg flex-1 md:flex-none">Clear</button>
+                        <button id="join-submit" type="submit" class="bg-red-600 text-white px-6 py-3 rounded-lg font-semibold shadow hover:bg-red-700 flex-1 md:flex-none">Register</button>
+                        <button id="join-clear" type="button" class="border border-gray-300 px-4 py-3 rounded-lg flex-1 md:flex-none">Clear</button>
                     </div>
                 </form>
             </div>
@@ -1138,48 +1273,33 @@
         <!-- Admin Panel Section - Initially Hidden -->
         <section id="admin-panel" class="py-12 hidden">
             <h2 class="text-2xl font-extrabold text-red-700">Admin Dashboard</h2>
-            <p class="mt-2 text-gray-600">Manage events and users from here.</p>
-        
+            <p class="mt-2 text-gray-600">Welcome, Admin! Here you can manage community events, update donor information and add recent donations.</p>
+
             <div class="mt-6 grid md:grid-cols-2 gap-6">
                 <!-- Event Management Panel -->
                 <div class="bg-white p-6 rounded-xl shadow-lg">
-                    <h3 class="text-xl font-bold text-red-600 mb-4">Site Statistics</h3>
-                    <form id="admin-stats-form" class="grid grid-cols-1 gap-4 mb-6">
-                        <div class="relative">
-                            <input name="livesHelped" id="admin-lives-helped-input" type="number" placeholder=" " required min="0"
-                                class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-4 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
-                            <label for="admin-lives-helped-input" class="absolute left-4 top-4 text-gray-400 transition-all peer-placeholder-shown:top-4 peer-placeholder-shown:text-base peer-focus:-top-3 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Lives Helped Count</label>
-                        </div>
-                        <button type="submit" class="bg-red-600 text-white px-6 py-3 rounded-lg font-semibold shadow hover:bg-red-700">Update Lives Helped</button>
-                    </form>
-                    <hr class="my-6 border-t-2 border-gray-100" />
                     <h3 class="text-xl font-bold text-red-600 mb-4">Event Details</h3>
                     <form id="admin-event-form" class="grid grid-cols-1 gap-4">
                         <input type="hidden" id="admin-event-id" name="id" />
                         <div class="relative">
-                            <input name="title" id="event-title" type="text" placeholder=" " required
-                                class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-4 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
-                            <label for="event-title" class="absolute left-4 top-4 text-gray-400 transition-all peer-placeholder-shown:top-4 peer-placeholder-shown:text-base peer-focus:-top-3 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Event Title</label>
+                            <input name="title" id="event-title" type="text" placeholder=" " required class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
+                            <label for="event-title" class="absolute left-4 top-3 text-gray-400 transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-focus:-top-3 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Event Title</label>
                         </div>
                         <div class="relative">
-                            <input name="date" id="event-date" type="date" placeholder=" " required
-                                class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-4 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
-                            <label for="event-date" class="absolute left-4 top-4 text-gray-400 transition-all peer-placeholder-shown:top-4 peer-placeholder-shown:text-base peer-focus:-top-3 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Date</label>
+                            <input name="date" id="event-date" type="date" placeholder=" " required class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
+                            <label for="event-date" class="absolute left-4 top-3 text-gray-400 transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-focus:-top-3 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Event Date</label>
                         </div>
                         <div class="relative">
-                            <input name="time" id="event-time" type="time" placeholder=" " required
-                                class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-4 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
-                            <label for="event-time" class="absolute left-4 top-4 text-gray-400 transition-all peer-placeholder-shown:top-4 peer-placeholder-shown:text-base peer-focus:-top-3 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Time</label>
+                            <input name="time" id="event-time" type="time" placeholder=" " required class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
+                            <label for="event-time" class="absolute left-4 top-3 text-gray-400 transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-focus:-top-3 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Event Time</label>
                         </div>
                         <div class="relative">
-                            <input name="location" id="event-location" type="text" placeholder=" " required
-                                class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-4 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
-                            <label for="event-location" class="absolute left-4 top-4 text-gray-400 transition-all peer-placeholder-shown:top-4 peer-placeholder-shown:text-base peer-focus:-top-3 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Location</label>
+                            <input name="location" id="event-location" type="text" placeholder=" " required class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
+                            <label for="event-location" class="absolute left-4 top-3 text-gray-400 transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-focus:-top-3 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Location</label>
                         </div>
                         <div class="relative">
-                            <textarea name="description" id="event-description" placeholder=" " required rows="2"
-                                class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-4 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none"></textarea>
-                            <label for="event-description" class="absolute left-4 top-4 text-gray-400 transition-all peer-placeholder-shown:top-4 peer-placeholder-shown:text-base peer-focus:-top-3 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Description</label>
+                            <textarea name="description" id="event-description" placeholder=" " required rows="2" class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none"></textarea>
+                            <label for="event-description" class="absolute left-4 top-3 text-gray-400 transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-focus:-top-3 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Description</label>
                         </div>
                         <div class="flex gap-3">
                             <button type="submit" class="bg-red-600 text-white px-6 py-3 rounded-lg font-semibold shadow hover:bg-red-700 flex-1">Save Event</button>
@@ -1190,37 +1310,18 @@
                         <!-- Events list will be dynamically loaded here -->
                     </div>
                 </div>
-        
+
                 <!-- Member Management Panel -->
                 <div class="bg-white p-6 rounded-xl shadow-lg">
-                    <h3 class="text-xl font-bold text-red-600 mb-4">Member Management</h3>
-                    <form id="admin-member-form" class="grid grid-cols-1 gap-4">
-                        <input type="hidden" id="admin-member-id" name="id" />
+                    <h3 class="text-xl font-bold text-red-600 mb-4">Recent Donor</h3>
+                    <form id="admin-recent-donor-form" class="grid grid-cols-1 gap-4 mb-6">
                         <div class="relative">
-                            <input name="fullName" id="admin-member-fullname" type="text" placeholder=" " required
-                                class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-4 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
-                            <label for="admin-member-fullname"
-                                class="absolute left-4 top-4 text-gray-400 transition-all peer-placeholder-shown:top-4 peer-placeholder-shown:text-base peer-focus:-top-3 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Full name</label>
-                        </div>
-                        <div class="relative">
-                            <input name="phone" id="admin-member-phone" type="tel" placeholder=" " required
-                                class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-4 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
-                            <label for="admin-member-phone"
-                                class="absolute left-4 top-4 text-gray-400 transition-all peer-placeholder-shown:top-4 peer-placeholder-shown:text-base peer-focus:-top-3 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Phone number</label>
-                        </div>
-                        <div class="flex items-center gap-2">
-                             <input type="checkbox" id="admin-member-hide-phone" name="isPhoneHidden" class="h-4 w-4 text-red-600 border-gray-300 rounded focus:ring-red-500">
-                             <label for="admin-member-hide-phone" class="text-sm text-gray-700 font-medium">Hide phone number from public</label>
-                        </div>
-                         <div class="relative">
-                            <textarea name="publicComment" id="admin-member-comment" placeholder="Optional comment for public" rows="2"
-                                class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-4 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none"></textarea>
-                            <label for="admin-member-comment" class="absolute left-4 top-4 text-gray-400 transition-all peer-placeholder-shown:top-4 peer-placeholder-shown:text-base peer-focus:-top-3 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Public comment (e.g., "Contact admin")</label>
+                            <input name="donor-name" id="donor-name" type="text" placeholder=" " required class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
+                            <label for="donor-name" class="absolute left-4 top-3 text-gray-400 transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-focus:-top-3 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Donor Name</label>
                         </div>
                         <div class="flex flex-col">
-                            <label for="admin-member-bloodGroup" class="text-sm text-gray-600 mb-2">Blood group</label>
-                            <select name="bloodGroup" id="admin-member-bloodGroup" required
-                                class="block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none">
+                            <label for="donor-blood-group" class="text-sm text-gray-600 mb-2">Blood Group</label>
+                            <select name="donor-blood-group" id="donor-blood-group" required class="block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none">
                                 <option value="">Select group</option>
                                 <option>A+</option>
                                 <option>A-</option>
@@ -1233,16 +1334,56 @@
                             </select>
                         </div>
                         <div class="relative">
-                            <input name="location" id="admin-member-location" type="text" placeholder=" " required
-                                class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-4 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
-                            <label for="admin-member-location"
-                                class="absolute left-4 top-4 text-gray-400 transition-all peer-placeholder-shown:top-4 peer-placeholder-shown:text-base peer-focus:-top-3 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Current Location</label>
+                            <input name="donor-location" id="donor-location" type="text" placeholder=" " required class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
+                            <label for="donor-location" class="absolute left-4 top-3 text-gray-400 transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-focus:-top-3 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Location</label>
                         </div>
                         <div class="relative">
-                            <input name="lastDonateDate" id="admin-member-lastDonateDate" type="date" placeholder=" "
-                                class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-4 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
-                            <label for="admin-member-lastDonateDate"
-                                class="absolute left-4 top-4 text-gray-400 transition-all peer-placeholder-shown:top-4 peer-placeholder-shown:text-base peer-focus:-top-3 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Last blood donation</label>
+                            <input name="donation-date" id="donation-date" type="date" placeholder=" " required class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
+                            <label for="donation-date" class="absolute left-4 top-3 text-gray-400 transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-focus:-top-3 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Donation Date</label>
+                        </div>
+                        <button type="submit" class="bg-red-600 text-white px-6 py-3 rounded-lg font-semibold shadow hover:bg-red-700">Add Last Donor Info</button>
+                    </form>
+                    <hr class="my-6 border-t-2 border-gray-100" />
+                    <h3 class="text-xl font-bold text-red-600 mb-4">Member Management</h3>
+                    <form id="admin-member-form" class="grid grid-cols-1 gap-4">
+                        <input type="hidden" id="admin-member-id" name="id" />
+                        <div class="relative">
+                            <input name="fullName" id="admin-member-fullname" type="text" placeholder=" " required class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
+                            <label for="admin-member-fullname" class="absolute left-4 top-3 text-gray-400 transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-focus:-top-3 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Full name</label>
+                        </div>
+                        <div class="relative">
+                            <input name="phone" id="admin-member-phone" type="tel" placeholder=" " required class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
+                            <label for="admin-member-phone" class="absolute left-4 top-3 text-gray-400 transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-focus:-top-3 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Phone number</label>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <input type="checkbox" id="admin-member-hide-phone" name="isPhoneHidden" class="h-4 w-4 text-red-600 border-gray-300 rounded focus:ring-red-500">
+                            <label for="admin-member-hide-phone" class="text-sm text-gray-700 font-medium">Hide phone number from public</label>
+                        </div>
+                        <div class="relative">
+                            <textarea name="publicComment" id="admin-member-comment" placeholder="Optional comment for public" rows="2" class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none"></textarea>
+                            <label for="admin-member-comment" class="absolute left-4 top-3 text-gray-400 transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-focus:-top-3 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Public comment (e.g., "Contact admin")</label>
+                        </div>
+                        <div class="flex flex-col">
+                            <label for="admin-member-bloodGroup" class="text-sm text-gray-600 mb-2">Blood group</label>
+                            <select name="bloodGroup" id="admin-member-bloodGroup" required class="block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none">
+                                <option value="">Select group</option>
+                                <option>A+</option>
+                                <option>A-</option>
+                                <option>B+</option>
+                                <option>B-</option>
+                                <option>O+</option>
+                                <option>O-</option>
+                                <option>AB+</option>
+                                <option>AB-</option>
+                            </select>
+                        </div>
+                        <div class="relative">
+                            <input name="location" id="admin-member-location" type="text" placeholder=" " required class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
+                            <label for="admin-member-location" class="absolute left-4 top-3 text-gray-400 transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-focus:-top-3 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Current Location</label>
+                        </div>
+                        <div class="relative">
+                            <input name="lastDonateDate" id="admin-member-lastDonateDate" type="date" placeholder=" " class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
+                            <label for="admin-member-lastDonateDate" class="absolute left-4 top-3 text-gray-400 transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-focus:-top-3 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Last blood donation</label>
                         </div>
                         <div class="flex gap-3 mt-4">
                             <button type="submit" class="bg-red-600 text-white px-6 py-3 rounded-lg font-semibold shadow hover:bg-red-700 flex-1">Save Changes</button>
@@ -1261,18 +1402,15 @@
                 <h2 class="text-2xl font-extrabold text-red-700">Contact</h2>
                 <p class="mt-3 text-gray-700">Have questions or want to get involved? Reach out to us.</p>
                 <div class="mt-6 flex flex-col sm:flex-row sm:items-center sm:justify-center gap-4">
-                    <a href="mailto:bdc@bloodlife.org"
-                        class="flex items-center gap-3 px-4 py-3 rounded-md bg-red-50 hover:bg-red-100">
+                    <a href="mailto:bdc@bloodlife.org" class="flex items-center gap-3 px-4 py-3 rounded-md bg-red-50 hover:bg-red-100">
                         <svg class="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M16 12H8m8 0a4 4 0 11-8 0 4 4 0 018 0z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 12H8m8 0a4 4 0 11-8 0 4 4 0 018 0z" />
                         </svg>
                         <span class="text-sm font-medium text-red-700">bdc@bloodlife.org</span>
                     </a>
                     <a href="tel:+8801712460423" class="flex items-center gap-3 px-4 py-3 rounded-md bg-red-50 hover:bg-red-100">
                         <svg class="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M3 5a2 2 0 012-2h2.5a1 1 0 01.95.684l1 3a1 1 0 01-.217.982L7.5 10.5a11 11 0 005 5l2.834-2.834a1 1 0 01.982-.217l3 1A1 1 0 0121 16.5V19a2 2 0 01-2 2H17c-8.284 0-15-6.716-15-15V5z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h2.5a1 1 0 01.95.684l1 3a1 1 0 01-.217.982L7.5 10.5a11 11 0 005 5l2.834-2.834a1 1 0 01.982-.217l3 1A1 1 0 0121 16.5V19a2 2 0 01-2 2H17c-8.284 0-15-6.716-15-15V5z" />
                         </svg>
                         <span class="text-sm font-medium text-red-700">+8801712460423</span>
                     </a>
@@ -1329,15 +1467,12 @@
                 </div>
                 <div class="flex items-center justify-end gap-4 mt-2">
                     <div class="flex gap-2 items-center">
-                        <button type="submit"
-                            class="bg-red-600 text-white px-4 py-2 rounded font-semibold shadow hover:bg-red-700 transition">Sign
+                        <button type="submit" class="bg-red-600 text-white px-4 py-2 rounded font-semibold shadow hover:bg-red-700 transition">Sign
                             in</button>
-                        <button id="login-cancel" type="button"
-                            class="border border-gray-300 text-gray-700 px-4 py-2 rounded font-semibold shadow hover:bg-gray-100 transition">Cancel</button>
+                        <button id="login-cancel" type="button" class="border border-gray-300 text-gray-700 px-4 py-2 rounded font-semibold shadow hover:bg-gray-100 transition">Cancel</button>
                     </div>
                 </div>
-                <a id="forgot-password-link" href="#"
-                    class="block text-center mt-2 text-xs text-red-700 hover:underline hover:text-red-900 transition-colors duration-200">
+                <a id="forgot-password-link" href="#" class="block text-center mt-2 text-xs text-red-700 hover:underline hover:text-red-900 transition-colors duration-200">
                     Forgot Password?
                 </a>
             </form>
@@ -1359,63 +1494,39 @@
             <form id="profile-form" class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <!-- Full Name -->
                 <div class="relative">
-                    <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-gray-400" fill="none" viewBox="0 0 24 24"
-                            stroke="currentColor" stroke-width="2">
-                            <path stroke-linecap="round" stroke-linejoin="round"
-                                d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                        </svg>
-                    </div>
                     <input name="fullName" id="profile-fullName" type="text" placeholder=" " required
-                        class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-4 pl-10 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
+                        class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
                     <label for="profile-fullName"
-                        class="absolute left-10 top-4 text-gray-400 transition-all peer-placeholder-shown:top-4 peer-placeholder-shown:text-base peer-focus:-top-3 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Full
+                        class="absolute left-4 top-3 text-gray-400 transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-focus:-top-3 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Full
                         name</label>
-                </div>
-                <!-- Email -->
-                <div class="relative">
-                    <!-- Envelope Icon -->
-                    <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-gray-400" fill="none" viewBox="0 0 24 24"
-                            stroke="currentColor" stroke-width="2">
-                            <path stroke-linecap="round" stroke-linejoin="round"
-                                d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8m-18 8h18V8l-9 6-9-6v8z" />
-                        </svg>
-                    </div>
-
-                    <!-- Input -->
-                    <input name="email" id="profile-email" type="email" placeholder=" " required readonly
-                        class="peer block w-full rounded-lg border-2 border-gray-100 bg-gray-100 cursor-not-allowed p-4 pl-10 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
-
-                    <!-- Floating Label -->
-                    <label for="profile-email" class="absolute left-10 top-4 text-gray-400 transition-all 
-                        peer-placeholder-shown:top-4 peer-placeholder-shown:text-base 
-                        peer-focus:-top-3 peer-focus:text-sm peer-focus:text-red-700 
-                        peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 
-                        pointer-events-none bg-gray-100 px-1"> Email (cannot be changed)
-                    </label>
-                </div>
-
-                <!-- Phone -->
-                <div class="relative">
-                    <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-gray-400" fill="none" viewBox="0 0 24 24"
-                            stroke="currentColor" stroke-width="2">
-                            <path stroke-linecap="round" stroke-linejoin="round"
-                                d="M3 5a2 2 0 012-2h2.5a1 1 0 01.95.684l1 3a1 1 0 01-.217.982L7.5 10.5a11 11 0 005 5l2.834-2.834a1 1 0 01.982-.217l3 1A1 1 0 0121 16.5V19a2 2 0 01-2 2H17c-8.284 0-15-6.716-15-15V5z" />
-                        </svg>
-                    </div>
-                    <input name="phone" id="profile-phone" type="tel" placeholder=" " required
-                        class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-4 pl-10 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
-                    <label for="profile-phone"
-                        class="absolute left-10 top-4 text-gray-400 transition-all peer-placeholder-shown:top-4 peer-placeholder-shown:text-base peer-focus:-top-3 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Phone
+                        </div>
+                        <!-- Email -->
+                        <div class="relative">
+                            <!-- Input -->
+                            <input name="email" id="profile-email" type="email" placeholder=" " required readonly
+                                class="peer block w-full rounded-lg border-2 border-gray-100 bg-gray-100 cursor-not-allowed p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
+                        
+                            <!-- Floating Label -->
+                            <label for="profile-email" class="absolute left-4 top-3 text-gray-400 transition-all 
+                         peer-placeholder-shown:top-3 peer-placeholder-shown:text-base 
+                         peer-focus:-top-3 peer-focus:text-sm peer-focus:text-red-700 
+                         peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 
+                         pointer-events-none bg-gray-100 px-1"> Email (cannot be changed)
+                            </label>
+                        </div>
+                        
+                        <!-- Phone -->
+                        <div class="relative">
+                            <input name="phone" id="profile-phone" type="tel" placeholder=" " required
+                                class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
+                            <label for="profile-phone"
+                        class="absolute left-4 top-3 text-gray-400 transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-focus:-top-3 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Phone
                         number</label>
                 </div>
                 <!-- Blood Group -->
                 <div class="flex flex-col">
                     <label for="profile-bloodGroup" class="text-sm text-gray-600 mb-2">Blood group</label>
-                    <select name="bloodGroup" id="profile-bloodGroup" required
-                        class="block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none">
+                    <select name="bloodGroup" id="profile-bloodGroup" required class="block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none">
                         <option value="">Select group</option>
                         <option>A+</option>
                         <option>A-</option>
@@ -1429,63 +1540,41 @@
                 </div>
                 <!-- Location -->
                 <div class="relative">
-                    <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-gray-400" fill="none" viewBox="0 0 24 24"
-                            stroke="currentColor" stroke-width="2">
-                            <path stroke-linecap="round" stroke-linejoin="round"
-                                d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                        </svg>
-                    </div>
                     <input name="location" id="profile-location" type="text" placeholder=" " required
-                        class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-4 pl-10 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
+                        class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
                     <label for="profile-location"
-                        class="absolute left-10 top-4 text-gray-400 transition-all peer-placeholder-shown:top-4 peer-placeholder-shown:text-base peer-focus:-top-3 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Current
+                        class="absolute left-4 top-3 text-gray-400 transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-focus:-top-3 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Current
                         Location</label>
                 </div>
                 <!-- Last Donation Date -->
                 <div class="relative">
-                    <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-gray-400" fill="none" viewBox="0 0 24 24"
-                            stroke="currentColor" stroke-width="2">
-                            <path stroke-linecap="round" stroke-linejoin="round"
-                                d="M8 7V3m8 4V3M3 11h18M5 21h14a2 2 0 002-2V7H3v12a2 2 0 002 2z" />
-                        </svg>
-                    </div>
                     <input name="lastDonateDate" id="profile-lastDonateDate" type="date" placeholder=" "
-                        class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-4 pl-10 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
+                        class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
                     <label for="profile-lastDonateDate"
-                        class="absolute left-10 top-4 text-gray-400 transition-all peer-placeholder-shown:top-4 peer-placeholder-shown:text-base peer-focus:-top-3 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Last
+                        class="absolute left-4 top-3 text-gray-400 transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-focus:-top-3 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Last
                         blood donation</label>
                 </div>
                 <!-- Additional Notes -->
                 <div class="relative md:col-span-2">
-                    <textarea name="notes" id="profile-notes" placeholder=" " rows="2"
-                        class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-4 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none"></textarea>
-                    <label for="profile-notes"
-                        class="absolute left-4 top-4 text-gray-400 transition-all peer-placeholder-shown:top-4 peer-placeholder-shown:text-base peer-focus:-top-3 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Additional
+                    <textarea name="notes" id="profile-notes" placeholder=" " rows="2" class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none"></textarea>
+                    <label for="profile-notes" class="absolute left-4 top-3 text-gray-400 transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-focus:-top-3 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Additional
                         Notes</label>
                 </div>
                 <div class="relative hidden">
-                    <input name="role" id="profile-role" type="text" readonly
-                        class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-4 pl-10 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
-                    <label for="profile-role"
-                        class="absolute left-10 top-4 text-gray-400 transition-all peer-placeholder-shown:top-4 peer-placeholder-shown:text-base peer-focus:-top-3 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">User Role</label>
+                    <input name="role" id="profile-role" type="text" readonly class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-4 pl-10 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
+                    <label for="profile-role" class="absolute left-10 top-4 text-gray-400 transition-all peer-placeholder-shown:top-4 peer-placeholder-shown:text-base peer-focus:-top-3 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">User Role</label>
                 </div>
                 <div class="flex flex-wrap gap-3 mt-4 md:col-span-2">
-                    <button type="submit"
-                        class="bg-red-600 text-white px-6 py-3 rounded-lg font-semibold shadow hover:bg-red-700 flex-1">Save
+                    <button type="submit" class="bg-red-600 text-white px-6 py-3 rounded-lg font-semibold shadow hover:bg-red-700 flex-1">Save
                         Changes</button>
-                    <button id="pf-logout" type="button"
-                        class="border border-gray-300 px-4 py-3 rounded-lg flex-1">Logout</button>
+                    <button id="pf-logout" type="button" class="border border-gray-300 px-4 py-3 rounded-lg flex-1">Logout</button>
                     <!-- Delete Profile Button -->
-                    <button id="pf-delete" type="button"
-                        class="border border-red-300 text-red-600 px-4 py-3 rounded-lg flex-1 hover:bg-red-50">Delete Profile</button>
+                    <button id="pf-delete" type="button" class="border border-red-300 text-red-600 px-4 py-3 rounded-lg flex-1 hover:bg-red-50">Delete Profile</button>
                 </div>
             </form>
         </div>
     </div>
-    
+
     <!-- Delete Confirmation Modal -->
     <div id="delete-confirm-modal" class="fixed inset-0 hidden items-center justify-center z-50">
         <div class="absolute inset-0 bg-black opacity-40"></div>
