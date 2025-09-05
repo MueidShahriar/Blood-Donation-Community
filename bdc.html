@@ -126,7 +126,7 @@
         let currentUserRole = 'member';
 
         // Hardcoded admin email for demonstration. In a production app, this should be handled securely on the server.
-        const ADMIN_EMAIL = 'admin@bauet.com';
+        const ADMIN_EMAIL = 'mueidshahriar_cse1616@std.bauet.ac.bd';
 
         // Function to open a modal
         function openModal(modal) {
@@ -155,7 +155,7 @@
         function renderDonorCardPublic(d) {
             const lastDate = d.lastDonateDate ? new Date(d.lastDonateDate).toLocaleDateString() : '—';
             const contactElement = d.isPhoneHidden ?
-                `<a href="#contact" class="text-red-700 font-semibold no-underline">${d.publicComment || 'Contact Admin'}</a>` :
+                `<a href="#contact" class="text-red-700 font-semibold no-underline">${d.publicComment || 'Contact to Admin'}</a>` :
                 `<div class="flex items-center space-x-1">
                     <svg class="w-4 h-4 mr-1 text-red-500" fill="currentColor" viewBox="0 0 24 24"><path d="M3 5a2 2 0 012-2h2.5a1 1 0 01.95.684l1 3a1 1 0 01-.217.982L7.5 10.5a11 11 0 005 5l2.834-2.834a1 1 0 01.982-.217l3 1A1 1 0 0121 16.5V19a2 2 0 01-2 2H17c-8.284 0-15-6.716-15-15V5z"/></svg>
                     <span class="text-xs text-gray-500">${d.phone}</span>
@@ -543,8 +543,6 @@
                 return;
             }
             if (confirm(`Are you sure you want to delete member with ID: ${memberId}?`)) {
-                // Admins can only delete data from the database, not the auth account directly.
-                // This is a Firebase security constraint. The user can delete their own account from their profile.
                 remove(ref(database, 'donors/' + memberId))
                     .then(() => showModalMessage(successModal, 'Member profile deleted successfully!', 'Success'))
                     .catch(error => showModalMessage(successModal, `Failed to delete member data: ${error.message}`, 'Error'));
