@@ -336,6 +336,11 @@
                             <ul class="mt-4 list-none p-0 space-y-1 text-gray-600">
                                 <li><span class="font-bold">Blood Group:</span> ${d.bloodGroup}</li>
                                 <li><span class="font-bold">Location:</span> ${d.location}</li>
+                                <li><span class="font-bold">Department:</span> ${d.department || '—'}</li>
+                                <li><span class="font-bold">Batch:</span> ${d.batch || '—'}</li>
+                                <li><span class="font-bold">ID No.:</span> ${d.idNo || '—'}</li>
+                                <li><span class="font-bold">Age:</span> ${d.age || '—'}</li>
+                                <li><span class="font-bold">Weight:</span> ${d.weight ? d.weight + ' kg' : '—'}</li>
                             </ul>
                         </div>
                     </div>
@@ -808,11 +813,16 @@
                         name: fd.get('donor-name'),
                         bloodGroup: fd.get('donor-blood-group'),
                         location: fd.get('donor-location'),
+                        department: fd.get('donor-department'),
+                        batch: fd.get('donor-batch'),
+                        idNo: fd.get('donor-id'),
+                        age: fd.get('donor-age'),
+                        weight: fd.get('donor-weight'),
                         date: fd.get('donation-date')
                     };
 
                     if (!donorData.name || !donorData.bloodGroup || !donorData.location || !donorData.date) {
-                        showModalMessage(successModal, 'Please fill all required fields for the recent donor.', 'Error');
+                        showModalMessage(successModal, 'Please fill all required fields: Donor Name, Blood Group, Location, and Donation Date.', 'Error');
                         return;
                     }
 
@@ -1335,6 +1345,26 @@
                             <input name="donor-location" id="donor-location" type="text" placeholder=" " required class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
                             <label for="donor-location" class="absolute left-4 top-3 text-gray-400 transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-focus:-top-3 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Location</label>
                         </div>
+                        <div class="flex flex-col">
+                            <label for="donor-department" class="text-sm font-medium text-red-700 mb-1">Department</label>
+                            <input name="donor-department" id="donor-department" type="text" class="block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
+                        </div>
+                        <div class="flex flex-col">
+                            <label for="donor-batch" class="text-sm font-medium text-red-700 mb-1">Batch</label>
+                            <input name="donor-batch" id="donor-batch" type="text" class="block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
+                        </div>
+                        <div class="flex flex-col">
+                            <label for="donor-id" class="text-sm font-medium text-red-700 mb-1">ID No.</label>
+                            <input name="donor-id" id="donor-id" type="text" class="block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
+                        </div>
+                        <div class="flex flex-col">
+                            <label for="donor-age" class="text-sm font-medium text-red-700 mb-1">Age</label>
+                            <input name="donor-age" id="donor-age" type="number" class="block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
+                        </div>
+                        <div class="flex flex-col">
+                            <label for="donor-weight" class="text-sm font-medium text-red-700 mb-1">Weight (kg)</label>
+                            <input name="donor-weight" id="donor-weight" type="number" class="block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
+                        </div>
                         <div class="relative">
                             <input name="donation-date" id="donation-date" type="date" placeholder=" " required class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
                             <label for="donation-date" class="absolute left-4 top-3 text-gray-400 transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-focus:-top-3 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Donation Date</label>
@@ -1506,10 +1536,10 @@
                         
                             <!-- Floating Label -->
                             <label for="profile-email" class="absolute left-4 top-3 text-gray-400 transition-all 
-                         peer-placeholder-shown:top-3 peer-placeholder-shown:text-base 
-                         peer-focus:-top-3 peer-focus:text-sm peer-focus:text-red-700 
-                         peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 
-                         pointer-events-none bg-gray-100 px-1"> Email (cannot be changed)
+                          peer-placeholder-shown:top-3 peer-placeholder-shown:text-base 
+                          peer-focus:-top-3 peer-focus:text-sm peer-focus:text-red-700 
+                          peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 
+                          pointer-events-none bg-gray-100 px-1"> Email (cannot be changed)
                             </label>
                         </div>
                         
@@ -1518,8 +1548,8 @@
                             <input name="phone" id="profile-phone" type="tel" placeholder=" " required
                                 class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
                             <label for="profile-phone"
-                        class="absolute left-4 top-3 text-gray-400 transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-focus:-top-3 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Phone
-                        number</label>
+                            class="absolute left-4 top-3 text-gray-400 transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-focus:-top-3 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Phone
+                            number</label>
                 </div>
                 <!-- Blood Group -->
                 <div class="flex flex-col">
