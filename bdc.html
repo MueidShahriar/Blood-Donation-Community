@@ -209,7 +209,7 @@
             if (!searchResults) return;
 
             if (filteredDonors.length === 0) {
-                searchResults.innerHTML = '<div class="text-gray-500 italic">No donors found matching your criteria.</div>';
+                searchResults.innerHTML = '<div class="text-gray-500 italic">No donors found.</div>';
             } else {
                 const header = `<div class="text-sm text-gray-600 mb-2">Found <span class="font-bold text-red-700">${filteredDonors.length}</span> donor(s)</div>`;
                 searchResults.innerHTML = header + filteredDonors.map(renderDonorCardPublic).join('');
@@ -459,7 +459,7 @@
                     });
                 }
             }
-            renderRecentDonorsCarousel(recentDonors.reverse()); // Reverse to show newest first
+            renderRecentDonorsCarousel(recentDonors.reverse()); 
         }, (error) => {
             console.error("Failed to load recent donations: ", error);
         });
