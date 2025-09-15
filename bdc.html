@@ -11,64 +11,77 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" xintegrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2k4t1tqL/wO1g4pDq9n+Ww/7A/l5e/Vq3Lw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <style>
+        :root{
+            --red-600: #e11d48;
+            --red-500: #ef4444;
+            --muted: #64748b;
+            --glass: rgba(255,255,255,0.6);
+            /* Stronger, more visible shadows */
+            --card-shadow: 0 14px 40px rgba(15, 23, 42, 0.12);
+            --card-strong: 0 20px 60px rgba(15, 23, 42, 0.16);
+            --radius-xl: 16px;
+            font-synthesis: none;
+        }
+
+        html,body{height:100%;}
         body {
             font-family: 'Inter', sans-serif;
+            background: linear-gradient(180deg, #fff 0%, #f8fafc 60%);
+            -webkit-font-smoothing:antialiased;
+            -moz-osx-font-smoothing:grayscale;
+            color: #0f172a;
         }
 
-        /* Custom scrollbar for better aesthetics */
-        body::-webkit-scrollbar {
-            width: 12px;
-        }
+        /* Custom scrollbar */
+        body::-webkit-scrollbar{width:12px;height:12px}
+        body::-webkit-scrollbar-track{background:transparent}
+        body::-webkit-scrollbar-thumb{background:linear-gradient(180deg,var(--red-600),var(--red-500));border-radius:999px}
 
-        body::-webkit-scrollbar-track {
-            background: #f1f1f1;
-        }
+        @keyframes floaty {0%{transform:translateY(0)}50%{transform:translateY(-8px)}100%{transform:translateY(0)}}
+        .animate-bounce-slow{animation:floaty 4s ease-in-out infinite}
 
-        body::-webkit-scrollbar-thumb {
-            background-color: #ef4444;
-            border-radius: 6px;
-            border: 3px solid #f1f1f1;
-        }
+        /* Cards */
+        .rounded-xl{border-radius:var(--radius-xl)!important}
+    .shadow{box-shadow:0 8px 24px rgba(15,23,42,0.10)!important}
+    .shadow-sm{box-shadow:0 6px 18px rgba(15,23,42,0.08)!important}
+    .shadow-lg{box-shadow:var(--card-shadow)!important}
+    .shadow-xl{box-shadow:var(--card-strong)!important}
 
-        @keyframes bounce-slow {
-            0%,
-            100% {
-                transform: translateY(0) scale(1);
-            }
-            50% {
-                transform: translateY(-20px) scale(1.05);
-            }
-        }
+        article, .card, .bg-white{transition:transform .28s ease, box-shadow .28s ease}
+        article:hover, .card:hover{transform:translateY(-6px)}
 
-        .animate-bounce-slow {
-            animation: bounce-slow 4s ease-in-out infinite;
-        }
+        /* Recent donor carousel controls */
+        #recentDonorCarousel .carousel-control-prev-icon,#recentDonorCarousel .carousel-control-next-icon{background-color:rgba(225,29,72,0.12);border-radius:999px;padding:1.3rem;background-size:50%}
+        #recentDonorCarousel .carousel-indicators li{background-color:#ffdede}
+        #recentDonorCarousel .carousel-indicators .active{background-color:var(--red-500)}
 
-        #recentDonorCarousel .carousel-control-prev-icon,
-        #recentDonorCarousel .carousel-control-next-icon {
-            background-color: rgba(239, 68, 68, 0.7);
-            border-radius: 50%;
-            padding: 1.5rem;
-            background-size: 50% 50%;
-        }
+        /* Back-to-top */
+        #back-to-top{transition:opacity .25s ease, transform .15s ease;opacity:0;transform:translateY(6px)}
+        #back-to-top.show{opacity:1;transform:translateY(0)}
 
-        #recentDonorCarousel .carousel-indicators li {
-            background-color: #fca5a5;
-        }
+        /* How/feature cards */
+    .how-card{background:linear-gradient(180deg,rgba(255,255,255,0.9),#fff);border:1px solid rgba(239,68,68,0.06);padding:1.25rem;border-radius:14px;box-shadow:0 10px 28px rgba(15,23,42,0.10)!important}
+        .how-card .icon-circle{width:56px;height:56px;border-radius:999px;display:inline-flex;align-items:center;justify-content:center;background:linear-gradient(180deg, rgba(239,68,68,0.08), rgba(239,68,68,0.03));box-shadow:0 6px 18px rgba(14, 23, 32, 0.04)}
 
-        #recentDonorCarousel .carousel-indicators .active {
-            background-color: #ef4444;
-        }
+        /* Stats row */
+    .stats-panel{display:flex;align-items:center;justify-content:space-between;gap:1rem;padding:1.25rem;border-radius:12px;background:linear-gradient(90deg, rgba(255,255,255,0.9), rgba(255,255,255,0.8));box-shadow:0 12px 36px rgba(2,6,23,0.10)}
+        .stats-grid{display:flex;gap:1.5rem;align-items:center}
+        .stat-card{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0.5rem 1rem;border-radius:12px;min-width:110px}
+        .stat-card .num{font-size:1.6rem;font-weight:800;color:var(--red-600);letter-spacing:-0.02em}
+        .stat-card .label{font-size:.85rem;color:var(--muted);margin-top:6px}
+
+        .hero-cta{background:linear-gradient(90deg,var(--red-600),var(--red-500));color:white;padding:.75rem 1.1rem;border-radius:10px;font-weight:700;box-shadow:0 8px 28px rgba(225,29,72,0.18);display:inline-flex;align-items:center;gap:.6rem}
+        .hero-cta svg{filter:drop-shadow(0 6px 12px rgba(225,29,72,0.18))}
+
+        /* Small utilities */
+        .muted{color:var(--muted)}
+        @media (max-width:768px){.stats-panel{flex-direction:column;align-items:stretch}.stats-grid{justify-content:space-between}}
         
-        #back-to-top {
-            transition: opacity 0.3s ease-in-out;
-            opacity: 0;
-        }
-        #back-to-top.show {
-            opacity: 1;
-        }
+        /* Reserve space for fixed header using CSS var */
+        :root { --header-height: 0px; }
+        main { padding-top: var(--header-height); }
     </style>
     <meta name="description" content="Community-driven blood donation platform. Register as a donor, search donors by blood group and location.">
 </head>
@@ -79,11 +92,23 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
     <script type="module">
+        // Adjust CSS variable for header height so fixed header doesn't overlap content
+        function setHeaderOffset(){
+            const header = document.querySelector('header');
+            const h = header ? header.offsetHeight : 0;
+            document.documentElement.style.setProperty('--header-height', h + 'px');
+        }
+        window.addEventListener('load', setHeaderOffset, { once: true });
+        window.addEventListener('resize', setHeaderOffset);
+        if ('ResizeObserver' in window) {
+            new ResizeObserver(() => setHeaderOffset()).observe(document.body);
+        }
         import {
             initializeApp
         } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
         import {
-            getAnalytics
+            getAnalytics,
+            isSupported as analyticsIsSupported
         } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-analytics.js";
         import {
             getAuth,
@@ -118,7 +143,16 @@
         };
 
         const app = initializeApp(firebaseConfig);
-        const analytics = getAnalytics(app);
+        let analytics;
+        try {
+            analyticsIsSupported().then((supported) => {
+                if (supported) {
+                    analytics = getAnalytics(app);
+                }
+            });
+        } catch (e) {
+            console.warn('Analytics not supported in this environment.');
+        }
         const auth = getAuth(app);
         const database = getDatabase(app);
 
@@ -182,6 +216,16 @@
             }, { once: true });
 
             openModal(modal);
+        }
+
+        function getDateParts(dateStr) {
+            if (!dateStr || typeof dateStr !== 'string') return { y: '', m: '', d: '' };
+            const parts = dateStr.split('-');
+            return {
+                y: parts[0] || '',
+                m: parts[1] || '',
+                d: parts[2] || ''
+            };
         }
 
         function renderDonorCardPublic(d) {
@@ -374,12 +418,14 @@
         onValue(donorsRef, (snapshot) => {
             const data = snapshot.val();
             donorsList = [];
-            for (let key in data) {
-                if (data.hasOwnProperty(key)) {
-                    donorsList.push({
-                        id: key,
-                        ...data[key]
-                    });
+            if (data && typeof data === 'object') {
+                for (let key in data) {
+                    if (Object.prototype.hasOwnProperty.call(data, key)) {
+                        donorsList.push({
+                            id: key,
+                            ...data[key]
+                        });
+                    }
                 }
             }
             const searchForm = document.getElementById('search-form');
@@ -405,33 +451,38 @@
         onValue(eventsRef, (snapshot) => {
             const data = snapshot.val();
             eventsList = [];
-            for (let key in data) {
-                if (data.hasOwnProperty(key)) {
-                    eventsList.push({
-                        id: key,
-                        ...data[key]
-                    });
+            if (data && typeof data === 'object') {
+                for (let key in data) {
+                    if (Object.prototype.hasOwnProperty.call(data, key)) {
+                        eventsList.push({
+                            id: key,
+                            ...data[key]
+                        });
+                    }
                 }
             }
             const publicEventsList = document.getElementById('public-events-list');
             if (publicEventsList) {
-                publicEventsList.innerHTML = eventsList.map(e => `
+                publicEventsList.innerHTML = eventsList.map(e => {
+                    const parts = getDateParts(e.date);
+                    return `
                     <article class="bg-white rounded-xl shadow-lg p-4 flex gap-4 items-center flex-col sm:flex-row text-center sm:text-left">
                         <div class="flex-shrink-0 w-full sm:w-20">
-                            <div class="text-sm font-bold text-red-700">${e.date.split('-')[1]}</div>
-                            <div class="text-2xl font-extrabold">${e.date.split('-')[2]}</div>
-                            <div class="text-xs text-gray-500">${e.date.split('-')[0]}</div>
+                            <div class="text-sm font-bold text-red-700">${parts.m}</div>
+                            <div class="text-2xl font-extrabold">${parts.d}</div>
+                            <div class="text-xs text-gray-500">${parts.y}</div>
                         </div>
                         <div class="flex-1">
-                            <h3 class="text-lg font-bold">${e.title}</h3>
-                            <p class="text-sm text-gray-600">${e.location} • ${e.time}</p>
-                            <p class="mt-2 text-gray-700">${e.description}</p>
+                            <h3 class="text-lg font-bold">${e.title || ''}</h3>
+                            <p class="text-sm text-gray-600">${e.location || ''} • ${e.time || ''}</p>
+                            <p class="mt-2 text-gray-700">${e.description || ''}</p>
                             <div class="mt-3 flex gap-2 justify-center sm:justify-start">
                                 <a href="#" class="px-4 py-2 bg-red-600 text-white rounded-md">Register</a>
                             </div>
                         </div>
                     </article>
-                `).join('');
+                    `;
+                }).join('');
             }
             if (currentUserRole === 'admin') {
                 renderAdminEventsList();
@@ -515,27 +566,27 @@
 
         function saveEvent(eventData) {
             if (!currentUser || currentUserRole !== 'admin') {
-                showModalMessage(successModal, 'You do not have permission to perform this action.', 'Permission Denied');
+                showModalMessage('success-modal', 'You do not have permission to perform this action.', 'Permission Denied');
                 return;
             }
             const eventId = eventData.id;
             delete eventData.id;
             if (eventId) {
                 update(ref(database, 'events/' + eventId), eventData)
-                    .then(() => showModalMessage(successModal, 'Event updated successfully!', 'Success'))
-                    .catch(error => showModalMessage(successModal, `Failed to update event: ${error.message}`, 'Error'));
+                    .then(() => showModalMessage('success-modal', 'Event updated successfully!', 'Success'))
+                    .catch(error => showModalMessage('success-modal', `Failed to update event: ${error.message}`, 'Error'));
             } else {
                 const newEventRef = push(eventsRef);
                 set(newEventRef, eventData)
-                    .then(() => showModalMessage(successModal, 'New event created successfully!', 'Success'))
-                    .catch(error => showModalMessage(successModal, `Failed to create event: ${error.message}`, 'Error'));
+                    .then(() => showModalMessage('success-modal', 'New event created successfully!', 'Success'))
+                    .catch(error => showModalMessage('success-modal', `Failed to create event: ${error.message}`, 'Error'));
             }
             clearAdminEventForm();
         }
 
         function deleteEvent(eventId) {
             if (!currentUser || currentUserRole !== 'admin') {
-                showModalMessage(successModal, 'You do not have permission to perform this action.', 'Permission Denied');
+                showModalMessage('success-modal', 'You do not have permission to perform this action.', 'Permission Denied');
                 return;
             }
             const modal = document.getElementById('delete-confirm-modal');
@@ -545,18 +596,18 @@
                 remove(ref(database, 'events/' + eventId))
                     .then(() => {
                         closeModal(modal);
-                        showModalMessage(successModal, 'Event deleted successfully!', 'Success');
+                        showModalMessage('success-modal', 'Event deleted successfully!', 'Success');
                     })
                     .catch(error => {
                         closeModal(modal);
-                        showModalMessage(successModal, `Failed to delete event: ${error.message}`, 'Error');
+                        showModalMessage('success-modal', `Failed to delete event: ${error.message}`, 'Error');
                     });
             }, { title: 'Delete Event', message: 'Deleting this event is permanent and cannot be undone.' });
         }
 
         function deleteMember(memberId) {
             if (!currentUser || currentUserRole !== 'admin') {
-                showModalMessage(successModal, 'You do not have permission to perform this action.', 'Permission Denied');
+                showModalMessage('success-modal', 'You do not have permission to perform this action.', 'Permission Denied');
                 return;
             }
             const modal = document.getElementById('delete-confirm-modal');
@@ -566,11 +617,11 @@
                 remove(ref(database, 'donors/' + memberId))
                     .then(() => {
                         closeModal(modal);
-                        showModalMessage(successModal, 'Member profile deleted successfully!', 'Success');
+                        showModalMessage('success-modal', 'Member profile deleted successfully!', 'Success');
                     })
                     .catch(error => {
                         closeModal(modal);
-                        showModalMessage(successModal, `Failed to delete member data: ${error.message}`, 'Error');
+                        showModalMessage('success-modal', `Failed to delete member data: ${error.message}`, 'Error');
                     });
             }, { title: 'Delete Member', message: 'Deleting this member profile is permanent and cannot be undone.' });
         }
@@ -668,16 +719,16 @@
                             email: email,
                             createdAt: new Date().toISOString()
                         }).then(() => {
-                            showModalMessage(successModal, `Welcome, ${donorData.fullName}! Your donor profile was created successfully.`, 'Success');
+                            showModalMessage('success-modal', `Welcome, ${donorData.fullName}! Your donor profile was created successfully.`, 'Success');
                             joinForm.reset();
                         }).catch((error) => {
                             console.error("Error saving donor data:", error);
-                            showModalMessage(successModal, 'An error occurred while saving your profile data.', 'Error');
+                            showModalMessage('success-modal', 'An error occurred while saving your profile data.', 'Error');
                         });
                     })
                     .catch((error) => {
                         const errorMessage = error.message;
-                        showModalMessage(successModal, `Signup failed: ${errorMessage}`, 'Error');
+                        showModalMessage('success-modal', `Signup failed: ${errorMessage}`, 'Error');
                     });
             });
 
@@ -711,17 +762,19 @@
                 onValue(donorsRef, (snapshot) => {
                     const data = snapshot.val();
                     let filteredDonors = [];
-                    for (let key in data) {
-                        if (data.hasOwnProperty(key)) {
-                            const donor = {
-                                id: key,
-                                ...data[key]
-                            };
-                            if (showEligibleOnly && !isDonorEligible(donor.lastDonateDate)) {
-                                continue;
-                            }
-                            if (!blood || donor.bloodGroup === blood) {
-                                filteredDonors.push(donor);
+                    if (data && typeof data === 'object') {
+                        for (let key in data) {
+                            if (Object.prototype.hasOwnProperty.call(data, key)) {
+                                const donor = {
+                                    id: key,
+                                    ...data[key]
+                                };
+                                if (showEligibleOnly && !isDonorEligible(donor.lastDonateDate)) {
+                                    continue;
+                                }
+                                if (!blood || donor.bloodGroup === blood) {
+                                    filteredDonors.push(donor);
+                                }
                             }
                         }
                     }
@@ -782,7 +835,7 @@
                     })
                     .catch((error) => {
                         const errorMessage = error.message;
-                        showModalMessage(successModal, `Login failed: ${errorMessage}`, 'Login Failed');
+                        showModalMessage('success-modal', `Login failed: ${errorMessage}`, 'Login Failed');
                     });
             });
 
@@ -792,17 +845,17 @@
                 const emailInput = document.getElementById('login-email');
                 const email = emailInput?.value?.trim();
                 if (!email) {
-                        showModalMessage(successModal, 'Please enter your email to reset the password.', 'Email Required');
+                        showModalMessage('success-modal', 'Please enter your email to reset the password.', 'Email Required');
                         return;
                     }
                 sendPasswordResetEmail(auth, email)
                     .then(() => {
-                        showModalMessage(successModal, `A password reset link has been sent to ${email}. Please check your inbox.`, 'Password Reset Sent');
+                        showModalMessage('success-modal', `A password reset link has been sent to ${email}. Please check your inbox.`, 'Password Reset Sent');
                         closeModal(loginModal);
                     })
                     .catch((error) => {
                         const errorMessage = error.message;
-                        showModalMessage(successModal, `Failed to send reset email: ${errorMessage}`, 'Password Reset Error');
+                        showModalMessage('success-modal', `Failed to send reset email: ${errorMessage}`, 'Password Reset Error');
                     });
             });
 
@@ -844,7 +897,7 @@
                         date: fd.get('donation-date')
                     };
                     if (!donorData.name || !donorData.bloodGroup || !donorData.location || !donorData.date) {
-                        showModalMessage(successModal, 'Please fill all required fields: Donor Name, Blood Group, Location, and Donation Date.', 'Error');
+                        showModalMessage('success-modal', 'Please fill all required fields: Donor Name, Blood Group, Location, and Donation Date.', 'Error');
                         return;
                     }
                     onValue(statsRef, (snapshot) => {
@@ -857,10 +910,10 @@
                         updates['/stats/livesHelped'] = newLivesHelped;
                         update(ref(database), updates)
                             .then(() => {
-                                showModalMessage(successModal, 'Recent donor added and lives helped count incremented!', 'Success');
+                                showModalMessage('success-modal', 'Recent donor added and lives helped count incremented!', 'Success');
                                 adminRecentDonorForm.reset();
                             })
-                            .catch(error => showModalMessage(successModal, `Failed to update data: ${error.message}`, 'Error'));
+                            .catch(error => showModalMessage('success-modal', `Failed to update data: ${error.message}`, 'Error'));
                     }, {
                         onlyOnce: true
                     });
@@ -886,10 +939,10 @@
                     if (memberId) {
                         update(ref(database, 'donors/' + memberId), updatedData)
                             .then(() => {
-                                showModalMessage(successModal, 'Member profile updated successfully!', 'Success');
+                                showModalMessage('success-modal', 'Member profile updated successfully!', 'Success');
                                 clearAdminMemberForm();
                             })
-                            .catch(error => showModalMessage(successModal, `Failed to update member: ${error.message}`, 'Error'));
+                            .catch(error => showModalMessage('success-modal', `Failed to update member: ${error.message}`, 'Error'));
                     }
                 });
             }
@@ -916,35 +969,35 @@
                 const userRef = ref(database, 'donors/' + currentUser.uid);
                 set(userRef, updatedData)
                     .then(() => {
-                        showModalMessage(successModal, 'Your profile has been updated successfully!', 'Success');
+                        showModalMessage('success-modal', 'Your profile has been updated successfully!', 'Success');
                         closeModal(profileModal);
                     })
                     .catch((error) => {
                         console.error("Error updating profile:", error);
-                        showModalMessage(successModal, `Failed to update profile: ${error.message}`, 'Error');
+                        showModalMessage('success-modal', `Failed to update profile: ${error.message}`, 'Error');
                     });
             });
 
             pfLogout?.addEventListener('click', () => {
                 signOut(auth).then(() => {
                     closeModal(profileModal);
-                    showModalMessage(successModal, 'You have been logged out successfully.', 'Logout Successful');
+                    showModalMessage('success-modal', 'You have been logged out successfully.', 'Logout Successful');
                 }).catch((error) => {
                     console.error("Logout failed:", error);
-                    showModalMessage(successModal, 'An error occurred during logout.', 'Logout Failed');
+                    showModalMessage('success-modal', 'An error occurred during logout.', 'Logout Failed');
                 });
             });
 
             pfDelete?.addEventListener('click', () => {
                 if (!currentUser) {
-                    showModalMessage(successModal, 'You must be logged in to delete your profile.', 'Error');
+                    showModalMessage('success-modal', 'You must be logged in to delete your profile.', 'Error');
                     return;
                 }
 
                 attachConfirmHandler(() => {
                     const user = auth.currentUser;
                     if (!user) {
-                        showModalMessage(successModal, 'You must be logged in to delete your profile.', 'Error');
+                        showModalMessage('success-modal', 'You must be logged in to delete your profile.', 'Error');
                         return;
                     }
                     const donorRef = ref(database, 'donors/' + user.uid);
@@ -953,15 +1006,15 @@
                         .then(() => {
                             closeModal(document.getElementById('delete-confirm-modal'));
                             closeModal(profileModal);
-                            showModalMessage(successModal, 'Your profile has been deleted successfully.', 'Profile Deleted');
+                            showModalMessage('success-modal', 'Your profile has been deleted successfully.', 'Profile Deleted');
                         })
                         .catch((error) => {
                             if (error && error.code === 'auth/requires-recent-login') {
-                                showModalMessage(successModal, 'Please log in again to delete your profile.', 'Re-login Required');
+                                showModalMessage('success-modal', 'Please log in again to delete your profile.', 'Re-login Required');
                                 signOut(auth);
                             } else {
                                 console.error("Error deleting profile:", error);
-                                showModalMessage(successModal, `Failed to delete profile: ${error && error.message}`, 'Error');
+                                showModalMessage('success-modal', `Failed to delete profile: ${error && error.message}`, 'Error');
                             }
                         });
                 }, { title: 'Confirm Delete', message: 'Deleting your profile is permanent and cannot be undone.' });
@@ -995,7 +1048,7 @@
     </script>
 
     <!-- Header -->
-    <header class="sticky top-0 z-40 bg-white/90 backdrop-blur shadow-lg rounded-b-xl">
+    <header class="fixed top-0 left-0 right-0 z-40 bg-white/90 backdrop-blur shadow-lg rounded-b-xl">
         <nav class="max-w-6xl mx-auto flex items-center justify-between px-4 py-2">
             <div class="flex items-center gap-3">
                 <img src="image/blood-drop.png" alt="logo" class="h-10 w-10 border-red-600" />
@@ -1484,9 +1537,10 @@
             <div class="max-w-6xl mx-auto px-10 sm:px-6 lg:px-8 text-center">
             <p class="mt-6 text-sm">Developed by Md. Mueid Shahriar <br> CSE-16th, BAUET</p>
         </div>
+        </div>
     </footer>
 
-    <div id="success-modal" class="fixed inset-0 hidden items-center justify-center z-60">
+    <div id="success-modal" class="fixed inset-0 hidden items-center justify-center z-[60]">
         <div class="absolute inset-0 bg-black opacity-40"></div>
         <div class="bg-white rounded-lg shadow-xl p-6 max-w-md mx-4 z-10">
             <h3 class="text-lg font-bold text-red-700">Success!</h3>
