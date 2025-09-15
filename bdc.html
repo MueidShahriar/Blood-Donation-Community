@@ -141,10 +141,46 @@
         }
 
         function showModalMessage(modal, message, title) {
+            // Accept either an element or an id; if no modal provided, fall back to #success-modal
+            let modalEl = null;
+            if (typeof modal === 'string') modalEl = document.getElementById(modal);
+            else modalEl = modal || document.getElementById('success-modal');
+            if (!modalEl) return console.warn('Modal element not found for showModalMessage');
+            const titleEl = modalEl.querySelector('h3');
+            const messageEl = modalEl.querySelector('p');
+            if (titleEl && title) titleEl.textContent = title;
+            if (messageEl) messageEl.textContent = message || '';
+            openModal(modalEl);
+        }
+
+        // Helper to attach a single, one-time confirm handler to the shared delete-confirm modal.
+        // It clears previous handlers and opens the modal with optional title/message.
+        function attachConfirmHandler(callback, opts = {}) {
+            const modal = document.getElementById('delete-confirm-modal');
+            if (!modal) return console.warn('Delete confirm modal not found');
             const titleEl = modal.querySelector('h3');
             const messageEl = modal.querySelector('p');
-            if (titleEl) titleEl.textContent = title;
-            if (messageEl) messageEl.textContent = message;
+            if (opts.title && titleEl) titleEl.textContent = opts.title;
+            if (opts.message && messageEl) messageEl.textContent = opts.message;
+
+            const confirmBtn = document.getElementById('delete-confirm');
+            if (!confirmBtn) {
+                openModal(modal);
+                return;
+            }
+
+            // Remove any existing event listeners by replacing the node with a clone
+            const newBtn = confirmBtn.cloneNode(true);
+            confirmBtn.parentNode.replaceChild(newBtn, confirmBtn);
+
+            newBtn.addEventListener('click', () => {
+                try {
+                    callback();
+                } catch (err) {
+                    console.error('Error in confirm handler:', err);
+                }
+            }, { once: true });
+
             openModal(modal);
         }
 
@@ -505,10 +541,7 @@
             const modal = document.getElementById('delete-confirm-modal');
             const titleEl = modal.querySelector('h3');
             const messageEl = modal.querySelector('p');
-            titleEl.textContent = 'Are you sure?';
-            messageEl.textContent = 'Deleting this event is permanent and cannot be undone.';
-            openModal(modal);
-            document.getElementById('delete-confirm').onclick = () => {
+            attachConfirmHandler(() => {
                 remove(ref(database, 'events/' + eventId))
                     .then(() => {
                         closeModal(modal);
@@ -518,7 +551,7 @@
                         closeModal(modal);
                         showModalMessage(successModal, `Failed to delete event: ${error.message}`, 'Error');
                     });
-            };
+            }, { title: 'Delete Event', message: 'Deleting this event is permanent and cannot be undone.' });
         }
 
         function deleteMember(memberId) {
@@ -529,10 +562,7 @@
             const modal = document.getElementById('delete-confirm-modal');
             const titleEl = modal.querySelector('h3');
             const messageEl = modal.querySelector('p');
-            titleEl.textContent = 'Are you sure?';
-            messageEl.textContent = `Deleting member with ID: ${memberId}. This action cannot be undone.`;
-            openModal(modal);
-            document.getElementById('delete-confirm').onclick = () => {
+            attachConfirmHandler(() => {
                 remove(ref(database, 'donors/' + memberId))
                     .then(() => {
                         closeModal(modal);
@@ -542,7 +572,7 @@
                         closeModal(modal);
                         showModalMessage(successModal, `Failed to delete member data: ${error.message}`, 'Error');
                     });
-            };
+            }, { title: 'Delete Member', message: 'Deleting this member profile is permanent and cannot be undone.' });
         }
 
         window.onload = function() {
@@ -588,7 +618,7 @@
             document.addEventListener('click', (e) => {
                 if (!mobileMenu) return;
                 const isOpen = !mobileMenu.classList.contains('hidden');
-                const clickedInside = mobileMenu.contains(e.target) || menuToggle.contains(e.target);
+                const clickedInside = (mobileMenu && mobileMenu.contains(e.target)) || (menuToggle && menuToggle.contains(e.target));
                 if (isOpen && !clickedInside) {
                     closeModal(mobileMenu);
                 }
@@ -709,10 +739,11 @@
                 if (currentUser) {
                     const userRef = ref(database, `donors/${currentUser.uid}`);
                     onValue(userRef, (snapshot) => {
-                        const userData = snapshot.val();
-                        if (profileModal && userData) {
+                        const userData = snapshot.val() || {};
+                        if (profileModal) {
+                            // Prefill profile fields with DB data when available, otherwise use auth data or empty defaults
                             document.getElementById('profile-fullName').value = userData.fullName || '';
-                            document.getElementById('profile-email').value = userData.email || '';
+                            document.getElementById('profile-email').value = userData.email || currentUser.email || '';
                             document.getElementById('profile-phone').value = userData.phone || '';
                             document.getElementById('profile-bloodGroup').value = userData.bloodGroup || '';
                             document.getElementById('profile-location').value = userData.location || '';
@@ -741,7 +772,12 @@
                 const password = document.getElementById('login-password')?.value;
                 signInWithEmailAndPassword(auth, email, password)
                     .then((userCredential) => {
+                        // Ensure currentUser is set immediately from the sign-in result
+                        currentUser = userCredential.user;
+                        // Update UI state now (DOM is ready) so Profile button reflects logged-in state
+                        updateLoginButtonState();
                         closeModal(loginModal);
+                        // Open profile after updating UI state
                         handleLoginClick();
                     })
                     .catch((error) => {
@@ -904,34 +940,31 @@
                     showModalMessage(successModal, 'You must be logged in to delete your profile.', 'Error');
                     return;
                 }
-                openModal(deleteConfirmModal);
-            });
 
-            deleteConfirmBtn?.addEventListener('click', () => {
-                const user = auth.currentUser;
-                const donorRef = ref(database, 'donors/' + user.uid);
-                if (user && user.uid === user.uid) {
+                attachConfirmHandler(() => {
+                    const user = auth.currentUser;
+                    if (!user) {
+                        showModalMessage(successModal, 'You must be logged in to delete your profile.', 'Error');
+                        return;
+                    }
+                    const donorRef = ref(database, 'donors/' + user.uid);
                     remove(donorRef)
+                        .then(() => deleteUser(user))
                         .then(() => {
-                            return deleteUser(user);
-                        })
-                        .then(() => {
-                            closeModal(deleteConfirmModal);
+                            closeModal(document.getElementById('delete-confirm-modal'));
                             closeModal(profileModal);
                             showModalMessage(successModal, 'Your profile has been deleted successfully.', 'Profile Deleted');
                         })
                         .catch((error) => {
-                            if (error.code === 'auth/requires-recent-login') {
+                            if (error && error.code === 'auth/requires-recent-login') {
                                 showModalMessage(successModal, 'Please log in again to delete your profile.', 'Re-login Required');
                                 signOut(auth);
                             } else {
                                 console.error("Error deleting profile:", error);
-                                showModalMessage(successModal, `Failed to delete profile: ${error.message}`, 'Error');
+                                showModalMessage(successModal, `Failed to delete profile: ${error && error.message}`, 'Error');
                             }
                         });
-                } else {
-                    showModalMessage(successModal, 'You do not have permission to delete this account.', 'Permission Denied');
-                }
+                }, { title: 'Confirm Delete', message: 'Deleting your profile is permanent and cannot be undone.' });
             });
 
             document.addEventListener('keydown', (ev) => {
@@ -944,7 +977,8 @@
             const backToTopBtn = document.getElementById('back-to-top');
 
             window.addEventListener('scroll', () => {
-                if (window.scrollY > 300) { 
+                if (!backToTopBtn) return;
+                if (window.scrollY > 300) {
                     backToTopBtn.classList.add('show');
                 } else {
                     backToTopBtn.classList.remove('show');
@@ -1438,6 +1472,7 @@
     <footer class="mt-12 bg-gray-900 text-gray-200 py-6">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <p class="mb-2 text-sm">© 2025 Life is Beautiful 💜</p>
+            <div class="flex justify-center gap-3 mt-2"></div>
             <div class="flex justify-center gap-3 mt-2">
                 <a href="https://github.com/MueidShahriar" target="_blank" rel="noopener noreferrer" class="text-gray-300 hover:text-red-500 transition-colors">
                     <i class="fab fa-github fa-lg"></i>
@@ -1445,7 +1480,8 @@
                 <a href="https://www.facebook.com/mueid016" target="_blank" rel="noopener noreferrer" class="text-gray-300 hover:text-red-500 transition-colors">
                     <i class="fab fa-facebook fa-lg"></i>
                 </a>
-            </div class="max-w-6xl mx-auto px-10 sm:px-6 lg:px-8 text-center">
+            </div>
+            <div class="max-w-6xl mx-auto px-10 sm:px-6 lg:px-8 text-center">
             <p class="mt-6 text-sm">Developed by Md. Mueid Shahriar <br> CSE-16th, BAUET</p>
         </div>
     </footer>
