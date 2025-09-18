@@ -133,7 +133,29 @@
             border: 1px solid rgba(239, 68, 68, 0.06);
             padding: 1.25rem;
             border-radius: 14px;
-            box-shadow: 0 10px 28px rgba(15, 23, 42, 0.10) !important
+            box-shadow: 0 10px 28px rgba(15, 23, 42, 0.10) !important;
+            transition: transform .38s cubic-bezier(.22, .61, .36, 1), box-shadow .38s ease;
+            will-change: transform, box-shadow;
+            cursor: default;
+        }
+
+        .how-card:hover {
+            transform: scale(1.05);
+            box-shadow: var(--card-strong), 0 0 0 6px rgba(239, 68, 68, 0.06) !important;
+        }
+
+        /* Softer hover/transition for cards that should feel calmer */
+        .how-card.gentle {
+            transition: transform .18s ease, box-shadow .18s ease;
+        }
+
+        .how-card.gentle:hover {
+            transform: translateY(-2px) scale(1.02);
+        }
+
+        /* Compact card variant for tighter layouts */
+        .how-card.compact {
+            padding: 0.75rem;
         }
 
         .how-card .icon-circle {
@@ -145,6 +167,135 @@
             justify-content: center;
             background: linear-gradient(180deg, rgba(239, 68, 68, 0.08), rgba(239, 68, 68, 0.03));
             box-shadow: 0 6px 18px rgba(14, 23, 32, 0.04)
+        }
+
+        /* Accent color helpers */
+        .how-card.accent-rose {
+            border-color: rgba(225, 29, 72, 0.10);
+        }
+
+        .how-card.accent-rose:hover {
+            box-shadow: var(--card-strong), 0 0 0 6px rgba(225, 29, 72, 0.08) !important;
+        }
+
+        .how-card.accent-rose .icon-circle {
+            background: linear-gradient(180deg, rgba(225, 29, 72, .16), rgba(225, 29, 72, .06));
+            color: #e11d48;
+        }
+
+        .how-card.accent-amber {
+            border-color: rgba(245, 158, 11, 0.10);
+        }
+
+        .how-card.accent-amber:hover {
+            box-shadow: var(--card-strong), 0 0 0 6px rgba(245, 158, 11, 0.08) !important;
+        }
+
+        .how-card.accent-amber .icon-circle {
+            background: linear-gradient(180deg, rgba(245, 158, 11, .16), rgba(245, 158, 11, .06));
+            color: #f59e0b;
+        }
+
+        .how-card.accent-emerald {
+            border-color: rgba(16, 185, 129, 0.10);
+        }
+
+        .how-card.accent-emerald:hover {
+            box-shadow: var(--card-strong), 0 0 0 6px rgba(16, 185, 129, 0.08) !important;
+        }
+
+        .how-card.accent-emerald .icon-circle {
+            background: linear-gradient(180deg, rgba(16, 185, 129, .16), rgba(16, 185, 129, .06));
+            color: #10b981;
+        }
+
+        .how-card.accent-indigo {
+            border-color: rgba(99, 102, 241, 0.10);
+        }
+
+        .how-card.accent-indigo:hover {
+            box-shadow: var(--card-strong), 0 0 0 6px rgba(99, 102, 241, 0.08) !important;
+        }
+
+        .how-card.accent-indigo .icon-circle {
+            background: linear-gradient(180deg, rgba(99, 102, 241, .16), rgba(99, 102, 241, .06));
+            color: #6366f1;
+        }
+
+        .how-card.accent-sky {
+            border-color: rgba(14, 165, 233, 0.10);
+        }
+
+        .how-card.accent-sky:hover {
+            box-shadow: var(--card-strong), 0 0 0 6px rgba(14, 165, 233, 0.08) !important;
+        }
+
+        .how-card.accent-sky .icon-circle {
+            background: linear-gradient(180deg, rgba(14, 165, 233, .16), rgba(14, 165, 233, .06));
+            color: #0ea5e9;
+        }
+
+        .search-card.accent-sky {
+            border-color: rgba(14, 165, 233, 0.12);
+        }
+
+        .search-card.accent-sky .icon-circle {
+            background: linear-gradient(180deg, rgba(14, 165, 233, .16), rgba(14, 165, 233, .06));
+            color: #0ea5e9;
+        }
+
+        /* Soft tints for card backgrounds */
+        .how-card.tint-rose {
+            background: linear-gradient(180deg, rgba(255, 241, 242, .92), #ffffff);
+        }
+
+        .how-card.tint-amber {
+            background: linear-gradient(180deg, rgba(255, 251, 235, .92), #ffffff);
+        }
+
+        .how-card.tint-emerald {
+            background: linear-gradient(180deg, rgba(236, 253, 245, .92), #ffffff);
+        }
+
+        .how-card.tint-indigo {
+            background: linear-gradient(180deg, rgba(238, 242, 255, .92), #ffffff);
+        }
+
+        .how-card.tint-sky {
+            background: linear-gradient(180deg, rgba(240, 249, 255, .92), #ffffff);
+        }
+
+        .search-card.tint-sky {
+            background: linear-gradient(180deg, rgba(240, 249, 255, .92), #ffffff);
+        }
+
+        /* Small icon circle for compact cards (e.g., stats) */
+        .icon-circle-sm {
+            width: 40px;
+            height: 40px;
+            border-radius: 999px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(180deg, rgba(239, 68, 68, 0.10), rgba(239, 68, 68, 0.04));
+            color: var(--red-600);
+            box-shadow: 0 6px 16px rgba(14, 23, 32, 0.06);
+            margin-bottom: 6px;
+        }
+
+        .stat-card.accent-indigo .icon-circle-sm {
+            background: linear-gradient(180deg, rgba(99, 102, 241, .18), rgba(99, 102, 241, .06));
+            color: #6366f1;
+        }
+
+        .stat-card.accent-rose .icon-circle-sm {
+            background: linear-gradient(180deg, rgba(225, 29, 72, .18), rgba(225, 29, 72, .06));
+            color: #e11d48;
+        }
+
+        .stat-card.accent-amber .icon-circle-sm {
+            background: linear-gradient(180deg, rgba(245, 158, 11, .18), rgba(245, 158, 11, .06));
+            color: #f59e0b;
         }
 
         .stats-panel {
@@ -175,10 +326,13 @@
         }
 
         .stat-card .num {
-            font-size: 1.6rem;
-            font-weight: 800;
-            color: var(--red-600);
-            letter-spacing: -0.02em
+            font-size: clamp(1.8rem, 2.5vw, 2.2rem);
+            font-weight: 900;
+            letter-spacing: -0.02em;
+            background: linear-gradient(180deg, #ef4444, #dc2626);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
         .stat-card .label {
@@ -207,6 +361,228 @@
             color: var(--muted)
         }
 
+        /* Find Donors card enhancements */
+        .search-card {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .search-card::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: -60%;
+            height: 3px;
+            width: 120%;
+            background: linear-gradient(90deg, transparent, rgba(239, 68, 68, .55), transparent);
+            animation: sweep 3.5s linear infinite;
+        }
+
+        @keyframes sweep {
+            0% {
+                left: -60%;
+            }
+
+            100% {
+                left: 100%;
+            }
+        }
+
+        .btn-breathe {
+            transition: transform .2s ease, box-shadow .3s ease;
+            box-shadow: 0 6px 22px rgba(225, 29, 72, 0.22);
+        }
+
+        .btn-breathe:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(225, 29, 72, 0.28);
+        }
+
+        /* Recent Donation card + info list */
+        .recent-card {
+            position: relative;
+        }
+
+        .recent-card::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            border-radius: 14px;
+            box-shadow: inset 0 0 0 1px rgba(225, 29, 72, .08);
+        }
+
+        .info-list li {
+            display: flex;
+            align-items: center;
+            gap: .5rem;
+            justify-content: center;
+        }
+
+        @media (min-width:640px) {
+            .info-list li {
+                justify-content: flex-start;
+            }
+        }
+
+        .info-list i {
+            color: #e11d48;
+            opacity: .9;
+        }
+
+        /* Donor search result card */
+        .donor-card {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .donor-card::before {
+            content: "";
+            position: absolute;
+            inset: 0 auto 0 0;
+            width: 5px;
+            background: linear-gradient(180deg, #ef4444, #dc2626);
+            border-top-left-radius: 10px;
+            border-bottom-left-radius: 10px;
+            box-shadow: 0 0 0 1px rgba(225, 29, 72, .06) inset;
+        }
+
+        .donor-card:hover {
+            transform: translateY(-3px);
+        }
+
+        /* Input prefix icons */
+        .field-icon-left {
+            position: relative;
+        }
+
+        .field-icon-left .fi {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #9ca3af;
+            pointer-events: none;
+        }
+
+        .field-icon-left input,
+        .field-icon-left select,
+        .field-icon-left textarea {
+            padding-left: 2.5rem !important;
+        }
+
+        /* Adjust floating labels inside icon fields */
+        .field-icon-left label.absolute {
+            left: 2.5rem !important;
+        }
+
+        /* Admin theme (scoped to #admin-panel) */
+        #admin-panel {
+            --admin: #6366f1;
+            --admin-hover: #4f46e5;
+            --admin-text: #4338ca;
+            --admin-soft: rgba(99, 102, 241, .10);
+            --admin-soft-2: rgba(99, 102, 241, .16);
+        }
+
+        /* Override common Tailwind reds inside admin to indigo */
+        #admin-panel .text-red-700,
+        #admin-panel .text-red-600 {
+            color: var(--admin-text) !important;
+        }
+
+        #admin-panel .bg-red-600 {
+            background-color: var(--admin) !important;
+        }
+
+        #admin-panel .hover\:bg-red-700:hover {
+            background-color: var(--admin-hover) !important;
+        }
+
+        #admin-panel .border-red-300 {
+            border-color: #c7d2fe !important;
+        }
+
+        #admin-panel .focus\:border-red-300:focus {
+            border-color: var(--admin) !important;
+        }
+
+        #admin-panel input[type="checkbox"].text-red-600 {
+            accent-color: var(--admin);
+            color: var(--admin) !important;
+        }
+
+        /* Floating label focus color inside admin */
+        #admin-panel .peer:focus~label,
+        #admin-panel .peer:valid~label {
+            color: var(--admin) !important;
+        }
+
+        /* Admin tabs */
+        .admin-tabs {
+            display: flex;
+            gap: .5rem;
+            background: #fff;
+            padding: .5rem;
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(15, 23, 42, .08);
+        }
+
+        .admin-tab {
+            display: inline-flex;
+            align-items: center;
+            gap: .5rem;
+            padding: .5rem .75rem;
+            border-radius: 10px;
+            color: var(--admin);
+            background: var(--admin-soft);
+            font-weight: 600;
+            cursor: pointer;
+            transition: background .2s ease, transform .15s ease;
+        }
+
+        .admin-tab:hover {
+            background: var(--admin-soft-2);
+            transform: translateY(-1px);
+        }
+
+        .admin-tab.active {
+            background: linear-gradient(90deg, var(--admin), var(--admin-hover));
+            color: #fff;
+            box-shadow: 0 10px 24px rgba(99, 102, 241, .22);
+        }
+
+        .admin-tabpanel {
+            margin-top: 1rem;
+        }
+
+        /* Login modal UI tweaks */
+        #login-modal .modal-panel { border-radius: 14px; box-shadow: 0 20px 60px rgba(15,23,42,.16); }
+        #login-modal .modal-title { display: flex; align-items: center; gap: .6rem; }
+        .field-icon-right { position: relative; }
+        .field-icon-right .fr { position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: #9ca3af; cursor: pointer; }
+        .field-icon-right input { padding-right: 2.5rem !important; }
+    /* Center and color icons nicely inside login modal fields */
+    #login-modal .field-icon-left { position: relative; }
+    #login-modal .field-icon-left .fi { top: 50% !important; transform: translateY(-50%); color: #9ca3af; }
+    #login-modal .field-icon-left:focus-within .fi { color: var(--red-600); }
+    #login-modal .field-icon-right:focus-within .fr { color: var(--red-600); }
+
+        /* Admin-only navbar theme */
+        body.admin-mode header { background: linear-gradient(90deg, rgba(99,102,241,0.95), rgba(79,70,229,0.95)) !important; color: #fff; }
+        body.admin-mode header a, body.admin-mode header button { color: #fff !important; }
+        body.admin-mode header .text-red-700 { color: #fff !important; }
+        body.admin-mode header .hover\:bg-red-50:hover { background-color: rgba(255,255,255,0.10) !important; }
+        body.admin-mode header .bg-red-600 { background-color: #6366f1 !important; }
+        body.admin-mode header .hover\:bg-red-700:hover { background-color: #4f46e5 !important; }
+        body.admin-mode #mobile-menu { background: linear-gradient(90deg, rgba(99,102,241,0.95), rgba(79,70,229,0.95)) !important; }
+        body.admin-mode #mobile-menu a, body.admin-mode #mobile-login-btn { color: #fff !important; }
+        body.admin-mode #mobile-menu a:hover { background-color: rgba(255,255,255,0.10) !important; }
+    /* Hide Join section for admin view */
+    body.admin-mode section#join { display: none !important; }
+    /* Hide Contact section for admin view */
+    body.admin-mode section#contact { display: none !important; }
+
         @media (max-width:768px) {
             .stats-panel {
                 flex-direction: column;
@@ -222,8 +598,80 @@
             --header-height: 0px;
         }
 
-        main {
-            padding-top: var(--header-height);
+        /* Sticky footer layout (footer at page end, not fixed) */
+        body { display: flex; flex-direction: column; min-height: 100vh; }
+        main { flex: 1 0 auto; padding-top: var(--header-height); }
+        footer { flex-shrink: 0; }
+
+        /* Float-In animation for scroll reveal */
+        .float-in {
+            opacity: 0;
+            transform: translateY(24px) scale(0.98);
+            will-change: transform, opacity;
+            transition: opacity 240ms ease, transform 240ms ease;
+            /* smooth exit */
+        }
+
+        .float-in.is-visible {
+            animation: float-in 2400ms cubic-bezier(.16, 1, .3, 1) forwards;
+            animation-delay: var(--delay, 0ms);
+        }
+
+        .float-in.is-out-up {
+            animation: float-out-up 800ms cubic-bezier(.22, .61, .36, 1) forwards;
+        }
+
+        .float-in.is-out-down {
+            animation: float-out-down 800ms cubic-bezier(.22, .61, .36, 1) forwards;
+        }
+
+        @keyframes float-in {
+            0% {
+                opacity: 0;
+                transform: translateY(28px) scale(0.985);
+            }
+
+            60% {
+                opacity: 1;
+                transform: translateY(-2px) scale(1.0);
+            }
+
+            100% {
+                opacity: 1;
+                transform: translateY(0) scale(1.0);
+            }
+        }
+
+        @keyframes float-out-up {
+            0% {
+                opacity: 1;
+                transform: translateY(0) scale(1.0);
+            }
+
+            100% {
+                opacity: 0;
+                transform: translateY(-20px) scale(0.985);
+            }
+        }
+
+        @keyframes float-out-down {
+            0% {
+                opacity: 1;
+                transform: translateY(0) scale(1.0);
+            }
+
+            100% {
+                opacity: 0;
+                transform: translateY(20px) scale(0.985);
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .float-in {
+                opacity: 1 !important;
+                transform: none !important;
+                animation: none !important;
+            }
         }
     </style>
     <meta name="description"
@@ -236,6 +684,21 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
     <script type="module">
+        const __pendingCounts__ = new Map();
+        window.__statsVisible__ = false;
+        window.__animateCountTo__ = undefined;
+        function setCountTarget(id, value) {
+            const v = Number(value || 0);
+            const el = document.getElementById(id);
+            if (!el) {
+                __pendingCounts__.set(id, v);
+                return;
+            }
+            el.dataset.countTo = String(v);
+            if (window.__statsVisible__ && typeof window.__animateCountTo__ === 'function') {
+                window.__animateCountTo__(el, v);
+            }
+        }
         function setHeaderOffset() {
             const header = document.querySelector('header');
             const h = header ? header.offsetHeight : 0;
@@ -244,7 +707,8 @@
         window.addEventListener('load', setHeaderOffset, { once: true });
         window.addEventListener('resize', setHeaderOffset);
         if ('ResizeObserver' in window) {
-            new ResizeObserver(() => setHeaderOffset()).observe(document.body);
+            const ro = new ResizeObserver(() => setHeaderOffset());
+            ro.observe(document.body);
         }
         import {
             initializeApp
@@ -376,15 +840,11 @@
                     <span class="text-xs text-gray-500">${d.phone}</span>
                 </div>`;
             return `
-                <div class="bg-white p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200 flex flex-col sm:flex-row sm:items-center justify-between border-l-4 border-red-600">
+                <div class="donor-card float-in bg-white p-4 rounded-lg shadow-sm hover:shadow-md transition-all duration-300 flex flex-col sm:flex-row sm:items-center justify-between">
                     <div class="flex-1 min-w-0 mb-2 sm:mb-0">
                         <div class="font-bold text-red-700 truncate">${d.fullName}</div>
-                        <div class="text-xs text-gray-600 mt-1">
-                            <span class="font-bold">Blood Group:</span> <span>${d.bloodGroup}</span>
-                        </div>
-                        <div class="text-xs text-gray-600">
-                            <span class="font-bold">Current Location:</span> <span>${d.location || '—'}</span>
-                        </div>
+                        <div class="text-xs text-gray-600 mt-1 flex items-center gap-1"><i class="fa-solid fa-droplet text-red-500"></i><span class="font-bold">Blood Group:</span> <span>${d.bloodGroup}</span></div>
+                        <div class="text-xs text-gray-600 flex items-center gap-1"><i class="fa-solid fa-location-dot text-red-500"></i><span class="font-bold">Current Location:</span> <span>${d.location || '—'}</span></div>
                     </div>
                     <div class="flex-shrink-0 flex flex-col items-end justify-end text-xs text-gray-500 mt-2 sm:mt-0 whitespace-nowrap">
                         <div class="flex items-center space-x-1">
@@ -426,6 +886,7 @@
             } else {
                 const header = `<div class="text-sm text-gray-600 mb-2">Found <span class="font-bold text-red-700">${filteredDonors.length}</span> donor(s)</div>`;
                 searchResults.innerHTML = header + filteredDonors.map(renderDonorCardPublic).join('');
+                if (window.registerFloatEls) window.registerFloatEls(searchResults);
             }
         }
 
@@ -530,18 +991,17 @@
                 const itemClass = index === 0 ? 'carousel-item active' : 'carousel-item';
                 const carouselItemHTML = `
                     <div class="${itemClass}">
-                        <div class="relative bg-white p-6 rounded-xl shadow-lg mx-auto max-w-2xl text-center overflow-hidden">
-                            <div class="absolute top-0 left-0 h-full w-2 bg-red-600"></div>
-                            <div class="absolute top-0 right-0 h-full w-2 bg-red-600"></div>
-                            <h3 class="text-xl font-bold text-red-700">Recent Donation</h3>
-                            <p class="mt-3 text-gray-700">A huge thank you to our recent donor, <span class="font-bold text-red-600">${d.name}</span>, who donated blood on <span class="font-semibold">${date}</span>.</p>
-                            <ul class="mt-2 list-none p-0 space-y-1 text-gray-600">
-                                <li><span class="font-bold">Blood Group:</span> ${d.bloodGroup}</li>
-                                <li><span class="font-bold">Location:</span> ${d.location}</li>
-                                <li><span class="font-bold">Department:</span> ${d.department || '-'}</li>
-                                <li><span class="font-bold">Batch:</span> ${d.batch || '-'}</li>
-                                <li><span class="font-bold">Age:</span> ${d.age || '-'}</li>
-                                <li><span class="font-bold">Weight:</span> ${d.weight ? d.weight + ' kg' : '-'}</li>
+                        <div class="recent-card relative bg-white p-6 rounded-xl shadow-lg mx-auto max-w-2xl text-center sm:text-left overflow-hidden">
+                            <div class="absolute top-0 left-0 h-full w-2 bg-red-600 rounded-l-xl"></div>
+                            <h3 class="text-xl font-bold text-red-700 text-center">Recent Donation</h3>
+                            <p class="mt-3 text-gray-700 text-center sm:text-left">A huge thank you to our recent donor, <span class="font-bold text-red-600">${d.name}</span>, who donated blood on <span class="font-semibold">${date}</span>.</p>
+                            <ul class="mt-4 list-none p-0 space-y-2 text-gray-700 info-list">
+                                <li><i class="fa-solid fa-droplet"></i><span class="font-bold">Blood Group:</span> <span>${d.bloodGroup}</span></li>
+                                <li><i class="fa-solid fa-location-dot"></i><span class="font-bold">Location:</span> <span>${d.location}</span></li>
+                                <li><i class="fa-solid fa-building-columns"></i><span class="font-bold">Department:</span> <span>${d.department || '-'}</span></li>
+                                <li><i class="fa-solid fa-layer-group"></i><span class="font-bold">Batch:</span> <span>${d.batch || '-'}</span></li>
+                                <li><i class="fa-solid fa-user"></i><span class="font-bold">Age:</span> <span>${d.age || '-'}</span></li>
+                                <li><i class="fa-solid fa-weight-scale"></i><span class="font-bold">Weight:</span> <span>${d.weight ? d.weight + ' kg' : '-'}</span></li>
                             </ul>
                         </div>
                     </div>
@@ -569,19 +1029,21 @@
             }
             const searchForm = document.getElementById('search-form');
             if (searchForm) {
-                const blood = document.getElementById('search-blood')?.value?.trim();
-                const filtered = donorsList.filter(d =>
-                    (!blood || d.bloodGroup === blood)
-                );
+                const blood = document.getElementById('search-blood')?.value;
+                let filtered;
+                if (!blood || blood === 'all') {
+                    filtered = donorsList;
+                } else if (blood === 'select') {
+                    filtered = [];
+                } else {
+                    filtered = donorsList.filter(d => d.bloodGroup === blood);
+                }
                 renderSearchResults(filtered);
             }
             if (currentUserRole === 'admin') {
                 renderAdminMembersList();
             }
-            const donorCountEl = document.getElementById('donor-count');
-            if (donorCountEl) {
-                donorCountEl.textContent = donorsList.length;
-            }
+            setCountTarget('donor-count', donorsList.length);
         }, (error) => {
             console.error("Failed to load donors: ", error);
         });
@@ -602,34 +1064,43 @@
             }
             const publicEventsList = document.getElementById('public-events-list');
             if (publicEventsList) {
-                publicEventsList.innerHTML = eventsList.map(e => {
+                publicEventsList.innerHTML = eventsList.map((e, idx) => {
                     const parts = getDateParts(e.date);
+                    const accents = [
+                        { card: 'accent-rose tint-rose', month: 'text-red-700', btn: 'bg-red-600 hover:bg-red-700' },
+                        { card: 'accent-amber tint-amber', month: 'text-amber-600', btn: 'bg-amber-500 hover:bg-amber-600' },
+                        { card: 'accent-emerald tint-emerald', month: 'text-emerald-600', btn: 'bg-emerald-600 hover:bg-emerald-700' },
+                        { card: 'accent-indigo tint-indigo', month: 'text-indigo-600', btn: 'bg-indigo-600 hover:bg-indigo-700' },
+                        { card: 'accent-sky tint-sky', month: 'text-sky-600', btn: 'bg-sky-600 hover:bg-sky-700' },
+                    ];
+                    const a = accents[idx % accents.length];
                     return `
-                    <article class="bg-white rounded-xl shadow-lg p-4 flex gap-4 items-center flex-col sm:flex-row text-center sm:text-left">
-                        <div class="flex-shrink-0 w-full sm:w-20">
-                            <div class="text-sm font-bold text-red-700">${parts.m}</div>
-                            <div class="text-2xl font-extrabold">${parts.d}</div>
-                            <div class="text-xs text-gray-500">${parts.y}</div>
-                        </div>
-                        <div class="flex-1">
-                            <h3 class="text-lg font-bold">${e.title || ''}</h3>
-                            <p class="text-sm text-gray-600">${e.location || ''} • ${e.time || ''}</p>
-                            <p class="mt-2 text-gray-700">${e.description || ''}</p>
-                            <div class="mt-3 flex gap-2 justify-center sm:justify-start">
-                                <a href="#" class="px-4 py-2 bg-red-600 text-white rounded-md">Register</a>
+                        <article class="how-card ${a.card} bg-white rounded-xl shadow-lg p-4 transform transition hover:scale-105 float-in flex gap-4 items-center flex-col sm:flex-row text-center sm:text-left">
+                            <div class="flex-shrink-0 w-full sm:w-20">
+                                <div class="text-sm font-bold ${a.month}">${parts.m}</div>
+                                <div class="text-2xl font-extrabold">${parts.d}</div>
+                                <div class="text-xs text-gray-500">${parts.y}</div>
                             </div>
-                        </div>
-                    </article>
-                    `;
+                            <div class="flex-1">
+                                <h3 class="text-lg font-bold">${e.title || ''}</h3>
+                                <p class="text-sm text-gray-600">${e.location || ''} • ${e.time || ''}</p>
+                                <p class="mt-2 text-gray-700">${e.description || ''}</p>
+                                <div class="mt-3 flex gap-2 justify-center sm:justify-start">
+                                    <a href="#" class="px-4 py-2 ${a.btn} text-white rounded-md inline-flex items-center gap-2">
+                                        <i class="fa-solid fa-calendar-check"></i>
+                                        <span>Register</span>
+                                    </a>
+                                </div>
+                            </div>
+                        </article>
+                        `;
                 }).join('');
+                if (window.registerFloatEls) window.registerFloatEls(publicEventsList);
             }
             if (currentUserRole === 'admin') {
                 renderAdminEventsList();
             }
-            const eventCountEl = document.getElementById('event-count');
-            if (eventCountEl) {
-                eventCountEl.textContent = eventsList.length;
-            }
+            setCountTarget('event-count', eventsList.length);
         }, (error) => {
             console.error("Failed to load events: ", error);
         });
@@ -637,9 +1108,8 @@
         const statsRef = ref(database, 'stats');
         onValue(statsRef, (snapshot) => {
             const statsData = snapshot.val();
-            const livesHelpedEl = document.getElementById('lives-helped-count');
-            if (livesHelpedEl && statsData && statsData.livesHelped) {
-                livesHelpedEl.textContent = statsData.livesHelped;
+            if (statsData && statsData.livesHelped != null) {
+                setCountTarget('lives-helped-count', statsData.livesHelped);
             }
         }, (error) => {
             console.error("Failed to load stats: ", error);
@@ -670,21 +1140,54 @@
             const mobileLoginBtn = document.getElementById('mobile-login-btn');
             const profileUserId = document.getElementById('profile-userId');
             const adminPanel = document.getElementById('admin-panel');
+            const adminBadge = document.getElementById('admin-badge');
+            const adminNavLink = document.getElementById('admin-nav-link');
+            const adminMobileLink = document.getElementById('admin-mobile-link');
+            const joinLink = document.getElementById('nav-join-link');
+            const joinMobileLink = document.getElementById('mobile-join-link');
+            const howLink = document.getElementById('nav-how-link');
+            const howMobileLink = document.getElementById('mobile-how-link');
+            const contactLink = document.getElementById('nav-contact-link');
+            const contactMobileLink = document.getElementById('mobile-contact-link');
             if (!loginBtn || !mobileLoginBtn || !adminPanel) return;
             if (currentUser) {
-                loginBtn.textContent = 'Profile';
+                loginBtn.innerHTML = '<i class="fa-solid fa-user" aria-hidden="true"></i><span class="sr-only">Profile</span>';
+                loginBtn.setAttribute('aria-label', 'Profile');
+                loginBtn.setAttribute('title', 'Profile');
                 loginBtn.dataset.state = 'loggedin';
-                mobileLoginBtn.textContent = 'Profile';
+                mobileLoginBtn.innerHTML = '<i class="fa-solid fa-user" aria-hidden="true"></i><span class="sr-only">Profile</span>';
+                mobileLoginBtn.setAttribute('aria-label', 'Profile');
+                mobileLoginBtn.setAttribute('title', 'Profile');
                 if (profileUserId) profileUserId.textContent = `User ID: ${currentUser.uid}`;
                 const userRef = ref(database, `donors/${currentUser.uid}/role`);
                 onValue(userRef, (snapshot) => {
                     currentUserRole = snapshot.val() || 'member';
                     if (currentUserRole === 'admin') {
                         adminPanel.classList.remove('hidden');
+                        document.body.classList.add('admin-mode');
+                        if (adminBadge) { adminBadge.classList.remove('hidden'); adminBadge.classList.add('inline-flex'); }
+                        adminNavLink && adminNavLink.classList.remove('hidden');
+                        adminMobileLink && adminMobileLink.classList.remove('hidden');
+                        joinLink && joinLink.classList.add('hidden');
+                        joinMobileLink && joinMobileLink.classList.add('hidden');
+                        howLink && howLink.classList.add('hidden');
+                        howMobileLink && howMobileLink.classList.add('hidden');
+                        contactLink && contactLink.classList.add('hidden');
+                        contactMobileLink && contactMobileLink.classList.add('hidden');
                         renderAdminMembersList();
                         renderAdminEventsList();
                     } else {
                         adminPanel.classList.add('hidden');
+                        document.body.classList.remove('admin-mode');
+                        if (adminBadge) { adminBadge.classList.add('hidden'); adminBadge.classList.remove('inline-flex'); }
+                        adminNavLink && adminNavLink.classList.add('hidden');
+                        adminMobileLink && adminMobileLink.classList.add('hidden');
+                        joinLink && joinLink.classList.remove('hidden');
+                        joinMobileLink && joinMobileLink.classList.remove('hidden');
+                        howLink && howLink.classList.remove('hidden');
+                        howMobileLink && howMobileLink.classList.remove('hidden');
+                        contactLink && contactLink.classList.remove('hidden');
+                        contactMobileLink && contactMobileLink.classList.remove('hidden');
                     }
                 }, {
                     onlyOnce: true
@@ -695,6 +1198,16 @@
                 mobileLoginBtn.textContent = 'Login';
                 if (profileUserId) profileUserId.textContent = '';
                 adminPanel.classList.add('hidden');
+                document.body.classList.remove('admin-mode');
+                adminBadge && adminBadge.classList.add('hidden');
+                adminNavLink && adminNavLink.classList.add('hidden');
+                adminMobileLink && adminMobileLink.classList.add('hidden');
+                joinLink && joinLink.classList.remove('hidden');
+                joinMobileLink && joinMobileLink.classList.remove('hidden');
+                howLink && howLink.classList.remove('hidden');
+                howMobileLink && howMobileLink.classList.remove('hidden');
+                contactLink && contactLink.classList.remove('hidden');
+                contactMobileLink && contactMobileLink.classList.remove('hidden');
             }
         }
 
@@ -892,7 +1405,7 @@
 
             searchForm?.addEventListener('submit', (e) => {
                 e.preventDefault();
-                const blood = searchBlood?.value?.trim();
+                const blood = searchBlood?.value;
                 const showEligibleOnly = eligibleOnlyCheckbox?.checked;
 
                 if (!searchResults) return;
@@ -911,7 +1424,7 @@
                                 if (showEligibleOnly && !isDonorEligible(donor.lastDonateDate)) {
                                     continue;
                                 }
-                                if (!blood || donor.bloodGroup === blood) {
+                                if (!blood || blood === 'all' || donor.bloodGroup === blood) {
                                     filteredDonors.push(donor);
                                 }
                             }
@@ -992,6 +1505,19 @@
                         const errorMessage = error.message;
                         showModalMessage('success-modal', `Failed to send reset email: ${errorMessage}`, 'Password Reset Error');
                     });
+            });
+
+            // Show/hide password toggle in login modal
+            const pwToggle = document.getElementById('toggle-password');
+            const pwInput = document.getElementById('login-password');
+            pwToggle?.addEventListener('click', () => {
+                if (!pwInput) return;
+                const isHidden = pwInput.getAttribute('type') === 'password';
+                pwInput.setAttribute('type', isHidden ? 'text' : 'password');
+                pwToggle.setAttribute('aria-label', isHidden ? 'Hide password' : 'Show password');
+                pwToggle.setAttribute('title', isHidden ? 'Hide password' : 'Show password');
+                const icon = pwToggle.querySelector('i');
+                if (icon) { icon.classList.toggle('fa-eye'); icon.classList.toggle('fa-eye-slash'); }
             });
 
             const adminEventForm = document.getElementById('admin-event-form');
@@ -1178,6 +1704,141 @@
                     behavior: 'smooth'
                 });
             });
+
+            // Admin dashboard tabs
+            const adminPanel = document.getElementById('admin-panel');
+            if (adminPanel) {
+                const tabs = adminPanel.querySelectorAll('.admin-tab');
+                const panels = adminPanel.querySelectorAll('[data-panel]');
+                tabs.forEach(tab => {
+                    tab.addEventListener('click', () => {
+                        const target = tab.getAttribute('data-tab');
+                        tabs.forEach(t => t.classList.remove('active'));
+                        tab.classList.add('active');
+                        panels.forEach(p => {
+                            p.classList.toggle('hidden', p.getAttribute('data-panel') !== target);
+                        });
+                    });
+                });
+            }
+
+            // Float-In scroll reveal for cards with directional float-out (reusable)
+            const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+            let __floatIO__ = null;
+            let __floatIO_lastY = window.scrollY;
+            function registerFloatEls(root = document) {
+                const els = root.querySelectorAll('.float-in:not([data-float-registered])');
+                if (!els.length) return;
+                if (reduceMotion) {
+                    els.forEach(el => { el.classList.add('is-visible'); el.setAttribute('data-float-registered', '1'); });
+                    return;
+                }
+                if ('IntersectionObserver' in window) {
+                    if (!__floatIO__) {
+                        __floatIO__ = new IntersectionObserver((entries) => {
+                            entries.forEach(entry => {
+                                const scrollingDown = window.scrollY >= __floatIO_lastY;
+                                if (entry.isIntersecting) {
+                                    entry.target.classList.add('is-visible');
+                                    entry.target.classList.remove('is-out-up', 'is-out-down');
+                                } else {
+                                    entry.target.classList.remove('is-visible');
+                                    entry.target.classList.add(scrollingDown ? 'is-out-up' : 'is-out-down');
+                                }
+                            });
+                            __floatIO_lastY = window.scrollY;
+                        }, { threshold: 0.15, rootMargin: '0px 0px -5% 0px' });
+                    }
+                    els.forEach((el, i) => {
+                        el.style.setProperty('--delay', `${i * 120}ms`);
+                        el.setAttribute('data-float-registered', '1');
+                        __floatIO__.observe(el);
+                    });
+                } else {
+                    els.forEach(el => { el.classList.add('is-visible'); el.setAttribute('data-float-registered', '1'); });
+                }
+            }
+            // expose for dynamic content sections
+            window.registerFloatEls = registerFloatEls;
+            // initial registration
+            registerFloatEls(document);
+
+            // Stats count-up animation
+            const statNums = document.querySelectorAll('.stat-card .num');
+            const fmt = (n) => n.toLocaleString();
+            const animateCountTo = (el, target, duration = 1500, startOverride = undefined) => {
+                const startVal = (startOverride != null)
+                    ? Number(startOverride)
+                    : Number(el.textContent.replace(/,/g, '') || '0');
+                const start = performance.now();
+                const ease = (t) => 1 - Math.pow(1 - t, 3); // easeOutCubic
+                const step = (now) => {
+                    const p = Math.min(1, (now - start) / duration);
+                    const val = Math.round(startVal + (target - startVal) * ease(p));
+                    el.textContent = fmt(val);
+                    if (p < 1) requestAnimationFrame(step);
+                };
+                requestAnimationFrame(step);
+            };
+            // expose animator so early setCountTarget calls can animate when visible
+            window.__animateCountTo__ = animateCountTo;
+
+            let statsVisible = false;
+            let statsWasVisible = false; // detect re-entry on scroll up/down
+            const animateAllStats = () => {
+                statNums.forEach(el => {
+                    const target = Number(el.dataset.countTo || el.textContent || '0');
+                    animateCountTo(el, target);
+                });
+            };
+            const statsCard = document.querySelector('#donor-count')?.closest('.how-card') || document.querySelector('.stats-grid');
+            if ('IntersectionObserver' in window && statsCard) {
+                const statsIO = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        const nowVisible = entry.isIntersecting && entry.intersectionRatio > 0.30;
+                        const becameVisible = nowVisible && !statsWasVisible;
+                        statsVisible = nowVisible;
+                        window.__statsVisible__ = statsVisible;
+                        if (becameVisible) {
+                            // Replay from 0 every time section re-enters viewport (up or down)
+                            statNums.forEach(el => {
+                                const target = Number(el.dataset.countTo || el.textContent || '0');
+                                animateCountTo(el, target, 1500, 0);
+                            });
+                        }
+                        statsWasVisible = nowVisible;
+                    });
+                }, { threshold: [0, 0.25, 0.5, 0.75, 1] });
+                statsIO.observe(statsCard);
+            } else if (statsCard) {
+                animateAllStats();
+            }
+
+            // Flush any pending counter targets that were set before DOM was ready
+            if (__pendingCounts__.size) {
+                for (const [id, v] of __pendingCounts__) {
+                    const el = document.getElementById(id);
+                    if (el) el.dataset.countTo = String(v);
+                }
+                __pendingCounts__.clear();
+            }
+
+            // Initial render of search results after DOM is ready
+            // Handles case where donors data arrived before the search form existed
+            const searchBloodEl = document.getElementById('search-blood');
+            const searchResultsEl = document.getElementById('search-results');
+            if (searchBloodEl && searchResultsEl && Array.isArray(donorsList)) {
+                const blood = searchBloodEl.value;
+                let filtered;
+                if (!blood || blood === 'all') {
+                    filtered = donorsList;
+                } else if (blood === 'select') {
+                    filtered = [];
+                } else {
+                    filtered = donorsList.filter(d => d.bloodGroup === blood);
+                }
+                renderSearchResults(filtered);
+            }
         };
     </script>
 
@@ -1187,16 +1848,18 @@
             <div class="flex items-center gap-3">
                 <img src="image/blood-drop.png" alt="logo" class="h-10 w-10 border-red-600" />
                 <span class="text-2xl font-extrabold text-red-700 tracking-tight">Blood Donation Community</span>
+                <span id="admin-badge" class="hidden items-center gap-1 text-xs font-bold px-2 py-1 rounded bg-indigo-600 text-white shadow">Admin</span>
             </div>
             <div class="hidden md:flex items-center gap-1 text-base font-medium">
                 <a href="#about" class="px-3 py-2 rounded hover:bg-red-50 text-red-700">About</a>
-                <a href="#how" class="px-3 py-2 rounded hover:bg-red-50 text-red-700">How to Donate</a>
+                <a id="nav-how-link" href="#how" class="px-3 py-2 rounded hover:bg-red-50 text-red-700">How to Donate</a>
                 <a href="#events" class="px-3 py-2 rounded hover:bg-red-50 text-red-700">Events</a>
-                <a href="#join" class="px-3 py-2 rounded hover:bg-red-50 text-red-700">Join</a>
+                <a id="nav-join-link" href="#join" class="px-3 py-2 rounded hover:bg-red-50 text-red-700">Join</a>
                 <a href="#search" class="px-3 py-2 rounded hover:bg-red-50 text-red-700">Search</a>
-                <a href="#contact" class="px-3 py-2 rounded hover:bg-red-50 text-red-700">Contact</a>
+                <a id="nav-contact-link" href="#contact" class="px-3 py-2 rounded hover:bg-red-50 text-red-700">Contact</a>
+                <a id="admin-nav-link" href="#admin-panel" class="hidden px-3 py-2 rounded hover:bg-red-50 text-red-700">Dashboard</a>
                 <button id="login-btn"
-                    class="bg-red-600 text-white px-4 py-2 rounded-lg font-semibold shadow hover:bg-red-700 transition">Profile</button>
+                    class="bg-red-600 text-white px-4 py-2 rounded-lg font-semibold shadow hover:bg-red-700 transition inline-flex items-center justify-center">Profile</button>
             </div>
             <div class="flex items-center gap-2">
                 <button id="menu-toggle" class="md:hidden p-2 rounded-lg bg-red-100 text-red-700 hover:bg-red-200"
@@ -1211,10 +1874,12 @@
         <div id="mobile-menu" class="md:hidden hidden bg-white/95 shadow-lg rounded-b-xl">
             <div class="px-4 py-4 flex flex-col gap-2 text-red-700">
                 <a href="#about" class="block px-3 py-2 rounded hover:bg-red-50">About</a>
-                <a href="#how" class="block px-3 py-2 rounded hover:bg-red-50">How to Donate</a>
+                <a id="mobile-how-link" href="#how" class="block px-3 py-2 rounded hover:bg-red-50">How to Donate</a>
                 <a href="#events" class="block px-3 py-2 rounded hover:bg-red-50">Events</a>
-                <a href="#join" class="block px-3 py-2 rounded hover:bg-red-50">Join</a>
+                <a id="mobile-join-link" href="#join" class="block px-3 py-2 rounded hover:bg-red-50">Join</a>
                 <a href="#search" class="block px-3 py-2 rounded hover:bg-red-50">Search</a>
+                <a id="mobile-contact-link" href="#contact" class="block px-3 py-2 rounded hover:bg-red-50">Contact</a>
+                <a id="admin-mobile-link" href="#admin-panel" class="hidden block px-3 py-2 rounded hover:bg-red-50">Dashboard</a>
                 <button id="mobile-login-btn"
                     class="w-full text-left px-3 py-2 rounded hover:bg-red-50 text-red-700 font-medium">Profile</button>
             </div>
@@ -1234,11 +1899,15 @@
                 <div
                     class="flex flex-col sm:flex-row gap-4 w-full sm:w-auto items-center justify-center md:justify-start">
                     <a href="#join"
-                        class="w-full sm:w-auto text-center bg-gradient-to-r from-red-600 to-red-400 text-white px-8 py-3 rounded-lg font-semibold shadow-lg hover:scale-105 transition">Become
-                        a Donor</a>
+                        class="w-full sm:w-auto text-center bg-gradient-to-r from-red-600 to-red-400 text-white px-8 py-3 rounded-lg font-semibold shadow-lg hover:scale-105 transition inline-flex items-center justify-center gap-2 btn-breathe">
+                        <i class="fa-solid fa-hand-holding-droplet"></i>
+                        <span>Become a Donor</span>
+                    </a>
                     <a href="#search"
-                        class="w-full sm:w-auto text-center bg-white border-2 border-red-600 text-red-600 px-8 py-3 rounded-lg font-semibold shadow hover:bg-red-50 hover:scale-105 transition">Search
-                        Donors</a>
+                        class="w-full sm:w-auto text-center bg-white border-2 border-red-600 text-red-600 px-8 py-3 rounded-lg font-semibold shadow hover:bg-red-50 hover:scale-105 transition inline-flex items-center justify-center gap-2 btn-breathe">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        <span>Search Donors</span>
+                    </a>
                 </div>
             </div>
             <div class="flex-1 flex justify-center items-center">
@@ -1253,7 +1922,8 @@
         </section>
 
         <section id="recent-donor" class="py-12">
-            <div id="recentDonorCarousel" class="carousel slide" data-ride="carousel">
+            <div id="recentDonorCarousel" class="carousel slide" data-ride="carousel" data-interval="9000"
+                data-pause="hover">
                 <ol class="carousel-indicators">
                 </ol>
                 <div class="carousel-inner">
@@ -1271,8 +1941,9 @@
 
         <section id="about" class="py-12">
             <div
-                class="bg-white rounded-xl shadow-lg p-8 border-l-8 border-red-600 flex flex-col md:flex-row gap-8 items-start">
-                <div class="flex-shrink-0 flex items-center justify-center w-20 h-20 bg-red-100 rounded-full shadow">
+                class="how-card tint-rose accent-rose rounded-xl shadow-lg p-8 transform transition hover:scale-105 float-in flex flex-col md:flex-row gap-8 items-start">
+                <div
+                    class="flex-shrink-0 flex items-center justify-center w-20 h-20 bg-red-100 rounded-full shadow icon-circle">
                     <svg class="w-12 h-12 text-red-600" fill="none" stroke="currentColor" stroke-width="2"
                         viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round"
@@ -1321,80 +1992,86 @@
         </section>
 
         <section id="how" class="py-12">
-            <div class="grid md:grid-cols-3 gap-6">
-                <article class="bg-white rounded-xl shadow-lg p-6 hover:scale-105 transform transition">
-                    <div class="flex items-center gap-4">
-                        <div class="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center text-red-600">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M12 11c1.657 0 3-1.343 3-3S13.657 5 12 5s-3 1.343-3 3 1.343 3 3 3zM19 21v-2a4 4 0 00-4-4H9a4 4 0 00-4 4v2" />
-                            </svg>
+            <div class="how-sticky-container">
+                <div class="grid md:grid-cols-3 gap-6">
+                    <article
+                        class="how-card accent-amber tint-amber rounded-xl shadow-lg p-6 transform transition hover:scale-105 float-in">
+                        <div class="flex items-center gap-4">
+                            <div
+                                class="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center text-red-600">
+                                <i class="fa-solid fa-clipboard-check text-xl" aria-hidden="true"></i>
+                            </div>
+                            <h4 class="text-lg font-bold text-red-700">Check Eligibility</h4>
                         </div>
-                        <h4 class="text-lg font-bold text-red-700">Check Eligibility</h4>
-                    </div>
-                    <p class="mt-4 text-gray-600">Before donating, please ensure you meet the basic eligibility
-                        criteria: age,
-                        health condition and travel/medication restrictions. We provide guidelines and a brief
-                        self-check.</p>
-                    <a href="#" class="mt-4 inline-block text-sm text-red-600 font-medium hover:underline">Learn more
-                        →</a>
-                </article>
+                        <p class="mt-4 text-gray-600">Be 18–60 years old, 50kg+, feeling well and fever‑free, with at
+                            least 90 days since your last donation. Certain medicines, recent travel and illnesses may
+                            defer donation.</p>
+                        <a href="#" class="mt-4 inline-block text-sm text-red-600 font-medium hover:underline">Learn
+                            more
+                            →</a>
+                    </article>
 
-                <article class="bg-white rounded-xl shadow-lg p-6 hover:scale-105 transform transition">
-                    <div class="flex items-center gap-4">
-                        <div class="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center text-red-600">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M8 7V3m8 4V3M3 11h18M5 21h14a2 2 0 002-2V7H3v12a2 2 0 002 2z" />
-                            </svg>
+                    <article
+                        class="how-card accent-emerald tint-emerald rounded-xl shadow-lg p-6 transform transition hover:scale-105 float-in">
+                        <div class="flex items-center gap-4">
+                            <div
+                                class="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center text-red-600">
+                                <i class="fa-solid fa-user-plus text-xl" aria-hidden="true"></i>
+                            </div>
+                            <h4 class="text-lg font-bold text-red-700">Register</h4>
                         </div>
-                        <h4 class="text-lg font-bold text-red-700">Register</h4>
-                    </div>
-                    <p class="mt-4 text-gray-600">Sign up quickly using our form. You can register as a donor and
-                        optionally
-                        create an account to manage your profile and donation history.</p>
-                    <a href="#join" class="mt-4 inline-block text-sm text-red-600 font-medium hover:underline">Register
-                        now →</a>
-                </article>
+                        <p class="mt-4 text-gray-600">Create your donor profile in minutes and keep your details up to
+                            date. Choose privacy options (e.g., hide phone), track donations and get notified about
+                            nearby
+                            needs and events.</p>
+                        <a href="#join"
+                            class="mt-4 inline-block text-sm text-red-600 font-medium hover:underline">Register
+                            now →</a>
+                    </article>
 
-                <article class="bg-white rounded-xl shadow-lg p-6 hover:scale-105 transform transition">
-                    <div class="flex items-center gap-4">
-                        <div class="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center text-red-600">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4" />
-                            </svg>
+                    <article
+                        class="how-card accent-indigo tint-indigo rounded-xl shadow-lg p-6 transform transition hover:scale-105 float-in">
+                        <div class="flex items-center gap-4">
+                            <div
+                                class="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center text-red-600">
+                                <i class="fa-solid fa-hand-holding-droplet text-xl" aria-hidden="true"></i>
+                            </div>
+                            <h4 class="text-lg font-bold text-red-700">Donate & Save</h4>
                         </div>
-                        <h4 class="text-lg font-bold text-red-700">Donate & Save</h4>
-                    </div>
-                    <p class="mt-4 text-gray-600">Find the nearest blood drive or visit a partner blood bank. Our events
-                        are run
-                        by certified teams ensuring donor safety and comfort.</p>
-                    <a href="#events" class="mt-4 inline-block text-sm text-red-600 font-medium hover:underline">See
-                        events →</a>
-                </article>
+                        <p class="mt-4 text-gray-600">Book a slot, bring a photo ID, eat light, stay hydrated and rest
+                            for
+                            a short while after. Safe, professional teams guide you through a 8–10 minute donation.</p>
+                        <a href="#events" class="mt-4 inline-block text-sm text-red-600 font-medium hover:underline">See
+                            events →</a>
+                    </article>
+                </div>
             </div>
 
             <div
-                class="mt-8 bg-white rounded-lg shadow p-6 flex flex-col md:flex-row items-center justify-between gap-6">
-                <div class="flex flex-col sm:flex-row items-center gap-6 w-full md:w-auto">
-                    <div class="text-center">
-                        <div id="donor-count" class="text-3xl font-extrabold text-red-700">0</div>
-                        <div class="text-sm text-gray-600">Registered Donors</div>
+                class="mt-8 how-card tint-rose rounded-xl shadow-lg p-6 transform transition hover:scale-105 float-in flex flex-col md:flex-row items-center justify-between gap-6">
+                <div class="stats-grid w-full md:w-auto">
+                    <div class="stat-card text-center accent-indigo">
+                        <div class="icon-circle-sm"><i class="fa-solid fa-users" aria-hidden="true"></i></div>
+                        <div id="donor-count" class="num" data-count-to="0">0</div>
+                        <div class="label">Registered Donors</div>
                     </div>
-                    <div class="text-center">
-                        <div id="lives-helped-count" class="text-3xl font-extrabold text-red-700">0</div>
-                        <div class="text-sm text-gray-600">Lives Helped</div>
+                    <div class="stat-card text-center accent-rose">
+                        <div class="icon-circle-sm"><i class="fa-solid fa-heart-pulse" aria-hidden="true"></i></div>
+                        <div id="lives-helped-count" class="num" data-count-to="0">0</div>
+                        <div class="label">Lives Helped</div>
                     </div>
-                    <div class="text-center">
-                        <div id="event-count" class="text-3xl font-extrabold text-red-700">0</div>
-                        <div class="text-sm text-gray-600">Events This Year</div>
+                    <div class="stat-card text-center accent-amber">
+                        <div class="icon-circle-sm"><i class="fa-solid fa-calendar-days" aria-hidden="true"></i></div>
+                        <div id="event-count" class="num" data-count-to="0">0</div>
+                        <div class="label">Events This Year</div>
                     </div>
                 </div>
                 <div class="w-full md:w-auto">
                     <a href="#join"
-                        class="w-full text-center inline-block bg-red-600 text-white px-5 py-2 rounded-md font-semibold">Join
-                        Our
-                        Donor Network</a>
+                        class="w-full inline-flex items-center justify-center gap-2 bg-red-600 text-white px-5 py-2 rounded-md font-semibold">
+                        <i class="fa-solid fa-user-plus" aria-hidden="true"></i>
+                        <span>Join Our Donor Network</span>
+                    </a>
                 </div>
             </div>
         </section>
@@ -1416,22 +2093,35 @@
                         <p class="mt-1 text-sm text-gray-600 max-w-xl">Search by blood group to find nearby donors
                             quickly. Connect directly once you locate a match.</p>
                     </div>
-                    <div class="w-full md:w-auto flex flex-col items-center gap-4 bg-white p-4 rounded-xl shadow-lg">
-                        <form id="search-form" class="flex flex-col sm:flex-row items-center gap-3 w-full">
-                            <select id="search-blood" aria-label="Blood group"
-                                class="w-full sm:flex-1 h-10 px-4 rounded-lg border border-gray-100 bg-white text-gray-700">
-                                <option value="">All Donor(s)</option>
-                                <option>A+</option>
-                                <option>A-</option>
-                                <option>B+</option>
-                                <option>B-</option>
-                                <option>O+</option>
-                                <option>O-</option>
-                                <option>AB+</option>
-                                <option>AB-</option>
-                            </select>
+                    <div
+                        class="w-full md:w-auto how-card compact search-card accent-sky float-in flex flex-col items-center gap-2">
+                        <div class="flex items-center gap-2 -mb-1">
+                            <div class="icon-circle-sm"><i class="fa-solid fa-magnifying-glass text-sm"
+                                    aria-hidden="true"></i></div>
+                            <h3 class="text-base font-bold text-red-700">Find Donors</h3>
+                        </div>
+                        <form id="search-form" class="flex flex-col sm:flex-row items-center gap-2 w-full">
+                            <div class="field-icon-left w-full sm:flex-1">
+                                <i class="fi fa-solid fa-droplet" style="top: 1.15rem"></i>
+                                <select id="search-blood" aria-label="Blood group"
+                                    class="w-full h-9 pl-10 pr-3 rounded-lg border border-gray-100 bg-white text-gray-700 text-sm">
+                                    <option value="select" selected>Select donor</option>
+                                    <option value="all">All Donor(s)</option>
+                                    <option value="A+">A+</option>
+                                    <option value="A-">A-</option>
+                                    <option value="B+">B+</option>
+                                    <option value="B-">B-</option>
+                                    <option value="O+">O+</option>
+                                    <option value="O-">O-</option>
+                                    <option value="AB+">AB+</option>
+                                    <option value="AB-">AB-</option>
+                                </select>
+                            </div>
                             <button type="submit"
-                                class="w-full sm:w-auto h-10 px-6 bg-red-600 text-white rounded-lg font-semibold shadow hover:bg-red-700">Search</button>
+                                class="w-full sm:w-auto h-9 px-4 bg-red-600 text-white rounded-lg font-semibold btn-breathe hover:bg-red-700 inline-flex items-center justify-center gap-2 text-sm">
+                                <i class="fa-solid fa-magnifying-glass text-xs" aria-hidden="true"></i>
+                                <span>Search</span>
+                            </button>
                         </form>
                         <div class="w-full flex justify-center items-center">
                             <input type="checkbox" id="eligible-only"
@@ -1450,8 +2140,9 @@
         </section>
 
         <section id="join" class="py-12">
-            <div class="bg-white rounded-xl shadow-lg p-8 max-w-lg mx-auto">
-                <div class="text-center">
+            <div class="how-card gentle tint-emerald accent-emerald rounded-xl shadow-lg p-8 max-w-lg mx-auto">
+                <div class="text-center flex flex-col items-center gap-2">
+                    <div class="icon-circle"><i class="fa-solid fa-user-check text-xl" aria-hidden="true"></i></div>
                     <h2 class="text-2xl font-extrabold text-red-700">Join us as a donor</h2>
                     <p class="mt-1 text-gray-600">Register to become part of our verified donor network. Add your
                         details and
@@ -1459,7 +2150,8 @@
                 </div>
 
                 <form id="join-form" class="mt-6 grid grid-cols-1 gap-4">
-                    <div class="relative">
+                    <div class="field-icon-left">
+                        <i class="fi fa-solid fa-user"></i>
                         <input name="fullName" id="fullName" type="text" placeholder=" " required
                             class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
                         <label for="fullName"
@@ -1467,15 +2159,17 @@
                             name</label>
                     </div>
 
-                    <div class="relative">
+                    <div class="field-icon-left">
+                        <i class="fi fa-solid fa-envelope"></i>
                         <input name="email" id="email" type="email" placeholder=" " required
                             class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
                         <label for="email"
                             class="absolute left-4 top-3 text-gray-400 transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-focus:-top-3 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Email</label>
                     </div>
 
-                    <div class="flex flex-col">
+                    <div class="field-icon-left flex flex-col">
                         <label for="gender" class="text-sm text-gray-600 mb-2">Gender</label>
+                        <i class="fi fa-solid fa-venus-mars" style="top: 3.1rem"></i>
                         <select name="gender" id="gender" required
                             class="block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none">
                             <option value="">Select gender</option>
@@ -1485,7 +2179,8 @@
                         </select>
                     </div>
 
-                    <div class="relative">
+                    <div class="field-icon-left">
+                        <i class="fi fa-solid fa-phone"></i>
                         <input name="phone" id="phone" type="tel" placeholder=" " required
                             class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
                         <label for="phone"
@@ -1493,8 +2188,9 @@
                             number</label>
                     </div>
 
-                    <div class="flex flex-col">
+                    <div class="field-icon-left flex flex-col">
                         <label for="bloodGroup" class="text-sm text-gray-600 mb-2">Blood group</label>
+                        <i class="fi fa-solid fa-droplet" style="top: 3.1rem"></i>
                         <select name="bloodGroup" id="bloodGroup" required
                             class="block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none">
                             <option value="">Select group</option>
@@ -1509,7 +2205,8 @@
                         </select>
                     </div>
 
-                    <div class="relative">
+                    <div class="field-icon-left">
+                        <i class="fi fa-solid fa-location-dot"></i>
                         <input name="location" id="location" type="text" placeholder=" " required
                             class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
                         <label for="location"
@@ -1517,7 +2214,8 @@
                             Location</label>
                     </div>
 
-                    <div class="relative">
+                    <div class="field-icon-left">
+                        <i class="fi fa-solid fa-clock"></i>
                         <input name="lastDonateDate" id="lastDonateDate" type="date" placeholder=" "
                             class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
                         <label for="lastDonateDate"
@@ -1525,14 +2223,16 @@
                             blood donation</label>
                     </div>
 
-                    <div class="relative">
+                    <div class="field-icon-left">
+                        <i class="fi fa-solid fa-lock"></i>
                         <input name="password" id="password" type="password" placeholder=" " required
                             class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
                         <label for="password"
                             class="absolute left-4 top-3 text-gray-400 transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-focus:-top-3 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Password</label>
                     </div>
 
-                    <div class="relative">
+                    <div class="field-icon-left">
+                        <i class="fi fa-solid fa-lock"></i>
                         <input name="confirmPassword" id="confirmPassword" type="password" placeholder=" " required
                             class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
                         <label for="confirmPassword"
@@ -1541,7 +2241,10 @@
                     </div>
                     <div class="flex gap-3">
                         <button id="join-submit" type="submit"
-                            class="bg-red-600 text-white px-6 py-3 rounded-lg font-semibold shadow hover:bg-red-700 flex-1 md:flex-none">Register</button>
+                            class="bg-red-600 text-white px-6 py-3 rounded-lg font-semibold shadow hover:bg-red-700 flex-1 md:flex-none inline-flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-user-plus" aria-hidden="true"></i>
+                            <span>Register</span>
+                        </button>
                         <button id="join-clear" type="button"
                             class="border border-gray-300 px-4 py-3 rounded-lg flex-1 md:flex-none">Clear</button>
                     </div>
@@ -1555,243 +2258,284 @@
             <p class="mt-2 text-gray-600">Welcome, Admin! Here you can manage community events, update donor information
                 and add recent donations.</p>
 
-            <div class="mt-6 grid md:grid-cols-2 gap-6">
-                <!-- Event Management Panel -->
-                <div class="bg-white p-6 rounded-xl shadow-lg">
-                    <h3 class="text-xl font-bold text-red-600 mb-4">Event Details</h3>
-                    <form id="admin-event-form" class="grid grid-cols-1 gap-4">
-                        <input type="hidden" id="admin-event-id" name="id" />
-                        <div class="relative">
-                            <input name="title" id="event-title" type="text" placeholder=" " required
-                                class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
-                            <label for="event-title"
-                                class="absolute left-4 top-3 text-gray-400 transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-focus:-top-3 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Event
-                                Title</label>
+            <div class="mt-6 admin-tabs">
+                <button type="button" class="admin-tab active" data-tab="events"><i
+                        class="fa-solid fa-calendar-days"></i><span>Events</span></button>
+                <button type="button" class="admin-tab" data-tab="recent"><i
+                        class="fa-solid fa-hand-holding-droplet"></i><span>Recent Donor</span></button>
+                <button type="button" class="admin-tab" data-tab="members"><i
+                        class="fa-solid fa-users"></i><span>Members</span></button>
+            </div>
+
+            <div class="admin-tabpanel">
+                <!-- Events Tab -->
+                <div data-panel="events">
+                    <div class="bg-white p-6 rounded-xl shadow-lg">
+                        <h3 class="text-xl font-bold text-red-600 mb-4">Event Details</h3>
+                        <form id="admin-event-form" class="grid grid-cols-1 gap-4">
+                            <input type="hidden" id="admin-event-id" name="id" />
+                            <div class="field-icon-left">
+                                <i class="fi fa-solid fa-heading"></i>
+                                <input name="title" id="event-title" type="text" placeholder=" " required
+                                    class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
+                                <label for="event-title"
+                                    class="absolute left-4 top-3 text-gray-400 transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-focus:-top-3 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Event
+                                    Title</label>
+                            </div>
+                            <div class="field-icon-left">
+                                <i class="fi fa-solid fa-calendar-day"></i>
+                                <input name="date" id="event-date" type="date" placeholder=" " required
+                                    class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
+                                <label for="event-date"
+                                    class="absolute left-4 top-3 text-gray-400 transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-focus:-top-3 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Event
+                                    Date</label>
+                            </div>
+                            <div class="field-icon-left">
+                                <i class="fi fa-solid fa-clock"></i>
+                                <input name="time" id="event-time" type="time" placeholder=" " required
+                                    class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
+                                <label for="event-time"
+                                    class="absolute left-4 top-3 text-gray-400 transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-focus:-top-3 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Event
+                                    Time</label>
+                            </div>
+                            <div class="field-icon-left">
+                                <i class="fi fa-solid fa-location-dot"></i>
+                                <input name="location" id="event-location" type="text" placeholder=" " required
+                                    class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
+                                <label for="event-location"
+                                    class="absolute left-4 top-3 text-gray-400 transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-focus:-top-3 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Location</label>
+                            </div>
+                            <div class="field-icon-left">
+                                <i class="fi fa-solid fa-align-left"></i>
+                                <textarea name="description" id="event-description" placeholder=" " required rows="2"
+                                    class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none"></textarea>
+                                <label for="event-description"
+                                    class="absolute left-4 top-3 text-gray-400 transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-focus:-top-3 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Description</label>
+                            </div>
+                            <div class="flex gap-3">
+                                <button type="submit"
+                                    class="bg-red-600 text-white px-6 py-3 rounded-lg font-semibold shadow hover:bg-red-700 flex-1">Save
+                                    Event</button>
+                                <button type="button" id="clear-event-btn"
+                                    class="border border-gray-300 px-4 py-3 rounded-lg flex-1">Clear</button>
+                            </div>
+                        </form>
+                        <div id="admin-events-list" class="mt-6 flex flex-col gap-4">
                         </div>
-                        <div class="relative">
-                            <input name="date" id="event-date" type="date" placeholder=" " required
-                                class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
-                            <label for="event-date"
-                                class="absolute left-4 top-3 text-gray-400 transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-focus:-top-3 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Event
-                                Date</label>
-                        </div>
-                        <div class="relative">
-                            <input name="time" id="event-time" type="time" placeholder=" " required
-                                class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
-                            <label for="event-time"
-                                class="absolute left-4 top-3 text-gray-400 transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-focus:-top-3 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Event
-                                Time</label>
-                        </div>
-                        <div class="relative">
-                            <input name="location" id="event-location" type="text" placeholder=" " required
-                                class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
-                            <label for="event-location"
-                                class="absolute left-4 top-3 text-gray-400 transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-focus:-top-3 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Location</label>
-                        </div>
-                        <div class="relative">
-                            <textarea name="description" id="event-description" placeholder=" " required rows="2"
-                                class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none"></textarea>
-                            <label for="event-description"
-                                class="absolute left-4 top-3 text-gray-400 transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-focus:-top-3 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Description</label>
-                        </div>
-                        <div class="flex gap-3">
-                            <button type="submit"
-                                class="bg-red-600 text-white px-6 py-3 rounded-lg font-semibold shadow hover:bg-red-700 flex-1">Save
-                                Event</button>
-                            <button type="button" id="clear-event-btn"
-                                class="border border-gray-300 px-4 py-3 rounded-lg flex-1">Clear</button>
-                        </div>
-                    </form>
-                    <div id="admin-events-list" class="mt-6 flex flex-col gap-4">
                     </div>
                 </div>
 
-                <!-- Member Management Panel -->
-                <div class="bg-white p-6 rounded-xl shadow-lg">
-                    <h3 class="text-xl font-bold text-red-600 mb-4">Recent Donor</h3>
-                    <form id="admin-recent-donor-form" class="grid grid-cols-1 gap-4 mb-6">
-                        <div class="relative">
-                            <input name="donor-name" id="donor-name" type="text" placeholder=" " required
-                                class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
-                            <label for="donor-name"
-                                class="absolute left-4 top-3 text-gray-400 transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-focus:-top-3 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Donor
-                                Name</label>
-                        </div>
-                        <div class="flex flex-col">
-                            <label for="donor-blood-group" class="text-sm text-gray-600 mb-2">Blood Group</label>
-                            <select name="donor-blood-group" id="donor-blood-group" required
-                                class="block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none">
-                                <option value="">Select group</option>
-                                <option>A+</option>
-                                <option>A-</option>
-                                <option>B+</option>
-                                <option>B-</option>
-                                <option>O+</option>
-                                <option>O-</option>
-                                <option>AB+</option>
-                                <option>AB-</option>
-                            </select>
-                        </div>
-                        <div class="relative">
-                            <input name="donor-location" id="donor-location" type="text" placeholder=" " required
-                                class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
-                            <label for="donor-location"
-                                class="absolute left-4 top-3 text-gray-400 transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-focus:-top-3 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Location</label>
-                        </div>
-                        <div class="flex flex-col">
-                            <label for="donor-department"
-                                class="text-sm font-medium text-red-700 mb-1">Department</label>
-                            <input name="donor-department" id="donor-department" type="text"
-                                class="block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
-                        </div>
-                        <div class="flex flex-col">
-                            <label for="donor-batch" class="text-sm font-medium text-red-700 mb-1">Batch</label>
-                            <input name="donor-batch" id="donor-batch" type="text"
-                                class="block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
-                        </div>
-                        <div class="flex flex-col">
-                            <label for="donor-age" class="text-sm font-medium text-red-700 mb-1">Age</label>
-                            <input name="donor-age" id="donor-age" type="number"
-                                class="block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
-                        </div>
-                        <div class="flex flex-col">
-                            <label for="donor-weight" class="text-sm font-medium text-red-700 mb-1">Weight (kg)</label>
-                            <input name="donor-weight" id="donor-weight" type="number"
-                                class="block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
-                        </div>
-                        <div class="relative">
-                            <input name="donation-date" id="donation-date" type="date" placeholder=" " required
-                                class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
-                            <label for="donation-date"
-                                class="absolute left-4 top-3 text-gray-400 transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-focus:-top-3 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Donation
-                                Date</label>
-                        </div>
-                        <button type="submit"
-                            class="bg-red-600 text-white px-6 py-3 rounded-lg font-semibold shadow hover:bg-red-700">Add
-                            Last Donor Info</button>
-                    </form>
-                    <hr class="my-6 border-t-2 border-gray-100" />
-                    <h3 class="text-xl font-bold text-red-600 mb-4">Member Management</h3>
-                    <form id="admin-member-form" class="grid grid-cols-1 gap-4">
-                        <input type="hidden" id="admin-member-id" name="id" />
-                        <div class="relative">
-                            <input name="fullName" id="admin-member-fullname" type="text" placeholder=" " required
-                                class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
-                            <label for="admin-member-fullname"
-                                class="absolute left-4 top-3 text-gray-400 transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-focus:-top-3 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Full
-                                name</label>
-                        </div>
-                        <div class="relative">
-                            <input name="phone" id="admin-member-phone" type="tel" placeholder=" " required
-                                class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
-                            <label for="admin-member-phone"
-                                class="absolute left-4 top-3 text-gray-400 transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-focus:-top-3 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Phone
-                                number</label>
-                        </div>
-                        <div class="flex items-center gap-2">
-                            <input type="checkbox" id="admin-member-hide-phone" name="isPhoneHidden"
-                                class="h-4 w-4 text-red-600 border-gray-300 rounded focus:ring-red-500">
-                            <label for="admin-member-hide-phone" class="text-sm text-gray-700 font-medium">Hide phone
-                                number from public</label>
-                        </div>
-                        <div class="relative">
-                            <textarea name="publicComment" id="admin-member-comment"
-                                placeholder="Optional comment for public" rows="2"
-                                class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none"></textarea>
-                            <label for="admin-member-comment"
-                                class="absolute left-4 top-3 text-gray-400 transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-focus:-top-3 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Public
-                                comment (e.g., "Contact admin")</label>
-                        </div>
-                        <div class="flex flex-col">
-                            <label for="admin-member-bloodGroup" class="text-sm text-gray-600 mb-2">Blood group</label>
-                            <select name="bloodGroup" id="admin-member-bloodGroup" required
-                                class="block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none">
-                                <option value="">Select group</option>
-                                <option>A+</option>
-                                <option>A-</option>
-                                <option>B+</option>
-                                <option>B-</option>
-                                <option>O+</option>
-                                <option>O-</option>
-                                <option>AB+</option>
-                                <option>AB-</option>
-                            </select>
-                        </div>
-                        <div class="relative">
-                            <input name="location" id="admin-member-location" type="text" placeholder=" " required
-                                class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
-                            <label for="admin-member-location"
-                                class="absolute left-4 top-3 text-gray-400 transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-focus:-top-3 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Current
-                                Location</label>
-                        </div>
-                        <div class="relative">
-                            <input name="lastDonateDate" id="admin-member-lastDonateDate" type="date" placeholder=" "
-                                class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
-                            <label for="admin-member-lastDonateDate"
-                                class="absolute left-4 top-3 text-gray-400 transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-focus:-top-3 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Last
-                                blood donation</label>
-                        </div>
-                        <div class="flex gap-3 mt-4">
+                <!-- Recent Donor Tab -->
+                <div data-panel="recent" class="hidden">
+                    <div class="bg-white p-6 rounded-xl shadow-lg">
+                        <h3 class="text-xl font-bold text-red-600 mb-4">Recent Donor</h3>
+                        <form id="admin-recent-donor-form" class="grid grid-cols-1 gap-4 mb-6">
+                            <div class="field-icon-left">
+                                <i class="fi fa-solid fa-user"></i>
+                                <input name="donor-name" id="donor-name" type="text" placeholder=" " required
+                                    class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
+                                <label for="donor-name"
+                                    class="absolute left-4 top-3 text-gray-400 transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-focus:-top-3 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Donor
+                                    Name</label>
+                            </div>
+                            <div class="field-icon-left flex flex-col">
+                                <label for="donor-blood-group" class="text-sm text-gray-600 mb-2">Blood Group</label>
+                                <i class="fi fa-solid fa-droplet" style="top: 3.1rem"></i>
+                                <select name="donor-blood-group" id="donor-blood-group" required
+                                    class="block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none">
+                                    <option value="">Select group</option>
+                                    <option>A+</option>
+                                    <option>A-</option>
+                                    <option>B+</option>
+                                    <option>B-</option>
+                                    <option>O+</option>
+                                    <option>O-</option>
+                                    <option>AB+</option>
+                                    <option>AB-</option>
+                                </select>
+                            </div>
+                            <div class="field-icon-left">
+                                <i class="fi fa-solid fa-location-dot"></i>
+                                <input name="donor-location" id="donor-location" type="text" placeholder=" " required
+                                    class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
+                                <label for="donor-location"
+                                    class="absolute left-4 top-3 text-gray-400 transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-focus:-top-3 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Location</label>
+                            </div>
+                            <div class="field-icon-left flex flex-col">
+                                <label for="donor-department"
+                                    class="text-sm font-medium text-red-700 mb-1">Department</label>
+                                <i class="fi fa-solid fa-building-columns" style="top: 3.1rem"></i>
+                                <input name="donor-department" id="donor-department" type="text"
+                                    class="block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
+                            </div>
+                            <div class="field-icon-left flex flex-col">
+                                <label for="donor-batch" class="text-sm font-medium text-red-700 mb-1">Batch</label>
+                                <i class="fi fa-solid fa-layer-group" style="top: 3.1rem"></i>
+                                <input name="donor-batch" id="donor-batch" type="text"
+                                    class="block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
+                            </div>
+                            <div class="field-icon-left flex flex-col">
+                                <label for="donor-age" class="text-sm font-medium text-red-700 mb-1">Age</label>
+                                <i class="fi fa-solid fa-person" style="top: 3.1rem"></i>
+                                <input name="donor-age" id="donor-age" type="number"
+                                    class="block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
+                            </div>
+                            <div class="field-icon-left flex flex-col">
+                                <label for="donor-weight" class="text-sm font-medium text-red-700 mb-1">Weight
+                                    (kg)</label>
+                                <i class="fi fa-solid fa-weight-scale" style="top: 3.1rem"></i>
+                                <input name="donor-weight" id="donor-weight" type="number"
+                                    class="block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
+                            </div>
+                            <div class="field-icon-left">
+                                <i class="fi fa-solid fa-calendar-day"></i>
+                                <input name="donation-date" id="donation-date" type="date" placeholder=" " required
+                                    class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
+                                <label for="donation-date"
+                                    class="absolute left-4 top-3 text-gray-400 transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-focus:-top-3 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Donation
+                                    Date</label>
+                            </div>
                             <button type="submit"
-                                class="bg-red-600 text-white px-6 py-3 rounded-lg font-semibold shadow hover:bg-red-700 flex-1">Save
-                                Changes</button>
-                            <button type="button" id="clear-member-btn"
-                                class="border border-gray-300 px-4 py-3 rounded-lg flex-1">Clear</button>
+                                class="bg-red-600 text-white px-6 py-3 rounded-lg font-semibold shadow hover:bg-red-700">Add
+                                Last Donor Info</button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Members Tab -->
+                <div data-panel="members" class="hidden">
+                    <div class="bg-white p-6 rounded-xl shadow-lg">
+                        <h3 class="text-xl font-bold text-red-600 mb-4">Member Management</h3>
+                        <form id="admin-member-form" class="grid grid-cols-1 gap-4">
+                            <input type="hidden" id="admin-member-id" name="id" />
+                            <div class="field-icon-left">
+                                <i class="fi fa-solid fa-user"></i>
+                                <input name="fullName" id="admin-member-fullname" type="text" placeholder=" " required
+                                    class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
+                                <label for="admin-member-fullname"
+                                    class="absolute left-4 top-3 text-gray-400 transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-focus:-top-3 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Full
+                                    name</label>
+                            </div>
+                            <div class="field-icon-left">
+                                <i class="fi fa-solid fa-phone"></i>
+                                <input name="phone" id="admin-member-phone" type="tel" placeholder=" " required
+                                    class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
+                                <label for="admin-member-phone"
+                                    class="absolute left-4 top-3 text-gray-400 transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-focus:-top-3 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Phone
+                                    number</label>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <input type="checkbox" id="admin-member-hide-phone" name="isPhoneHidden"
+                                    class="h-4 w-4 text-red-600 border-gray-300 rounded focus:ring-red-500">
+                                <label for="admin-member-hide-phone" class="text-sm text-gray-700 font-medium">Hide
+                                    phone
+                                    number from public</label>
+                            </div>
+                            <div class="field-icon-left">
+                                <i class="fi fa-solid fa-comment-dots"></i>
+                                <textarea name="publicComment" id="admin-member-comment"
+                                    placeholder="Optional comment for public" rows="2"
+                                    class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none"></textarea>
+                                <label for="admin-member-comment"
+                                    class="absolute left-4 top-3 text-gray-400 transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-focus:-top-3 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Public
+                                    comment (e.g., "Contact admin")</label>
+                            </div>
+                            <div class="field-icon-left flex flex-col">
+                                <label for="admin-member-bloodGroup" class="text-sm text-gray-600 mb-2">Blood
+                                    group</label>
+                                <i class="fi fa-solid fa-droplet" style="top: 3.1rem"></i>
+                                <select name="bloodGroup" id="admin-member-bloodGroup" required
+                                    class="block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none">
+                                    <option value="">Select group</option>
+                                    <option>A+</option>
+                                    <option>A-</option>
+                                    <option>B+</option>
+                                    <option>B-</option>
+                                    <option>O+</option>
+                                    <option>O-</option>
+                                    <option>AB+</option>
+                                    <option>AB-</option>
+                                </select>
+                            </div>
+                            <div class="field-icon-left">
+                                <i class="fi fa-solid fa-location-dot"></i>
+                                <input name="location" id="admin-member-location" type="text" placeholder=" " required
+                                    class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
+                                <label for="admin-member-location"
+                                    class="absolute left-4 top-3 text-gray-400 transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-focus:-top-3 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Current
+                                    Location</label>
+                            </div>
+                            <div class="field-icon-left">
+                                <i class="fi fa-solid fa-calendar-day"></i>
+                                <input name="lastDonateDate" id="admin-member-lastDonateDate" type="date"
+                                    placeholder=" "
+                                    class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
+                                <label for="admin-member-lastDonateDate"
+                                    class="absolute left-4 top-3 text-gray-400 transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-focus:-top-3 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Last
+                                    blood donation</label>
+                            </div>
+                            <div class="flex gap-3 mt-4">
+                                <button type="submit"
+                                    class="bg-red-600 text-white px-6 py-3 rounded-lg font-semibold shadow hover:bg-red-700 flex-1">Save
+                                    Changes</button>
+                                <button type="button" id="clear-member-btn"
+                                    class="border border-gray-300 px-4 py-3 rounded-lg flex-1">Clear</button>
+                            </div>
+                        </form>
+                        <div id="admin-members-list" class="mt-6 flex flex-col gap-4">
                         </div>
-                    </form>
-                    <div id="admin-members-list" class="mt-6 flex flex-col gap-4">
                     </div>
                 </div>
             </div>
         </section>
 
         <section id="contact" class="py-12">
-            <div class="bg-white p-8 rounded-lg shadow text-center max-w-3xl mx-auto">
+            <div
+                class="how-card gentle tint-rose accent-rose rounded-xl shadow-lg p-10 max-w-3xl mx-auto text-center float-in">
                 <h2 class="text-2xl font-extrabold text-red-700">Contact</h2>
-                <p class="mt-3 text-gray-700">Have questions or want to get involved? Reach out to us.</p>
+                <p class="mt-3 text-gray-600">Have questions or want to get involved? Reach out to us.</p>
                 <div class="mt-6 flex flex-col sm:flex-row sm:items-center sm:justify-center gap-4">
                     <a href="mailto:bdc@bloodlife.org"
-                        class="flex items-center gap-3 px-4 py-3 rounded-md bg-red-50 hover:bg-red-100">
-                        <svg class="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M16 12H8m8 0a4 4 0 11-8 0 4 4 0 018 0z" />
-                        </svg>
-                        <span class="text-sm font-medium text-red-700">bdc@bloodlife.org</span>
+                        class="contact-chip inline-flex items-center gap-3 px-5 py-3 rounded-xl border border-red-100 bg-red-50/70 text-red-800 shadow-sm hover:shadow-md">
+                        <span class="icon-circle-sm"><i class="fa-solid fa-at" aria-hidden="true"></i></span>
+                        <span class="text-sm font-medium">bdc@bloodlife.org</span>
                     </a>
                     <a href="tel:+8801712460423"
-                        class="flex items-center gap-3 px-4 py-3 rounded-md bg-red-50 hover:bg-red-100">
-                        <svg class="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M3 5a2 2 0 012-2h2.5a1 1 0 01.95.684l1 3a1 1 0 01-.217.982L7.5 10.5a11 11 0 005 5l2.834-2.834a1 1 0 01.982-.217l3 1A1 1 0 0121 16.5V19a2 2 0 01-2 2H17c-8.284 0-15-6.716-15-15V5z" />
-                        </svg>
-                        <span class="text-sm font-medium text-red-700">+8801712460423</span>
+                        class="contact-chip inline-flex items-center gap-3 px-5 py-3 rounded-xl border border-red-100 bg-red-50/70 text-red-800 shadow-sm hover:shadow-md">
+                        <span class="icon-circle-sm"><i class="fa-solid fa-phone" aria-hidden="true"></i></span>
+                        <span class="text-sm font-medium">+8801712460423</span>
                     </a>
                 </div>
                 <div class="mt-6">
-                    <a href="#join" class="inline-block bg-red-600 text-white px-6 py-3 rounded-md font-semibold">Join as a Donor</a>
+                    <a href="#join"
+                        class="inline-flex items-center gap-2 bg-red-600 text-white px-6 py-3 rounded-lg font-semibold shadow hover:bg-red-700 btn-breathe">
+                        <i class="fa-solid fa-user-plus" aria-hidden="true"></i>
+                        <span>Join as a Donor</span>
+                    </a>
                 </div>
             </div>
         </section>
 
     </main>
 
-    <footer class="mt-12 bg-gray-900 text-gray-200 py-6">
-        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <p class="mb-2 text-sm">© 2025 Life is Beautiful 💜</p>
-            <div class="flex justify-center gap-3 mt-2"></div>
+    <footer
+        class="mt-16 relative text-gray-300 bg-slate-900/95 backdrop-blur rounded-t-2xl shadow-[0_-12px_40px_rgba(2,6,23,0.45)] overflow-hidden">
+        <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-red-500/60 to-transparent">
+        </div>
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center py-8">
+            <p class="mb-3 text-sm opacity-90">© 2025 Life is Beautiful 💜</p>
             <div class="flex justify-center gap-3 mt-2">
-                <a href="https://github.com/MueidShahriar" target="_blank" rel="noopener noreferrer"
-                    class="text-gray-300 hover:text-red-500 transition-colors">
-                    <i class="fab fa-github fa-lg"></i>
+                <a href="https://github.com/MueidShahriar" aria-label="GitHub" target="_blank" rel="noopener noreferrer"
+                    class="inline-flex items-center justify-center w-9 h-9 rounded-full border border-white/10 bg-white/5 hover:bg-white/10 hover:border-white/20 text-white transition shadow-sm">
+                    <i class="fab fa-github"></i>
                 </a>
-                <a href="https://www.facebook.com/mueid016" target="_blank" rel="noopener noreferrer"
-                    class="text-gray-300 hover:text-red-500 transition-colors">
-                    <i class="fab fa-facebook fa-lg"></i>
+                <a href="https://www.facebook.com/mueid016" aria-label="Facebook" target="_blank"
+                    rel="noopener noreferrer"
+                    class="inline-flex items-center justify-center w-9 h-9 rounded-full border border-white/10 bg-white/5 hover:bg-white/10 hover:border-white/20 text-white transition shadow-sm">
+                    <i class="fab fa-facebook"></i>
                 </a>
             </div>
-            <div class="max-w-6xl mx-auto px-10 sm:px-6 lg:px-8 text-center">
-                <p class="mt-6 text-sm">Developed by Md. Mueid Shahriar <br> CSE-16th, BAUET</p>
-            </div>
+            <p class="mt-5 text-sm opacity-90">Developed by Md. Mueid Shahriar<br />CSE-16th, BAUET</p>
         </div>
     </footer>
 
@@ -1808,29 +2552,43 @@
 
     <div id="login-modal" class="fixed inset-0 hidden items-center justify-center z-50">
         <div class="absolute inset-0 bg-black opacity-40"></div>
-        <div class="bg-white rounded-lg shadow-xl p-6 max-w-md mx-4 z-10">
-            <h3 class="text-lg font-bold text-red-700">Login</h3>
+        <div class="bg-white modal-panel p-6 max-w-md mx-4 z-10">
+            <div class="modal-title">
+                <span class="icon-circle-sm"><i class="fa-solid fa-right-to-bracket" aria-hidden="true"></i></span>
+                <h3 class="text-lg font-extrabold text-red-700">Login</h3>
+            </div>
             <form id="login-form" class="mt-4">
-                <div class="mb-3">
+                <div class="mb-3 field-icon-left">
                     <label for="login-email" class="block text-sm text-gray-600 mb-1">Email</label>
-                    <input id="login-email" type="email" required class="w-full rounded-lg border p-3" />
+                    <i class="fi fa-solid fa-at"></i>
+                    <input id="login-email" type="email" required class="w-full rounded-lg border-2 border-gray-100 bg-white p-3 shadow-sm focus:border-red-300 focus:outline-none" />
                 </div>
-                <div class="mb-3">
+                <div class="mb-3 field-icon-left field-icon-right">
                     <label for="login-password" class="block text-sm text-gray-600 mb-1">Password</label>
-                    <input id="login-password" type="password" required class="w-full rounded-lg border p-3" />
+                    <i class="fi fa-solid fa-key"></i>
+                    <input id="login-password" type="password" required class="w-full rounded-lg border-2 border-gray-100 bg-white p-3 shadow-sm focus:border-red-300 focus:outline-none" />
+                    <button type="button" id="toggle-password" aria-label="Show password" title="Show password" class="fr">
+                        <i class="fa-solid fa-eye"></i>
+                    </button>
                 </div>
                 <div class="flex items-center justify-end gap-4 mt-2">
                     <div class="flex gap-2 items-center">
                         <button type="submit"
-                            class="bg-red-600 text-white px-4 py-2 rounded font-semibold shadow hover:bg-red-700 transition">Sign
-                            in</button>
+                            class="bg-gradient-to-r from-red-600 to-red-500 text-white px-4 py-2 rounded font-semibold shadow hover:from-red-700 hover:to-red-600 transition inline-flex items-center gap-2">
+                            <i class="fa-solid fa-right-to-bracket"></i>
+                            <span>Sign in</span>
+                        </button>
                         <button id="login-cancel" type="button"
-                            class="border border-gray-300 text-gray-700 px-4 py-2 rounded font-semibold shadow hover:bg-gray-100 transition">Cancel</button>
+                            class="border border-gray-300 text-gray-700 px-4 py-2 rounded font-semibold shadow hover:bg-gray-100 transition inline-flex items-center gap-2">
+                            <i class="fa-solid fa-xmark"></i>
+                            <span>Cancel</span>
+                        </button>
                     </div>
                 </div>
                 <a id="forgot-password-link" href="#"
-                    class="block text-center mt-2 text-xs text-red-700 hover:underline hover:text-red-900 transition-colors duration-200">
-                    Forgot Password?
+                    class="block text-center mt-2 text-xs text-red-700 hover:underline hover:text-red-900 transition-colors duration-200 inline-flex items-center justify-center gap-1 w-full">
+                    <i class="fa-solid fa-circle-question"></i>
+                    <span>Forgot Password?</span>
                 </a>
             </form>
         </div>
@@ -1849,14 +2607,16 @@
                 </button>
             </div>
             <form id="profile-form" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div class="relative">
+                <div class="field-icon-left">
+                    <i class="fi fa-solid fa-user"></i>
                     <input name="fullName" id="profile-fullName" type="text" placeholder=" " required
                         class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
                     <label for="profile-fullName"
                         class="absolute left-4 top-3 text-gray-400 transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-focus:-top-3 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Full
                         name</label>
                 </div>
-                <div class="relative">
+                <div class="field-icon-left">
+                    <i class="fi fa-solid fa-envelope"></i>
                     <input name="email" id="profile-email" type="email" placeholder=" " required readonly
                         class="peer block w-full rounded-lg border-2 border-gray-100 bg-gray-100 cursor-not-allowed p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
                     <label for="profile-email" class="absolute left-4 top-3 text-gray-400 transition-all 
@@ -1866,15 +2626,17 @@
                         pointer-events-none bg-gray-100 px-1"> Email (cannot be changed)
                     </label>
                 </div>
-                <div class="relative">
+                <div class="field-icon-left">
+                    <i class="fi fa-solid fa-phone"></i>
                     <input name="phone" id="profile-phone" type="tel" placeholder=" " required
                         class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
                     <label for="profile-phone"
                         class="absolute left-4 top-3 text-gray-400 transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-focus:-top-3 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Phone
                         number</label>
                 </div>
-                <div class="flex flex-col">
+                <div class="field-icon-left flex flex-col">
                     <label for="profile-bloodGroup" class="text-sm text-gray-600 mb-2">Blood group</label>
+                    <i class="fi fa-solid fa-droplet" style="top: 3.1rem"></i>
                     <select name="bloodGroup" id="profile-bloodGroup" required
                         class="block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none">
                         <option value="">Select group</option>
@@ -1888,21 +2650,24 @@
                         <option>AB-</option>
                     </select>
                 </div>
-                <div class="relative">
+                <div class="field-icon-left">
+                    <i class="fi fa-solid fa-location-dot"></i>
                     <input name="location" id="profile-location" type="text" placeholder=" " required
                         class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
                     <label for="profile-location"
                         class="absolute left-4 top-3 text-gray-400 transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-focus:-top-3 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Current
                         Location</label>
                 </div>
-                <div class="relative">
+                <div class="field-icon-left">
+                    <i class="fi fa-solid fa-calendar-day"></i>
                     <input name="lastDonateDate" id="profile-lastDonateDate" type="date" placeholder=" "
                         class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
                     <label for="profile-lastDonateDate"
                         class="absolute left-4 top-3 text-gray-400 transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-focus:-top-3 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Last
                         blood donation</label>
                 </div>
-                <div class="relative md:col-span-2">
+                <div class="field-icon-left md:col-span-2">
+                    <i class="fi fa-solid fa-note-sticky"></i>
                     <textarea name="notes" id="profile-notes" placeholder=" " rows="2"
                         class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none"></textarea>
                     <label for="profile-notes"
@@ -1957,7 +2722,5 @@
         </a>
     </div>
 </body>
-    
+
 </html>
-
-
