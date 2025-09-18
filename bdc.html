@@ -421,7 +421,8 @@
 
         @media (min-width:640px) {
             .info-list li {
-                justify-content: flex-start;
+                /* keep centered alignment on larger screens as well */
+                justify-content: center;
             }
         }
 
@@ -557,31 +558,133 @@
         }
 
         /* Login modal UI tweaks */
-        #login-modal .modal-panel { border-radius: 14px; box-shadow: 0 20px 60px rgba(15,23,42,.16); }
-        #login-modal .modal-title { display: flex; align-items: center; gap: .6rem; }
-        .field-icon-right { position: relative; }
-        .field-icon-right .fr { position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: #9ca3af; cursor: pointer; }
-        .field-icon-right input { padding-right: 2.5rem !important; }
-    /* Center and color icons nicely inside login modal fields */
-    #login-modal .field-icon-left { position: relative; }
-    #login-modal .field-icon-left .fi { top: 50% !important; transform: translateY(-50%); color: #9ca3af; }
-    #login-modal .field-icon-left:focus-within .fi { color: var(--red-600); }
-    #login-modal .field-icon-right:focus-within .fr { color: var(--red-600); }
+        #login-modal .modal-panel {
+            border-radius: 14px;
+            box-shadow: 0 20px 60px rgba(15, 23, 42, .16);
+        }
+
+        #login-modal .modal-title {
+            display: flex;
+            align-items: center;
+            gap: .6rem;
+        }
+
+        .field-icon-right {
+            position: relative;
+        }
+
+        .field-icon-right .fr {
+            position: absolute;
+            right: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #9ca3af;
+            cursor: pointer;
+        }
+
+        .field-icon-right input {
+            padding-right: 2.5rem !important;
+        }
+
+        /* Center and color icons nicely inside login modal fields */
+        #login-modal .field-icon-left {
+            position: relative;
+        }
+
+        #login-modal .field-icon-left .fi {
+            top: 50% !important;
+            transform: translateY(-50%);
+            color: #9ca3af;
+        }
+
+        #login-modal .field-icon-left:focus-within .fi {
+            color: var(--red-600);
+        }
+
+        #login-modal .field-icon-right:focus-within .fr {
+            color: var(--red-600);
+        }
 
         /* Admin-only navbar theme */
-        body.admin-mode header { background: linear-gradient(90deg, rgba(99,102,241,0.95), rgba(79,70,229,0.95)) !important; color: #fff; }
-        body.admin-mode header a, body.admin-mode header button { color: #fff !important; }
-        body.admin-mode header .text-red-700 { color: #fff !important; }
-        body.admin-mode header .hover\:bg-red-50:hover { background-color: rgba(255,255,255,0.10) !important; }
-        body.admin-mode header .bg-red-600 { background-color: #6366f1 !important; }
-        body.admin-mode header .hover\:bg-red-700:hover { background-color: #4f46e5 !important; }
-        body.admin-mode #mobile-menu { background: linear-gradient(90deg, rgba(99,102,241,0.95), rgba(79,70,229,0.95)) !important; }
-        body.admin-mode #mobile-menu a, body.admin-mode #mobile-login-btn { color: #fff !important; }
-        body.admin-mode #mobile-menu a:hover { background-color: rgba(255,255,255,0.10) !important; }
-    /* Hide Join section for admin view */
-    body.admin-mode section#join { display: none !important; }
-    /* Hide Contact section for admin view */
-    body.admin-mode section#contact { display: none !important; }
+        body.admin-mode header {
+            background: linear-gradient(90deg, rgba(99, 102, 241, 0.95), rgba(79, 70, 229, 0.95)) !important;
+            color: #fff;
+        }
+
+        body.admin-mode header a,
+        body.admin-mode header button {
+            color: #fff !important;
+        }
+
+        body.admin-mode header .text-red-700 {
+            color: #fff !important;
+        }
+
+        body.admin-mode header .hover\:bg-red-50:hover {
+            background-color: rgba(255, 255, 255, 0.10) !important;
+        }
+
+        body.admin-mode header .bg-red-600 {
+            background-color: #6366f1 !important;
+        }
+
+        body.admin-mode header .hover\:bg-red-700:hover {
+            background-color: #4f46e5 !important;
+        }
+
+        body.admin-mode #mobile-menu {
+            background: linear-gradient(90deg, rgba(99, 102, 241, 0.95), rgba(79, 70, 229, 0.95)) !important;
+        }
+
+        body.admin-mode #mobile-menu a,
+        body.admin-mode #mobile-login-btn {
+            color: #fff !important;
+        }
+
+        body.admin-mode #mobile-menu a:hover {
+            background-color: rgba(255, 255, 255, 0.10) !important;
+        }
+
+        /* Hide About, Join, and Search links in admin mode */
+        body.admin-mode #nav-about-link,
+        body.admin-mode #mobile-about-link,
+        body.admin-mode #nav-join-link,
+        body.admin-mode #mobile-join-link,
+        body.admin-mode #nav-search-link,
+        body.admin-mode #mobile-search-link,
+        body.admin-mode #nav-events-link,
+        body.admin-mode #mobile-events-link {
+            display: none !important;
+        }
+
+        /* Hide About/Join/Contact sections for admin view */
+        body.admin-mode section#about {
+            display: none !important;
+        }
+
+        body.admin-mode section#hero {
+            display: none !important;
+        }
+
+        body.admin-mode section#how {
+            display: none !important;
+        }
+
+        body.admin-mode section#recent-donor {
+            display: none !important;
+        }
+
+        body.admin-mode section#events {
+            display: none !important;
+        }
+
+        body.admin-mode section#join {
+            display: none !important;
+        }
+
+        body.admin-mode section#contact {
+            display: none !important;
+        }
 
         @media (max-width:768px) {
             .stats-panel {
@@ -599,9 +702,20 @@
         }
 
         /* Sticky footer layout (footer at page end, not fixed) */
-        body { display: flex; flex-direction: column; min-height: 100vh; }
-        main { flex: 1 0 auto; padding-top: var(--header-height); }
-        footer { flex-shrink: 0; }
+        body {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        main {
+            flex: 1 0 auto;
+            padding-top: var(--header-height);
+        }
+
+        footer {
+            flex-shrink: 0;
+        }
 
         /* Float-In animation for scroll reveal */
         .float-in {
@@ -615,6 +729,14 @@
         .float-in.is-visible {
             animation: float-in 2400ms cubic-bezier(.16, 1, .3, 1) forwards;
             animation-delay: var(--delay, 0ms);
+        }
+
+        /* Instantly visible state (no animation), used on scroll up */
+        .float-in.instant-visible {
+            opacity: 1 !important;
+            transform: translateY(0) scale(1.0) !important;
+            animation: none !important;
+            transition: none !important;
         }
 
         .float-in.is-out-up {
@@ -991,11 +1113,12 @@
                 const itemClass = index === 0 ? 'carousel-item active' : 'carousel-item';
                 const carouselItemHTML = `
                     <div class="${itemClass}">
-                        <div class="recent-card relative bg-white p-6 rounded-xl shadow-lg mx-auto max-w-2xl text-center sm:text-left overflow-hidden">
+                        <div class="recent-card relative bg-white p-6 rounded-xl shadow-lg mx-auto max-w-2xl text-center overflow-hidden">
                             <div class="absolute top-0 left-0 h-full w-2 bg-red-600 rounded-l-xl"></div>
+                            <div class="absolute top-0 right-0 h-full w-2 bg-red-600 rounded-r-xl"></div>
                             <h3 class="text-xl font-bold text-red-700 text-center">Recent Donation</h3>
-                            <p class="mt-3 text-gray-700 text-center sm:text-left">A huge thank you to our recent donor, <span class="font-bold text-red-600">${d.name}</span>, who donated blood on <span class="font-semibold">${date}</span>.</p>
-                            <ul class="mt-4 list-none p-0 space-y-2 text-gray-700 info-list">
+                            <p class="mt-3 text-gray-700 text-center">A huge thank you to our recent donor, <span class="font-bold text-red-600">${d.name}</span>, who donated blood on <span class="font-semibold">${date}</span>.</p>
+                            <ul class="mt-4 list-none p-0 space-y-2 text-gray-700 info-list text-center">
                                 <li><i class="fa-solid fa-droplet"></i><span class="font-bold">Blood Group:</span> <span>${d.bloodGroup}</span></li>
                                 <li><i class="fa-solid fa-location-dot"></i><span class="font-bold">Location:</span> <span>${d.location}</span></li>
                                 <li><i class="fa-solid fa-building-columns"></i><span class="font-bold">Department:</span> <span>${d.department || '-'}</span></li>
@@ -1722,7 +1845,7 @@
                 });
             }
 
-            // Float-In scroll reveal for cards with directional float-out (reusable)
+            // Float-In scroll reveal for cards; always float-out downward when leaving
             const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
             let __floatIO__ = null;
             let __floatIO_lastY = window.scrollY;
@@ -1739,11 +1862,17 @@
                             entries.forEach(entry => {
                                 const scrollingDown = window.scrollY >= __floatIO_lastY;
                                 if (entry.isIntersecting) {
-                                    entry.target.classList.add('is-visible');
                                     entry.target.classList.remove('is-out-up', 'is-out-down');
+                                    if (scrollingDown) {
+                                        entry.target.classList.remove('instant-visible');
+                                        entry.target.classList.add('is-visible');
+                                    } else {
+                                        entry.target.classList.remove('is-visible');
+                                        entry.target.classList.add('instant-visible');
+                                    }
                                 } else {
-                                    entry.target.classList.remove('is-visible');
-                                    entry.target.classList.add(scrollingDown ? 'is-out-up' : 'is-out-down');
+                                    // On exit, remove visibility classes without adding any exit animation
+                                    entry.target.classList.remove('is-visible', 'instant-visible', 'is-out-up', 'is-out-down');
                                 }
                             });
                             __floatIO_lastY = window.scrollY;
@@ -1766,12 +1895,12 @@
             // Stats count-up animation
             const statNums = document.querySelectorAll('.stat-card .num');
             const fmt = (n) => n.toLocaleString();
-            const animateCountTo = (el, target, duration = 1500, startOverride = undefined) => {
+            const animateCountTo = (el, target, duration = 1200, startOverride = undefined) => {
                 const startVal = (startOverride != null)
                     ? Number(startOverride)
                     : Number(el.textContent.replace(/,/g, '') || '0');
                 const start = performance.now();
-                const ease = (t) => 1 - Math.pow(1 - t, 3); // easeOutCubic
+                const ease = (t) => 1 - Math.pow(1 - t, 3); 
                 const step = (now) => {
                     const p = Math.min(1, (now - start) / duration);
                     const val = Math.round(startVal + (target - startVal) * ease(p));
@@ -1784,7 +1913,7 @@
             window.__animateCountTo__ = animateCountTo;
 
             let statsVisible = false;
-            let statsWasVisible = false; // detect re-entry on scroll up/down
+            let statsWasVisible = false; 
             const animateAllStats = () => {
                 statNums.forEach(el => {
                     const target = Number(el.dataset.countTo || el.textContent || '0');
@@ -1800,7 +1929,6 @@
                         statsVisible = nowVisible;
                         window.__statsVisible__ = statsVisible;
                         if (becameVisible) {
-                            // Replay from 0 every time section re-enters viewport (up or down)
                             statNums.forEach(el => {
                                 const target = Number(el.dataset.countTo || el.textContent || '0');
                                 animateCountTo(el, target, 1500, 0);
@@ -1823,8 +1951,6 @@
                 __pendingCounts__.clear();
             }
 
-            // Initial render of search results after DOM is ready
-            // Handles case where donors data arrived before the search form existed
             const searchBloodEl = document.getElementById('search-blood');
             const searchResultsEl = document.getElementById('search-results');
             if (searchBloodEl && searchResultsEl && Array.isArray(donorsList)) {
@@ -1848,16 +1974,20 @@
             <div class="flex items-center gap-3">
                 <img src="image/blood-drop.png" alt="logo" class="h-10 w-10 border-red-600" />
                 <span class="text-2xl font-extrabold text-red-700 tracking-tight">Blood Donation Community</span>
-                <span id="admin-badge" class="hidden items-center gap-1 text-xs font-bold px-2 py-1 rounded bg-indigo-600 text-white shadow">Admin</span>
+                <span id="admin-badge"
+                    class="hidden items-center gap-1 text-xs font-bold px-2 py-1 rounded bg-indigo-600 text-white shadow">Admin</span>
             </div>
             <div class="hidden md:flex items-center gap-1 text-base font-medium">
-                <a href="#about" class="px-3 py-2 rounded hover:bg-red-50 text-red-700">About</a>
-                <a id="nav-how-link" href="#how" class="px-3 py-2 rounded hover:bg-red-50 text-red-700">How to Donate</a>
-                <a href="#events" class="px-3 py-2 rounded hover:bg-red-50 text-red-700">Events</a>
+                <a id="nav-about-link" href="#about" class="px-3 py-2 rounded hover:bg-red-50 text-red-700">About</a>
+                <a id="nav-how-link" href="#how" class="px-3 py-2 rounded hover:bg-red-50 text-red-700">How to
+                    Donate</a>
+                <a id="nav-events-link" href="#events" class="px-3 py-2 rounded hover:bg-red-50 text-red-700">Events</a>
                 <a id="nav-join-link" href="#join" class="px-3 py-2 rounded hover:bg-red-50 text-red-700">Join</a>
-                <a href="#search" class="px-3 py-2 rounded hover:bg-red-50 text-red-700">Search</a>
-                <a id="nav-contact-link" href="#contact" class="px-3 py-2 rounded hover:bg-red-50 text-red-700">Contact</a>
-                <a id="admin-nav-link" href="#admin-panel" class="hidden px-3 py-2 rounded hover:bg-red-50 text-red-700">Dashboard</a>
+                <a id="nav-search-link" href="#search" class="px-3 py-2 rounded hover:bg-red-50 text-red-700">Search</a>
+                <a id="nav-contact-link" href="#contact"
+                    class="px-3 py-2 rounded hover:bg-red-50 text-red-700">Contact</a>
+                <a id="admin-nav-link" href="#admin-panel"
+                    class="hidden px-3 py-2 rounded hover:bg-red-50 text-red-700">Dashboard</a>
                 <button id="login-btn"
                     class="bg-red-600 text-white px-4 py-2 rounded-lg font-semibold shadow hover:bg-red-700 transition inline-flex items-center justify-center">Profile</button>
             </div>
@@ -1873,21 +2003,21 @@
         </nav>
         <div id="mobile-menu" class="md:hidden hidden bg-white/95 shadow-lg rounded-b-xl">
             <div class="px-4 py-4 flex flex-col gap-2 text-red-700">
-                <a href="#about" class="block px-3 py-2 rounded hover:bg-red-50">About</a>
                 <a id="mobile-how-link" href="#how" class="block px-3 py-2 rounded hover:bg-red-50">How to Donate</a>
-                <a href="#events" class="block px-3 py-2 rounded hover:bg-red-50">Events</a>
+                <a id="mobile-events-link" href="#events" class="block px-3 py-2 rounded hover:bg-red-50">Events</a>
                 <a id="mobile-join-link" href="#join" class="block px-3 py-2 rounded hover:bg-red-50">Join</a>
-                <a href="#search" class="block px-3 py-2 rounded hover:bg-red-50">Search</a>
+                <a id="mobile-search-link" href="#search" class="block px-3 py-2 rounded hover:bg-red-50">Search</a>
                 <a id="mobile-contact-link" href="#contact" class="block px-3 py-2 rounded hover:bg-red-50">Contact</a>
-                <a id="admin-mobile-link" href="#admin-panel" class="hidden block px-3 py-2 rounded hover:bg-red-50">Dashboard</a>
+                <a id="admin-mobile-link" href="#admin-panel"
+                    class="hidden block px-3 py-2 rounded hover:bg-red-50">Dashboard</a>
                 <button id="mobile-login-btn"
-                    class="w-full text-left px-3 py-2 rounded hover:bg-red-50 text-red-700 font-medium">Profile</button>
+                    class="w-full text-left px-2 py-2 rounded hover:bg-red-50 text-red-700 font-medium">Profile</button>
             </div>
         </div>
     </header>
 
     <main class="max-w-6xl mx-auto px-4 sm:px-4 lg:px-6">
-        <section class="relative flex flex-col md:flex-row items-center justify-between py-12 gap-6">
+        <section id="hero" class="relative flex flex-col md:flex-row items-center justify-between pt-4 pb-12 gap-6">
             <div class="flex-1 flex flex-col items-center justify-center text-center md:items-start md:text-left">
                 <h1
                     class="text-4xl sm:text-5xl font-extrabold text-red-700 mb-4 tracking-tight break-words leading-tight">
@@ -2087,14 +2217,14 @@
 
         <section id="search" class="py-12">
             <div class="bg-gradient-to-r from-red-50 to-white p-6 rounded-xl shadow-lg">
-                <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                <div class="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
                     <div>
                         <h2 class="text-2xl font-extrabold text-red-700">Find Donors</h2>
                         <p class="mt-1 text-sm text-gray-600 max-w-xl">Search by blood group to find nearby donors
                             quickly. Connect directly once you locate a match.</p>
                     </div>
                     <div
-                        class="w-full md:w-auto how-card compact search-card accent-sky float-in flex flex-col items-center gap-2">
+                        class="w-full md:w-auto how-card compact search-card accent-sky float-in flex flex-col items-center md:items-start md:self-start gap-2">
                         <div class="flex items-center gap-2 -mb-1">
                             <div class="icon-circle-sm"><i class="fa-solid fa-magnifying-glass text-sm"
                                     aria-hidden="true"></i></div>
@@ -2561,13 +2691,16 @@
                 <div class="mb-3 field-icon-left">
                     <label for="login-email" class="block text-sm text-gray-600 mb-1">Email</label>
                     <i class="fi fa-solid fa-at"></i>
-                    <input id="login-email" type="email" required class="w-full rounded-lg border-2 border-gray-100 bg-white p-3 shadow-sm focus:border-red-300 focus:outline-none" />
+                    <input id="login-email" type="email" required
+                        class="w-full rounded-lg border-2 border-gray-100 bg-white p-3 shadow-sm focus:border-red-300 focus:outline-none" />
                 </div>
                 <div class="mb-3 field-icon-left field-icon-right">
                     <label for="login-password" class="block text-sm text-gray-600 mb-1">Password</label>
                     <i class="fi fa-solid fa-key"></i>
-                    <input id="login-password" type="password" required class="w-full rounded-lg border-2 border-gray-100 bg-white p-3 shadow-sm focus:border-red-300 focus:outline-none" />
-                    <button type="button" id="toggle-password" aria-label="Show password" title="Show password" class="fr">
+                    <input id="login-password" type="password" required
+                        class="w-full rounded-lg border-2 border-gray-100 bg-white p-3 shadow-sm focus:border-red-300 focus:outline-none" />
+                    <button type="button" id="toggle-password" aria-label="Show password" title="Show password"
+                        class="fr">
                         <i class="fa-solid fa-eye"></i>
                     </button>
                 </div>
