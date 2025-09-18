@@ -815,6 +815,13 @@
                 animation: none !important;
             }
         }
+
+        /* Public mobile: hide Contact card so footer matches admin panel bottom */
+        @media (max-width: 640px) {
+            body:not(.admin-mode) section#contact {
+                display: none !important;
+            }
+        }
     </style>
     <meta name="description"
         content="Community-driven blood donation platform. Register as a donor, search donors by blood group and location.">
