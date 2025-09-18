@@ -128,6 +128,26 @@
             transform: translateY(0)
         }
 
+        /* Safe-area aware positioning for the floating action button wrapper */
+        #fab-wrap {
+            position: fixed;
+            bottom: max(1rem, env(safe-area-inset-bottom));
+            right: max(1rem, env(safe-area-inset-right));
+        }
+        @supports not (bottom: max(1rem, 1rem)) {
+            #fab-wrap {
+                bottom: 1rem;
+                right: 1rem;
+            }
+        }
+
+        /* Add breathing room at the bottom on small screens so FAB doesn't obscure content */
+        @media (max-width: 640px) {
+            main {
+                padding-bottom: 88px;
+            }
+        }
+
         .how-card {
             background: linear-gradient(180deg, rgba(255, 255, 255, 0.9), #fff);
             border: 1px solid rgba(239, 68, 68, 0.06);
@@ -1809,17 +1829,38 @@
                 }
             });
 
-            // Back-to-top button functionality
+            // Back-to-top button functionality with footer awareness
             const backToTopBtn = document.getElementById('back-to-top');
+            const footerEl = document.querySelector('footer');
 
-            window.addEventListener('scroll', () => {
+            function updateBackToTopVisibility() {
                 if (!backToTopBtn) return;
-                if (window.scrollY > 300) {
-                    backToTopBtn.classList.add('show');
+                const beyond = window.scrollY > 300;
+                let footerVisible = false;
+                if ('IntersectionObserver' in window && footerEl) {
+                    // handled by IO below; keep simple here
                 } else {
-                    backToTopBtn.classList.remove('show');
+                    // fallback: rough check using viewport bottom
+                    const rect = footerEl?.getBoundingClientRect();
+                    footerVisible = !!rect && rect.top < window.innerHeight;
                 }
-            });
+                if (beyond && !footerVisible) backToTopBtn.classList.add('show'); else backToTopBtn?.classList.remove('show');
+            }
+
+            window.addEventListener('scroll', updateBackToTopVisibility);
+            window.addEventListener('resize', updateBackToTopVisibility);
+            updateBackToTopVisibility();
+
+            // Use IntersectionObserver to hide FAB when footer is visible
+            if ('IntersectionObserver' in window && footerEl && backToTopBtn) {
+                const fabFooterIO = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        const footerVisible = entry.isIntersecting && entry.intersectionRatio > 0.01;
+                        if (footerVisible) backToTopBtn.classList.remove('show'); else updateBackToTopVisibility();
+                    });
+                }, { threshold: [0, 0.01, 0.1] });
+                fabFooterIO.observe(footerEl);
+            }
 
             backToTopBtn?.addEventListener('click', () => {
                 window.scrollTo({
@@ -2844,8 +2885,8 @@
         </div>
     </div>
 
-    <div
-        class="fixed bottom-4 right-4 z-40 flex flex-col items-end gap-2 sm:bottom-4 sm:right-4 md:bottom-4 md:right-4">
+    <div id="fab-wrap"
+        class="z-40 flex flex-col items-end gap-2">
         <a href="#" id="back-to-top"
             class="bg-red-600 text-white w-12 h-12 rounded-full shadow-lg hover:bg-red-700 transition-all text-lg flex items-center justify-center">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
