@@ -52,19 +52,18 @@
             border-radius: 999px
         }
 
-        /* Responsive site title that truncates on very small screens */
-        .site-title {
-            display: inline-block;
-            white-space: nowrap;
-        }
+        /* Responsive site title */
+        .site-title { display: inline-block; white-space: nowrap; }
         @media (max-width: 640px) {
             .site-title {
-                max-width: 52vw;
-                overflow: hidden;
-                text-overflow: ellipsis;
-                font-size: 1.25rem; /* ~text-xl for tight headers */
+                white-space: normal;           /* allow wrapping instead of cutting */
+                max-width: 72vw;               /* more room for text */
+                overflow: visible;
+                text-overflow: clip;
+                font-size: 1.125rem;           /* ~text-lg to keep header compact */
+                line-height: 1.2;
             }
-            .header-logo { width: 2rem; height: 2rem; }
+            .header-logo { width: 1.75rem; height: 1.75rem; }
         }
 
         @keyframes floaty {
