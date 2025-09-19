@@ -52,6 +52,21 @@
             border-radius: 999px
         }
 
+        /* Responsive site title that truncates on very small screens */
+        .site-title {
+            display: inline-block;
+            white-space: nowrap;
+        }
+        @media (max-width: 640px) {
+            .site-title {
+                max-width: 52vw;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                font-size: 1.25rem; /* ~text-xl for tight headers */
+            }
+            .header-logo { width: 2rem; height: 2rem; }
+        }
+
         @keyframes floaty {
             0% {
                 transform: translateY(0)
@@ -437,12 +452,20 @@
             align-items: center;
             gap: .5rem;
             justify-content: center;
+            flex-wrap: wrap;
         }
-
         @media (min-width:640px) {
             .info-list li {
                 /* keep centered alignment on larger screens as well */
                 justify-content: center;
+            }
+        }
+        /* On small screens, show long Location value on its own line */
+        @media (max-width: 640px) {
+            .info-list li.location .value {
+                flex-basis: 100%;
+                text-align: center;
+                margin-top: 2px;
             }
         }
 
@@ -656,6 +679,20 @@
             background: linear-gradient(90deg, rgba(99, 102, 241, 0.95), rgba(79, 70, 229, 0.95)) !important;
         }
 
+        /* Admin-mode: restyle the hamburger (3-line) button */
+        body.admin-mode #menu-toggle {
+            background-color: #ffe4e6 !important; /* rose-100 */
+            color: #3b82f6 !important; /* blue-500 lines for visibility */
+            border-radius: 12px;
+            box-shadow: 0 10px 24px rgba(79, 70, 229, .25), inset 0 0 0 2px rgba(79, 70, 229, .25);
+            transition: transform .15s ease, box-shadow .2s ease, background-color .2s ease, color .2s ease;
+        }
+        body.admin-mode #menu-toggle:hover {
+            background-color: #fecdd3 !important; /* rose-200 */
+            transform: translateY(-1px);
+            box-shadow: 0 12px 28px rgba(79, 70, 229, .30), inset 0 0 0 2px rgba(79, 70, 229, .25);
+        }
+
         body.admin-mode #mobile-menu a,
         body.admin-mode #mobile-login-btn {
             color: #fff !important;
@@ -732,6 +769,9 @@
             flex: 1 0 auto;
             padding-top: var(--header-height);
         }
+
+        /* Ensure in-page anchors are not hidden behind the fixed header */
+        section { scroll-margin-top: calc(var(--header-height) + 8px); }
 
         footer {
             flex-shrink: 0;
@@ -816,12 +856,7 @@
             }
         }
 
-        /* Public mobile: hide Contact card so footer matches admin panel bottom */
-        @media (max-width: 640px) {
-            body:not(.admin-mode) section#contact {
-                display: none !important;
-            }
-        }
+        /* (Removed previous rule that hid Contact on mobile) */
     </style>
     <meta name="description"
         content="Community-driven blood donation platform. Register as a donor, search donors by blood group and location.">
@@ -1147,7 +1182,7 @@
                             <p class="mt-3 text-gray-700 text-center">A huge thank you to our recent donor, <span class="font-bold text-red-600">${d.name}</span>, who donated blood on <span class="font-semibold">${date}</span>.</p>
                             <ul class="mt-4 list-none p-0 space-y-2 text-gray-700 info-list text-center">
                                 <li><i class="fa-solid fa-droplet"></i><span class="font-bold">Blood Group:</span> <span>${d.bloodGroup}</span></li>
-                                <li><i class="fa-solid fa-location-dot"></i><span class="font-bold">Location:</span> <span>${d.location}</span></li>
+                                <li class="location"><i class="fa-solid fa-location-dot"></i><span class="font-bold">Location:</span> <span class="value">${d.location}</span></li>
                                 <li><i class="fa-solid fa-building-columns"></i><span class="font-bold">Department:</span> <span>${d.department || '-'}</span></li>
                                 <li><i class="fa-solid fa-layer-group"></i><span class="font-bold">Batch:</span> <span>${d.batch || '-'}</span></li>
                                 <li><i class="fa-solid fa-user"></i><span class="font-bold">Age:</span> <span>${d.age || '-'}</span></li>
@@ -1180,15 +1215,18 @@
             const searchForm = document.getElementById('search-form');
             if (searchForm) {
                 const blood = document.getElementById('search-blood')?.value;
-                let filtered;
-                if (!blood || blood === 'all') {
-                    filtered = donorsList;
-                } else if (blood === 'select') {
-                    filtered = [];
+                const resultsEl = document.getElementById('search-results');
+                if (blood === 'select') {
+                    if (resultsEl) resultsEl.innerHTML = '';
                 } else {
-                    filtered = donorsList.filter(d => d.bloodGroup === blood);
+                    let filtered;
+                    if (!blood || blood === 'all') {
+                        filtered = donorsList;
+                    } else {
+                        filtered = donorsList.filter(d => d.bloodGroup === blood);
+                    }
+                    renderSearchResults(filtered);
                 }
-                renderSearchResults(filtered);
             }
             if (currentUserRole === 'admin') {
                 renderAdminMembersList();
@@ -1559,6 +1597,11 @@
                 const showEligibleOnly = eligibleOnlyCheckbox?.checked;
 
                 if (!searchResults) return;
+                if (blood === 'select') {
+                    // For placeholder selection, show nothing
+                    searchResults.innerHTML = '';
+                    return;
+                }
                 searchResults.innerHTML = '<div class="text-gray-500 italic">Searching…</div>';
 
                 onValue(donorsRef, (snapshot) => {
@@ -2003,15 +2046,17 @@
             const searchResultsEl = document.getElementById('search-results');
             if (searchBloodEl && searchResultsEl && Array.isArray(donorsList)) {
                 const blood = searchBloodEl.value;
-                let filtered;
-                if (!blood || blood === 'all') {
-                    filtered = donorsList;
-                } else if (blood === 'select') {
-                    filtered = [];
+                if (blood === 'select') {
+                    searchResultsEl.innerHTML = '';
                 } else {
-                    filtered = donorsList.filter(d => d.bloodGroup === blood);
+                    let filtered;
+                    if (!blood || blood === 'all') {
+                        filtered = donorsList;
+                    } else {
+                        filtered = donorsList.filter(d => d.bloodGroup === blood);
+                    }
+                    renderSearchResults(filtered);
                 }
-                renderSearchResults(filtered);
             }
         };
     </script>
@@ -2020,8 +2065,8 @@
     <header class="fixed top-0 left-0 right-0 z-40 bg-white/90 backdrop-blur shadow-lg rounded-b-xl">
         <nav class="max-w-6xl mx-auto flex items-center justify-between px-4 py-2">
             <div class="flex items-center gap-3">
-                <img src="image/blood-drop.png" alt="logo" class="h-10 w-10 border-red-600" />
-                <span class="text-2xl font-extrabold text-red-700 tracking-tight">Blood Donation Community</span>
+                <img src="image/blood-drop.png" alt="logo" class="h-10 w-10 header-logo border-red-600" />
+                <span class="text-2xl font-extrabold text-red-700 tracking-tight site-title">Blood Donation Community</span>
                 <span id="admin-badge"
                     class="hidden items-center gap-1 text-xs font-bold px-2 py-1 rounded bg-indigo-600 text-white shadow">Admin</span>
             </div>
@@ -2059,7 +2104,7 @@
                 <a id="admin-mobile-link" href="#admin-panel"
                     class="hidden block px-3 py-2 rounded hover:bg-red-50">Dashboard</a>
                 <button id="mobile-login-btn"
-                    class="w-full text-left px-2 py-2 rounded hover:bg-red-50 text-red-700 font-medium">Profile</button>
+                    class="block text-left px-3 py-2 rounded hover:bg-red-50 text-red-700 font-medium">Login</button>
             </div>
         </div>
     </header>
@@ -2068,7 +2113,7 @@
         <section id="hero" class="relative flex flex-col md:flex-row items-center justify-between pt-4 pb-12 gap-6">
             <div class="flex-1 flex flex-col items-center justify-center text-center md:items-start md:text-left">
                 <h1
-                    class="text-4xl sm:text-5xl font-extrabold text-red-700 mb-4 tracking-tight break-words leading-tight">
+                    class="text-4xl sm:text-5xl font-extrabold text-red-700 mb-4 tracking-tight break-words leading-tight hero-title">
                     Donate Blood Save Life
                 </h1>
                 <p class="mb-8 text-lg text-gray-700 max-w-xl mx-auto md:mx-0">Be a hero in your community. Register as
@@ -2318,7 +2363,7 @@
         </section>
 
         <section id="join" class="py-12">
-            <div class="how-card gentle tint-emerald accent-emerald rounded-xl shadow-lg p-8 max-w-lg mx-auto">
+            <div class="how-card gentle tint-emerald accent-emerald rounded-xl shadow-lg p-8 max-w-lg mx-auto float-in">
                 <div class="text-center flex flex-col items-center gap-2">
                     <div class="icon-circle"><i class="fa-solid fa-user-check text-xl" aria-hidden="true"></i></div>
                     <h2 class="text-2xl font-extrabold text-red-700">Join us as a donor</h2>
