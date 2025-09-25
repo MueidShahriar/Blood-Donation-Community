@@ -701,7 +701,7 @@
             background-color: rgba(255, 255, 255, 0.10) !important;
         }
 
-        /* Hide About, Join, and Search links in admin mode */
+        /* Hide About, Join, Search, and Events links in admin mode (nav + mobile) */
         body.admin-mode #nav-about-link,
         body.admin-mode #mobile-about-link,
         body.admin-mode #nav-join-link,
@@ -871,6 +871,124 @@
         }
 
         /* (Removed previous rule that hid Contact on mobile) */
+        
+        /* --- Mobile card responsiveness (global) --- */
+        @media (max-width: 768px) {
+            /* Slightly reduce icon sizes on tablets/phones */
+            .how-card .icon-circle { width: 48px; height: 48px; }
+            .icon-circle-sm { width: 36px; height: 36px; }
+        }
+
+        @media (max-width: 640px) {
+            /* Ensure all card types take full width and have comfortable spacing */
+            .card,
+            .how-card,
+            .search-card,
+            .recent-card,
+            .donor-card {
+                width: 100%;
+                margin-inline: 0;
+                margin-bottom: 0.75rem;
+                padding: clamp(0.75rem, 2.8vw, 1rem);
+                border-radius: 12px;
+                overflow-wrap: anywhere;
+                word-break: break-word;
+            }
+
+            /* Images inside cards scale to container width */
+            .card img,
+            .recent-card img,
+            .donor-card img {
+                max-width: 100%;
+                height: auto;
+                border-radius: 10px;
+            }
+
+            /* Avatar/media size within compact cards */
+            .donor-card .avatar,
+            .recent-card .avatar {
+                width: clamp(52px, 16vw, 72px);
+                height: clamp(52px, 16vw, 72px);
+                object-fit: cover;
+                border-radius: 10px;
+            }
+
+            /* Headings scale down a bit on phones */
+            .card .title,
+            .how-card .title,
+            .search-card .title,
+            .recent-card .title,
+            .donor-card .title,
+            .card h3,
+            .how-card h3,
+            .search-card h3,
+            .recent-card h3,
+            .donor-card h3 {
+                font-size: clamp(1rem, 4.2vw, 1.15rem);
+                line-height: 1.25;
+            }
+            .card .subtitle,
+            .muted {
+                font-size: clamp(0.85rem, 3.6vw, 0.95rem);
+            }
+
+            /* Common flex content in cards stacks vertically on phones */
+            .card .flex,
+            .donor-card .flex,
+            .recent-card .flex {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.5rem;
+            }
+
+            .donor-card .meta,
+            .recent-card .meta,
+            .card .meta {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 0.35rem 0.5rem;
+            }
+
+            .card .btn-group,
+            .donor-card .btn-group,
+            .recent-card .btn-group {
+                width: 100%;
+                display: flex;
+                gap: 0.5rem;
+                flex-wrap: wrap;
+            }
+            .card .btn-group > *,
+            .donor-card .btn-group > *,
+            .recent-card .btn-group > * {
+                flex: 1 1 auto;
+                min-width: 140px;
+            }
+            .card .btn,
+            .donor-card .btn,
+            .search-card .btn,
+            .recent-card .btn {
+                width: 100%;
+            }
+
+            .info-list { justify-content: flex-start; gap: 0.25rem 0.75rem; }
+            .info-list li { justify-content: flex-start; }
+            .info-list .value { display: block; max-width: 100%; }
+
+            .stats-panel { flex-direction: column; gap: 0.75rem; align-items: stretch; }
+            .stats-grid { flex-wrap: wrap; gap: 0.75rem; justify-content: space-between; }
+            .stat-card { min-width: 0; flex: 1 1 calc(50% - 0.75rem); padding: 0.5rem 0.75rem; }
+            .stat-card .num { font-size: clamp(1.4rem, 8vw, 1.8rem); }
+
+            [class*="grid-cols-4"],
+            [class*="grid-cols-3"],
+            [class*="grid-cols-2"] {
+                grid-template-columns: 1fr !important;
+            }
+        }
+
+        @media (max-width: 360px) {
+            .stat-card { flex: 1 1 100%; }
+        }
     </style>
     <meta name="description"
         content="Community-driven blood donation platform. Register as a donor, search donors by blood group and location.">
@@ -882,7 +1000,6 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
     <script>
-        // Prefer compact view on small mobile screens (~75% zoom equivalent)
         (function () {
             const vp = document.querySelector('meta[name="viewport"]');
             if (!vp) return;
@@ -1248,15 +1365,24 @@
             const searchForm = document.getElementById('search-form');
             if (searchForm) {
                 const blood = document.getElementById('search-blood')?.value;
+                const eligibleOnly = document.getElementById('eligible-only')?.checked;
                 const resultsEl = document.getElementById('search-results');
                 if (blood === 'select') {
                     if (resultsEl) resultsEl.innerHTML = '';
                 } else {
-                    let filtered;
-                    if (!blood || blood === 'all') {
-                        filtered = donorsList;
-                    } else {
-                        filtered = donorsList.filter(d => d.bloodGroup === blood);
+                    let filtered = donorsList;
+                    if (blood && blood !== 'all' && blood !== 'select') {
+                        filtered = filtered.filter(d => d.bloodGroup === blood);
+                    }
+                    if (eligibleOnly) {
+                        const isEligible = (lastDonationDate) => {
+                            if (!lastDonationDate) return true;
+                            const today = new Date();
+                            const lastDonation = new Date(lastDonationDate);
+                            const threeMonthsAgo = new Date(new Date().setMonth(today.getMonth() - 3));
+                            return lastDonation <= threeMonthsAgo;
+                        };
+                        filtered = filtered.filter(d => isEligible(d.lastDonateDate));
                     }
                     renderSearchResults(filtered);
                 }
@@ -1527,25 +1653,27 @@
 
             const menuToggle = document.getElementById('menu-toggle');
             const mobileMenu = document.getElementById('mobile-menu');
+            function setMenuOpen(open) {
+                if (!mobileMenu || !menuToggle) return;
+                mobileMenu.classList.toggle('hidden', !open);
+                menuToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+            }
             menuToggle?.addEventListener('click', (ev) => {
                 if (!mobileMenu) return;
-                mobileMenu.classList.toggle('hidden');
+                const open = mobileMenu.classList.contains('hidden');
+                setMenuOpen(open);
                 ev.stopPropagation();
             });
 
             mobileMenu?.querySelectorAll('a, button').forEach(a => {
-                a.addEventListener('click', () => {
-                    closeModal(mobileMenu);
-                });
+                a.addEventListener('click', () => setMenuOpen(false));
             });
 
             document.addEventListener('click', (e) => {
-                if (!mobileMenu) return;
+                if (!mobileMenu || !menuToggle) return;
                 const isOpen = !mobileMenu.classList.contains('hidden');
-                const clickedInside = (mobileMenu && mobileMenu.contains(e.target)) || (menuToggle && menuToggle.contains(e.target));
-                if (isOpen && !clickedInside) {
-                    closeModal(mobileMenu);
-                }
+                const clickedInside = mobileMenu.contains(e.target) || menuToggle.contains(e.target);
+                if (isOpen && !clickedInside) setMenuOpen(false);
             });
 
             const joinForm = document.getElementById('join-form');
@@ -1615,52 +1743,40 @@
             const searchResults = document.getElementById('search-results');
 
             function isDonorEligible(lastDonationDate) {
-                if (!lastDonationDate) {
-                    return true;
-                }
+                if (!lastDonationDate) return true;
                 const today = new Date();
                 const lastDonation = new Date(lastDonationDate);
                 const threeMonthsAgo = new Date(new Date().setMonth(today.getMonth() - 3));
                 return lastDonation <= threeMonthsAgo;
             }
 
-            searchForm?.addEventListener('submit', (e) => {
-                e.preventDefault();
+            function runSearch() {
+                if (!searchResults) return;
                 const blood = searchBlood?.value;
                 const showEligibleOnly = eligibleOnlyCheckbox?.checked;
-
-                if (!searchResults) return;
                 if (blood === 'select') {
-                    // For placeholder selection, show nothing
                     searchResults.innerHTML = '';
                     return;
                 }
-                searchResults.innerHTML = '<div class="text-gray-500 italic">Searching…</div>';
+                let filtered = donorsList;
+                if (blood && blood !== 'all' && blood !== 'select') {
+                    filtered = filtered.filter(d => d.bloodGroup === blood);
+                }
+                if (showEligibleOnly) {
+                    filtered = filtered.filter(d => isDonorEligible(d.lastDonateDate));
+                }
+                renderSearchResults(filtered);
+            }
 
-                onValue(donorsRef, (snapshot) => {
-                    const data = snapshot.val();
-                    let filteredDonors = [];
-                    if (data && typeof data === 'object') {
-                        for (let key in data) {
-                            if (Object.prototype.hasOwnProperty.call(data, key)) {
-                                const donor = {
-                                    id: key,
-                                    ...data[key]
-                                };
-                                if (showEligibleOnly && !isDonorEligible(donor.lastDonateDate)) {
-                                    continue;
-                                }
-                                if (!blood || blood === 'all' || donor.bloodGroup === blood) {
-                                    filteredDonors.push(donor);
-                                }
-                            }
-                        }
-                    }
-                    renderSearchResults(filteredDonors);
-                }, {
-                    onlyOnce: true
-                });
+            // Submit filters locally; no extra DB read
+            searchForm?.addEventListener('submit', (e) => {
+                e.preventDefault();
+                runSearch();
             });
+
+            // Auto-refresh when filters change
+            eligibleOnlyCheckbox?.addEventListener('change', runSearch);
+            searchBlood?.addEventListener('change', runSearch);
 
             const loginBtn = document.getElementById('login-btn');
             const mobileLoginBtn = document.getElementById('mobile-login-btn');
@@ -2076,17 +2192,27 @@
             }
 
             const searchBloodEl = document.getElementById('search-blood');
+            const eligibleOnlyEl = document.getElementById('eligible-only');
             const searchResultsEl = document.getElementById('search-results');
             if (searchBloodEl && searchResultsEl && Array.isArray(donorsList)) {
                 const blood = searchBloodEl.value;
+                const showEligibleOnly = !!eligibleOnlyEl?.checked;
                 if (blood === 'select') {
                     searchResultsEl.innerHTML = '';
                 } else {
-                    let filtered;
-                    if (!blood || blood === 'all') {
-                        filtered = donorsList;
-                    } else {
-                        filtered = donorsList.filter(d => d.bloodGroup === blood);
+                    let filtered = donorsList;
+                    if (blood && blood !== 'all' && blood !== 'select') {
+                        filtered = filtered.filter(d => d.bloodGroup === blood);
+                    }
+                    if (showEligibleOnly) {
+                        const isEligible = (lastDonationDate) => {
+                            if (!lastDonationDate) return true;
+                            const today = new Date();
+                            const lastDonation = new Date(lastDonationDate);
+                            const threeMonthsAgo = new Date(new Date().setMonth(today.getMonth() - 3));
+                            return lastDonation <= threeMonthsAgo;
+                        };
+                        filtered = filtered.filter(d => isEligible(d.lastDonateDate));
                     }
                     renderSearchResults(filtered);
                 }
@@ -2105,8 +2231,7 @@
             </div>
             <div class="hidden md:flex items-center gap-1 text-base font-medium">
                 <a id="nav-about-link" href="#about" class="px-3 py-2 rounded hover:bg-red-50 text-red-700">About</a>
-                <a id="nav-how-link" href="#how" class="px-3 py-2 rounded hover:bg-red-50 text-red-700">How to
-                    Donate</a>
+                <a id="nav-how-link" href="#how" class="px-3 py-2 rounded hover:bg-red-50 text-red-700">Donation Guide</a>
                 <a id="nav-events-link" href="#events" class="px-3 py-2 rounded hover:bg-red-50 text-red-700">Events</a>
                 <a id="nav-join-link" href="#join" class="px-3 py-2 rounded hover:bg-red-50 text-red-700">Join</a>
                 <a id="nav-search-link" href="#search" class="px-3 py-2 rounded hover:bg-red-50 text-red-700">Search</a>
@@ -2119,7 +2244,7 @@
             </div>
             <div class="flex items-center gap-2">
                 <button id="menu-toggle" class="md:hidden p-2 rounded-lg bg-red-100 text-red-700 hover:bg-red-200"
-                    aria-label="Open menu">
+                    aria-label="Open menu" aria-controls="mobile-menu" aria-expanded="false" type="button">
                     <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M4 6h16M4 12h16M4 18h16" />
@@ -2129,7 +2254,7 @@
         </nav>
         <div id="mobile-menu" class="md:hidden hidden bg-white/95 shadow-lg rounded-b-xl">
             <div class="px-4 py-4 flex flex-col gap-2 text-red-700">
-                <a id="mobile-how-link" href="#how" class="block px-3 py-2 rounded hover:bg-red-50">How to Donate</a>
+                <a id="mobile-how-link" href="#how" class="block px-3 py-2 rounded hover:bg-red-50">Donation Guide</a>
                 <a id="mobile-events-link" href="#events" class="block px-3 py-2 rounded hover:bg-red-50">Events</a>
                 <a id="mobile-join-link" href="#join" class="block px-3 py-2 rounded hover:bg-red-50">Join</a>
                 <a id="mobile-search-link" href="#search" class="block px-3 py-2 rounded hover:bg-red-50">Search</a>
@@ -2373,11 +2498,6 @@
                                     <option value="AB-">AB-</option>
                                 </select>
                             </div>
-                            <button type="submit"
-                                class="w-full sm:w-auto h-9 px-4 bg-red-600 text-white rounded-lg font-semibold btn-breathe hover:bg-red-700 inline-flex items-center justify-center gap-2 text-sm">
-                                <i class="fa-solid fa-magnifying-glass text-xs" aria-hidden="true"></i>
-                                <span>Search</span>
-                            </button>
                         </form>
                         <div class="w-full flex justify-center items-center">
                             <input type="checkbox" id="eligible-only"
@@ -2417,7 +2537,7 @@
 
                     <div class="field-icon-left">
                         <i class="fi fa-solid fa-envelope"></i>
-                        <input name="email" id="email" type="email" placeholder=" " required
+                        <input name="email" id="email" type="email" placeholder=" " required autocomplete="email"
                             class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
                         <label for="email"
                             class="absolute left-4 top-3 text-gray-400 transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-focus:-top-3 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Email</label>
@@ -2437,7 +2557,7 @@
 
                     <div class="field-icon-left">
                         <i class="fi fa-solid fa-phone"></i>
-                        <input name="phone" id="phone" type="tel" placeholder=" " required
+                        <input name="phone" id="phone" type="tel" placeholder=" " required autocomplete="tel" inputmode="tel"
                             class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
                         <label for="phone"
                             class="absolute left-4 top-3 text-gray-400 transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-focus:-top-3 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Phone
@@ -2463,7 +2583,7 @@
 
                     <div class="field-icon-left">
                         <i class="fi fa-solid fa-location-dot"></i>
-                        <input name="location" id="location" type="text" placeholder=" " required
+                        <input name="location" id="location" type="text" placeholder=" " required autocomplete="address-level2"
                             class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
                         <label for="location"
                             class="absolute left-4 top-3 text-gray-400 transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-focus:-top-3 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Current
@@ -2481,7 +2601,7 @@
 
                     <div class="field-icon-left">
                         <i class="fi fa-solid fa-lock"></i>
-                        <input name="password" id="password" type="password" placeholder=" " required
+                        <input name="password" id="password" type="password" placeholder=" " required autocomplete="new-password"
                             class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
                         <label for="password"
                             class="absolute left-4 top-3 text-gray-400 transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-focus:-top-3 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Password</label>
@@ -2489,7 +2609,7 @@
 
                     <div class="field-icon-left">
                         <i class="fi fa-solid fa-lock"></i>
-                        <input name="confirmPassword" id="confirmPassword" type="password" placeholder=" " required
+                        <input name="confirmPassword" id="confirmPassword" type="password" placeholder=" " required autocomplete="new-password"
                             class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
                         <label for="confirmPassword"
                             class="absolute left-4 top-3 text-gray-400 transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-focus:-top-3 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Confirm
