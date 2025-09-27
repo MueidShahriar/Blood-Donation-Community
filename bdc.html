@@ -53,17 +53,28 @@
         }
 
         /* Responsive site title */
-        .site-title { display: inline-block; white-space: nowrap; }
+        .site-title {
+            display: inline-block;
+            white-space: nowrap;
+        }
+
         @media (max-width: 640px) {
             .site-title {
-                white-space: normal;           /* allow wrapping instead of cutting */
-                max-width: 72vw;               /* more room for text */
+                white-space: normal;
+                /* allow wrapping instead of cutting */
+                max-width: 72vw;
+                /* more room for text */
                 overflow: visible;
                 text-overflow: clip;
-                font-size: 1.125rem;           /* ~text-lg to keep header compact */
+                font-size: 1.125rem;
+                /* ~text-lg to keep header compact */
                 line-height: 1.2;
             }
-            .header-logo { width: 1.75rem; height: 1.75rem; }
+
+            .header-logo {
+                width: 1.75rem;
+                height: 1.75rem;
+            }
         }
 
         @keyframes floaty {
@@ -148,6 +159,7 @@
             bottom: max(1rem, env(safe-area-inset-bottom));
             right: max(1rem, env(safe-area-inset-right));
         }
+
         @supports not (bottom: max(1rem, 1rem)) {
             #fab-wrap {
                 bottom: 1rem;
@@ -453,18 +465,83 @@
             justify-content: center;
             flex-wrap: wrap;
         }
+
         @media (min-width:640px) {
             .info-list li {
                 /* keep centered alignment on larger screens as well */
                 justify-content: center;
             }
         }
+
         /* On small screens, show long Location value on its own line */
         @media (max-width: 640px) {
             .info-list li.location .value {
                 flex-basis: 100%;
                 text-align: center;
                 margin-top: 2px;
+            }
+
+            .recent-card,
+            .recent-card p,
+            .recent-card li,
+            .recent-card .info-list li span {
+                text-align: center;
+            }
+
+            .recent-card .info-list li {
+                flex-direction: row;
+                align-items: center;
+                justify-content: center;
+                gap: 0.5rem;
+                flex-wrap: wrap;
+            }
+
+            .donor-card .info-stack {
+                display: flex;
+                flex-direction: column;
+                gap: 0.75rem;
+                margin-top: 0.75rem;
+            }
+
+            .donor-card .info-row {
+                display: flex;
+                gap: 0.6rem;
+                align-items: flex-start;
+            }
+
+            .donor-card .info-row .icon {
+                color: #ef4444;
+                font-size: 0.95rem;
+                line-height: 1;
+                padding-top: 2px;
+            }
+
+            .donor-card .info-row .icon.icon-placeholder {
+                width: 0.95rem;
+                height: 0.95rem;
+                display: inline-block;
+            }
+
+            .donor-card .info-row .info-text {
+                font-size: 0.82rem;
+                color: #4b5563;
+                line-height: 1.25;
+            }
+
+            .donor-card .info-row .info-text .label {
+                display: block;
+                font-weight: 600;
+                color: #1f2937;
+            }
+
+            .donor-card .info-row .info-text .value {
+                display: block;
+                margin-top: 2px;
+            }
+
+            .donor-card .info-row .info-text .value a {
+                color: inherit;
+                text-decoration: none;
             }
         }
 
@@ -492,6 +569,39 @@
 
         .donor-card:hover {
             transform: translateY(-3px);
+        }
+
+        .donor-card .info-stack {
+            margin-top: 0.5rem;
+        }
+
+        .donor-card .info-row {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+        .donor-card .info-row .icon {
+            color: #ef4444;
+            font-size: 0.85rem;
+            line-height: 1;
+        }
+
+        .donor-card .info-row .info-text {
+            display: flex;
+            gap: 0.3rem;
+            align-items: baseline;
+            font-size: 0.78rem;
+            color: #4b5563;
+        }
+
+        .donor-card .info-row .info-text .label {
+            font-weight: 700;
+            color: #1f2937;
+        }
+
+        .donor-card .info-row .info-text .value {
+            display: inline;
         }
 
         /* Input prefix icons */
@@ -680,14 +790,15 @@
 
         /* Admin-mode: restyle the hamburger (3-line) button */
         body.admin-mode #menu-toggle {
-            background-color: #ffe4e6 !important; /* rose-100 */
-            color: #3b82f6 !important; /* blue-500 lines for visibility */
+            background-color: #ffe4e6 !important;
+            color: #3b82f6 !important;
             border-radius: 12px;
             box-shadow: 0 10px 24px rgba(79, 70, 229, .25), inset 0 0 0 2px rgba(79, 70, 229, .25);
             transition: transform .15s ease, box-shadow .2s ease, background-color .2s ease, color .2s ease;
         }
+
         body.admin-mode #menu-toggle:hover {
-            background-color: #fecdd3 !important; /* rose-200 */
+            background-color: #fecdd3 !important;
             transform: translateY(-1px);
             box-shadow: 0 12px 28px rgba(79, 70, 229, .30), inset 0 0 0 2px rgba(79, 70, 229, .25);
         }
@@ -701,7 +812,6 @@
             background-color: rgba(255, 255, 255, 0.10) !important;
         }
 
-        /* Hide About, Join, Search, and Events links in admin mode (nav + mobile) */
         body.admin-mode #nav-about-link,
         body.admin-mode #mobile-about-link,
         body.admin-mode #nav-join-link,
@@ -770,7 +880,9 @@
         }
 
         /* Ensure in-page anchors are not hidden behind the fixed header */
-        section { scroll-margin-top: calc(var(--header-height) + 8px); }
+        section {
+            scroll-margin-top: calc(var(--header-height) + 8px);
+        }
 
         footer {
             flex-shrink: 0;
@@ -780,16 +892,29 @@
         footer {
             padding-bottom: max(1rem, env(safe-area-inset-bottom));
         }
+
         @supports not (padding-bottom: max(1rem, 1rem)) {
-            footer { padding-bottom: 1rem; }
+            footer {
+                padding-bottom: 1rem;
+            }
         }
-        footer .footer-text { font-size: clamp(0.75rem, 1.6vw, 0.9rem); }
-        footer .socials { gap: clamp(0.5rem, 2vw, 0.9rem); }
+
+        footer .footer-text {
+            font-size: clamp(0.75rem, 1.6vw, 0.9rem);
+        }
+
+        footer .socials {
+            gap: clamp(0.5rem, 2vw, 0.9rem);
+        }
+
         footer .social-link {
             width: clamp(2.25rem, 4.8vw, 2.75rem);
             height: clamp(2.25rem, 4.8vw, 2.75rem);
         }
-        footer .social-link i { font-size: clamp(0.9rem, 2.6vw, 1.1rem); }
+
+        footer .social-link i {
+            font-size: clamp(0.9rem, 2.6vw, 1.1rem);
+        }
 
         /* Float-In animation for scroll reveal */
         .float-in {
@@ -875,11 +1000,19 @@
         /* --- Mobile card responsiveness (global) --- */
         @media (max-width: 768px) {
             /* Slightly reduce icon sizes on tablets/phones */
-            .how-card .icon-circle { width: 48px; height: 48px; }
-            .icon-circle-sm { width: 36px; height: 36px; }
+            .how-card .icon-circle {
+                width: 48px;
+                height: 48px;
+            }
+
+            .icon-circle-sm {
+                width: 36px;
+                height: 36px;
+            }
         }
 
         @media (max-width: 640px) {
+
             /* Ensure all card types take full width and have comfortable spacing */
             .card,
             .how-card,
@@ -927,6 +1060,7 @@
                 font-size: clamp(1rem, 4.2vw, 1.15rem);
                 line-height: 1.25;
             }
+
             .card .subtitle,
             .muted {
                 font-size: clamp(0.85rem, 3.6vw, 0.95rem);
@@ -957,12 +1091,14 @@
                 gap: 0.5rem;
                 flex-wrap: wrap;
             }
-            .card .btn-group > *,
-            .donor-card .btn-group > *,
-            .recent-card .btn-group > * {
+
+            .card .btn-group>*,
+            .donor-card .btn-group>*,
+            .recent-card .btn-group>* {
                 flex: 1 1 auto;
                 min-width: 140px;
             }
+
             .card .btn,
             .donor-card .btn,
             .search-card .btn,
@@ -970,14 +1106,55 @@
                 width: 100%;
             }
 
-            .info-list { justify-content: flex-start; gap: 0.25rem 0.75rem; }
-            .info-list li { justify-content: flex-start; }
-            .info-list .value { display: block; max-width: 100%; }
+            .info-list {
+                justify-content: flex-start;
+                gap: 0.25rem 0.75rem;
+            }
 
-            .stats-panel { flex-direction: column; gap: 0.75rem; align-items: stretch; }
-            .stats-grid { flex-wrap: wrap; gap: 0.75rem; justify-content: space-between; }
-            .stat-card { min-width: 0; flex: 1 1 calc(50% - 0.75rem); padding: 0.5rem 0.75rem; }
-            .stat-card .num { font-size: clamp(1.4rem, 8vw, 1.8rem); }
+            .info-list li {
+                justify-content: flex-start;
+            }
+
+            .info-list .value {
+                display: block;
+                max-width: 100%;
+            }
+
+            .recent-card .info-list,
+            .recent-card .info-list li {
+                justify-content: center;
+            }
+
+            .recent-card .info-list .value {
+                display: inline;
+            }
+
+            .recent-card .info-list li.location .value {
+                flex-basis: auto;
+                margin-top: 0;
+            }
+
+            .stats-panel {
+                flex-direction: column;
+                gap: 0.75rem;
+                align-items: stretch;
+            }
+
+            .stats-grid {
+                flex-wrap: wrap;
+                gap: 0.75rem;
+                justify-content: space-between;
+            }
+
+            .stat-card {
+                min-width: 0;
+                flex: 1 1 calc(50% - 0.75rem);
+                padding: 0.5rem 0.75rem;
+            }
+
+            .stat-card .num {
+                font-size: clamp(1.4rem, 8vw, 1.8rem);
+            }
 
             [class*="grid-cols-4"],
             [class*="grid-cols-3"],
@@ -987,7 +1164,9 @@
         }
 
         @media (max-width: 360px) {
-            .stat-card { flex: 1 1 100%; }
+            .stat-card {
+                flex: 1 1 100%;
+            }
         }
     </style>
     <meta name="description"
@@ -1000,7 +1179,7 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
     <script>
-        (function () {
+        (function() {
             const vp = document.querySelector('meta[name="viewport"]');
             if (!vp) return;
             const apply = () => {
@@ -1011,7 +1190,9 @@
                 const next = `width=device-width, initial-scale=${scale}`;
                 if (current !== next) vp.setAttribute('content', next);
             };
-            window.addEventListener('load', apply, { once: true });
+            window.addEventListener('load', apply, {
+                once: true
+            });
             window.addEventListener('resize', apply);
             window.addEventListener('orientationchange', apply);
         })();
@@ -1021,6 +1202,7 @@
         const __pendingCounts__ = new Map();
         window.__statsVisible__ = false;
         window.__animateCountTo__ = undefined;
+
         function setCountTarget(id, value) {
             const v = Number(value || 0);
             const el = document.getElementById(id);
@@ -1033,12 +1215,15 @@
                 window.__animateCountTo__(el, v);
             }
         }
+
         function setHeaderOffset() {
             const header = document.querySelector('header');
             const h = header ? header.offsetHeight : 0;
             document.documentElement.style.setProperty('--header-height', h + 'px');
         }
-        window.addEventListener('load', setHeaderOffset, { once: true });
+        window.addEventListener('load', setHeaderOffset, {
+            once: true
+        });
         window.addEventListener('resize', setHeaderOffset);
         if ('ResizeObserver' in window) {
             const ro = new ResizeObserver(() => setHeaderOffset());
@@ -1150,13 +1335,19 @@
                 } catch (err) {
                     console.error('Error in confirm handler:', err);
                 }
-            }, { once: true });
+            }, {
+                once: true
+            });
 
             openModal(modal);
         }
 
         function getDateParts(dateStr) {
-            if (!dateStr || typeof dateStr !== 'string') return { y: '', m: '', d: '' };
+            if (!dateStr || typeof dateStr !== 'string') return {
+                y: '',
+                m: '',
+                d: ''
+            };
             const parts = dateStr.split('-');
             return {
                 y: parts[0] || '',
@@ -1167,24 +1358,79 @@
 
         function renderDonorCardPublic(d) {
             const lastDate = d.lastDonateDate ? new Date(d.lastDonateDate).toLocaleDateString() : '-';
-            const contactElement = d.isPhoneHidden ?
-                `<a href="#contact" class="text-red-700 font-semibold no-underline">${d.publicComment || 'Contact to Admin'}</a>` :
-                `<div class="flex items-center space-x-1">
-                    <svg class="w-4 h-4 mr-1 text-red-500" fill="currentColor" viewBox="0 0 24 24"><path d="M3 5a2 2 0 012-2h2.5a1 1 0 01.95.684l1 3a1 1 0 01-.217.982L7.5 10.5a11 11 0 005 5l2.834-2.834a1 1 0 01.982-.217l3 1A1 1 0 0121 16.5V19a2 2 0 01-2 2H17c-8.284 0-15-6.716-15-15V5z"/></svg>
-                    <span class="text-xs text-gray-500">${d.phone}</span>
-                </div>`;
+            const contactDesktop = d.isPhoneHidden
+                ? `<div class="flex items-center gap-1">
+                        <i class="fa-solid fa-circle-info text-red-500"></i>
+                        <span class="text-xs text-red-700 font-semibold no-underline">${d.publicComment || 'Contact Admin'}</span>
+                   </div>`
+                : `<div class="flex items-center gap-1">
+                        <i class="fa-solid fa-phone text-red-500"></i>
+                        <span class="font-bold">Contact:</span>
+                        <a class="text-xs text-gray-600 underline" href="tel:${d.phone}">${d.phone}</a>
+                   </div>`;
+
+            const contactMobileRow = d.isPhoneHidden
+                ? `<div class="info-row sm:hidden">
+                        <i class="icon fa-solid fa-circle-info text-red-500"></i>
+                        <div class="info-text">
+                            <span class="value text-red-700 font-semibold">${d.publicComment || 'Contact Admin'}</span>
+                        </div>
+                   </div>`
+                : `<div class="info-row sm:hidden">
+                        <i class="icon fa-solid fa-phone text-red-500"></i>
+                        <div class="info-text">
+                            <a class="value font-semibold tracking-wide text-gray-700" href="tel:${d.phone}">${d.phone}</a>
+                        </div>
+                   </div>`;
+
             return `
                 <div class="donor-card float-in bg-white p-4 rounded-lg shadow-sm hover:shadow-md transition-all duration-300 flex flex-col sm:flex-row sm:items-center justify-between">
                     <div class="flex-1 min-w-0 mb-2 sm:mb-0">
                         <div class="font-bold text-red-700 truncate">${d.fullName}</div>
-                        <div class="text-xs text-gray-600 mt-1 flex items-center gap-1"><i class="fa-solid fa-droplet text-red-500"></i><span class="font-bold">Blood Group:</span> <span>${d.bloodGroup}</span></div>
-                        <div class="text-xs text-gray-600 flex items-center gap-1"><i class="fa-solid fa-location-dot text-red-500"></i><span class="font-bold">Current Location:</span> <span>${d.location || '—'}</span></div>
-                    </div>
-                    <div class="flex-shrink-0 flex flex-col items-end justify-end text-xs text-gray-500 mt-2 sm:mt-0 whitespace-nowrap">
-                        <div class="flex items-center space-x-1">
-                            <span class="font-bold">Last Donated:</span>&nbsp;<span>${lastDate}</span>
+                        <div class="info-stack sm:hidden">
+                            <div class="info-row">
+                                <i class="icon fa-solid fa-droplet text-red-500"></i>
+                                <div class="info-text">
+                                    <span class="label">Blood Group:</span>
+                                    <span class="value">${d.bloodGroup}</span>
+                                </div>
+                            </div>
+                            <div class="info-row sm:hidden">
+                                <i class="icon fa-solid fa-calendar-day text-red-500"></i>
+                                <div class="info-text">
+                                    <span class="label">Last Donated:</span>
+                                    <span class="value">${lastDate}</span>
+                                </div>
+                            </div>
+                            <div class="info-row">
+                                <i class="icon fa-solid fa-location-dot text-red-500"></i>
+                                <div class="info-text">
+                                    <span class="label">Current Location:</span>
+                                    <span class="value">${d.location || '—'}</span>
+                                </div>
+                            </div>
+                            ${contactMobileRow}
                         </div>
-                        ${contactElement}
+                        <div class="hidden sm:flex sm:flex-col text-xs text-gray-600 gap-1 mt-1">
+                            <div class="flex items-center gap-1">
+                                <i class="fa-solid fa-droplet text-red-500"></i>
+                                <span class="font-bold">Blood Group:</span>
+                                <span>${d.bloodGroup}</span>
+                            </div>
+                            <div class="flex items-center gap-1">
+                                <i class="fa-solid fa-location-dot text-red-500"></i>
+                                <span class="font-bold">Current Location:</span>
+                                <span>${d.location || '—'}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex-shrink-0 hidden sm:flex flex-col items-start md:items-end justify-end text-xs text-gray-500 mt-2 sm:mt-0 whitespace-nowrap">
+                        <div class="flex items-center gap-1">
+                            <i class="fa-solid fa-calendar-day text-red-500"></i>
+                            <span class="font-bold">Last Donated:</span>
+                            <span>${lastDate}</span>
+                        </div>
+                        ${contactDesktop}
                     </div>
                 </div>
             `;
@@ -1414,11 +1660,31 @@
                 publicEventsList.innerHTML = eventsList.map((e, idx) => {
                     const parts = getDateParts(e.date);
                     const accents = [
-                        { card: 'accent-rose tint-rose', month: 'text-red-700', btn: 'bg-red-600 hover:bg-red-700' },
-                        { card: 'accent-amber tint-amber', month: 'text-amber-600', btn: 'bg-amber-500 hover:bg-amber-600' },
-                        { card: 'accent-emerald tint-emerald', month: 'text-emerald-600', btn: 'bg-emerald-600 hover:bg-emerald-700' },
-                        { card: 'accent-indigo tint-indigo', month: 'text-indigo-600', btn: 'bg-indigo-600 hover:bg-indigo-700' },
-                        { card: 'accent-sky tint-sky', month: 'text-sky-600', btn: 'bg-sky-600 hover:bg-sky-700' },
+                        {
+                            card: 'accent-rose tint-rose',
+                            month: 'text-red-700',
+                            btn: 'bg-red-600 hover:bg-red-700'
+                        },
+                        {
+                            card: 'accent-amber tint-amber',
+                            month: 'text-amber-600',
+                            btn: 'bg-amber-500 hover:bg-amber-600'
+                        },
+                        {
+                            card: 'accent-emerald tint-emerald',
+                            month: 'text-emerald-600',
+                            btn: 'bg-emerald-600 hover:bg-emerald-700'
+                        },
+                        {
+                            card: 'accent-indigo tint-indigo',
+                            month: 'text-indigo-600',
+                            btn: 'bg-indigo-600 hover:bg-indigo-700'
+                        },
+                        {
+                            card: 'accent-sky tint-sky',
+                            month: 'text-sky-600',
+                            btn: 'bg-sky-600 hover:bg-sky-700'
+                        },
                     ];
                     const a = accents[idx % accents.length];
                     return `
@@ -1512,7 +1778,10 @@
                     if (currentUserRole === 'admin') {
                         adminPanel.classList.remove('hidden');
                         document.body.classList.add('admin-mode');
-                        if (adminBadge) { adminBadge.classList.remove('hidden'); adminBadge.classList.add('inline-flex'); }
+                        if (adminBadge) {
+                            adminBadge.classList.remove('hidden');
+                            adminBadge.classList.add('inline-flex');
+                        }
                         adminNavLink && adminNavLink.classList.remove('hidden');
                         adminMobileLink && adminMobileLink.classList.remove('hidden');
                         joinLink && joinLink.classList.add('hidden');
@@ -1526,7 +1795,10 @@
                     } else {
                         adminPanel.classList.add('hidden');
                         document.body.classList.remove('admin-mode');
-                        if (adminBadge) { adminBadge.classList.add('hidden'); adminBadge.classList.remove('inline-flex'); }
+                        if (adminBadge) {
+                            adminBadge.classList.add('hidden');
+                            adminBadge.classList.remove('inline-flex');
+                        }
                         adminNavLink && adminNavLink.classList.add('hidden');
                         adminMobileLink && adminMobileLink.classList.add('hidden');
                         joinLink && joinLink.classList.remove('hidden');
@@ -1601,7 +1873,10 @@
                         closeModal(modal);
                         showModalMessage('success-modal', `Failed to delete event: ${error.message}`, 'Error');
                     });
-            }, { title: 'Delete Event', message: 'Deleting this event is permanent and cannot be undone.' });
+            }, {
+                title: 'Delete Event',
+                message: 'Deleting this event is permanent and cannot be undone.'
+            });
         }
 
         function deleteMember(memberId) {
@@ -1622,10 +1897,13 @@
                         closeModal(modal);
                         showModalMessage('success-modal', `Failed to delete member data: ${error.message}`, 'Error');
                     });
-            }, { title: 'Delete Member', message: 'Deleting this member profile is permanent and cannot be undone.' });
+            }, {
+                title: 'Delete Member',
+                message: 'Deleting this member profile is permanent and cannot be undone.'
+            });
         }
 
-        window.onload = function () {
+        window.onload = function() {
             const successModal = document.getElementById('success-modal');
             const successClose = document.getElementById('success-close');
             successClose?.addEventListener('click', () => closeModal(successModal));
@@ -1653,6 +1931,7 @@
 
             const menuToggle = document.getElementById('menu-toggle');
             const mobileMenu = document.getElementById('mobile-menu');
+
             function setMenuOpen(open) {
                 if (!mobileMenu || !menuToggle) return;
                 mobileMenu.classList.toggle('hidden', !open);
@@ -1859,7 +2138,10 @@
                 pwToggle.setAttribute('aria-label', isHidden ? 'Hide password' : 'Show password');
                 pwToggle.setAttribute('title', isHidden ? 'Hide password' : 'Show password');
                 const icon = pwToggle.querySelector('i');
-                if (icon) { icon.classList.toggle('fa-eye'); icon.classList.toggle('fa-eye-slash'); }
+                if (icon) {
+                    icon.classList.toggle('fa-eye');
+                    icon.classList.toggle('fa-eye-slash');
+                }
             });
 
             const adminEventForm = document.getElementById('admin-event-form');
@@ -2019,7 +2301,10 @@
                                 showModalMessage('success-modal', `Failed to delete profile: ${error && error.message}`, 'Error');
                             }
                         });
-                }, { title: 'Confirm Delete', message: 'Deleting your profile is permanent and cannot be undone.' });
+                }, {
+                    title: 'Confirm Delete',
+                    message: 'Deleting your profile is permanent and cannot be undone.'
+                });
             });
 
             document.addEventListener('keydown', (ev) => {
@@ -2043,7 +2328,8 @@
                     const rect = footerEl?.getBoundingClientRect();
                     footerVisible = !!rect && rect.top < window.innerHeight;
                 }
-                if (beyond && !footerVisible) backToTopBtn.classList.add('show'); else backToTopBtn?.classList.remove('show');
+                if (beyond && !footerVisible) backToTopBtn.classList.add('show');
+                else backToTopBtn?.classList.remove('show');
             }
 
             window.addEventListener('scroll', updateBackToTopVisibility);
@@ -2055,9 +2341,12 @@
                 const fabFooterIO = new IntersectionObserver((entries) => {
                     entries.forEach(entry => {
                         const footerVisible = entry.isIntersecting && entry.intersectionRatio > 0.01;
-                        if (footerVisible) backToTopBtn.classList.remove('show'); else updateBackToTopVisibility();
+                        if (footerVisible) backToTopBtn.classList.remove('show');
+                        else updateBackToTopVisibility();
                     });
-                }, { threshold: [0, 0.01, 0.1] });
+                }, {
+                    threshold: [0, 0.01, 0.1]
+                });
                 fabFooterIO.observe(footerEl);
             }
 
@@ -2089,11 +2378,15 @@
             const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
             let __floatIO__ = null;
             let __floatIO_lastY = window.scrollY;
+
             function registerFloatEls(root = document) {
                 const els = root.querySelectorAll('.float-in:not([data-float-registered])');
                 if (!els.length) return;
                 if (reduceMotion) {
-                    els.forEach(el => { el.classList.add('is-visible'); el.setAttribute('data-float-registered', '1'); });
+                    els.forEach(el => {
+                        el.classList.add('is-visible');
+                        el.setAttribute('data-float-registered', '1');
+                    });
                     return;
                 }
                 if ('IntersectionObserver' in window) {
@@ -2116,7 +2409,10 @@
                                 }
                             });
                             __floatIO_lastY = window.scrollY;
-                        }, { threshold: 0.15, rootMargin: '0px 0px -5% 0px' });
+                        }, {
+                            threshold: 0.15,
+                            rootMargin: '0px 0px -5% 0px'
+                        });
                     }
                     els.forEach((el, i) => {
                         el.style.setProperty('--delay', `${i * 120}ms`);
@@ -2124,7 +2420,10 @@
                         __floatIO__.observe(el);
                     });
                 } else {
-                    els.forEach(el => { el.classList.add('is-visible'); el.setAttribute('data-float-registered', '1'); });
+                    els.forEach(el => {
+                        el.classList.add('is-visible');
+                        el.setAttribute('data-float-registered', '1');
+                    });
                 }
             }
             // expose for dynamic content sections
@@ -2136,11 +2435,11 @@
             const statNums = document.querySelectorAll('.stat-card .num');
             const fmt = (n) => n.toLocaleString();
             const animateCountTo = (el, target, duration = 1200, startOverride = undefined) => {
-                const startVal = (startOverride != null)
-                    ? Number(startOverride)
-                    : Number(el.textContent.replace(/,/g, '') || '0');
+                const startVal = (startOverride != null) ?
+                    Number(startOverride) :
+                    Number(el.textContent.replace(/,/g, '') || '0');
                 const start = performance.now();
-                const ease = (t) => 1 - Math.pow(1 - t, 3); 
+                const ease = (t) => 1 - Math.pow(1 - t, 3);
                 const step = (now) => {
                     const p = Math.min(1, (now - start) / duration);
                     const val = Math.round(startVal + (target - startVal) * ease(p));
@@ -2153,7 +2452,7 @@
             window.__animateCountTo__ = animateCountTo;
 
             let statsVisible = false;
-            let statsWasVisible = false; 
+            let statsWasVisible = false;
             const animateAllStats = () => {
                 statNums.forEach(el => {
                     const target = Number(el.dataset.countTo || el.textContent || '0');
@@ -2176,7 +2475,9 @@
                         }
                         statsWasVisible = nowVisible;
                     });
-                }, { threshold: [0, 0.25, 0.5, 0.75, 1] });
+                }, {
+                    threshold: [0, 0.25, 0.5, 0.75, 1]
+                });
                 statsIO.observe(statsCard);
             } else if (statsCard) {
                 animateAllStats();
@@ -2254,6 +2555,7 @@
         </nav>
         <div id="mobile-menu" class="md:hidden hidden bg-white/95 shadow-lg rounded-b-xl">
             <div class="px-4 py-4 flex flex-col gap-2 text-red-700">
+                <a id="mobile-about-link" href="#about" class="block px-3 py-2 rounded hover:bg-red-50">About</a>
                 <a id="mobile-how-link" href="#how" class="block px-3 py-2 rounded hover:bg-red-50">Donation Guide</a>
                 <a id="mobile-events-link" href="#events" class="block px-3 py-2 rounded hover:bg-red-50">Events</a>
                 <a id="mobile-join-link" href="#join" class="block px-3 py-2 rounded hover:bg-red-50">Join</a>
@@ -2557,7 +2859,8 @@
 
                     <div class="field-icon-left">
                         <i class="fi fa-solid fa-phone"></i>
-                        <input name="phone" id="phone" type="tel" placeholder=" " required autocomplete="tel" inputmode="tel"
+                        <input name="phone" id="phone" type="tel" placeholder=" " required autocomplete="tel"
+                            inputmode="tel"
                             class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
                         <label for="phone"
                             class="absolute left-4 top-3 text-gray-400 transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-focus:-top-3 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Phone
@@ -2583,7 +2886,8 @@
 
                     <div class="field-icon-left">
                         <i class="fi fa-solid fa-location-dot"></i>
-                        <input name="location" id="location" type="text" placeholder=" " required autocomplete="address-level2"
+                        <input name="location" id="location" type="text" placeholder=" " required
+                            autocomplete="address-level2"
                             class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
                         <label for="location"
                             class="absolute left-4 top-3 text-gray-400 transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-focus:-top-3 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Current
@@ -2601,7 +2905,8 @@
 
                     <div class="field-icon-left">
                         <i class="fi fa-solid fa-lock"></i>
-                        <input name="password" id="password" type="password" placeholder=" " required autocomplete="new-password"
+                        <input name="password" id="password" type="password" placeholder=" " required
+                            autocomplete="new-password"
                             class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
                         <label for="password"
                             class="absolute left-4 top-3 text-gray-400 transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-focus:-top-3 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Password</label>
@@ -2609,7 +2914,8 @@
 
                     <div class="field-icon-left">
                         <i class="fi fa-solid fa-lock"></i>
-                        <input name="confirmPassword" id="confirmPassword" type="password" placeholder=" " required autocomplete="new-password"
+                        <input name="confirmPassword" id="confirmPassword" type="password" placeholder=" " required
+                            autocomplete="new-password"
                             class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
                         <label for="confirmPassword"
                             class="absolute left-4 top-3 text-gray-400 transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-focus:-top-3 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Confirm
