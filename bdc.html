@@ -52,7 +52,6 @@
             border-radius: 999px
         }
 
-        /* Responsive site title */
         .site-title {
             display: inline-block;
             white-space: nowrap;
@@ -61,13 +60,10 @@
         @media (max-width: 640px) {
             .site-title {
                 white-space: normal;
-                /* allow wrapping instead of cutting */
                 max-width: 72vw;
-                /* more room for text */
                 overflow: visible;
                 text-overflow: clip;
                 font-size: 1.125rem;
-                /* ~text-lg to keep header compact */
                 line-height: 1.2;
             }
 
@@ -153,7 +149,6 @@
             transform: translateY(0)
         }
 
-        /* Safe-area aware positioning for the floating action button wrapper */
         #fab-wrap {
             position: fixed;
             bottom: max(1rem, env(safe-area-inset-bottom));
@@ -167,7 +162,6 @@
             }
         }
 
-        /* Add breathing room at the bottom on small screens so FAB doesn't obscure content */
         @media (max-width: 640px) {
             main {
                 padding-bottom: 88px;
@@ -190,7 +184,6 @@
             box-shadow: var(--card-strong), 0 0 0 6px rgba(239, 68, 68, 0.06) !important;
         }
 
-        /* Softer hover/transition for cards that should feel calmer */
         .how-card.gentle {
             transition: transform .18s ease, box-shadow .18s ease;
         }
@@ -199,7 +192,6 @@
             transform: translateY(-2px) scale(1.02);
         }
 
-        /* Compact card variant for tighter layouts */
         .how-card.compact {
             padding: 0.75rem;
         }
@@ -215,7 +207,6 @@
             box-shadow: 0 6px 18px rgba(14, 23, 32, 0.04)
         }
 
-        /* Accent color helpers */
         .how-card.accent-rose {
             border-color: rgba(225, 29, 72, 0.10);
         }
@@ -315,7 +306,6 @@
             background: linear-gradient(180deg, rgba(240, 249, 255, .92), #ffffff);
         }
 
-        /* Small icon circle for compact cards (e.g., stats) */
         .icon-circle-sm {
             width: 40px;
             height: 40px;
@@ -407,7 +397,6 @@
             color: var(--muted)
         }
 
-        /* Find Donors card enhancements */
         .search-card {
             position: relative;
             overflow: hidden;
@@ -444,7 +433,6 @@
             box-shadow: 0 10px 30px rgba(225, 29, 72, 0.28);
         }
 
-        /* Recent Donation card + info list */
         .recent-card {
             position: relative;
         }
@@ -468,12 +456,10 @@
 
         @media (min-width:640px) {
             .info-list li {
-                /* keep centered alignment on larger screens as well */
                 justify-content: center;
             }
         }
 
-        /* On small screens, show long Location value on its own line */
         @media (max-width: 640px) {
             .info-list li.location .value {
                 flex-basis: 100%;
@@ -604,7 +590,6 @@
             display: inline;
         }
 
-        /* Input prefix icons */
         .field-icon-left {
             position: relative;
         }
@@ -624,21 +609,33 @@
             padding-left: 2.5rem !important;
         }
 
-        /* Adjust floating labels inside icon fields */
         .field-icon-left label.absolute {
             left: 2.5rem !important;
         }
 
-        /* Admin theme (scoped to #admin-panel) */
-        #admin-panel {
-            --admin: #6366f1;
-            --admin-hover: #4f46e5;
-            --admin-text: #4338ca;
-            --admin-soft: rgba(99, 102, 241, .10);
-            --admin-soft-2: rgba(99, 102, 241, .16);
+        .desktop-only,
+        .admin-desktop-only {
+            display: none !important;
         }
 
-        /* Override common Tailwind reds inside admin to indigo */
+        @media (min-width: 768px) {
+            .desktop-only:not(.hidden) {
+                display: inline-flex !important;
+            }
+
+            .admin-desktop-only:not(.hidden) {
+                display: inline-flex !important;
+            }
+        }
+
+        #admin-panel {
+            --admin: var(--red-600);
+            --admin-hover: #c81e46;
+            --admin-text: #be123c;
+            --admin-soft: rgba(225, 29, 72, 0.12);
+            --admin-soft-2: rgba(225, 29, 72, 0.18);
+        }
+
         #admin-panel .text-red-700,
         #admin-panel .text-red-600 {
             color: var(--admin-text) !important;
@@ -996,9 +993,10 @@
         }
 
         /* (Removed previous rule that hid Contact on mobile) */
-        
+
         /* --- Mobile card responsiveness (global) --- */
         @media (max-width: 768px) {
+
             /* Slightly reduce icon sizes on tablets/phones */
             .how-card .icon-circle {
                 width: 48px;
@@ -1179,7 +1177,7 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
     <script>
-        (function() {
+        (function () {
             const vp = document.querySelector('meta[name="viewport"]');
             if (!vp) return;
             const apply = () => {
@@ -1903,7 +1901,7 @@
             });
         }
 
-        window.onload = function() {
+        window.onload = function () {
             const successModal = document.getElementById('success-modal');
             const successClose = document.getElementById('success-close');
             successClose?.addEventListener('click', () => closeModal(successModal));
@@ -2322,9 +2320,8 @@
                 const beyond = window.scrollY > 300;
                 let footerVisible = false;
                 if ('IntersectionObserver' in window && footerEl) {
-                    // handled by IO below; keep simple here
-                } else {
-                    // fallback: rough check using viewport bottom
+                }
+                else {
                     const rect = footerEl?.getBoundingClientRect();
                     footerVisible = !!rect && rect.top < window.innerHeight;
                 }
@@ -2374,7 +2371,6 @@
                 });
             }
 
-            // Float-In scroll reveal for cards; always float-out downward when leaving
             const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
             let __floatIO__ = null;
             let __floatIO_lastY = window.scrollY;
@@ -2404,7 +2400,6 @@
                                         entry.target.classList.add('instant-visible');
                                     }
                                 } else {
-                                    // On exit, remove visibility classes without adding any exit animation
                                     entry.target.classList.remove('is-visible', 'instant-visible', 'is-out-up', 'is-out-down');
                                 }
                             });
@@ -2426,12 +2421,9 @@
                     });
                 }
             }
-            // expose for dynamic content sections
             window.registerFloatEls = registerFloatEls;
-            // initial registration
             registerFloatEls(document);
 
-            // Stats count-up animation
             const statNums = document.querySelectorAll('.stat-card .num');
             const fmt = (n) => n.toLocaleString();
             const animateCountTo = (el, target, duration = 1200, startOverride = undefined) => {
@@ -2448,7 +2440,6 @@
                 };
                 requestAnimationFrame(step);
             };
-            // expose animator so early setCountTarget calls can animate when visible
             window.__animateCountTo__ = animateCountTo;
 
             let statsVisible = false;
@@ -2523,26 +2514,34 @@
 
     <!-- Header -->
     <header class="fixed top-0 left-0 right-0 z-40 bg-white/90 backdrop-blur shadow-lg rounded-b-xl">
-        <nav class="max-w-6xl mx-auto flex items-center justify-between px-4 py-2">
+        <nav class="max-w-6xl mx-auto flex items-center justify-between px-4 sm:px-5 lg:px-6 py-2">
             <div class="flex items-center gap-3">
                 <img src="image/blood-drop.png" alt="logo" class="h-10 w-10 header-logo border-red-600" />
-                <span class="text-2xl font-extrabold text-red-700 tracking-tight site-title">Blood Donation Community</span>
+                <span class="text-2xl font-extrabold text-red-700 tracking-tight site-title">Blood Donation
+                    Community</span>
                 <span id="admin-badge"
-                    class="hidden items-center gap-1 text-xs font-bold px-2 py-1 rounded bg-indigo-600 text-white shadow">Admin</span>
+                    class="hidden items-center gap-1 text-xs font-bold px-2 py-1 rounded bg-red-600 text-white shadow">Admin</span>
             </div>
-            <div class="hidden md:flex items-center gap-1 text-base font-medium">
-                <a id="nav-about-link" href="#about" class="px-3 py-2 rounded hover:bg-red-50 text-red-700">About</a>
-                <a id="nav-how-link" href="#how" class="px-3 py-2 rounded hover:bg-red-50 text-red-700">Donation Guide</a>
-                <a id="nav-events-link" href="#events" class="px-3 py-2 rounded hover:bg-red-50 text-red-700">Events</a>
+            <div class="hidden md:flex items-center gap-1 text-base font-medium flex-1">
+                <a id="nav-about-link" href="#about"
+                    class="px-3 py-2 rounded hover:bg-red-50 text-red-700">About</a>
+                <a id="nav-how-link" href="#how" class="px-3 py-2 rounded hover:bg-red-50 text-red-700">Donation
+                    Guide</a>
+                <a id="nav-events-link" href="#events"
+                    class="px-3 py-2 rounded hover:bg-red-50 text-red-700">Events</a>
                 <a id="nav-join-link" href="#join" class="px-3 py-2 rounded hover:bg-red-50 text-red-700">Join</a>
-                <a id="nav-search-link" href="#search" class="px-3 py-2 rounded hover:bg-red-50 text-red-700">Search</a>
+                <a id="nav-search-link" href="#search"
+                    class="px-3 py-2 rounded hover:bg-red-50 text-red-700">Search</a>
                 <a id="nav-contact-link" href="#contact"
                     class="px-3 py-2 rounded hover:bg-red-50 text-red-700">Contact</a>
-                <a id="admin-nav-link" href="#admin-panel"
-                    class="hidden px-3 py-2 rounded hover:bg-red-50 text-red-700">Dashboard</a>
-                <button id="login-btn"
-                    class="bg-red-600 text-white px-4 py-2 rounded-lg font-semibold shadow hover:bg-red-700 transition inline-flex items-center justify-center">Profile</button>
             </div>
+            <div class="flex items-center gap-4">
+                <a id="admin-nav-link" href="#admin-panel"
+                    class="hidden admin-desktop-only px-3 py-2 rounded hover:bg-red-50 text-red-700">Dashboard</a>
+                <button id="login-btn"
+                    class="desktop-only inline-flex bg-red-600 text-white px-4 py-2 rounded-lg font-semibold shadow hover:bg-red-700 transition items-center justify-center">Profile</button>
+            </div>
+
             <div class="flex items-center gap-2">
                 <button id="menu-toggle" class="md:hidden p-2 rounded-lg bg-red-100 text-red-700 hover:bg-red-200"
                     aria-label="Open menu" aria-controls="mobile-menu" aria-expanded="false" type="button">
@@ -3396,8 +3395,7 @@
         </div>
     </div>
 
-    <div id="fab-wrap"
-        class="z-40 flex flex-col items-end gap-2">
+    <div id="fab-wrap" class="z-40 flex flex-col items-end gap-2">
         <a href="#" id="back-to-top"
             class="bg-red-600 text-white w-12 h-12 rounded-full shadow-lg hover:bg-red-700 transition-all text-lg flex items-center justify-center">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
