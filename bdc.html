@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en" class="antialiased scroll-smooth">
 
 <head>
@@ -32,7 +32,7 @@
 
         body {
             font-family: 'Inter', sans-serif;
-            background: linear-gradient(180deg, #fff 0%, #f8fafc 60%);
+            background: #ffffff;
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
             color: #0f172a;
@@ -594,6 +594,11 @@
             position: relative;
         }
 
+        /* Ensure icons position relative to the input area, not the label+input stack */
+        .field-icon-left .input-wrap {
+            position: relative;
+        }
+
         .field-icon-left .fi {
             position: absolute;
             left: 14px;
@@ -611,6 +616,10 @@
 
         .field-icon-left label.absolute {
             left: 2.5rem !important;
+            border-radius: 9999px; /* pill */
+            padding: 0 .35rem; /* small horizontal padding for the background */
+            line-height: 1.1; /* keep compact height */
+            z-index: 1; /* sit above input border */
         }
 
         .desktop-only,
@@ -666,6 +675,16 @@
         #admin-panel .peer:focus~label,
         #admin-panel .peer:valid~label {
             color: var(--admin) !important;
+        }
+
+        /* Consistent floating label background across the app */
+        .field-icon-left label.absolute,
+        .field-icon-left label[for] {
+            background: #ffffff; /* default white cards */
+        }
+        /* Emerald-tinted join card: match its light tint so label blends */
+        section#join .how-card.tint-emerald label.absolute {
+            background: rgba(236, 253, 245, 0.92);
         }
 
         /* Admin tabs */
@@ -737,6 +756,10 @@
 
         /* Center and color icons nicely inside login modal fields */
         #login-modal .field-icon-left {
+            position: relative;
+        }
+        /* Make the immediate input container positioned so icons center to input, not the label+input group */
+        #login-modal .field-icon-left .input-wrap {
             position: relative;
         }
 
@@ -1171,7 +1194,7 @@
         content="Community-driven blood donation platform. Register as a donor, search donors by blood group and location.">
 </head>
 
-<body class="bg-gray-50 text-gray-900">
+<body class="bg-white text-gray-900">
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
@@ -1356,11 +1379,11 @@
 
         function renderDonorCardPublic(d) {
             const lastDate = d.lastDonateDate ? new Date(d.lastDonateDate).toLocaleDateString() : '-';
-            const contactDesktop = d.isPhoneHidden
-                ? `<div class="flex items-center gap-1">
-                        <i class="fa-solid fa-circle-info text-red-500"></i>
-                        <span class="text-xs text-red-700 font-semibold no-underline">${d.publicComment || 'Contact Admin'}</span>
-                   </div>`
+        const contactDesktop = d.isPhoneHidden
+        ? `<a href="#contact" class="flex items-center gap-1 text-red-700 hover:text-red-800 transition-colors">
+            <i class="fa-solid fa-circle-info text-red-500"></i>
+            <span class="text-xs font-semibold no-underline">${d.publicComment || 'Contact Admin'}</span>
+           </a>`
                 : `<div class="flex items-center gap-1">
                         <i class="fa-solid fa-phone text-red-500"></i>
                         <span class="font-bold">Contact:</span>
@@ -1371,7 +1394,7 @@
                 ? `<div class="info-row sm:hidden">
                         <i class="icon fa-solid fa-circle-info text-red-500"></i>
                         <div class="info-text">
-                            <span class="value text-red-700 font-semibold">${d.publicComment || 'Contact Admin'}</span>
+                            <a href="#contact" class="value text-red-700 font-semibold hover:text-red-800 transition-colors">${d.publicComment || 'Contact Admin'}</a>
                         </div>
                    </div>`
                 : `<div class="info-row sm:hidden">
@@ -2046,7 +2069,7 @@
             }
 
             // Submit filters locally; no extra DB read
-            searchForm?.addEventListener('submit', (e) => {
+           searchForm?.addEventListener('submit', (e) => {
                 e.preventDefault();
                 runSearch();
             });
@@ -2370,6 +2393,52 @@
                     });
                 });
             }
+
+            // Make Contact navigation fast-smooth (short duration ~250ms)
+            const fastScrollTo = (el, duration = 250) => {
+                const root = document.documentElement;
+                const headerH = parseFloat(getComputedStyle(root).getPropertyValue('--header-height')) || 0;
+                const targetY = el.getBoundingClientRect().top + window.pageYOffset - headerH;
+                const startY = window.pageYOffset;
+                const distance = targetY - startY;
+                const start = performance.now();
+                const ease = (t) => 1 - Math.pow(1 - t, 3); // easeOutCubic
+                const step = (now) => {
+                    const p = Math.min(1, (now - start) / duration);
+                    const y = startY + distance * ease(p);
+                    window.scrollTo(0, y);
+                    if (p < 1) requestAnimationFrame(step);
+                };
+                requestAnimationFrame(step);
+            };
+
+            document.querySelectorAll('a[href="#contact"]').forEach(link => {
+                link.addEventListener('click', (e) => {
+                    const target = document.getElementById('contact');
+                    if (!target) return;
+                    e.preventDefault();
+                    // Close mobile menu quickly if open
+                    const mobileMenu = document.getElementById('mobile-menu');
+                    if (mobileMenu && !mobileMenu.classList.contains('hidden')) {
+                        mobileMenu.classList.add('hidden');
+                    }
+                    const prefersReduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+                    if (prefersReduce) {
+                        const root = document.documentElement;
+                        const headerH = parseFloat(getComputedStyle(root).getPropertyValue('--header-height')) || 0;
+                        const targetY = target.getBoundingClientRect().top + window.pageYOffset - headerH;
+                        window.scrollTo(0, targetY);
+                    } else {
+                        fastScrollTo(target, 160);
+                    }
+                    // Update the URL hash without jumping again
+                    if (history.pushState) {
+                        history.pushState(null, '', '#contact');
+                    } else {
+                        location.hash = '#contact';
+                    }
+                });
+            });
 
             const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
             let __floatIO__ = null;
@@ -2830,75 +2899,81 @@
                     <div class="field-icon-left">
                         <i class="fi fa-solid fa-user"></i>
                         <input name="fullName" id="fullName" type="text" placeholder=" " required
-                            class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
+                            class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:bg-white focus:outline-none" />
                         <label for="fullName"
-                            class="absolute left-4 top-3 text-gray-400 transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-focus:-top-3 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Full
+                            class="absolute left-4 top-3 text-gray-400 transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-focus:-top-3.5 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3.5 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Full
                             name</label>
                     </div>
 
                     <div class="field-icon-left">
                         <i class="fi fa-solid fa-envelope"></i>
                         <input name="email" id="email" type="email" placeholder=" " required autocomplete="email"
-                            class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
+                            class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:bg-white focus:outline-none" />
                         <label for="email"
-                            class="absolute left-4 top-3 text-gray-400 transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-focus:-top-3 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Email</label>
+                            class="absolute left-4 top-3 text-gray-400 transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-focus:-top-3.5 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3.5 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Email</label>
                     </div>
 
                     <div class="field-icon-left flex flex-col">
                         <label for="gender" class="text-sm text-gray-600 mb-2">Gender</label>
-                        <i class="fi fa-solid fa-venus-mars" style="top: 3.1rem"></i>
-                        <select name="gender" id="gender" required
-                            class="block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none">
-                            <option value="">Select gender</option>
-                            <option>Male</option>
-                            <option>Female</option>
-                            <option>Other</option>
-                        </select>
+                        <div class="input-wrap">
+                            <i class="fi fa-solid fa-venus-mars"></i>
+                            <select name="gender" id="gender" required
+                                class="block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:bg-white focus:outline-none">
+                                <option value="">Select gender</option>
+                                <option>Male</option>
+                                <option>Female</option>
+                                <option>Other</option>
+                            </select>
+                        </div>
                     </div>
 
                     <div class="field-icon-left">
-                        <i class="fi fa-solid fa-phone"></i>
-                        <input name="phone" id="phone" type="tel" placeholder=" " required autocomplete="tel"
-                            inputmode="tel"
-                            class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
-                        <label for="phone"
-                            class="absolute left-4 top-3 text-gray-400 transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-focus:-top-3 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Phone
-                            number</label>
+                        <div class="input-wrap">
+                            <i class="fi fa-solid fa-phone"></i>
+                            <input name="phone" id="phone" type="tel" placeholder=" " required autocomplete="tel"
+                                inputmode="tel"
+                                class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:bg-white focus:outline-none" />
+                            <label for="phone"
+                                class="absolute left-4 top-3 text-gray-400 transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-focus:-top-3.5 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3.5 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Phone
+                                number</label>
+                        </div>
                     </div>
 
                     <div class="field-icon-left flex flex-col">
                         <label for="bloodGroup" class="text-sm text-gray-600 mb-2">Blood group</label>
-                        <i class="fi fa-solid fa-droplet" style="top: 3.1rem"></i>
-                        <select name="bloodGroup" id="bloodGroup" required
-                            class="block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none">
-                            <option value="">Select group</option>
-                            <option>A+</option>
-                            <option>A-</option>
-                            <option>B+</option>
-                            <option>B-</option>
-                            <option>O+</option>
-                            <option>O-</option>
-                            <option>AB+</option>
-                            <option>AB-</option>
-                        </select>
+                        <div class="input-wrap">
+                            <i class="fi fa-solid fa-droplet"></i>
+                            <select name="bloodGroup" id="bloodGroup" required
+                                class="block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:bg-white focus:outline-none">
+                                <option value="">Select group</option>
+                                <option>A+</option>
+                                <option>A-</option>
+                                <option>B+</option>
+                                <option>B-</option>
+                                <option>O+</option>
+                                <option>O-</option>
+                                <option>AB+</option>
+                                <option>AB-</option>
+                            </select>
+                        </div>
                     </div>
 
                     <div class="field-icon-left">
                         <i class="fi fa-solid fa-location-dot"></i>
                         <input name="location" id="location" type="text" placeholder=" " required
                             autocomplete="address-level2"
-                            class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
+                            class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:bg-white focus:outline-none" />
                         <label for="location"
-                            class="absolute left-4 top-3 text-gray-400 transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-focus:-top-3 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Current
+                            class="absolute left-4 top-3 text-gray-400 transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-focus:-top-3.5 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3.5 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Current
                             Location</label>
                     </div>
 
                     <div class="field-icon-left">
                         <i class="fi fa-solid fa-clock"></i>
                         <input name="lastDonateDate" id="lastDonateDate" type="date" placeholder=" "
-                            class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
+                            class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:bg-white focus:outline-none" />
                         <label for="lastDonateDate"
-                            class="absolute left-4 top-3 text-gray-400 transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-focus:-top-3 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Last
+                            class="absolute left-4 top-3 text-gray-400 transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-focus:-top-3.5 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3.5 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Last
                             blood donation</label>
                     </div>
 
@@ -2906,18 +2981,18 @@
                         <i class="fi fa-solid fa-lock"></i>
                         <input name="password" id="password" type="password" placeholder=" " required
                             autocomplete="new-password"
-                            class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
+                            class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:bg-white focus:outline-none" />
                         <label for="password"
-                            class="absolute left-4 top-3 text-gray-400 transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-focus:-top-3 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Password</label>
+                            class="absolute left-4 top-3 text-gray-400 transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-focus:-top-3.5 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3.5 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Password</label>
                     </div>
 
                     <div class="field-icon-left">
                         <i class="fi fa-solid fa-lock"></i>
                         <input name="confirmPassword" id="confirmPassword" type="password" placeholder=" " required
                             autocomplete="new-password"
-                            class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
+                            class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:bg-white focus:outline-none" />
                         <label for="confirmPassword"
-                            class="absolute left-4 top-3 text-gray-400 transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-focus:-top-3 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Confirm
+                            class="absolute left-4 top-3 text-gray-400 transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-focus:-top-3.5 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3.5 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Confirm
                             password</label>
                     </div>
                     <div class="flex gap-3">
@@ -3021,19 +3096,21 @@
                             </div>
                             <div class="field-icon-left flex flex-col">
                                 <label for="donor-blood-group" class="text-sm text-gray-600 mb-2">Blood Group</label>
-                                <i class="fi fa-solid fa-droplet" style="top: 3.1rem"></i>
-                                <select name="donor-blood-group" id="donor-blood-group" required
-                                    class="block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none">
-                                    <option value="">Select group</option>
-                                    <option>A+</option>
-                                    <option>A-</option>
-                                    <option>B+</option>
-                                    <option>B-</option>
-                                    <option>O+</option>
-                                    <option>O-</option>
-                                    <option>AB+</option>
-                                    <option>AB-</option>
-                                </select>
+                                <div class="input-wrap">
+                                    <i class="fi fa-solid fa-droplet"></i>
+                                    <select name="donor-blood-group" id="donor-blood-group" required
+                                        class="block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none">
+                                        <option value="">Select group</option>
+                                        <option>A+</option>
+                                        <option>A-</option>
+                                        <option>B+</option>
+                                        <option>B-</option>
+                                        <option>O+</option>
+                                        <option>O-</option>
+                                        <option>AB+</option>
+                                        <option>AB-</option>
+                                    </select>
+                                </div>
                             </div>
                             <div class="field-icon-left">
                                 <i class="fi fa-solid fa-location-dot"></i>
@@ -3098,12 +3175,14 @@
                                     name</label>
                             </div>
                             <div class="field-icon-left">
-                                <i class="fi fa-solid fa-phone"></i>
-                                <input name="phone" id="admin-member-phone" type="tel" placeholder=" " required
-                                    class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
-                                <label for="admin-member-phone"
-                                    class="absolute left-4 top-3 text-gray-400 transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-focus:-top-3 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Phone
-                                    number</label>
+                                <div class="input-wrap">
+                                    <i class="fi fa-solid fa-phone"></i>
+                                    <input name="phone" id="admin-member-phone" type="tel" placeholder=" " required
+                                        class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
+                                    <label for="admin-member-phone"
+                                        class="absolute left-4 top-3 text-gray-400 transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-focus:-top-3 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Phone
+                                        number</label>
+                                </div>
                             </div>
                             <div class="flex items-center gap-2">
                                 <input type="checkbox" id="admin-member-hide-phone" name="isPhoneHidden"
@@ -3124,19 +3203,21 @@
                             <div class="field-icon-left flex flex-col">
                                 <label for="admin-member-bloodGroup" class="text-sm text-gray-600 mb-2">Blood
                                     group</label>
-                                <i class="fi fa-solid fa-droplet" style="top: 3.1rem"></i>
-                                <select name="bloodGroup" id="admin-member-bloodGroup" required
-                                    class="block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none">
-                                    <option value="">Select group</option>
-                                    <option>A+</option>
-                                    <option>A-</option>
-                                    <option>B+</option>
-                                    <option>B-</option>
-                                    <option>O+</option>
-                                    <option>O-</option>
-                                    <option>AB+</option>
-                                    <option>AB-</option>
-                                </select>
+                                <div class="input-wrap">
+                                    <i class="fi fa-solid fa-droplet"></i>
+                                    <select name="bloodGroup" id="admin-member-bloodGroup" required
+                                        class="block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none">
+                                        <option value="">Select group</option>
+                                        <option>A+</option>
+                                        <option>A-</option>
+                                        <option>B+</option>
+                                        <option>B-</option>
+                                        <option>O+</option>
+                                        <option>O-</option>
+                                        <option>AB+</option>
+                                        <option>AB-</option>
+                                    </select>
+                                </div>
                             </div>
                             <div class="field-icon-left">
                                 <i class="fi fa-solid fa-location-dot"></i>
@@ -3241,19 +3322,23 @@
             <form id="login-form" class="mt-4">
                 <div class="mb-3 field-icon-left">
                     <label for="login-email" class="block text-sm text-gray-600 mb-1">Email</label>
-                    <i class="fi fa-solid fa-at"></i>
-                    <input id="login-email" type="email" required
-                        class="w-full rounded-lg border-2 border-gray-100 bg-white p-3 shadow-sm focus:border-red-300 focus:outline-none" />
+                    <div class="input-wrap">
+                        <i class="fi fa-solid fa-at"></i>
+                        <input id="login-email" type="email" required
+                            class="w-full rounded-lg border-2 border-gray-100 bg-white p-3 shadow-sm focus:border-red-300 focus:outline-none" />
+                    </div>
                 </div>
                 <div class="mb-3 field-icon-left field-icon-right">
                     <label for="login-password" class="block text-sm text-gray-600 mb-1">Password</label>
-                    <i class="fi fa-solid fa-key"></i>
-                    <input id="login-password" type="password" required
-                        class="w-full rounded-lg border-2 border-gray-100 bg-white p-3 shadow-sm focus:border-red-300 focus:outline-none" />
-                    <button type="button" id="toggle-password" aria-label="Show password" title="Show password"
-                        class="fr">
-                        <i class="fa-solid fa-eye"></i>
-                    </button>
+                    <div class="input-wrap">
+                        <i class="fi fa-solid fa-key"></i>
+                        <input id="login-password" type="password" required
+                            class="w-full rounded-lg border-2 border-gray-100 bg-white p-3 shadow-sm focus:border-red-300 focus:outline-none" />
+                        <button type="button" id="toggle-password" aria-label="Show password" title="Show password"
+                            class="fr">
+                            <i class="fa-solid fa-eye"></i>
+                        </button>
+                    </div>
                 </div>
                 <div class="flex items-center justify-end gap-4 mt-2">
                     <div class="flex gap-2 items-center">
@@ -3311,28 +3396,32 @@
                     </label>
                 </div>
                 <div class="field-icon-left">
-                    <i class="fi fa-solid fa-phone"></i>
-                    <input name="phone" id="profile-phone" type="tel" placeholder=" " required
-                        class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
-                    <label for="profile-phone"
-                        class="absolute left-4 top-3 text-gray-400 transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-focus:-top-3 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Phone
-                        number</label>
+                    <div class="input-wrap">
+                        <i class="fi fa-solid fa-phone"></i>
+                        <input name="phone" id="profile-phone" type="tel" placeholder=" " required
+                            class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
+                        <label for="profile-phone"
+                            class="absolute left-4 top-3 text-gray-400 transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-focus:-top-3 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Phone
+                            number</label>
+                    </div>
                 </div>
                 <div class="field-icon-left flex flex-col">
                     <label for="profile-bloodGroup" class="text-sm text-gray-600 mb-2">Blood group</label>
-                    <i class="fi fa-solid fa-droplet" style="top: 3.1rem"></i>
-                    <select name="bloodGroup" id="profile-bloodGroup" required
-                        class="block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none">
-                        <option value="">Select group</option>
-                        <option>A+</option>
-                        <option>A-</option>
-                        <option>B+</option>
-                        <option>B-</option>
-                        <option>O+</option>
-                        <option>O-</option>
-                        <option>AB+</option>
-                        <option>AB-</option>
-                    </select>
+                    <div class="input-wrap">
+                        <i class="fi fa-solid fa-droplet"></i>
+                        <select name="bloodGroup" id="profile-bloodGroup" required
+                            class="block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none">
+                            <option value="">Select group</option>
+                            <option>A+</option>
+                            <option>A-</option>
+                            <option>B+</option>
+                            <option>B-</option>
+                            <option>O+</option>
+                            <option>O-</option>
+                            <option>AB+</option>
+                            <option>AB-</option>
+                        </select>
+                    </div>
                 </div>
                 <div class="field-icon-left">
                     <i class="fi fa-solid fa-location-dot"></i>
