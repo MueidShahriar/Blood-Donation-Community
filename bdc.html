@@ -151,6 +151,9 @@
             border-radius: 50%;
             margin: 4px 5px;
         }
+        #recentDonorCarousel .carousel-indicators li:nth-child(n+11) {
+            display: none;
+        }
         #recentDonorCarousel .carousel-indicators .active {
             background-color: var(--red-500);
             width: 10px;
@@ -330,6 +333,10 @@
 
         .search-card.tint-sky {
             background: linear-gradient(180deg, rgba(240, 249, 255, .92), #ffffff);
+        }
+
+        .insight-card .insight-chart {
+            height: 16rem;
         }
 
         .insight-chip {
@@ -1106,6 +1113,10 @@
                 width: 36px;
                 height: 36px;
             }
+
+            .insight-chip {
+                align-self: center;
+            }
         }
 
         @media (max-width: 640px) {
@@ -1257,6 +1268,18 @@
             [class*="grid-cols-3"],
             [class*="grid-cols-2"] {
                 grid-template-columns: 1fr !important;
+            }
+
+            .insights-grid {
+                grid-template-columns: 1fr !important;
+            }
+
+            .insight-card {
+                padding: clamp(1rem, 4vw, 1.25rem) !important;
+            }
+
+            .insight-card .insight-chart {
+                height: 13.5rem;
             }
         }
 
@@ -3045,8 +3068,8 @@
                 </div>
                 <span class="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-red-600"><i class="fa-solid fa-signal"></i>Realtime</span>
             </div>
-            <div class="mt-6 grid gap-6 md:grid-cols-2 xl:grid-cols-3">
-                <article class="how-card accent-emerald tint-emerald rounded-xl shadow-lg p-6 transform transition hover:scale-105 float-in flex flex-col">
+            <div class="insights-grid mt-6 grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+                <article class="insight-card how-card accent-emerald tint-emerald rounded-xl shadow-lg p-6 transform transition hover:scale-105 float-in flex flex-col">
                     <span class="insight-chip insight-chip-emerald"><i class="fa-solid fa-chart-pie" aria-hidden="true"></i>Age Profile</span>
                     <div class="flex items-center justify-between gap-3">
                         <div class="flex items-center gap-3">
@@ -3056,13 +3079,13 @@
                         <span class="text-xs font-semibold text-emerald-600">Auto-updates</span>
                     </div>
                     <p class="mt-2 text-sm text-gray-600">Tracks how many active donors fall into each age band so outreach stays balanced.</p>
-                    <div class="mt-4 h-64">
+                    <div class="insight-chart mt-4">
                         <canvas id="ageGroupChart" class="w-full h-full" aria-label="Donor age group breakdown" role="img"></canvas>
                     </div>
                     <p id="ageGroupChartEmpty" class="mt-3 text-sm text-gray-500 hidden">No donor age data available yet. Add ages to donor profiles to populate this chart.</p>
                 </article>
 
-                <article class="how-card accent-amber tint-amber rounded-xl shadow-lg p-6 transform transition hover:scale-105 float-in flex flex-col">
+                <article class="insight-card how-card accent-amber tint-amber rounded-xl shadow-lg p-6 transform transition hover:scale-105 float-in flex flex-col">
                     <span class="insight-chip insight-chip-amber"><i class="fa-solid fa-clock-rotate-left" aria-hidden="true"></i>Monthly Pulse</span>
                     <div class="flex items-center justify-between gap-3">
                         <div class="flex items-center gap-3">
@@ -3072,13 +3095,13 @@
                         <span class="text-xs font-semibold text-amber-500">Year to date</span>
                     </div>
                     <p class="mt-2 text-sm text-gray-600">Visualises donation activity by month so you can spot seasonal trends at a glance.</p>
-                    <div class="mt-4 h-64">
+                    <div class="insight-chart mt-4">
                         <canvas id="monthlyDonorChart" class="w-full h-full" aria-label="Monthly donation distribution" role="img"></canvas>
                     </div>
                     <p id="monthlyDonorChartEmpty" class="mt-3 text-sm text-gray-500 hidden">No donation records found for this year. Log donations to activate this chart.</p>
                 </article>
 
-                <article class="how-card accent-indigo tint-indigo rounded-xl shadow-lg p-6 transform transition hover:scale-105 float-in flex flex-col">
+                <article class="insight-card how-card accent-indigo tint-indigo rounded-xl shadow-lg p-6 transform transition hover:scale-105 float-in flex flex-col">
                     <span class="insight-chip insight-chip-indigo"><i class="fa-solid fa-droplet" aria-hidden="true"></i>Blood Inventory</span>
                     <div class="flex items-center justify-between gap-3">
                         <div class="flex items-center gap-3">
@@ -3088,7 +3111,7 @@
                         <span class="text-xs font-semibold text-indigo-500">Supply pulse</span>
                     </div>
                     <p class="mt-2 text-sm text-gray-600">Shows how your donor pool is distributed by blood type so you immediately see gaps.</p>
-                    <div class="mt-4 h-64">
+                    <div class="insight-chart mt-4">
                         <canvas id="bloodGroupChart" class="w-full h-full" aria-label="Blood group distribution" role="img"></canvas>
                     </div>
                     <p id="bloodGroupChartEmpty" class="mt-3 text-sm text-gray-500 hidden">No blood group records to display yet. Add donors to populate this view.</p>
