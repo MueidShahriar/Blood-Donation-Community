@@ -36,6 +36,7 @@
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
             color: #0f172a;
+            overflow-x: hidden;
         }
 
         body::-webkit-scrollbar {
@@ -162,10 +163,16 @@
 
         /* Provide breathing room inside the recent donation card for indicators */
         #recentDonorCarousel .recent-card {
-            padding-bottom: 3.25rem; 
+            padding-bottom: 3.25rem;
+            width: min(100%, 640px);
+            margin: 0 auto;
         }
         @media (max-width: 640px) {
-            #recentDonorCarousel .recent-card { padding-bottom: 2.75rem; }
+            #recentDonorCarousel .recent-card {
+                padding-bottom: 2.75rem;
+                padding-left: 1.5rem;
+                padding-right: 1.5rem;
+            }
         }
 
         #back-to-top {
@@ -1117,6 +1124,10 @@
             }
         }
 
+        canvas {
+            max-width: 100%;
+        }
+
         @media (max-width: 640px) {
 
             /* Ensure all card types take full width and have comfortable spacing */
@@ -1944,7 +1955,7 @@
                 const itemClass = index === 0 ? 'carousel-item active' : 'carousel-item';
                 const carouselItemHTML = `
                     <div class="${itemClass}">
-                        <div class="recent-card relative bg-white p-6 rounded-xl shadow-lg mx-auto max-w-2xl text-center overflow-hidden">
+                        <div class="recent-card relative bg-white sm:p-6 p-5 rounded-xl shadow-lg mx-auto max-w-2xl w-full text-center overflow-hidden">
                             <div class="absolute top-0 left-0 h-full w-2 bg-red-600 rounded-l-xl"></div>
                             <div class="absolute top-0 right-0 h-full w-2 bg-red-600 rounded-r-xl"></div>
                             <h3 class="text-xl font-bold text-red-700 text-center">Recent Donation</h3>
