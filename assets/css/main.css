@@ -1129,6 +1129,11 @@ canvas {
         word-break: break-word;
     }
 
+    #search-results .donor-card {
+        padding: clamp(0.5rem, 2vw, 0.75rem) !important;
+        border-radius: 10px;
+    }
+
     /* Images inside cards scale to container width */
     .card img,
     .recent-card img,
@@ -1160,6 +1165,18 @@ canvas {
     .donor-card h3 {
         font-size: clamp(0.95rem, 3.8vw, 1.08rem);
         line-height: 1.22;
+    }
+
+    #search-results .donor-card .font-bold {
+        font-size: 0.92rem;
+    }
+
+    #search-results .donor-card .info-text {
+        font-size: 0.75rem;
+    }
+
+    #search-results .donor-card .info-text .label {
+        font-size: 0.76rem;
     }
 
     .card .subtitle,
