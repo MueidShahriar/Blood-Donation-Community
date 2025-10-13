@@ -1857,6 +1857,15 @@
         function renderAdminMembersList() {
             const membersListDiv = document.getElementById('admin-members-list');
             if (!membersListDiv) return;
+            if (!donorsList.length) {
+                membersListDiv.innerHTML = `
+                    <div class="rounded-lg border border-dashed border-red-200 bg-red-50/40 p-6 text-center text-sm text-red-600">
+                        No member records found yet. Once donors register, they'll appear here automatically.
+                    </div>
+                `;
+                return;
+            }
+
             membersListDiv.innerHTML = donorsList.map(renderDonorCardAdmin).join('');
 
             membersListDiv.querySelectorAll('.edit-member-btn').forEach(button => {
@@ -1935,6 +1944,12 @@
             document.getElementById('admin-event-id').value = '';
         }
 
+        function clearAdminRecentDonorForm() {
+            const form = document.getElementById('admin-recent-donor-form');
+            if (!form) return;
+            form.reset();
+        }
+
         function clearAdminMemberForm() {
             document.getElementById('admin-member-form').reset();
             document.getElementById('admin-member-id').value = '';
@@ -1992,6 +2007,7 @@
                     }
                 }
             }
+            console.debug('Loaded donors from Firebase:', donorsList.length);
             const searchForm = document.getElementById('search-form');
             if (searchForm) {
                 const blood = document.getElementById('search-blood')?.value;
@@ -2017,9 +2033,7 @@
                     renderSearchResults(filtered);
                 }
             }
-            if (currentUserRole === 'admin') {
-                renderAdminMembersList();
-            }
+            renderAdminMembersList();
             refreshDashboardCharts();
             setCountTarget('donor-count', donorsList.length);
         }, (error) => {
@@ -2585,13 +2599,18 @@
                         update(ref(database), updates)
                             .then(() => {
                                 showModalMessage('success-modal', 'Recent donor added and lives helped count incremented!', 'Success');
-                                adminRecentDonorForm.reset();
+                                clearAdminRecentDonorForm();
                             })
                             .catch(error => showModalMessage('success-modal', `Failed to update data: ${error.message}`, 'Error'));
                     }, {
                         onlyOnce: true
                     });
                 });
+            }
+
+            const clearRecentDonorBtn = document.getElementById('clear-recent-donor-btn');
+            if (clearRecentDonorBtn) {
+                clearRecentDonorBtn.addEventListener('click', clearAdminRecentDonorForm);
             }
 
             const adminMemberForm = document.getElementById('admin-member-form');
@@ -3495,7 +3514,12 @@
                             </div>
                             <div class="flex gap-3">
                                 <button type="submit"
-                                    class="border border-gray-300 px-4 py-3 rounded-lg flex-1">Clear</button>
+                                    class="bg-red-600 text-white px-6 py-3 rounded-lg font-semibold shadow hover:bg-red-700 flex-1 md:flex-none inline-flex items-center justify-center gap-2">
+                                    <i class="fa-solid fa-calendar-plus" aria-hidden="true"></i>
+                                    <span>Add Event</span>
+                                </button>
+                                <button type="button" id="clear-event-btn"
+                                    class="border border-gray-300 px-6 py-3 rounded-lg font-semibold flex-1 md:flex-none inline-flex items-center justify-center gap-2 text-gray-700 hover:bg-gray-100">Clear</button>
                             </div>
                         </form>
                         <div id="admin-events-list" class="mt-6 flex flex-col gap-4">
@@ -3509,8 +3533,6 @@
                         <h3 class="text-xl font-bold text-red-600 mb-4">Recent Donor</h3>
                         <form id="admin-recent-donor-form" class="grid grid-cols-1 gap-4 mb-6">
                             <div class="field-icon-left">
-                        <form id="admin-recent-donor-form" class="grid grid-cols-1 gap-4 mb-6">
-                            <div class="field-icon-left">
                                 <i class="fi fa-solid fa-user"></i>
                                 <input name="donor-name" id="donor-name" type="text" placeholder=" " required
                                     class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
@@ -3518,8 +3540,8 @@
                                     class="absolute left-4 top-3 text-gray-400 transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-focus:-top-3 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Donor
                                     Name</label>
                             </div>
-                            <div class="field-icon-left flex flex-col">
-                                <label for="donor-blood-group" class="text-sm text-gray-600 mb-2">Blood Group</label>
+                            <div class="field-icon-left">
+                                <label for="donor-blood-group" class="text-sm text-gray-600 mb-2 block">Blood Group</label>
                                 <div class="input-wrap">
                                     <i class="fi fa-solid fa-droplet"></i>
                                     <select name="donor-blood-group" id="donor-blood-group" required
@@ -3543,31 +3565,39 @@
                                 <label for="donor-location"
                                     class="absolute left-4 top-3 text-gray-400 transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-focus:-top-3 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Location</label>
                             </div>
-                            <div class="field-icon-left flex flex-col">
+                            <div class="field-icon-left">
                                 <label for="donor-department"
-                                    class="text-sm font-medium text-red-700 mb-1">Department</label>
-                                <i class="fi fa-solid fa-building-columns" style="top: 3.1rem"></i>
-                                <input name="donor-department" id="donor-department" type="text"
-                                    class="block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
+                                    class="text-sm font-medium text-red-700 mb-1 block">Department</label>
+                                <div class="input-wrap">
+                                    <i class="fi fa-solid fa-building-columns"></i>
+                                    <input name="donor-department" id="donor-department" type="text"
+                                        class="block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
+                                </div>
                             </div>
-                            <div class="field-icon-left flex flex-col">
-                                <label for="donor-batch" class="text-sm font-medium text-red-700 mb-1">Batch</label>
-                                <i class="fi fa-solid fa-layer-group" style="top: 3.1rem"></i>
-                                <input name="donor-batch" id="donor-batch" type="text"
-                                    class="block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
+                            <div class="field-icon-left">
+                                <label for="donor-batch" class="text-sm font-medium text-red-700 mb-1 block">Batch</label>
+                                <div class="input-wrap">
+                                    <i class="fi fa-solid fa-layer-group"></i>
+                                    <input name="donor-batch" id="donor-batch" type="text"
+                                        class="block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
+                                </div>
                             </div>
-                            <div class="field-icon-left flex flex-col">
-                                <label for="donor-age" class="text-sm font-medium text-red-700 mb-1">Age</label>
-                                <i class="fi fa-solid fa-person" style="top: 3.1rem"></i>
-                                <input name="donor-age" id="donor-age" type="number"
-                                    class="block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
+                            <div class="field-icon-left">
+                                <label for="donor-age" class="text-sm font-medium text-red-700 mb-1 block">Age</label>
+                                <div class="input-wrap">
+                                    <i class="fi fa-solid fa-person"></i>
+                                    <input name="donor-age" id="donor-age" type="number"
+                                        class="block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
+                                </div>
                             </div>
-                            <div class="field-icon-left flex flex-col">
-                                <label for="donor-weight" class="text-sm font-medium text-red-700 mb-1">Weight
+                            <div class="field-icon-left">
+                                <label for="donor-weight" class="text-sm font-medium text-red-700 mb-1 block">Weight
                                     (kg)</label>
-                                <i class="fi fa-solid fa-weight-scale" style="top: 3.1rem"></i>
-                                <input name="donor-weight" id="donor-weight" type="number"
-                                    class="block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
+                                <div class="input-wrap">
+                                    <i class="fi fa-solid fa-weight-scale"></i>
+                                    <input name="donor-weight" id="donor-weight" type="number"
+                                        class="block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
+                                </div>
                             </div>
                             <div class="field-icon-left">
                                 <i class="fi fa-solid fa-calendar-day"></i>
@@ -3577,9 +3607,15 @@
                                     class="absolute left-4 top-3 text-gray-400 transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-focus:-top-3 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Donation
                                     Date</label>
                             </div>
-                            <button type="submit"
-                                class="bg-red-600 text-white px-6 py-3 rounded-lg font-semibold shadow hover:bg-red-700">Add
-                                Last Donor Info</button>
+                            <div class="flex flex-col sm:flex-row gap-3">
+                                <button type="submit"
+                                    class="bg-red-600 text-white px-6 py-3 rounded-lg font-semibold shadow hover:bg-red-700 flex-1 md:flex-none inline-flex items-center justify-center gap-2">
+                                    <i class="fa-solid fa-hand-holding-droplet" aria-hidden="true"></i>
+                                    <span>Add Recent Donor Info</span>
+                                </button>
+                                <button type="button" id="clear-recent-donor-btn"
+                                    class="border border-gray-300 px-6 py-3 rounded-lg font-semibold flex-1 md:flex-none inline-flex items-center justify-center gap-2 text-gray-700 hover:bg-gray-100">Clear</button>
+                            </div>
                         </form>
                     </div>
                 </div>
@@ -3660,12 +3696,14 @@
                                     class="absolute left-4 top-3 text-gray-400 transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-focus:-top-3 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Last
                                     blood donation</label>
                             </div>
-                            <div class="flex gap-3 mt-4">
+                            <div class="flex flex-col sm:flex-row gap-3 mt-4">
                                 <button type="submit"
-                                    class="bg-red-600 text-white px-6 py-3 rounded-lg font-semibold shadow hover:bg-red-700 flex-1">Save
-                                    Changes</button>
+                                    class="bg-red-600 text-white px-6 py-3 rounded-lg font-semibold shadow hover:bg-red-700 flex-1 md:flex-none inline-flex items-center justify-center gap-2">
+                                    <i class="fa-solid fa-floppy-disk" aria-hidden="true"></i>
+                                    <span>Save Changes</span>
+                                </button>
                                 <button type="button" id="clear-member-btn"
-                                    class="border border-gray-300 px-4 py-3 rounded-lg flex-1">Clear</button>
+                                    class="border border-gray-300 px-6 py-3 rounded-lg font-semibold flex-1 md:flex-none inline-flex items-center justify-center gap-2 text-gray-700 hover:bg-gray-100">Clear</button>
                             </div>
                         </form>
                         <div id="admin-members-list" class="mt-6 flex flex-col gap-4">
