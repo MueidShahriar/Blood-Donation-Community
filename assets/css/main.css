@@ -546,6 +546,11 @@ body::-webkit-scrollbar-track {
 }
 
 @media (max-width: 640px) {
+
+    #recentDonorCarousel .carousel-control-prev,
+    #recentDonorCarousel .carousel-control-next {
+        display: none;
+    }
     .recent-card {
         padding: 1.45rem 1.35rem 1.75rem;
         border-radius: 20px;
