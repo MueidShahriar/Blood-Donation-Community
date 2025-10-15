@@ -1,3 +1,15 @@
+#recentDonorCarousel .carousel-control-prev,
+#recentDonorCarousel .carousel-control-next {
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease;
+}
+
+#recentDonorCarousel.show-controls .carousel-control-prev,
+#recentDonorCarousel.show-controls .carousel-control-next {
+    opacity: 1;
+    pointer-events: auto;
+}
 :root {
     --red-600: #e11d48;
     --red-500: #ef4444;
@@ -347,67 +359,216 @@ body::-webkit-scrollbar-track {
 
 .recent-card {
     position: relative;
+    overflow: hidden;
+    border-radius: 20px;
+    padding: clamp(1.45rem, 2.2vw, 2rem);
+    background: linear-gradient(180deg, #ffffff 0%, #fff7f7 100%);
+    box-shadow: 0 22px 52px rgba(225, 29, 72, 0.1);
+    border: 1px solid rgba(225, 29, 72, 0.16);
+    isolation: isolate;
 }
 
-.recent-card::after {
+.recent-card::before {
     content: "";
     position: absolute;
-    inset: 0;
+    top: -55%;
+    right: -30%;
+    width: 320px;
+    height: 320px;
+    background: radial-gradient(circle at center, rgba(239, 68, 68, 0.18), transparent 65%);
+    opacity: 0.7;
     pointer-events: none;
-    border-radius: 14px;
-    box-shadow: inset 0 0 0 1px rgba(225, 29, 72, .08);
-}
-/* neat subtle dashed divider inside the card that never overflows */
-.recent-card .dashed-divider {
-    position: relative;
-    height: 10px;
-    margin: 10px auto 0;
-    max-width: 520px; /* narrower than card */
-}
-.recent-card .dashed-divider::before {
-    content: "";
-    position: absolute;
-    left: 6%;
-    right: 6%;
-    top: 50%;
-    transform: translateY(-50%);
-    border-bottom: 2px dashed rgba(225, 29, 72, 0.18);
 }
 
-.info-list li {
+.recent-card__halo {
+    position: absolute;
+    left: -30%;
+    right: -30%;
+    bottom: -65%;
+    height: 260px;
+    background: radial-gradient(circle at center, rgba(225, 29, 72, 0.16), transparent 70%);
+    pointer-events: none;
+}
+
+.recent-card__chip,
+.recent-card__summary,
+.recent-card__message,
+.recent-card__divider,
+.recent-card__stats {
+    position: relative;
+    z-index: 1;
+}
+
+.recent-card__chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.35rem 0.9rem;
+    border-radius: 999px;
+    background: linear-gradient(135deg, rgba(225, 29, 72, 0.15), rgba(225, 29, 72, 0.05));
+    color: #b91c1c;
+    font-size: 0.74rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    box-shadow: inset 0 0 0 1px rgba(225, 29, 72, 0.18);
+}
+
+.recent-card__chip i {
+    font-size: 0.85rem;
+}
+
+.recent-card__summary {
     display: flex;
     align-items: center;
-    gap: .5rem;
-    justify-content: center;
-    flex-wrap: wrap;
+    gap: 1.1rem;
+    margin-top: 1.35rem;
 }
 
-@media (min-width:640px) {
-    .info-list li {
-        justify-content: center;
+.recent-card__avatar {
+    width: 3rem;
+    height: 3rem;
+    border-radius: 16px;
+    background: linear-gradient(135deg, #ef4444, #f97316);
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 1.05rem;
+    box-shadow: 0 18px 32px rgba(225, 29, 72, 0.22);
+}
+
+.recent-card__headline {
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: #1f2937;
+    margin: 0;
+}
+
+.recent-card__headline span {
+    color: #b91c1c;
+}
+
+.recent-card__date {
+    margin: 0.3rem 0 0;
+    font-size: 0.85rem;
+    color: #ef4444;
+    font-weight: 600;
+}
+
+.recent-card__date span {
+    background: rgba(239, 68, 68, 0.12);
+    padding: 0.15rem 0.45rem;
+    border-radius: 999px;
+}
+
+.recent-card__message {
+    margin: 1.1rem 0 0;
+    font-size: 0.92rem;
+    color: #475569;
+    line-height: 1.55;
+}
+
+.recent-card__message-spot {
+    color: #b91c1c;
+    font-weight: 600;
+}
+
+.recent-card__divider {
+    margin: 1.45rem 0;
+    height: 1px;
+    background: linear-gradient(90deg, rgba(225, 29, 72, 0), rgba(225, 29, 72, 0.35), rgba(225, 29, 72, 0));
+}
+
+.recent-card__stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(135px, 1fr));
+    gap: 0.85rem;
+}
+
+.recent-card__stat {
+    background: rgba(255, 255, 255, 0.88);
+    border: 1px solid rgba(225, 29, 72, 0.12);
+    border-radius: 14px;
+    padding: 0.75rem 0.9rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    min-height: 78px;
+    box-shadow: 0 12px 24px rgba(15, 23, 42, 0.05);
+}
+
+.recent-card__stat-label {
+    font-size: 0.76rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #64748b;
+    font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.recent-card__stat-label i {
+    color: #ef4444;
+    font-size: 0.85rem;
+}
+
+.recent-card__stat-value {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #1f2937;
+    word-break: break-word;
+}
+
+.recent-card__stat--accent {
+    background: linear-gradient(135deg, rgba(225, 29, 72, 0.18), rgba(225, 29, 72, 0.05));
+    border-color: rgba(225, 29, 72, 0.28);
+}
+
+.recent-card__stat--accent .recent-card__stat-label {
+    color: #b91c1c;
+}
+
+.recent-card__stat--accent .recent-card__stat-label i {
+    color: #b91c1c;
+}
+
+.recent-card__stat--wide {
+    grid-column: span 2;
+}
+
+@media (max-width: 768px) {
+    .recent-card {
+        padding: 1.6rem 1.5rem 1.85rem;
     }
 }
 
 @media (max-width: 640px) {
-    .info-list li.location .value {
-        flex-basis: 100%;
-        text-align: center;
-        margin-top: 2px;
+    .recent-card {
+        padding: 1.45rem 1.35rem 1.75rem;
+        border-radius: 20px;
     }
 
-    .recent-card,
-    .recent-card p,
-    .recent-card li,
-    .recent-card .info-list li span {
-        text-align: center;
+    .recent-card__summary {
+        align-items: flex-start;
+        gap: 0.85rem;
     }
 
-    .recent-card .info-list li {
-        flex-direction: row;
-        align-items: center;
-        justify-content: center;
-        gap: 0.5rem;
-        flex-wrap: wrap;
+    .recent-card__avatar {
+        width: 3rem;
+        height: 3rem;
+        border-radius: 14px;
+        font-size: 1.05rem;
+    }
+
+    .recent-card__stats {
+        grid-template-columns: 1fr;
+    }
+
+    .recent-card__stat--wide {
+        grid-column: span 1;
     }
 
     .donor-card .info-stack {
@@ -970,7 +1131,6 @@ canvas {
     .card,
     .how-card,
     .search-card,
-    .recent-card,
     .donor-card {
         width: 100%;
         margin-inline: 0;
@@ -983,7 +1143,30 @@ canvas {
 
     .search-card {
         border-radius: 1.5rem;
-        padding: clamp(1rem, 4vw, 1.35rem);
+        padding: clamp(1rem, 4vw, 1.3rem);
+    }
+
+    .recent-card {
+        padding: 1.25rem 1.2rem 1.5rem;
+        border-radius: 18px;
+    }
+
+    .recent-card__summary {
+        gap: 0.75rem;
+    }
+
+    .recent-card__avatar {
+        width: 2.6rem;
+        height: 2.6rem;
+        font-size: 0.98rem;
+    }
+
+    .recent-card__stats {
+        grid-template-columns: 1fr;
+    }
+
+    .recent-card__stat--wide {
+        grid-column: span 1;
     }
 
     .loading-banner {
@@ -998,7 +1181,6 @@ canvas {
 
     /* Images inside cards scale to container width */
     .card img,
-    .recent-card img,
     .donor-card img {
         max-width: 100%;
         height: auto;
@@ -1006,8 +1188,7 @@ canvas {
     }
 
     /* Avatar/media size within compact cards */
-    .donor-card .avatar,
-    .recent-card .avatar {
+    .donor-card .avatar {
         width: clamp(52px, 16vw, 72px);
         height: clamp(52px, 16vw, 72px);
         object-fit: cover;
@@ -1018,12 +1199,10 @@ canvas {
     .card .title,
     .how-card .title,
     .search-card .title,
-    .recent-card .title,
     .donor-card .title,
     .card h3,
     .how-card h3,
     .search-card h3,
-    .recent-card h3,
     .donor-card h3 {
         font-size: clamp(0.95rem, 3.8vw, 1.08rem);
         line-height: 1.22;
@@ -1041,22 +1220,14 @@ canvas {
         font-size: 0.76rem;
     }
 
-    .card .subtitle,
-    .muted {
-        font-size: clamp(0.8rem, 3.2vw, 0.9rem);
-    }
-
-    /* Common flex content in cards stacks vertically on phones */
     .card .flex,
-    .donor-card .flex,
-    .recent-card .flex {
+    .donor-card .flex {
         flex-direction: column;
         align-items: flex-start;
         gap: 0.4rem;
     }
 
     .donor-card .meta,
-    .recent-card .meta,
     .card .meta {
         display: flex;
         flex-wrap: wrap;
@@ -1064,54 +1235,18 @@ canvas {
     }
 
     .card .btn-group,
-    .donor-card .btn-group,
-    .recent-card .btn-group {
+    .donor-card .btn-group {
         width: 100%;
         display: flex;
         gap: 0.4rem;
         flex-wrap: wrap;
     }
 
-    .card .btn-group>*,
-    .donor-card .btn-group>*,
-    .recent-card .btn-group>* {
-        flex: 1 1 auto;
-        min-width: 120px;
-    }
-
+    .card .btn-group>* ,
     .card .btn,
     .donor-card .btn,
-    .search-card .btn,
-    .recent-card .btn {
+    .search-card .btn {
         width: 100%;
-    }
-
-    .info-list {
-        justify-content: flex-start;
-        gap: 0.25rem 0.75rem;
-    }
-
-    .info-list li {
-        justify-content: flex-start;
-    }
-
-    .info-list .value {
-        display: block;
-        max-width: 100%;
-    }
-
-    .recent-card .info-list,
-    .recent-card .info-list li {
-        justify-content: center;
-    }
-
-    .recent-card .info-list .value {
-        display: inline;
-    }
-
-    .recent-card .info-list li.location .value {
-        flex-basis: auto;
-        margin-top: 0;
     }
 
     .stats-panel {
@@ -1153,4 +1288,78 @@ canvas {
 #recent-loading {
     justify-content: center;
     margin-bottom: 1.25rem;
+}
+
+#recentDonorCarousel {
+    position: relative;
+    padding-bottom: 1.8rem;
+}
+
+#recentDonorCarousel .carousel-inner {
+    padding-bottom: 1.25rem;
+}
+
+#recentDonorCarousel .carousel-indicators {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0.1rem;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    gap: 0.4rem;
+}
+
+#recentDonorCarousel .carousel-indicators li {
+    width: 10px;
+    height: 10px;
+    border-radius: 999px;
+    background-color: rgba(225, 29, 72, 0.28);
+    border: 2px solid transparent;
+    transition: background-color 0.2s ease, transform 0.2s ease, border-color 0.2s ease;
+}
+
+#recentDonorCarousel .carousel-indicators li.active {
+    background-color: #e11d48;
+    border-color: rgba(225, 29, 72, 0.18);
+    transform: scale(1.2);
+}
+
+#recentDonorCarousel .carousel-indicators li:nth-child(n+11) {
+    display: none;
+}
+
+#recentDonorCarousel .carousel-control-prev,
+#recentDonorCarousel .carousel-control-next {
+    width: 3.25rem;
+    top: 50%;
+    transform: translateY(-50%);
+    opacity: 1;
+}
+
+#recentDonorCarousel .carousel-control-prev-icon,
+#recentDonorCarousel .carousel-control-next-icon {
+    width: 42px;
+    height: 42px;
+    border-radius: 999px;
+    border: 1px solid rgba(225, 29, 72, 0.35);
+    background-color: rgba(225, 29, 72, 0.12);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: 14px 14px;
+    box-shadow: 0 8px 18px rgba(225, 29, 72, 0.18);
+}
+
+#recentDonorCarousel .carousel-control-prev-icon {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23e11d48'%3E%3Cpath d='M9.828 3.172a.75.75 0 010 1.06L6.06 8l3.768 3.768a.75.75 0 01-1.06 1.06l-4.3-4.3a.75.75 0 010-1.06l4.3-4.3a.75.75 0 011.06 0z'/%3E%3C/svg%3E");
+}
+
+#recentDonorCarousel .carousel-control-next-icon {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23e11d48'%3E%3Cpath d='M6.172 12.828a.75.75 0 010-1.06L9.94 8 6.172 4.232a.75.75 0 111.06-1.06l4.3 4.3a.75.75 0 010 1.06l-4.3 4.3a.75.75 0 01-1.06 0z'/%3E%3C/svg%3E");
+}
+
+#recentDonorCarousel .carousel-control-prev:hover .carousel-control-prev-icon,
+#recentDonorCarousel .carousel-control-next:hover .carousel-control-next-icon {
+    background-color: rgba(225, 29, 72, 0.2);
+    border-color: rgba(225, 29, 72, 0.45);
 }

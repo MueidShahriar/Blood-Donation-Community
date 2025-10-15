@@ -493,6 +493,14 @@ function setRecentLoading(isLoading) {
         recentLoaderEl.classList.add('hidden');
         recentLoaderEl.setAttribute('aria-hidden', 'true');
     }
+    const carousel = document.getElementById('recentDonorCarousel');
+    if (carousel) {
+        if (isLoading) {
+            carousel.classList.remove('show-controls');
+        } else {
+            carousel.classList.add('show-controls');
+        }
+    }
 }
 
 if (!recentLoaderEl) {
@@ -659,7 +667,6 @@ function renderRecentDonorsCarousel(donors) {
                             <p class="recent-card__date">Donated on <span>${donationDate}</span></p>
                         </div>
                     </div>
-                    <p class="recent-card__message">Your generosity is already helping patients${locationMessage} receive life-saving support faster.</p>
                     <div class="recent-card__divider" aria-hidden="true"></div>
                     <div class="recent-card__stats">
                         <div class="recent-card__stat recent-card__stat--accent">
@@ -695,6 +702,11 @@ function renderRecentDonorsCarousel(donors) {
         const indicatorHTML = `<li data-target="#recentDonorCarousel" data-slide-to="${index}" class="${indicatorClass}"></li>`;
         carouselIndicators.innerHTML += indicatorHTML;
     });
+
+    // Ensure float-in animation hooks are refreshed for newly injected slides
+    if (window.registerFloatEls) {
+        window.registerFloatEls(carouselInner);
+    }
 }
 
 const donorsRef = ref(database, 'donors');
