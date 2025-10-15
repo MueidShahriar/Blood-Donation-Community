@@ -122,6 +122,10 @@
         </section>
 
         <section id="recent-donor" class="py-12">
+            <div id="recent-loading" class="loading-banner" role="status" aria-live="polite">
+                <span class="loading-banner__spinner" aria-hidden="true"></span>
+                <span class="loading-banner__text">Fetching recent donations...</span>
+            </div>
             <div id="recentDonorCarousel" class="carousel slide" data-ride="carousel" data-interval="9000"
                 data-pause="hover">
                 <ol class="carousel-indicators">
@@ -781,7 +785,7 @@
 
         <section id="contact" class="py-12">
             <div
-                class="how-card gentle tint-rose accent-rose rounded-xl shadow-lg p-10 max-w-3xl mx-auto text-center float-in">
+                class="how-card gentle tint-rose accent-rose rounded-xl shadow-lg p-10 max-w-3xl mx-auto text-center static-card">
                 <h2 class="text-2xl font-extrabold text-red-700">Contact</h2>
                 <p class="mt-3 text-gray-600">Have questions or want to get involved? Reach out to us.</p>
                 <div class="mt-6 flex flex-col sm:flex-row sm:items-center sm:justify-center gap-4">
@@ -988,7 +992,6 @@
                         Changes</button>
                     <button id="pf-logout" type="button"
                         class="border border-gray-300 px-4 py-3 rounded-lg flex-1">Logout</button>
-                    <!-- Delete Profile Button -->
                     <button id="pf-delete" type="button"
                         class="border border-red-300 text-red-600 px-4 py-3 rounded-lg flex-1 hover:bg-red-50">Delete
                         Profile</button>
@@ -1012,7 +1015,7 @@
         </div>
     </div>
 
-    <div id="fab-wrap" class="z-40 flex flex-col items-end gap-2">
+    <div id="fab-wrap" class="fixed bottom-6 right-6 z-40 flex flex-col items-end gap-2">
         <a href="#" id="back-to-top"
             class="bg-red-600 text-white w-12 h-12 rounded-full shadow-lg hover:bg-red-700 transition-all text-lg flex items-center justify-center">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"

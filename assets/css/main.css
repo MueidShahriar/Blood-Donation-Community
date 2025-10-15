@@ -252,6 +252,19 @@ body::-webkit-scrollbar-track {
     box-shadow: 0 18px 42px rgba(225, 29, 72, 0.12);
 }
 
+#back-to-top {
+    opacity: 0;
+    transform: translateY(18px);
+    pointer-events: none;
+    transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
+#back-to-top.show {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+}
+
 .search-card::before {
     content: "";
     position: absolute;
@@ -273,8 +286,15 @@ body::-webkit-scrollbar-track {
     }
 }
 
-/* Donor search loader styling */
-.search-loading {
+.static-card,
+.static-card:hover {
+    transform: none !important;
+    transition: none !important;
+}
+
+/* Loader banners (search + recent donors) */
+.search-loading,
+.loading-banner {
     display: flex;
     align-items: center;
     gap: 0.65rem;
@@ -288,11 +308,14 @@ body::-webkit-scrollbar-track {
     transition: opacity 0.2s ease;
 }
 
-.search-loading.hidden {
+.search-loading.hidden,
+.loading-banner.hidden {
+    display: none;
     opacity: 0;
 }
 
-.search-loading__spinner {
+.search-loading__spinner,
+.loading-banner__spinner {
     width: 1.1rem;
     height: 1.1rem;
     border-radius: 999px;
@@ -301,7 +324,8 @@ body::-webkit-scrollbar-track {
     animation: search-spin 0.8s linear infinite;
 }
 
-.search-loading__text {
+.search-loading__text,
+.loading-banner__text {
     letter-spacing: 0.01em;
 }
 
@@ -810,16 +834,12 @@ section {
 
 footer {
     flex-shrink: 0;
-}
-
-/* Responsive footer: safe-area padding + scalable sizes */
-footer {
-    padding-bottom: max(1rem, env(safe-area-inset-bottom));
+    padding-bottom: max(0rem, env(safe-area-inset-bottom));
 }
 
 @supports not (padding-bottom: max(1rem, 1rem)) {
     footer {
-        padding-bottom: 1rem;
+        padding-bottom: 0;
     }
 }
 
@@ -964,6 +984,11 @@ canvas {
     .search-card {
         border-radius: 1.5rem;
         padding: clamp(1rem, 4vw, 1.35rem);
+    }
+
+    .loading-banner {
+        justify-content: center;
+        text-align: center;
     }
 
     #search-results .donor-card {
@@ -1123,4 +1148,9 @@ canvas {
     .stat-card {
         flex: 1 1 100%;
     }
+}
+
+#recent-loading {
+    justify-content: center;
+    margin-bottom: 1.25rem;
 }

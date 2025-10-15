@@ -80,6 +80,8 @@ let currentUser = null;
 let currentUserRole = 'member';
 let searchLoaderEl = null;
 let searchRunTimeout = null;
+let recentLoaderEl = null;
+let recentLoaderState = true;
 
 let ageGroupChart;
 let monthlyDonorChart;
@@ -481,6 +483,25 @@ function setSearchLoading(isLoading) {
     }
 }
 
+function setRecentLoading(isLoading) {
+    recentLoaderState = !!isLoading;
+    if (!recentLoaderEl) return;
+    if (isLoading) {
+        recentLoaderEl.classList.remove('hidden');
+        recentLoaderEl.setAttribute('aria-hidden', 'false');
+    } else {
+        recentLoaderEl.classList.add('hidden');
+        recentLoaderEl.setAttribute('aria-hidden', 'true');
+    }
+}
+
+if (!recentLoaderEl) {
+    recentLoaderEl = document.getElementById('recent-loading');
+    if (recentLoaderEl) {
+        setRecentLoading(recentLoaderState);
+    }
+}
+
 function renderSearchResults(filteredDonors) {
     const searchResults = document.getElementById('search-results');
     if (!searchResults) return;
@@ -606,24 +627,67 @@ function renderRecentDonorsCarousel(donors) {
         return;
     }
     donors.forEach((d, index) => {
-        const date = d.date ? new Date(d.date).toLocaleDateString() : '—';
+        const donationDate = d.date ? new Date(d.date).toLocaleDateString() : '—';
+        const donorName = d.name || 'Anonymous Donor';
+        const locationLabel = d.location || '—';
+        const department = d.department || '—';
+        const batch = d.batch || '—';
+        const age = d.age ? d.age : '—';
+        const weight = d.weight ? `${d.weight} kg` : '—';
+        const bloodGroup = d.bloodGroup || '—';
+        const initials = donorName
+            .split(/\s+/)
+            .filter(Boolean)
+            .map(part => part[0])
+            .join('')
+            .slice(0, 2)
+            .toUpperCase() || 'BD';
+        const locationMessage = d.location ? ` in <span class="recent-card__message-spot">${locationLabel}</span>` : '';
         const itemClass = index === 0 ? 'carousel-item active' : 'carousel-item';
         const carouselItemHTML = `
             <div class="${itemClass}">
-                <div class="recent-card relative bg-white sm:p-6 p-5 rounded-xl shadow-lg mx-auto max-w-2xl w-full text-center overflow-hidden">
-                    <div class="absolute top-0 left-0 h-full w-2 bg-red-600 rounded-l-xl"></div>
-                    <div class="absolute top-0 right-0 h-full w-2 bg-red-600 rounded-r-xl"></div>
-                    <h3 class="text-xl font-bold text-red-700 text-center">Recent Donation</h3>
-                    <p class="mt-3 text-gray-700 text-center">A huge thank you to our recent donor, <span class="font-bold text-red-600">${d.name}</span>, who donated blood on <span class="font-semibold">${date}</span>.</p>
-                    <ul class="mt-4 list-none p-0 space-y-2 text-gray-700 info-list text-center">
-                        <li><i class="fa-solid fa-droplet"></i><span class="font-bold">Blood Group:</span> <span>${d.bloodGroup}</span></li>
-                        <li class="location"><i class="fa-solid fa-location-dot"></i><span class="font-bold">Location:</span> <span class="value">${d.location}</span></li>
-                        <li><i class="fa-solid fa-building-columns"></i><span class="font-bold">Department:</span> <span>${d.department || '-'}</span></li>
-                        <li><i class="fa-solid fa-layer-group"></i><span class="font-bold">Batch:</span> <span>${d.batch || '-'}</span></li>
-                        <li><i class="fa-solid fa-user"></i><span class="font-bold">Age:</span> <span>${d.age || '-'}</span></li>
-                        <li><i class="fa-solid fa-weight-scale"></i><span class="font-bold">Weight:</span> <span>${d.weight ? d.weight + ' kg' : '-'}</span></li>
-                    </ul>
-                </div>
+                <article class="recent-card mx-auto max-w-2xl w-full float-in">
+                    <span class="recent-card__halo" aria-hidden="true"></span>
+                    <div class="recent-card__chip">
+                        <i class="fa-solid fa-hand-holding-droplet" aria-hidden="true"></i>
+                        Recent Donation
+                    </div>
+                    <div class="recent-card__summary">
+                        <div class="recent-card__avatar" aria-hidden="true">${initials}</div>
+                        <div class="recent-card__summary-copy">
+                            <p class="recent-card__headline">A huge thank you to <span>${donorName}</span>.</p>
+                            <p class="recent-card__date">Donated on <span>${donationDate}</span></p>
+                        </div>
+                    </div>
+                    <p class="recent-card__message">Your generosity is already helping patients${locationMessage} receive life-saving support faster.</p>
+                    <div class="recent-card__divider" aria-hidden="true"></div>
+                    <div class="recent-card__stats">
+                        <div class="recent-card__stat recent-card__stat--accent">
+                            <span class="recent-card__stat-label"><i class="fa-solid fa-droplet" aria-hidden="true"></i>Blood Group</span>
+                            <span class="recent-card__stat-value">${bloodGroup}</span>
+                        </div>
+                        <div class="recent-card__stat recent-card__stat--wide">
+                            <span class="recent-card__stat-label"><i class="fa-solid fa-location-dot" aria-hidden="true"></i>Location</span>
+                            <span class="recent-card__stat-value">${locationLabel}</span>
+                        </div>
+                        <div class="recent-card__stat">
+                            <span class="recent-card__stat-label"><i class="fa-solid fa-building-columns" aria-hidden="true"></i>Department</span>
+                            <span class="recent-card__stat-value">${department}</span>
+                        </div>
+                        <div class="recent-card__stat">
+                            <span class="recent-card__stat-label"><i class="fa-solid fa-layer-group" aria-hidden="true"></i>Batch</span>
+                            <span class="recent-card__stat-value">${batch}</span>
+                        </div>
+                        <div class="recent-card__stat">
+                            <span class="recent-card__stat-label"><i class="fa-solid fa-user" aria-hidden="true"></i>Age</span>
+                            <span class="recent-card__stat-value">${age}</span>
+                        </div>
+                        <div class="recent-card__stat">
+                            <span class="recent-card__stat-label"><i class="fa-solid fa-weight-scale" aria-hidden="true"></i>Weight</span>
+                            <span class="recent-card__stat-value">${weight}</span>
+                        </div>
+                    </div>
+                </article>
             </div>
         `;
         carouselInner.innerHTML += carouselItemHTML;
@@ -788,8 +852,10 @@ onValue(recentDonationsRef, (snapshot) => {
     recentDonationsList = recentDonors;
     renderRecentDonorsCarousel(recentDonors);
     refreshDashboardCharts();
+    setRecentLoading(false);
 }, (error) => {
     console.error("Failed to load recent donations: ", error);
+    setRecentLoading(false);
 });
 
 function updateLoginButtonState() {
@@ -1067,6 +1133,10 @@ window.onload = function () {
     searchLoaderEl = document.getElementById('search-loading');
     if (searchLoaderEl) {
         setSearchLoading(false);
+    }
+    recentLoaderEl = document.getElementById('recent-loading');
+    if (recentLoaderEl) {
+        setRecentLoading(recentLoaderState);
     }
 
     function isDonorEligible(lastDonationDate) {
