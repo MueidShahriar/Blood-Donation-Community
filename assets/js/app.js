@@ -78,6 +78,8 @@ let eventsList = [];
 let recentDonationsList = [];
 let currentUser = null;
 let currentUserRole = 'member';
+let searchLoaderEl = null;
+let searchRunTimeout = null;
 
 let ageGroupChart;
 let monthlyDonorChart;
@@ -468,6 +470,17 @@ function renderDonorCardAdmin(d) {
     `;
 }
 
+function setSearchLoading(isLoading) {
+    if (!searchLoaderEl) return;
+    if (isLoading) {
+        searchLoaderEl.classList.remove('hidden');
+        searchLoaderEl.setAttribute('aria-hidden', 'false');
+    } else {
+        searchLoaderEl.classList.add('hidden');
+        searchLoaderEl.setAttribute('aria-hidden', 'true');
+    }
+}
+
 function renderSearchResults(filteredDonors) {
     const searchResults = document.getElementById('search-results');
     if (!searchResults) return;
@@ -478,6 +491,7 @@ function renderSearchResults(filteredDonors) {
         searchResults.innerHTML = header + filteredDonors.map(renderDonorCardPublic).join('');
         if (window.registerFloatEls) window.registerFloatEls(searchResults);
     }
+    setSearchLoading(false);
 }
 
 function renderAdminMembersList() {
@@ -641,6 +655,7 @@ onValue(donorsRef, (snapshot) => {
         const resultsEl = document.getElementById('search-results');
         if (blood === 'select') {
             if (resultsEl) resultsEl.innerHTML = '';
+            setSearchLoading(false);
         } else {
             let filtered = donorsList;
             if (blood && blood !== 'all' && blood !== 'select') {
@@ -1049,6 +1064,10 @@ window.onload = function () {
     const searchBlood = document.getElementById('search-blood');
     const eligibleOnlyCheckbox = document.getElementById('eligible-only');
     const searchResults = document.getElementById('search-results');
+    searchLoaderEl = document.getElementById('search-loading');
+    if (searchLoaderEl) {
+        setSearchLoading(false);
+    }
 
     function isDonorEligible(lastDonationDate) {
         if (!lastDonationDate) return true;
@@ -1062,18 +1081,28 @@ window.onload = function () {
         if (!searchResults) return;
         const blood = searchBlood?.value;
         const showEligibleOnly = eligibleOnlyCheckbox?.checked;
+        if (searchRunTimeout) {
+            clearTimeout(searchRunTimeout);
+            searchRunTimeout = null;
+        }
         if (blood === 'select') {
-            searchResults.innerHTML = '';
+            searchResults.innerHTML = '<div class="text-gray-500 italic">No results yet. Perform a search to display donor entries here.</div>';
+            setSearchLoading(false);
             return;
         }
-        let filtered = donorsList;
-        if (blood && blood !== 'all' && blood !== 'select') {
-            filtered = filtered.filter(d => d.bloodGroup === blood);
-        }
-        if (showEligibleOnly) {
-            filtered = filtered.filter(d => isDonorEligible(d.lastDonateDate));
-        }
-        renderSearchResults(filtered);
+        setSearchLoading(true);
+        searchResults.innerHTML = '';
+        searchRunTimeout = setTimeout(() => {
+            let filtered = donorsList;
+            if (blood && blood !== 'all' && blood !== 'select') {
+                filtered = filtered.filter(d => d.bloodGroup === blood);
+            }
+            if (showEligibleOnly) {
+                filtered = filtered.filter(d => isDonorEligible(d.lastDonateDate));
+            }
+            renderSearchResults(filtered);
+            searchRunTimeout = null;
+        }, 220);
     }
 
     // Submit filters locally; no extra DB read
@@ -1565,30 +1594,7 @@ window.onload = function () {
         __pendingCounts__.clear();
     }
 
-    const searchBloodEl = document.getElementById('search-blood');
-    const eligibleOnlyEl = document.getElementById('eligible-only');
-    const searchResultsEl = document.getElementById('search-results');
-    if (searchBloodEl && searchResultsEl && Array.isArray(donorsList)) {
-        const blood = searchBloodEl.value;
-        const showEligibleOnly = !!eligibleOnlyEl?.checked;
-        if (blood === 'select') {
-            searchResultsEl.innerHTML = '';
-        } else {
-            let filtered = donorsList;
-            if (blood && blood !== 'all' && blood !== 'select') {
-                filtered = filtered.filter(d => d.bloodGroup === blood);
-            }
-            if (showEligibleOnly) {
-                const isEligible = (lastDonationDate) => {
-                    if (!lastDonationDate) return true;
-                    const today = new Date();
-                    const lastDonation = new Date(lastDonationDate);
-                    const threeMonthsAgo = new Date(new Date().setMonth(today.getMonth() - 3));
-                    return lastDonation <= threeMonthsAgo;
-                };
-                filtered = filtered.filter(d => isEligible(d.lastDonateDate));
-            }
-            renderSearchResults(filtered);
-        }
+    if (searchResults) {
+        runSearch();
     }
 };

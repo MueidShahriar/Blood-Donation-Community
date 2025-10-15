@@ -29,229 +29,8 @@ body::-webkit-scrollbar {
 }
 
 body::-webkit-scrollbar-track {
-    background: transparent
-}
-
-body::-webkit-scrollbar-thumb {
-    background: linear-gradient(180deg, var(--red-600), var(--red-500));
-    border-radius: 999px
-}
-
-.site-title {
-    display: inline-block;
-    white-space: nowrap;
-}
-
-@media (max-width: 640px) {
-    .site-title {
-        white-space: normal;
-        max-width: 72vw;
-        overflow: visible;
-        text-overflow: clip;
-        font-size: 1.125rem;
-        line-height: 1.2;
-    }
-
-    .header-logo {
-        width: 1.75rem;
-        height: 1.75rem;
-    }
-}
-
-@keyframes floaty {
-    0% {
-        transform: translateY(0)
-    }
-
-    50% {
-        transform: translateY(-8px)
-    }
-
-    100% {
-        transform: translateY(0)
-    }
-}
-
-.animate-bounce-slow {
-    animation: floaty 4s ease-in-out infinite
-}
-
-.rounded-xl {
-    border-radius: var(--radius-xl) !important
-}
-
-.shadow {
-    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.10) !important
-}
-
-.shadow-sm {
-    box-shadow: 0 6px 18px rgba(15, 23, 42, 0.08) !important
-}
-
-.shadow-lg {
-    box-shadow: var(--card-shadow) !important
-}
-
-.shadow-xl {
-    box-shadow: var(--card-strong) !important
-}
-
-article,
-.card,
-.bg-white {
-    transition: transform .28s ease, box-shadow .28s ease
-}
-
-article:hover,
-.card:hover {
-    transform: translateY(-6px)
-}
-
-#recentDonorCarousel .carousel-control-prev-icon,
-#recentDonorCarousel .carousel-control-next-icon {
-    background-color: rgba(225, 29, 72, 0.12);
+    background: rgba(15, 23, 42, 0.06);
     border-radius: 999px;
-    padding: 1.3rem;
-    background-size: 50%
-}
-
-/* Keep indicators inside card width and make them dots */
-#recentDonorCarousel .carousel-indicators {
-    left: 50%;
-    right: auto; 
-    transform: translateX(-50%);
-    width: min(640px, calc(100% - 64px)); 
-    margin: 0 auto !important; 
-    padding: 0 8px;
-    bottom: 4px; /* position near bottom edge of carousel */
-    display: flex;
-    flex-wrap: wrap; 
-    justify-content: center;
-    list-style: none;
-}
-#recentDonorCarousel .carousel-indicators li {
-    background-color: #ffdede;
-    width: 8px; 
-    height: 8px;
-    border-radius: 50%;
-    margin: 4px 5px;
-}
-#recentDonorCarousel .carousel-indicators li:nth-child(n+11) {
-    display: none;
-}
-#recentDonorCarousel .carousel-indicators .active {
-    background-color: var(--red-500);
-    width: 10px;
-    height: 10px;
-}
-
-/* Provide breathing room inside the recent donation card for indicators */
-#recentDonorCarousel .recent-card {
-    padding-bottom: 3.25rem;
-    width: min(100%, 640px);
-    margin: 0 auto;
-}
-@media (max-width: 640px) {
-    #recentDonorCarousel .recent-card {
-        padding-bottom: 2.75rem;
-        padding-left: 1.5rem;
-        padding-right: 1.5rem;
-    }
-}
-
-#back-to-top {
-    transition: opacity .25s ease, transform .15s ease;
-    opacity: 0;
-    transform: translateY(6px)
-}
-
-#back-to-top.show {
-    opacity: 1;
-    transform: translateY(0)
-}
-
-#fab-wrap {
-    position: fixed;
-    bottom: max(1rem, env(safe-area-inset-bottom));
-    right: max(1rem, env(safe-area-inset-right));
-}
-
-@supports not (bottom: max(1rem, 1rem)) {
-    #fab-wrap {
-        bottom: 1rem;
-        right: 1rem;
-    }
-}
-
-@media (max-width: 640px) {
-    main {
-        padding-bottom: 88px;
-    }
-}
-
-.how-card {
-    background: linear-gradient(180deg, rgba(255, 255, 255, 0.9), #fff);
-    border: 1px solid rgba(239, 68, 68, 0.06);
-    padding: 1.25rem;
-    border-radius: 14px;
-    box-shadow: 0 10px 28px rgba(15, 23, 42, 0.10) !important;
-    transition: transform .38s cubic-bezier(.22, .61, .36, 1), box-shadow .38s ease;
-    will-change: transform, box-shadow;
-    cursor: default;
-}
-
-.how-card:hover {
-    transform: scale(1.05);
-    box-shadow: var(--card-strong), 0 0 0 6px rgba(239, 68, 68, 0.06) !important;
-}
-
-.how-card.gentle {
-    transition: transform .18s ease, box-shadow .18s ease;
-}
-
-.how-card.gentle:hover {
-    transform: translateY(-2px) scale(1.02);
-}
-
-.how-card.compact {
-    padding: 0.75rem;
-}
-
-.how-card .icon-circle {
-    width: 56px;
-    height: 56px;
-    border-radius: 999px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    background: linear-gradient(180deg, rgba(239, 68, 68, 0.08), rgba(239, 68, 68, 0.03));
-    box-shadow: 0 6px 18px rgba(14, 23, 32, 0.04)
-}
-
-.how-card.accent-rose {
-    border-color: rgba(225, 29, 72, 0.10);
-}
-
-.how-card.accent-rose:hover {
-    box-shadow: var(--card-strong), 0 0 0 6px rgba(225, 29, 72, 0.08) !important;
-}
-
-.how-card.accent-rose .icon-circle {
-    background: linear-gradient(180deg, rgba(225, 29, 72, .16), rgba(225, 29, 72, .06));
-    color: #e11d48;
-}
-
-.how-card.accent-amber {
-    border-color: rgba(245, 158, 11, 0.10);
-}
-
-.how-card.accent-amber:hover {
-    box-shadow: var(--card-strong), 0 0 0 6px rgba(245, 158, 11, 0.08) !important;
-}
-
-.how-card.accent-amber .icon-circle {
-    background: linear-gradient(180deg, rgba(245, 158, 11, .16), rgba(245, 158, 11, .06));
-    color: #f59e0b;
 }
 
 .how-card.accent-emerald {
@@ -398,7 +177,19 @@ article:hover,
     padding: 1.25rem;
     border-radius: 12px;
     background: linear-gradient(90deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.8));
-    box-shadow: 0 12px 36px rgba(2, 6, 23, 0.10)
+    box-shadow: 0 12px 36px rgba(2, 6, 23, 0.10);
+}
+
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
 }
 
 .stats-grid {
@@ -456,6 +247,9 @@ article:hover,
 .search-card {
     position: relative;
     overflow: hidden;
+    border-radius: 1.5rem;
+    padding: 1.4rem 1.4rem 1.6rem;
+    box-shadow: 0 18px 42px rgba(225, 29, 72, 0.12);
 }
 
 .search-card::before {
@@ -476,6 +270,44 @@ article:hover,
 
     100% {
         left: 100%;
+    }
+}
+
+/* Donor search loader styling */
+.search-loading {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    padding: 0.75rem 1rem;
+    border-radius: 0.75rem;
+    background: rgba(239, 68, 68, 0.06);
+    color: #b91c1c;
+    font-size: 0.9rem;
+    font-weight: 600;
+    box-shadow: inset 0 0 0 1px rgba(239, 68, 68, 0.08);
+    transition: opacity 0.2s ease;
+}
+
+.search-loading.hidden {
+    opacity: 0;
+}
+
+.search-loading__spinner {
+    width: 1.1rem;
+    height: 1.1rem;
+    border-radius: 999px;
+    border: 2px solid rgba(239, 68, 68, 0.18);
+    border-top-color: #ef4444;
+    animation: search-spin 0.8s linear infinite;
+}
+
+.search-loading__text {
+    letter-spacing: 0.01em;
+}
+
+@keyframes search-spin {
+    to {
+        transform: rotate(360deg);
     }
 }
 
@@ -1127,6 +959,11 @@ canvas {
         border-radius: 11px;
         overflow-wrap: anywhere;
         word-break: break-word;
+    }
+
+    .search-card {
+        border-radius: 1.5rem;
+        padding: clamp(1rem, 4vw, 1.35rem);
     }
 
     #search-results .donor-card {
