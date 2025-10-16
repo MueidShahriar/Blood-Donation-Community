@@ -13,13 +13,18 @@ export const chartColors = {
 export function getPieChartOptions() {
     return {
         responsive: true,
-        maintainAspectRatio: false,
+        maintainAspectRatio: true,
+        aspectRatio: 1.2,
         plugins: {
             legend: {
                 position: 'bottom',
                 labels: {
                     usePointStyle: true,
-                    boxWidth: 10
+                    boxWidth: 10,
+                    padding: 12,
+                    font: {
+                        size: 11
+                    }
                 }
             },
             tooltip: {
@@ -35,8 +40,14 @@ export function getPieChartOptions() {
             }
         },
         animation: {
-            duration: 600,
+            duration: 800,
             easing: 'easeOutQuart'
+        },
+        layout: {
+            padding: {
+                top: 10,
+                bottom: 10
+            }
         }
     };
 }

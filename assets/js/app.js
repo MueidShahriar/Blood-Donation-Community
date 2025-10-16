@@ -28,6 +28,25 @@ if ('ResizeObserver' in window) {
     const ro = new ResizeObserver(() => setHeaderOffset());
     ro.observe(document.body);
 }
+
+// Enhanced header scroll effect
+let lastScrollY = 0;
+window.addEventListener('scroll', () => {
+    const header = document.querySelector('header');
+    if (!header) return;
+    
+    const currentScrollY = window.scrollY;
+    
+    // Add scrolled class when scrolled down
+    if (currentScrollY > 50) {
+        header.classList.add('scrolled');
+    } else {
+        header.classList.remove('scrolled');
+    }
+    
+    lastScrollY = currentScrollY;
+}, { passive: true });
+
 import {
     initializeApp
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
@@ -496,9 +515,14 @@ function setRecentLoading(isLoading) {
     const carousel = document.getElementById('recentDonorCarousel');
     if (carousel) {
         if (isLoading) {
+            // Hide carousel buttons while loading
             carousel.classList.remove('show-controls');
         } else {
-            carousel.classList.add('show-controls');
+            // Show carousel buttons after loading is complete
+            // Add a small delay to ensure smooth transition
+            setTimeout(() => {
+                carousel.classList.add('show-controls');
+            }, 100);
         }
     }
 }
@@ -508,6 +532,12 @@ if (!recentLoaderEl) {
     if (recentLoaderEl) {
         setRecentLoading(recentLoaderState);
     }
+}
+
+// Initialize carousel without controls visible
+const initialCarousel = document.getElementById('recentDonorCarousel');
+if (initialCarousel) {
+    initialCarousel.classList.remove('show-controls');
 }
 
 function renderSearchResults(filteredDonors) {
@@ -627,13 +657,22 @@ function clearAdminMemberForm() {
 function renderRecentDonorsCarousel(donors) {
     const carouselInner = document.querySelector('#recentDonorCarousel .carousel-inner');
     const carouselIndicators = document.querySelector('#recentDonorCarousel .carousel-indicators');
+    const carousel = document.getElementById('recentDonorCarousel');
+    
     if (!carouselInner || !carouselIndicators) return;
+    
     carouselInner.innerHTML = '';
     carouselIndicators.innerHTML = '';
+    
     if (donors.length === 0) {
         carouselInner.innerHTML = '<div class="text-center p-5">No recent donations to show.</div>';
+        // Hide controls if no donations
+        if (carousel) {
+            carousel.classList.remove('show-controls');
+        }
         return;
     }
+    
     donors.forEach((d, index) => {
         const donationDate = d.date ? new Date(d.date).toLocaleDateString() : '—';
         const donorName = d.name || 'Anonymous Donor';
@@ -706,6 +745,13 @@ function renderRecentDonorsCarousel(donors) {
     // Ensure float-in animation hooks are refreshed for newly injected slides
     if (window.registerFloatEls) {
         window.registerFloatEls(carouselInner);
+    }
+    
+    // Show carousel controls after content is rendered (only if we have donations)
+    if (carousel && donors.length > 0) {
+        setTimeout(() => {
+            carousel.classList.add('show-controls');
+        }, 150);
     }
 }
 
@@ -1466,27 +1512,34 @@ window.onload = function () {
         if (!backToTopBtn) return;
         const beyond = window.scrollY > 300;
         let footerVisible = false;
-        if ('IntersectionObserver' in window && footerEl) {
+        
+        // Check if footer is in viewport
+        if (footerEl) {
+            const rect = footerEl.getBoundingClientRect();
+            footerVisible = rect && rect.top < window.innerHeight;
         }
-        else {
-            const rect = footerEl?.getBoundingClientRect();
-            footerVisible = !!rect && rect.top < window.innerHeight;
+        
+        if (beyond && !footerVisible) {
+            backToTopBtn.classList.add('show');
+        } else {
+            backToTopBtn.classList.remove('show');
         }
-        if (beyond && !footerVisible) backToTopBtn.classList.add('show');
-        else backToTopBtn?.classList.remove('show');
     }
 
-    window.addEventListener('scroll', updateBackToTopVisibility);
+    window.addEventListener('scroll', updateBackToTopVisibility, { passive: true });
     window.addEventListener('resize', updateBackToTopVisibility);
     updateBackToTopVisibility();
 
-    // Use IntersectionObserver to hide FAB when footer is visible
+    // Use IntersectionObserver to hide button when footer is visible
     if ('IntersectionObserver' in window && footerEl && backToTopBtn) {
         const fabFooterIO = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 const footerVisible = entry.isIntersecting && entry.intersectionRatio > 0.01;
-                if (footerVisible) backToTopBtn.classList.remove('show');
-                else updateBackToTopVisibility();
+                if (footerVisible) {
+                    backToTopBtn.classList.remove('show');
+                } else {
+                    updateBackToTopVisibility();
+                }
             });
         }, {
             threshold: [0, 0.01, 0.1]
@@ -1494,7 +1547,8 @@ window.onload = function () {
         fabFooterIO.observe(footerEl);
     }
 
-    backToTopBtn?.addEventListener('click', () => {
+    backToTopBtn?.addEventListener('click', (e) => {
+        e.preventDefault();
         window.scrollTo({
             top: 0,
             behavior: 'smooth'
