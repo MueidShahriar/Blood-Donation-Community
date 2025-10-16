@@ -168,6 +168,7 @@ body::-webkit-scrollbar-track {
     background: rgba(15, 23, 42, 0.08);
     color: #0f172a;
     align-self: flex-start;
+    margin-bottom: 1rem;
 }
 
 .insight-chip i {
