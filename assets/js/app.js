@@ -1,7 +1,6 @@
 const __pendingCounts__ = new Map();
 window.__statsVisible__ = false;
 window.__animateCountTo__ = undefined;
-
 function setCountTarget(id, value) {
     const v = Number(value || 0);
     const el = document.getElementById(id);
@@ -14,7 +13,6 @@ function setCountTarget(id, value) {
         window.__animateCountTo__(el, v);
     }
 }
-
 function setHeaderOffset() {
     const header = document.querySelector('header');
     const h = header ? header.offsetHeight : 0;
@@ -28,25 +26,18 @@ if ('ResizeObserver' in window) {
     const ro = new ResizeObserver(() => setHeaderOffset());
     ro.observe(document.body);
 }
-
-// Enhanced header scroll effect
 let lastScrollY = 0;
 window.addEventListener('scroll', () => {
     const header = document.querySelector('header');
     if (!header) return;
-    
     const currentScrollY = window.scrollY;
-    
-    // Add scrolled class when scrolled down
     if (currentScrollY > 50) {
         header.classList.add('scrolled');
     } else {
         header.classList.remove('scrolled');
     }
-    
     lastScrollY = currentScrollY;
 }, { passive: true });
-
 import {
     initializeApp
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
@@ -74,10 +65,8 @@ import {
     query,
     limitToLast
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
-
 import { firebaseConfig, ADMIN_EMAIL } from "./firebase-config.js";
 import { chartLabels, chartColors, getPieChartOptions } from "./chart-config.js";
-
 const app = initializeApp(firebaseConfig);
 let analytics;
 try {
@@ -91,7 +80,6 @@ try {
 }
 const auth = getAuth(app);
 const database = getDatabase(app);
-
 let donorsList = [];
 let eventsList = [];
 let recentDonationsList = [];
@@ -101,11 +89,9 @@ let searchLoaderEl = null;
 let searchRunTimeout = null;
 let recentLoaderEl = null;
 let recentLoaderState = true;
-
 let ageGroupChart;
 let monthlyDonorChart;
 let bloodGroupChart;
-
 function ensureDashboardCharts() {
     if (typeof Chart === 'undefined') {
         console.warn('Chart.js is not available; dashboard charts are disabled.');
@@ -166,13 +152,11 @@ function ensureDashboardCharts() {
         }
     }
 }
-
 function toggleEmptyState(elementId, hasData) {
     const el = document.getElementById(elementId);
     if (!el) return;
     el.classList.toggle('hidden', hasData);
 }
-
 function inferAgeValue(entry) {
     if (!entry || typeof entry !== 'object') return null;
     const ageFields = ['age', 'Age', 'donorAge'];
@@ -209,7 +193,6 @@ function inferAgeValue(entry) {
     }
     return null;
 }
-
 function computeAgeGroupCounts() {
     const buckets = new Map(chartLabels.age.map(label => [label, 0]));
     const assign = (age) => {
@@ -248,7 +231,6 @@ function computeAgeGroupCounts() {
     recentDonationsList.forEach(addFromEntry);
     return chartLabels.age.map(label => buckets.get(label) || 0);
 }
-
 function computeBloodGroupCounts() {
     const counts = chartLabels.blood.map(() => 0);
     const increment = (group) => {
@@ -263,7 +245,6 @@ function computeBloodGroupCounts() {
     recentDonationsList.forEach(d => increment(d?.bloodGroup));
     return counts;
 }
-
 function computeMonthlyCounts() {
     const counts = chartLabels.months.map(() => 0);
     const addDate = (dateValue) => {
@@ -278,7 +259,6 @@ function computeMonthlyCounts() {
     });
     return counts;
 }
-
 function updateAgeGroupChart() {
     ensureDashboardCharts();
     if (!ageGroupChart) return;
@@ -290,7 +270,6 @@ function updateAgeGroupChart() {
     const total = counts.reduce((sum, value) => sum + value, 0);
     toggleEmptyState('ageGroupChartEmpty', total > 0);
 }
-
 function updateMonthlyDonorChart() {
     ensureDashboardCharts();
     if (!monthlyDonorChart) return;
@@ -302,7 +281,6 @@ function updateMonthlyDonorChart() {
     const total = counts.reduce((sum, value) => sum + value, 0);
     toggleEmptyState('monthlyDonorChartEmpty', total > 0);
 }
-
 function updateBloodGroupChart() {
     ensureDashboardCharts();
     if (!bloodGroupChart) return;
@@ -314,25 +292,21 @@ function updateBloodGroupChart() {
     const total = counts.reduce((sum, value) => sum + value, 0);
     toggleEmptyState('bloodGroupChartEmpty', total > 0);
 }
-
 function refreshDashboardCharts() {
     updateAgeGroupChart();
     updateMonthlyDonorChart();
     updateBloodGroupChart();
 }
-
 function openModal(modal) {
     if (!modal) return;
     modal.classList.remove('hidden');
     modal.classList.add('flex');
 }
-
 function closeModal(modal) {
     if (!modal) return;
     modal.classList.add('hidden');
     modal.classList.remove('flex');
 }
-
 function showModalMessage(modal, message, title) {
     let modalEl = null;
     if (typeof modal === 'string') modalEl = document.getElementById(modal);
@@ -344,7 +318,6 @@ function showModalMessage(modal, message, title) {
     if (messageEl) messageEl.textContent = message || '';
     openModal(modalEl);
 }
-
 function attachConfirmHandler(callback, opts = {}) {
     const modal = document.getElementById('delete-confirm-modal');
     if (!modal) return console.warn('Delete confirm modal not found');
@@ -352,16 +325,13 @@ function attachConfirmHandler(callback, opts = {}) {
     const messageEl = modal.querySelector('p');
     if (opts.title && titleEl) titleEl.textContent = opts.title;
     if (opts.message && messageEl) messageEl.textContent = opts.message;
-
     const confirmBtn = document.getElementById('delete-confirm');
     if (!confirmBtn) {
         openModal(modal);
         return;
     }
-
     const newBtn = confirmBtn.cloneNode(true);
     confirmBtn.parentNode.replaceChild(newBtn, confirmBtn);
-
     newBtn.addEventListener('click', () => {
         try {
             callback();
@@ -371,10 +341,8 @@ function attachConfirmHandler(callback, opts = {}) {
     }, {
         once: true
     });
-
     openModal(modal);
 }
-
 function getDateParts(dateStr) {
     if (!dateStr || typeof dateStr !== 'string') return {
         y: '',
@@ -388,7 +356,6 @@ function getDateParts(dateStr) {
         d: parts[2] || ''
     };
 }
-
 function renderDonorCardPublic(d) {
     const lastDate = d.lastDonateDate ? new Date(d.lastDonateDate).toLocaleDateString() : '-';
 const contactDesktop = d.isPhoneHidden
@@ -401,7 +368,6 @@ const contactDesktop = d.isPhoneHidden
                 <span class="font-bold">Contact:</span>
                 <a class="text-xs text-gray-600 underline" href="tel:${d.phone}">${d.phone}</a>
            </div>`;
-
     const contactMobileRow = d.isPhoneHidden
         ? `<div class="info-row sm:hidden">
                 <i class="icon fa-solid fa-circle-info text-red-500"></i>
@@ -415,7 +381,6 @@ const contactDesktop = d.isPhoneHidden
                     <a class="value font-semibold tracking-wide text-gray-700" href="tel:${d.phone}">${d.phone}</a>
                 </div>
            </div>`;
-
     return `
         <div class="donor-card float-in bg-white p-4 rounded-lg shadow-sm hover:shadow-md transition-all duration-300 flex flex-col sm:flex-row sm:items-center justify-between">
             <div class="flex-1 min-w-0 mb-2 sm:mb-0">
@@ -468,7 +433,6 @@ const contactDesktop = d.isPhoneHidden
         </div>
     `;
 }
-
 function renderDonorCardAdmin(d) {
     const lastDate = d.lastDonateDate ? new Date(d.lastDonateDate).toLocaleDateString() : '-';
     const phone = d.phone || '-';
@@ -490,7 +454,6 @@ function renderDonorCardAdmin(d) {
         </div>
     `;
 }
-
 function setSearchLoading(isLoading) {
     if (!searchLoaderEl) return;
     if (isLoading) {
@@ -501,7 +464,6 @@ function setSearchLoading(isLoading) {
         searchLoaderEl.setAttribute('aria-hidden', 'true');
     }
 }
-
 function setRecentLoading(isLoading) {
     recentLoaderState = !!isLoading;
     if (!recentLoaderEl) return;
@@ -515,31 +477,24 @@ function setRecentLoading(isLoading) {
     const carousel = document.getElementById('recentDonorCarousel');
     if (carousel) {
         if (isLoading) {
-            // Hide carousel buttons while loading
             carousel.classList.remove('show-controls');
         } else {
-            // Show carousel buttons after loading is complete
-            // Add a small delay to ensure smooth transition
             setTimeout(() => {
                 carousel.classList.add('show-controls');
             }, 100);
         }
     }
 }
-
 if (!recentLoaderEl) {
     recentLoaderEl = document.getElementById('recent-loading');
     if (recentLoaderEl) {
         setRecentLoading(recentLoaderState);
     }
 }
-
-// Initialize carousel without controls visible
 const initialCarousel = document.getElementById('recentDonorCarousel');
 if (initialCarousel) {
     initialCarousel.classList.remove('show-controls');
 }
-
 function renderSearchResults(filteredDonors) {
     const searchResults = document.getElementById('search-results');
     if (!searchResults) return;
@@ -552,7 +507,6 @@ function renderSearchResults(filteredDonors) {
     }
     setSearchLoading(false);
 }
-
 function renderAdminMembersList() {
     const membersListDiv = document.getElementById('admin-members-list');
     if (!membersListDiv) return;
@@ -564,9 +518,7 @@ function renderAdminMembersList() {
         `;
         return;
     }
-
     membersListDiv.innerHTML = donorsList.map(renderDonorCardAdmin).join('');
-
     membersListDiv.querySelectorAll('.edit-member-btn').forEach(button => {
         button.addEventListener('click', (ev) => {
             const memberId = ev.target.dataset.memberId;
@@ -586,7 +538,6 @@ function renderAdminMembersList() {
             }
         });
     });
-
     membersListDiv.querySelectorAll('.delete-member-btn').forEach(button => {
         button.addEventListener('click', (ev) => {
             const memberId = ev.target.dataset.memberId;
@@ -597,7 +548,6 @@ function renderAdminMembersList() {
         });
     });
 }
-
 function renderAdminEventsList() {
     const eventsListDiv = document.getElementById('admin-events-list');
     if (!eventsListDiv) return;
@@ -613,7 +563,6 @@ function renderAdminEventsList() {
             </div>
         </div>
     `).join('');
-
     eventsListDiv.querySelectorAll('.edit-event-btn').forEach(button => {
         button.addEventListener('click', (ev) => {
             const eventId = ev.target.dataset.eventId;
@@ -637,42 +586,33 @@ function renderAdminEventsList() {
         });
     });
 }
-
 function clearAdminEventForm() {
     document.getElementById('admin-event-form').reset();
     document.getElementById('admin-event-id').value = '';
 }
-
 function clearAdminRecentDonorForm() {
     const form = document.getElementById('admin-recent-donor-form');
     if (!form) return;
     form.reset();
 }
-
 function clearAdminMemberForm() {
     document.getElementById('admin-member-form').reset();
     document.getElementById('admin-member-id').value = '';
 }
-
 function renderRecentDonorsCarousel(donors) {
     const carouselInner = document.querySelector('#recentDonorCarousel .carousel-inner');
     const carouselIndicators = document.querySelector('#recentDonorCarousel .carousel-indicators');
     const carousel = document.getElementById('recentDonorCarousel');
-    
     if (!carouselInner || !carouselIndicators) return;
-    
     carouselInner.innerHTML = '';
     carouselIndicators.innerHTML = '';
-    
     if (donors.length === 0) {
         carouselInner.innerHTML = '<div class="text-center p-5">No recent donations to show.</div>';
-        // Hide controls if no donations
         if (carousel) {
             carousel.classList.remove('show-controls');
         }
         return;
     }
-    
     donors.forEach((d, index) => {
         const donationDate = d.date ? new Date(d.date).toLocaleDateString() : '—';
         const donorName = d.name || 'Anonymous Donor';
@@ -741,20 +681,15 @@ function renderRecentDonorsCarousel(donors) {
         const indicatorHTML = `<li data-target="#recentDonorCarousel" data-slide-to="${index}" class="${indicatorClass}"></li>`;
         carouselIndicators.innerHTML += indicatorHTML;
     });
-
-    // Ensure float-in animation hooks are refreshed for newly injected slides
     if (window.registerFloatEls) {
         window.registerFloatEls(carouselInner);
     }
-    
-    // Show carousel controls after content is rendered (only if we have donations)
     if (carousel && donors.length > 0) {
         setTimeout(() => {
             carousel.classList.add('show-controls');
         }, 150);
     }
 }
-
 const donorsRef = ref(database, 'donors');
 onValue(donorsRef, (snapshot) => {
     const data = snapshot.val();
@@ -802,7 +737,6 @@ onValue(donorsRef, (snapshot) => {
 }, (error) => {
     console.error("Failed to load donors: ", error);
 });
-
 const eventsRef = ref(database, 'events');
 onValue(eventsRef, (snapshot) => {
     const data = snapshot.val();
@@ -879,7 +813,6 @@ onValue(eventsRef, (snapshot) => {
 }, (error) => {
     console.error("Failed to load events: ", error);
 });
-
 const statsRef = ref(database, 'stats');
 onValue(statsRef, (snapshot) => {
     const statsData = snapshot.val();
@@ -889,7 +822,6 @@ onValue(statsRef, (snapshot) => {
 }, (error) => {
     console.error("Failed to load stats: ", error);
 });
-
 const recentDonationsRef = ref(database, 'recentDonations');
 onValue(recentDonationsRef, (snapshot) => {
     const data = snapshot.val();
@@ -901,7 +833,6 @@ onValue(recentDonationsRef, (snapshot) => {
             }
         }
     }
-    // Sort by date (latest first) when available
     recentDonors.sort((a, b) => {
         const ad = a.date ? new Date(a.date).getTime() : 0;
         const bd = b.date ? new Date(b.date).getTime() : 0;
@@ -915,7 +846,6 @@ onValue(recentDonationsRef, (snapshot) => {
     console.error("Failed to load recent donations: ", error);
     setRecentLoading(false);
 });
-
 function updateLoginButtonState() {
     const loginBtn = document.getElementById('login-btn');
     const mobileLoginBtn = document.getElementById('mobile-login-btn');
@@ -997,12 +927,10 @@ function updateLoginButtonState() {
         contactMobileLink && contactMobileLink.classList.remove('hidden');
     }
 }
-
 onAuthStateChanged(auth, (user) => {
     currentUser = user;
     updateLoginButtonState();
 });
-
 function saveEvent(eventData) {
     if (!currentUser || currentUserRole !== 'admin') {
         showModalMessage('success-modal', 'You do not have permission to perform this action.', 'Permission Denied');
@@ -1022,7 +950,6 @@ function saveEvent(eventData) {
     }
     clearAdminEventForm();
 }
-
 function deleteEvent(eventId) {
     if (!currentUser || currentUserRole !== 'admin') {
         showModalMessage('success-modal', 'You do not have permission to perform this action.', 'Permission Denied');
@@ -1046,7 +973,6 @@ function deleteEvent(eventId) {
         message: 'Deleting this event is permanent and cannot be undone.'
     });
 }
-
 function deleteMember(memberId) {
     if (!currentUser || currentUserRole !== 'admin') {
         showModalMessage('success-modal', 'You do not have permission to perform this action.', 'Permission Denied');
@@ -1070,18 +996,15 @@ function deleteMember(memberId) {
         message: 'Deleting this member profile is permanent and cannot be undone.'
     });
 }
-
 window.onload = function () {
     const successModal = document.getElementById('success-modal');
     const successClose = document.getElementById('success-close');
     successClose?.addEventListener('click', () => closeModal(successModal));
     successModal?.querySelector('.absolute.inset-0')?.addEventListener('click', () => closeModal(successModal));
-
     const loginModal = document.getElementById('login-modal');
     const loginCancel = document.getElementById('login-cancel');
     loginCancel?.addEventListener('click', () => closeModal(loginModal));
     loginModal?.querySelector('.absolute.inset-0')?.addEventListener('click', () => closeModal(loginModal));
-
     const profileModal = document.getElementById('profile-modal');
     const pfClose = document.getElementById('pf-close');
     const pfLogout = document.getElementById('pf-logout');
@@ -1090,16 +1013,12 @@ window.onload = function () {
     const deleteConfirmModal = document.getElementById('delete-confirm-modal');
     const deleteCancelBtn = document.getElementById('delete-cancel');
     const deleteConfirmBtn = document.getElementById('delete-confirm');
-
     deleteCancelBtn?.addEventListener('click', () => closeModal(deleteConfirmModal));
     deleteConfirmModal?.querySelector('.absolute.inset-0')?.addEventListener('click', () => closeModal(deleteConfirmModal));
-
     pfClose?.addEventListener('click', () => closeModal(profileModal));
     profileModal?.querySelector('.absolute.inset-0')?.addEventListener('click', () => closeModal(profileModal));
-
     const menuToggle = document.getElementById('menu-toggle');
     const mobileMenu = document.getElementById('mobile-menu');
-
     function setMenuOpen(open) {
         if (!mobileMenu || !menuToggle) return;
         mobileMenu.classList.toggle('hidden', !open);
@@ -1111,21 +1030,17 @@ window.onload = function () {
         setMenuOpen(open);
         ev.stopPropagation();
     });
-
     mobileMenu?.querySelectorAll('a, button').forEach(a => {
         a.addEventListener('click', () => setMenuOpen(false));
     });
-
     document.addEventListener('click', (e) => {
         if (!mobileMenu || !menuToggle) return;
         const isOpen = !mobileMenu.classList.contains('hidden');
         const clickedInside = mobileMenu.contains(e.target) || menuToggle.contains(e.target);
         if (isOpen && !clickedInside) setMenuOpen(false);
     });
-
     const joinForm = document.getElementById('join-form');
     const joinClear = document.getElementById('join-clear');
-
     joinForm?.addEventListener('submit', (e) => {
         e.preventDefault();
         const fd = new FormData(joinForm);
@@ -1144,7 +1059,6 @@ window.onload = function () {
             gender: gender || 'Other',
             isPhoneHidden: isPhoneHidden
         };
-
         if (!donorData.fullName || !email || !donorData.phone || !donorData.bloodGroup || !donorData.location || !password || !confirm) {
             showModalMessage(successModal, 'Please fill all required fields.', 'Error');
             return;
@@ -1157,7 +1071,6 @@ window.onload = function () {
             showModalMessage(successModal, 'Passwords do not match.', 'Error');
             return;
         }
-
         createUserWithEmailAndPassword(auth, email, password)
             .then((userCredential) => {
                 const user = userCredential.user;
@@ -1179,11 +1092,9 @@ window.onload = function () {
                 showModalMessage('success-modal', `Signup failed: ${errorMessage}`, 'Error');
             });
     });
-
     joinClear?.addEventListener('click', () => {
         joinForm.reset();
     });
-
     const searchForm = document.getElementById('search-form');
     const searchBlood = document.getElementById('search-blood');
     const eligibleOnlyCheckbox = document.getElementById('eligible-only');
@@ -1196,7 +1107,6 @@ window.onload = function () {
     if (recentLoaderEl) {
         setRecentLoading(recentLoaderState);
     }
-
     function isDonorEligible(lastDonationDate) {
         if (!lastDonationDate) return true;
         const today = new Date();
@@ -1204,7 +1114,6 @@ window.onload = function () {
         const threeMonthsAgo = new Date(new Date().setMonth(today.getMonth() - 3));
         return lastDonation <= threeMonthsAgo;
     }
-
     function runSearch() {
         if (!searchResults) return;
         const blood = searchBlood?.value;
@@ -1232,21 +1141,15 @@ window.onload = function () {
             searchRunTimeout = null;
         }, 220);
     }
-
-    // Submit filters locally; no extra DB read
    searchForm?.addEventListener('submit', (e) => {
         e.preventDefault();
         runSearch();
     });
-
-    // Auto-refresh when filters change
     eligibleOnlyCheckbox?.addEventListener('change', runSearch);
     searchBlood?.addEventListener('change', runSearch);
-
     const loginBtn = document.getElementById('login-btn');
     const mobileLoginBtn = document.getElementById('mobile-login-btn');
     const loginForm = document.getElementById('login-form');
-
     function handleLoginClick() {
         if (currentUser) {
             const userRef = ref(database, `donors/${currentUser.uid}`);
@@ -1270,13 +1173,11 @@ window.onload = function () {
             openModal(loginModal);
         }
     }
-
     loginBtn?.addEventListener('click', handleLoginClick);
     mobileLoginBtn?.addEventListener('click', () => {
         closeModal(mobileMenu);
         handleLoginClick();
     });
-
     loginForm?.addEventListener('submit', (ev) => {
         ev.preventDefault();
         const email = document.getElementById('login-email')?.value?.trim();
@@ -1293,7 +1194,6 @@ window.onload = function () {
                 showModalMessage('success-modal', `Login failed: ${errorMessage}`, 'Login Failed');
             });
     });
-
     const forgotPasswordLink = document.getElementById('forgot-password-link');
     forgotPasswordLink?.addEventListener('click', (ev) => {
         ev.preventDefault();
@@ -1313,8 +1213,6 @@ window.onload = function () {
                 showModalMessage('success-modal', `Failed to send reset email: ${errorMessage}`, 'Password Reset Error');
             });
     });
-
-    // Show/hide password toggle in login modal
     const pwToggle = document.getElementById('toggle-password');
     const pwInput = document.getElementById('login-password');
     pwToggle?.addEventListener('click', () => {
@@ -1329,7 +1227,6 @@ window.onload = function () {
             icon.classList.toggle('fa-eye-slash');
         }
     });
-
     const adminEventForm = document.getElementById('admin-event-form');
     if (adminEventForm) {
         adminEventForm.addEventListener('submit', (ev) => {
@@ -1346,12 +1243,10 @@ window.onload = function () {
             saveEvent(eventData);
         });
     }
-
     const clearEventBtn = document.getElementById('clear-event-btn');
     if (clearEventBtn) {
         clearEventBtn.addEventListener('click', clearAdminEventForm);
     }
-
     const adminRecentDonorForm = document.getElementById('admin-recent-donor-form');
     if (adminRecentDonorForm) {
         adminRecentDonorForm.addEventListener('submit', (ev) => {
@@ -1390,12 +1285,10 @@ window.onload = function () {
             });
         });
     }
-
     const clearRecentDonorBtn = document.getElementById('clear-recent-donor-btn');
     if (clearRecentDonorBtn) {
         clearRecentDonorBtn.addEventListener('click', clearAdminRecentDonorForm);
     }
-
     const adminMemberForm = document.getElementById('admin-member-form');
     if (adminMemberForm) {
         adminMemberForm.addEventListener('submit', (ev) => {
@@ -1421,12 +1314,10 @@ window.onload = function () {
             }
         });
     }
-
     const clearMemberBtn = document.getElementById('clear-member-btn');
     if (clearMemberBtn) {
         clearMemberBtn.addEventListener('click', clearAdminMemberForm);
     }
-
     profileForm?.addEventListener('submit', (e) => {
         e.preventDefault();
         if (!currentUser) return;
@@ -1452,7 +1343,6 @@ window.onload = function () {
                 showModalMessage('success-modal', `Failed to update profile: ${error.message}`, 'Error');
             });
     });
-
     pfLogout?.addEventListener('click', () => {
         signOut(auth).then(() => {
             closeModal(profileModal);
@@ -1462,13 +1352,11 @@ window.onload = function () {
             showModalMessage('success-modal', 'An error occurred during logout.', 'Logout Failed');
         });
     });
-
     pfDelete?.addEventListener('click', () => {
         if (!currentUser) {
             showModalMessage('success-modal', 'You must be logged in to delete your profile.', 'Error');
             return;
         }
-
         attachConfirmHandler(() => {
             const user = auth.currentUser;
             if (!user) {
@@ -1497,40 +1385,30 @@ window.onload = function () {
             message: 'Deleting your profile is permanent and cannot be undone.'
         });
     });
-
     document.addEventListener('keydown', (ev) => {
         if (ev.key === 'Escape') {
             [successModal, profileModal, loginModal, deleteConfirmModal].forEach(m => closeModal(m));
         }
     });
-
-    // Back-to-top button functionality with footer awareness
     const backToTopBtn = document.getElementById('back-to-top');
     const footerEl = document.querySelector('footer');
-
     function updateBackToTopVisibility() {
         if (!backToTopBtn) return;
         const beyond = window.scrollY > 300;
         let footerVisible = false;
-        
-        // Check if footer is in viewport
         if (footerEl) {
             const rect = footerEl.getBoundingClientRect();
             footerVisible = rect && rect.top < window.innerHeight;
         }
-        
         if (beyond && !footerVisible) {
             backToTopBtn.classList.add('show');
         } else {
             backToTopBtn.classList.remove('show');
         }
     }
-
     window.addEventListener('scroll', updateBackToTopVisibility, { passive: true });
     window.addEventListener('resize', updateBackToTopVisibility);
     updateBackToTopVisibility();
-
-    // Use IntersectionObserver to hide button when footer is visible
     if ('IntersectionObserver' in window && footerEl && backToTopBtn) {
         const fabFooterIO = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
@@ -1546,7 +1424,6 @@ window.onload = function () {
         });
         fabFooterIO.observe(footerEl);
     }
-
     backToTopBtn?.addEventListener('click', (e) => {
         e.preventDefault();
         window.scrollTo({
@@ -1554,8 +1431,6 @@ window.onload = function () {
             behavior: 'smooth'
         });
     });
-
-    // Admin dashboard tabs
     const adminPanel = document.getElementById('admin-panel');
     if (adminPanel) {
         const tabs = adminPanel.querySelectorAll('.admin-tab');
@@ -1571,8 +1446,6 @@ window.onload = function () {
             });
         });
     }
-
-    // Make Contact navigation fast-smooth (short duration ~250ms)
     const fastScrollTo = (el, duration = 250) => {
         const root = document.documentElement;
         const headerH = parseFloat(getComputedStyle(root).getPropertyValue('--header-height')) || 0;
@@ -1589,13 +1462,11 @@ window.onload = function () {
         };
         requestAnimationFrame(step);
     };
-
     document.querySelectorAll('a[href="#contact"]').forEach(link => {
         link.addEventListener('click', (e) => {
             const target = document.getElementById('contact');
             if (!target) return;
             e.preventDefault();
-            // Close mobile menu quickly if open
             const mobileMenu = document.getElementById('mobile-menu');
             if (mobileMenu && !mobileMenu.classList.contains('hidden')) {
                 mobileMenu.classList.add('hidden');
@@ -1609,7 +1480,6 @@ window.onload = function () {
             } else {
                 fastScrollTo(target, 160);
             }
-            // Update the URL hash without jumping again
             if (history.pushState) {
                 history.pushState(null, '', '#contact');
             } else {
@@ -1617,11 +1487,9 @@ window.onload = function () {
             }
         });
     });
-
     const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     let __floatIO__ = null;
     let __floatIO_lastY = window.scrollY;
-
     function registerFloatEls(root = document) {
         const els = root.querySelectorAll('.float-in:not([data-float-registered])');
         if (!els.length) return;
@@ -1670,7 +1538,6 @@ window.onload = function () {
     }
     window.registerFloatEls = registerFloatEls;
     registerFloatEls(document);
-
     const statNums = document.querySelectorAll('.stat-card .num');
     const fmt = (n) => n.toLocaleString();
     const animateCountTo = (el, target, duration = 1200, startOverride = undefined) => {
@@ -1688,7 +1555,6 @@ window.onload = function () {
         requestAnimationFrame(step);
     };
     window.__animateCountTo__ = animateCountTo;
-
     let statsVisible = false;
     let statsWasVisible = false;
     const animateAllStats = () => {
@@ -1720,8 +1586,6 @@ window.onload = function () {
     } else if (statsCard) {
         animateAllStats();
     }
-
-    // Flush any pending counter targets that were set before DOM was ready
     if (__pendingCounts__.size) {
         for (const [id, v] of __pendingCounts__) {
             const el = document.getElementById(id);
@@ -1729,7 +1593,6 @@ window.onload = function () {
         }
         __pendingCounts__.clear();
     }
-
     if (searchResults) {
         runSearch();
     }
