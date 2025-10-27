@@ -13,6 +13,36 @@ function setCountTarget(id, value) {
         window.__animateCountTo__(el, v);
     }
 }
+function flushPendingCounts() {
+    if (!__pendingCounts__.size) return;
+    const pendingEntries = Array.from(__pendingCounts__.entries());
+    __pendingCounts__.clear();
+    pendingEntries.forEach(([id, value]) => {
+        setCountTarget(id, value);
+    });
+}
+function setupStatsVisibilityObserver() {
+    if (isStatsObserverInitialized) return;
+    isStatsObserverInitialized = true;
+    const section = document.getElementById('dashboard-insights');
+    if (!section || !('IntersectionObserver' in window)) {
+        window.__statsVisible__ = true;
+        flushPendingCounts();
+        return;
+    }
+    const observer = new IntersectionObserver((entries) => {
+        const entry = entries.find(Boolean);
+        if (!entry) return;
+        window.__statsVisible__ = entry.isIntersecting;
+        if (entry.isIntersecting) {
+            flushPendingCounts();
+            refreshDashboardCharts();
+        }
+    }, {
+        threshold: 0.25
+    });
+    observer.observe(section);
+}
 function setHeaderOffset() {
     const header = document.querySelector('header');
     const h = header ? header.offsetHeight : 0;
@@ -67,6 +97,7 @@ import {
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 import { firebaseConfig, ADMIN_EMAIL } from "./firebase-config.js";
 import { chartLabels, chartColors, getPieChartOptions } from "./chart-config.js";
+import { initLanguageSystem, t } from "./language-ui.js";
 const app = initializeApp(firebaseConfig);
 let analytics;
 try {
@@ -76,12 +107,13 @@ try {
         }
     });
 } catch (e) {
-    console.warn('Analytics not supported in this environment.');
 }
 const auth = getAuth(app);
 const database = getDatabase(app);
 let donorsList = [];
 let eventsList = [];
+let eventSearchTerm = '';
+let eventFilterMode = 'upcoming';
 let recentDonationsList = [];
 let currentUser = null;
 let currentUserRole = 'member';
@@ -92,9 +124,40 @@ let recentLoaderState = true;
 let ageGroupChart;
 let monthlyDonorChart;
 let bloodGroupChart;
+const EVENT_CARD_ACCENTS = [
+    {
+        card: 'accent-rose tint-rose',
+        month: 'text-red-700',
+        btn: 'bg-red-600 hover:bg-red-700'
+    },
+    {
+        card: 'accent-amber tint-amber',
+        month: 'text-amber-600',
+        btn: 'bg-amber-500 hover:bg-amber-600'
+    },
+    {
+        card: 'accent-emerald tint-emerald',
+        month: 'text-emerald-600',
+        btn: 'bg-emerald-600 hover:bg-emerald-700'
+    },
+    {
+        card: 'accent-indigo tint-indigo',
+        month: 'text-indigo-600',
+        btn: 'bg-indigo-600 hover:bg-indigo-700'
+    },
+    {
+        card: 'accent-sky tint-sky',
+        month: 'text-sky-600',
+        btn: 'bg-sky-600 hover:bg-sky-700'
+    }
+];
+let publicEventsListEl = null;
+let eventsEmptyStateEl = null;
+let joinFeedbackEl = null;
+let dashboardRefreshTimer = null;
+let isStatsObserverInitialized = false;
 function ensureDashboardCharts() {
     if (typeof Chart === 'undefined') {
-        console.warn('Chart.js is not available; dashboard charts are disabled.');
         return;
     }
     if (!ageGroupChart) {
@@ -259,6 +322,86 @@ function computeMonthlyCounts() {
     });
     return counts;
 }
+function getEventDateValue(event) {
+    if (!event || !event.date) return null;
+    const parsed = new Date(event.date);
+    if (Number.isNaN(parsed.getTime())) return null;
+    parsed.setHours(0, 0, 0, 0);
+    return parsed;
+}
+function sortEventsByDate(list, order = 'asc') {
+    const cloned = [...list];
+    cloned.sort((a, b) => {
+        const aDate = getEventDateValue(a);
+        const bDate = getEventDateValue(b);
+        if (!aDate && !bDate) return 0;
+        if (!aDate) return order === 'asc' ? 1 : -1;
+        if (!bDate) return order === 'asc' ? -1 : 1;
+        return order === 'asc' ? aDate.getTime() - bDate.getTime() : bDate.getTime() - aDate.getTime();
+    });
+    return cloned;
+}
+function getFilteredPublicEvents() {
+    const search = eventSearchTerm.trim().toLowerCase();
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const filtered = eventsList.filter((event) => {
+        const haystack = `${event.title || ''} ${event.location || ''} ${event.description || ''}`.toLowerCase();
+        const matchesSearch = !search || haystack.includes(search);
+        if (!matchesSearch) return false;
+        const eventDate = getEventDateValue(event);
+        if (eventFilterMode === 'upcoming') {
+            if (!eventDate) return true;
+            return eventDate.getTime() >= today.getTime();
+        }
+        if (eventFilterMode === 'past') {
+            if (!eventDate) return false;
+            return eventDate.getTime() < today.getTime();
+        }
+        return true;
+    });
+    if (eventFilterMode === 'past') return sortEventsByDate(filtered, 'desc');
+    return sortEventsByDate(filtered, 'asc');
+}
+function renderPublicEvents() {
+    if (!publicEventsListEl) publicEventsListEl = document.getElementById('public-events-list');
+    if (!eventsEmptyStateEl) eventsEmptyStateEl = document.getElementById('events-empty');
+    if (!publicEventsListEl) return;
+    const filteredEvents = getFilteredPublicEvents();
+    if (eventsEmptyStateEl) {
+        eventsEmptyStateEl.classList.toggle('hidden', filteredEvents.length > 0);
+    }
+    if (!filteredEvents.length) {
+        publicEventsListEl.innerHTML = '';
+        return;
+    }
+    publicEventsListEl.innerHTML = filteredEvents.map((event, idx) => {
+        const parts = getDateParts(event.date || '');
+        const accent = EVENT_CARD_ACCENTS[idx % EVENT_CARD_ACCENTS.length];
+        const timeSlot = [event.location || '', event.time || ''].filter(Boolean).join(' • ');
+        return `
+                <article class="how-card ${accent.card} bg-white rounded-xl shadow-lg p-4 transform transition hover:scale-105 float-in flex gap-4 items-center flex-col sm:flex-row text-center sm:text-left">
+                    <div class="flex-shrink-0 w-full sm:w-20">
+                        <div class="text-sm font-bold ${accent.month}">${parts.m || ''}</div>
+                        <div class="text-2xl font-extrabold">${parts.d || ''}</div>
+                        <div class="text-xs text-gray-500">${parts.y || ''}</div>
+                    </div>
+                    <div class="flex-1">
+                        <h3 class="text-lg font-bold">${event.title || ''}</h3>
+                        <p class="text-sm text-gray-600">${timeSlot}</p>
+                        <p class="mt-2 text-gray-700">${event.description || ''}</p>
+                        <div class="mt-3 flex gap-2 justify-center sm:justify-start">
+                            <a href="#contact" class="px-4 py-2 ${accent.btn} text-white rounded-md inline-flex items-center gap-2">
+                                <i class="fa-solid fa-calendar-check"></i>
+                                <span>Register</span>
+                            </a>
+                        </div>
+                    </div>
+                </article>
+                `;
+    }).join('');
+    if (window.registerFloatEls) window.registerFloatEls(publicEventsListEl);
+}
 function updateAgeGroupChart() {
     ensureDashboardCharts();
     if (!ageGroupChart) return;
@@ -311,7 +454,7 @@ function showModalMessage(modal, message, title) {
     let modalEl = null;
     if (typeof modal === 'string') modalEl = document.getElementById(modal);
     else modalEl = modal || document.getElementById('success-modal');
-    if (!modalEl) return console.warn('Modal element not found for showModalMessage');
+    if (!modalEl) return;
     const titleEl = modalEl.querySelector('h3');
     const messageEl = modalEl.querySelector('p');
     if (titleEl && title) titleEl.textContent = title;
@@ -320,7 +463,7 @@ function showModalMessage(modal, message, title) {
 }
 function attachConfirmHandler(callback, opts = {}) {
     const modal = document.getElementById('delete-confirm-modal');
-    if (!modal) return console.warn('Delete confirm modal not found');
+    if (!modal) return;
     const titleEl = modal.querySelector('h3');
     const messageEl = modal.querySelector('p');
     if (opts.title && titleEl) titleEl.textContent = opts.title;
@@ -551,7 +694,16 @@ function renderAdminMembersList() {
 function renderAdminEventsList() {
     const eventsListDiv = document.getElementById('admin-events-list');
     if (!eventsListDiv) return;
-    eventsListDiv.innerHTML = eventsList.map(e => `
+    if (!eventsList.length) {
+        eventsListDiv.innerHTML = `
+        <div class="rounded-lg border border-dashed border-red-200 bg-red-50/40 p-6 text-center text-sm text-red-600">
+            No events scheduled yet. Add an event to get started.
+        </div>
+        `;
+        return;
+    }
+    const sortedEvents = sortEventsByDate(eventsList, 'asc');
+    eventsListDiv.innerHTML = sortedEvents.map(e => `
         <div class="bg-white p-4 rounded-lg shadow-sm flex items-center justify-between">
             <div class="flex-1 min-w-0">
                 <div class="font-bold text-red-700 truncate">${e.title}</div>
@@ -704,7 +856,6 @@ onValue(donorsRef, (snapshot) => {
             }
         }
     }
-    console.debug('Loaded donors from Firebase:', donorsList.length);
     const searchForm = document.getElementById('search-form');
     if (searchForm) {
         const blood = document.getElementById('search-blood')?.value;
@@ -751,61 +902,7 @@ onValue(eventsRef, (snapshot) => {
             }
         }
     }
-    const publicEventsList = document.getElementById('public-events-list');
-    if (publicEventsList) {
-        publicEventsList.innerHTML = eventsList.map((e, idx) => {
-            const parts = getDateParts(e.date);
-            const accents = [
-                {
-                    card: 'accent-rose tint-rose',
-                    month: 'text-red-700',
-                    btn: 'bg-red-600 hover:bg-red-700'
-                },
-                {
-                    card: 'accent-amber tint-amber',
-                    month: 'text-amber-600',
-                    btn: 'bg-amber-500 hover:bg-amber-600'
-                },
-                {
-                    card: 'accent-emerald tint-emerald',
-                    month: 'text-emerald-600',
-                    btn: 'bg-emerald-600 hover:bg-emerald-700'
-                },
-                {
-                    card: 'accent-indigo tint-indigo',
-                    month: 'text-indigo-600',
-                    btn: 'bg-indigo-600 hover:bg-indigo-700'
-                },
-                {
-                    card: 'accent-sky tint-sky',
-                    month: 'text-sky-600',
-                    btn: 'bg-sky-600 hover:bg-sky-700'
-                },
-            ];
-            const a = accents[idx % accents.length];
-            return `
-                <article class="how-card ${a.card} bg-white rounded-xl shadow-lg p-4 transform transition hover:scale-105 float-in flex gap-4 items-center flex-col sm:flex-row text-center sm:text-left">
-                    <div class="flex-shrink-0 w-full sm:w-20">
-                        <div class="text-sm font-bold ${a.month}">${parts.m}</div>
-                        <div class="text-2xl font-extrabold">${parts.d}</div>
-                        <div class="text-xs text-gray-500">${parts.y}</div>
-                    </div>
-                    <div class="flex-1">
-                        <h3 class="text-lg font-bold">${e.title || ''}</h3>
-                        <p class="text-sm text-gray-600">${e.location || ''} • ${e.time || ''}</p>
-                        <p class="mt-2 text-gray-700">${e.description || ''}</p>
-                        <div class="mt-3 flex gap-2 justify-center sm:justify-start">
-                            <a href="#" class="px-4 py-2 ${a.btn} text-white rounded-md inline-flex items-center gap-2">
-                                <i class="fa-solid fa-calendar-check"></i>
-                                <span>Register</span>
-                            </a>
-                        </div>
-                    </div>
-                </article>
-                `;
-        }).join('');
-        if (window.registerFloatEls) window.registerFloatEls(publicEventsList);
-    }
+    renderPublicEvents();
     if (currentUserRole === 'admin') {
         renderAdminEventsList();
     }
@@ -823,6 +920,7 @@ onValue(statsRef, (snapshot) => {
     console.error("Failed to load stats: ", error);
 });
 const recentDonationsRef = ref(database, 'recentDonations');
+const feedbackRef = ref(database, 'feedback');
 onValue(recentDonationsRef, (snapshot) => {
     const data = snapshot.val();
     const recentDonors = [];
@@ -862,13 +960,15 @@ function updateLoginButtonState() {
     const contactMobileLink = document.getElementById('mobile-contact-link');
     if (!loginBtn || !mobileLoginBtn || !adminPanel) return;
     if (currentUser) {
-        loginBtn.innerHTML = '<i class="fa-solid fa-user" aria-hidden="true"></i><span class="sr-only">Profile</span>';
-        loginBtn.setAttribute('aria-label', 'Profile');
-        loginBtn.setAttribute('title', 'Profile');
+        loginBtn.innerHTML = '<i class="fa-solid fa-user" aria-hidden="true"></i><span class="sr-only">' + t('btnProfile') + '</span>';
+        loginBtn.setAttribute('aria-label', t('btnProfile'));
+        loginBtn.setAttribute('title', t('btnProfile'));
         loginBtn.dataset.state = 'loggedin';
-        mobileLoginBtn.innerHTML = '<i class="fa-solid fa-user" aria-hidden="true"></i><span class="sr-only">Profile</span>';
-        mobileLoginBtn.setAttribute('aria-label', 'Profile');
-        mobileLoginBtn.setAttribute('title', 'Profile');
+        loginBtn.removeAttribute('data-i18n');
+        mobileLoginBtn.textContent = t('btnProfile');
+        mobileLoginBtn.setAttribute('aria-label', t('btnProfile'));
+        mobileLoginBtn.setAttribute('title', t('btnProfile'));
+        mobileLoginBtn.removeAttribute('data-i18n');
         if (profileUserId) profileUserId.textContent = `User ID: ${currentUser.uid}`;
         const userRef = ref(database, `donors/${currentUser.uid}/role`);
         onValue(userRef, (snapshot) => {
@@ -910,9 +1010,11 @@ function updateLoginButtonState() {
             onlyOnce: true
         });
     } else {
-        loginBtn.textContent = 'Login';
+        loginBtn.textContent = t('btnLogin');
         loginBtn.dataset.state = 'loggedout';
-        mobileLoginBtn.textContent = 'Login';
+        loginBtn.setAttribute('data-i18n', 'btnLogin');
+        mobileLoginBtn.textContent = t('btnLogin');
+        mobileLoginBtn.setAttribute('data-i18n', 'btnLogin');
         if (profileUserId) profileUserId.textContent = '';
         adminPanel.classList.add('hidden');
         document.body.classList.remove('admin-mode');
@@ -997,6 +1099,14 @@ function deleteMember(memberId) {
     });
 }
 window.onload = function () {
+    // Initialize language system first
+    initLanguageSystem();
+    
+    // Listen for language changes and update login button
+    window.addEventListener('languageChanged', () => {
+        updateLoginButtonState();
+    });
+    
     const successModal = document.getElementById('success-modal');
     const successClose = document.getElementById('success-close');
     successClose?.addEventListener('click', () => closeModal(successModal));
@@ -1013,6 +1123,37 @@ window.onload = function () {
     const deleteConfirmModal = document.getElementById('delete-confirm-modal');
     const deleteCancelBtn = document.getElementById('delete-cancel');
     const deleteConfirmBtn = document.getElementById('delete-confirm');
+    const feedbackModal = document.getElementById('feedback-modal');
+    const feedbackBtn = document.getElementById('feedback-btn');
+    const feedbackClose = document.getElementById('feedback-close');
+    const feedbackCancel = document.getElementById('feedback-cancel');
+    const feedbackForm = document.getElementById('feedback-form');
+    const feedbackNameInput = document.getElementById('feedback-name');
+    const feedbackEmailInput = document.getElementById('feedback-email');
+    const feedbackMessageInput = document.getElementById('feedback-message');
+    const eventSearchInput = document.getElementById('event-search');
+    const eventFilterSelect = document.getElementById('event-filter');
+    joinFeedbackEl = document.getElementById('join-feedback');
+    publicEventsListEl = document.getElementById('public-events-list');
+    eventsEmptyStateEl = document.getElementById('events-empty');
+    if (eventSearchInput) {
+        eventSearchTerm = eventSearchInput.value || '';
+    }
+    if (eventFilterSelect) {
+        eventFilterMode = eventFilterSelect.value || 'upcoming';
+    }
+    setupStatsVisibilityObserver();
+    if (!dashboardRefreshTimer) {
+        dashboardRefreshTimer = window.setInterval(() => {
+            if (document.visibilityState === 'hidden') return;
+            refreshDashboardCharts();
+        }, 60000);
+        document.addEventListener('visibilitychange', () => {
+            if (document.visibilityState === 'visible') {
+                refreshDashboardCharts();
+            }
+        });
+    }
     deleteCancelBtn?.addEventListener('click', () => closeModal(deleteConfirmModal));
     deleteConfirmModal?.querySelector('.absolute.inset-0')?.addEventListener('click', () => closeModal(deleteConfirmModal));
     pfClose?.addEventListener('click', () => closeModal(profileModal));
@@ -1039,10 +1180,94 @@ window.onload = function () {
         const clickedInside = mobileMenu.contains(e.target) || menuToggle.contains(e.target);
         if (isOpen && !clickedInside) setMenuOpen(false);
     });
+    const feedbackOverlay = feedbackModal?.querySelector('.absolute.inset-0');
+    const focusFeedbackMessage = () => {
+        if (!feedbackMessageInput) return;
+        setTimeout(() => feedbackMessageInput.focus({ preventScroll: false }), 70);
+    };
+    feedbackBtn?.addEventListener('click', () => {
+        if (!feedbackModal) return;
+        feedbackForm?.reset();
+        openModal(feedbackModal);
+        focusFeedbackMessage();
+    });
+    feedbackClose?.addEventListener('click', () => {
+        feedbackForm?.reset();
+        closeModal(feedbackModal);
+    });
+    feedbackCancel?.addEventListener('click', () => {
+        feedbackForm?.reset();
+        closeModal(feedbackModal);
+    });
+    feedbackOverlay?.addEventListener('click', () => {
+        feedbackForm?.reset();
+        closeModal(feedbackModal);
+    });
+    feedbackForm?.addEventListener('submit', (ev) => {
+        ev.preventDefault();
+        const fd = new FormData(feedbackForm);
+        const name = fd.get('name')?.toString().trim() || '';
+        const email = fd.get('email')?.toString().trim() || '';
+        const message = fd.get('message')?.toString().trim() || '';
+        if (message.length < 10) {
+            showModalMessage('success-modal', 'Please share at least 10 characters so we can act on your feedback.', 'Feedback Too Short');
+            focusFeedbackMessage();
+            return;
+        }
+        if (email && !/^\S+@\S+\.\S+$/.test(email)) {
+            showModalMessage('success-modal', 'Please provide a valid email address or leave it blank.', 'Invalid Email');
+            if (feedbackEmailInput) feedbackEmailInput.focus();
+            return;
+        }
+        const submitBtn = feedbackForm.querySelector('button[type="submit"]');
+        submitBtn?.setAttribute('disabled', 'disabled');
+        const payload = {
+            name: name || 'Anonymous',
+            email,
+            message,
+            submittedAt: new Date().toISOString(),
+            userId: currentUser?.uid || null
+        };
+        push(feedbackRef, payload)
+            .then(() => {
+                showModalMessage('success-modal', 'Thank you for your feedback! We appreciate your time.', 'Feedback Received');
+                feedbackForm.reset();
+                closeModal(feedbackModal);
+            })
+            .catch((error) => {
+                console.error('Failed to submit feedback:', error);
+                showModalMessage('success-modal', `Could not submit feedback: ${error.message}`, 'Error');
+            })
+            .finally(() => {
+                submitBtn?.removeAttribute('disabled');
+            });
+    });
+    eventSearchInput?.addEventListener('input', (ev) => {
+        eventSearchTerm = ev.target.value || '';
+        renderPublicEvents();
+    });
+    eventFilterSelect?.addEventListener('change', (ev) => {
+        eventFilterMode = ev.target.value || 'upcoming';
+        renderPublicEvents();
+    });
+    renderPublicEvents();
+    function clearJoinFeedback() {
+        if (!joinFeedbackEl) return;
+        joinFeedbackEl.textContent = '';
+        joinFeedbackEl.classList.add('hidden');
+        joinFeedbackEl.classList.remove('join-feedback--success', 'join-feedback--error');
+    }
+    function setJoinFeedback(message, type = 'success') {
+        if (!joinFeedbackEl || !message) return;
+        joinFeedbackEl.textContent = message;
+        joinFeedbackEl.classList.remove('hidden', 'join-feedback--success', 'join-feedback--error');
+        joinFeedbackEl.classList.add(type === 'error' ? 'join-feedback--error' : 'join-feedback--success');
+    }
     const joinForm = document.getElementById('join-form');
     const joinClear = document.getElementById('join-clear');
     joinForm?.addEventListener('submit', (e) => {
         e.preventDefault();
+        clearJoinFeedback();
         const fd = new FormData(joinForm);
         const email = fd.get('email')?.toString().trim();
         const password = fd.get('password')?.toString();
@@ -1059,16 +1284,53 @@ window.onload = function () {
             gender: gender || 'Other',
             isPhoneHidden: isPhoneHidden
         };
-        if (!donorData.fullName || !email || !donorData.phone || !donorData.bloodGroup || !donorData.location || !password || !confirm) {
-            showModalMessage(successModal, 'Please fill all required fields.', 'Error');
+        if (!donorData.fullName || donorData.fullName.length < 3) {
+            setJoinFeedback('Please enter your full name (minimum 3 characters).', 'error');
             return;
         }
-        if (password.length < 6) {
-            showModalMessage(successModal, 'Password must be at least 6 characters.', 'Error');
+        if (!email) {
+            setJoinFeedback('Please provide a valid email address.', 'error');
+            return;
+        }
+        if (!donorData.bloodGroup) {
+            setJoinFeedback('Please select your blood group to help matches find you.', 'error');
+            return;
+        }
+        if (!donorData.phone) {
+            setJoinFeedback('Phone number is required.', 'error');
+            return;
+        }
+        const numericPhone = donorData.phone.replace(/[^\d+]/g, '');
+        if (numericPhone.length < 10) {
+            setJoinFeedback('Please enter a phone number with at least 10 digits.', 'error');
+            return;
+        }
+        const digitsOnly = donorData.phone.replace(/\D/g, '');
+        donorData.phone = donorData.phone.trim().startsWith('+') ? `+${digitsOnly}` : digitsOnly;
+        if (!donorData.location || donorData.location.length < 3) {
+            setJoinFeedback('Share your current location (minimum 3 characters).', 'error');
+            return;
+        }
+        if (donorData.lastDonateDate) {
+            const lastDonation = new Date(donorData.lastDonateDate);
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            if (Number.isNaN(lastDonation.getTime()) || lastDonation > today) {
+                setJoinFeedback('Last donation date cannot be in the future.', 'error');
+                return;
+            }
+        }
+        if (!password || !confirm) {
+            setJoinFeedback('Please set and confirm your password.', 'error');
             return;
         }
         if (password !== confirm) {
-            showModalMessage(successModal, 'Passwords do not match.', 'Error');
+            setJoinFeedback('Passwords do not match. Please re-enter them.', 'error');
+            return;
+        }
+        const strongPassword = /^(?=.*[A-Za-z])(?=.*\d).{8,}$/.test(password);
+        if (!strongPassword) {
+            setJoinFeedback('Password must be at least 8 characters and include a number.', 'error');
             return;
         }
         createUserWithEmailAndPassword(auth, email, password)
@@ -1080,20 +1342,27 @@ window.onload = function () {
                     email: email,
                     createdAt: new Date().toISOString()
                 }).then(() => {
+                    setJoinFeedback(`Welcome, ${donorData.fullName}! Your donor profile was created successfully.`, 'success');
                     showModalMessage('success-modal', `Welcome, ${donorData.fullName}! Your donor profile was created successfully.`, 'Success');
                     joinForm.reset();
+                    setTimeout(() => {
+                        clearJoinFeedback();
+                    }, 7000);
                 }).catch((error) => {
                     console.error("Error saving donor data:", error);
+                    setJoinFeedback('An error occurred while saving your profile data. Please try again.', 'error');
                     showModalMessage('success-modal', 'An error occurred while saving your profile data.', 'Error');
                 });
             })
             .catch((error) => {
                 const errorMessage = error.message;
+                setJoinFeedback(`Signup failed: ${errorMessage}`, 'error');
                 showModalMessage('success-modal', `Signup failed: ${errorMessage}`, 'Error');
             });
     });
     joinClear?.addEventListener('click', () => {
         joinForm.reset();
+        clearJoinFeedback();
     });
     const searchForm = document.getElementById('search-form');
     const searchBlood = document.getElementById('search-blood');
