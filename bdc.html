@@ -27,6 +27,7 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.6/dist/chart.umd.min.js"></script>
     <script src="assets/js/viewport.js"></script>
     <script type="module" src="assets/js/language-ui.js"></script>
+    <script type="module" src="assets/js/certificate.js"></script>
     <script type="module" src="assets/js/app.js"></script>
 
 
@@ -1002,15 +1003,24 @@
                         class="absolute left-10 top-4 text-gray-400 transition-all peer-placeholder-shown:top-4 peer-placeholder-shown:text-base peer-focus:-top-3 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">User
                         Role</label>
                 </div>
-                <div class="flex flex-wrap gap-3 mt-4 md:col-span-2">
+                <div class="grid grid-cols-2 gap-3 mt-6 md:col-span-2">
                     <button type="submit"
-                        class="bg-red-600 text-white px-6 py-3 rounded-lg font-semibold shadow hover:bg-red-700 flex-1">Save
-                        Changes</button>
+                        class="bg-red-600 text-white px-5 py-2.5 rounded-lg font-semibold shadow hover:bg-red-700 transition text-sm">
+                        <i class="fa-solid fa-save mr-1.5"></i>Save Changes
+                    </button>
+                    <button id="pf-certificate" type="button"
+                        class="bg-blue-600 text-white px-5 py-2.5 rounded-lg font-semibold shadow hover:bg-blue-700 transition text-sm">
+                        <i class="fa-solid fa-certificate mr-1.5"></i>
+                        <span data-i18n="certGenerate">Generate Certificate</span>
+                    </button>
                     <button id="pf-logout" type="button"
-                        class="border border-gray-300 px-4 py-3 rounded-lg flex-1">Logout</button>
+                        class="border-2 border-gray-300 text-gray-700 px-5 py-2.5 rounded-lg font-medium hover:bg-gray-50 transition text-sm">
+                        <i class="fa-solid fa-sign-out-alt mr-1.5"></i>Logout
+                    </button>
                     <button id="pf-delete" type="button"
-                        class="border border-red-300 text-red-600 px-4 py-3 rounded-lg flex-1 hover:bg-red-50">Delete
-                        Profile</button>
+                        class="border-2 border-red-300 text-red-600 px-5 py-2.5 rounded-lg font-medium hover:bg-red-50 transition text-sm">
+                        <i class="fa-solid fa-trash-alt mr-1.5"></i>Delete Profile
+                    </button>
                 </div>
             </form>
         </div>

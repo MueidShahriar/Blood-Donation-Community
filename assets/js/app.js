@@ -1621,6 +1621,33 @@ window.onload = function () {
             showModalMessage('success-modal', 'An error occurred during logout.', 'Logout Failed');
         });
     });
+    
+    // Certificate generation button
+    const pfCertificate = document.getElementById('pf-certificate');
+    pfCertificate?.addEventListener('click', async () => {
+        if (!currentUser) {
+            showModalMessage('success-modal', 'You must be logged in to generate a certificate.', 'Error');
+            return;
+        }
+        
+        try {
+            const { showCertificateModal } = await import('./certificate.js');
+            const donorData = {
+                fullName: document.getElementById('profile-fullName').value,
+                email: document.getElementById('profile-email').value,
+                bloodGroup: document.getElementById('profile-bloodGroup').value,
+                location: document.getElementById('profile-location').value,
+                lastDonateDate: document.getElementById('profile-lastDonateDate').value,
+                phone: document.getElementById('profile-phone').value
+            };
+            
+            showCertificateModal(donorData);
+        } catch (error) {
+            console.error("Error generating certificate:", error);
+            showModalMessage('success-modal', 'Failed to generate certificate. Please try again.', 'Error');
+        }
+    });
+    
     pfDelete?.addEventListener('click', () => {
         if (!currentUser) {
             showModalMessage('success-modal', 'You must be logged in to delete your profile.', 'Error');

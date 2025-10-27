@@ -161,6 +161,14 @@ export const translations = {
         contactPhone: "+8801712460423",
         contactJoinDonor: "Join as a Donor",
 
+        // Certificate
+        certTitle: "Your Donation Certificate",
+        certDownload: "Download",
+        certShare: "Share",
+        certGenerate: "Generate Certificate",
+        certSuccess: "Certificate generated successfully!",
+        certError: "Unable to generate certificate. Please try again.",
+
         // Footer
         footerCopyright: "© 2025 Life is Beautiful 💜",
         footerFeedback: "Share Feedback",
@@ -440,6 +448,17 @@ export const translations = {
         contactDescription: "প্রশ্ন আছে বা জড়িত হতে চান? আমাদের সাথে যোগাযোগ করুন।",
         contactEmail: "bdc@bloodlife.org",
         contactPhone: "+৮৮০১৭১২৪৬০৪২৩",
+        contactJoinDonor: "দাতা হিসেবে যোগ দিন",
+
+        // Certificate
+        certTitle: "আপনার রক্তদান সার্টিফিকেট",
+        certDownload: "ডাউনলোড করুন",
+        certShare: "শেয়ার করুন",
+        certGenerate: "সার্টিফিকেট তৈরি করুন",
+        certSuccess: "সার্টিফিকেট সফলভাবে তৈরি হয়েছে!",
+        certError: "সার্টিফিকেট তৈরি করতে অক্ষম। অনুগ্রহ করে আবার চেষ্টা করুন।",
+
+        // Footer
         contactJoinDonor: "দাতা হিসেবে যোগ দিন",
 
         // Footer
