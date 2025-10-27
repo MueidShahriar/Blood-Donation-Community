@@ -307,13 +307,54 @@ function generateCertificateId(donorData) {
     return `BDC-${bloodGroup}-${timestamp}-${random}`;
 }
 
-// Download certificate as PNG
+// Download certificate as PDF with high quality
 export function downloadCertificate(canvas, donorName) {
-    const link = document.createElement('a');
-    const fileName = `Blood_Donation_Certificate_${donorName.replace(/\s+/g, '_')}_${Date.now()}.png`;
-    link.download = fileName;
-    link.href = canvas.toDataURL('image/png');
-    link.click();
+    // Dynamically import jsPDF
+    import('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js')
+        .then((module) => {
+            const { jsPDF } = window.jspdf;
+            
+            // Create high-resolution canvas for better PDF quality
+            const scale = 2; // 2x scaling for higher quality
+            const highResCanvas = document.createElement('canvas');
+            highResCanvas.width = canvas.width * scale;
+            highResCanvas.height = canvas.height * scale;
+            const highResCtx = highResCanvas.getContext('2d');
+            
+            // Enable high-quality rendering
+            highResCtx.imageSmoothingEnabled = true;
+            highResCtx.imageSmoothingQuality = 'high';
+            
+            // Scale and draw the original canvas
+            highResCtx.scale(scale, scale);
+            highResCtx.drawImage(canvas, 0, 0);
+            
+            // Create PDF in landscape orientation to match certificate dimensions
+            const pdf = new jsPDF({
+                orientation: 'landscape',
+                unit: 'px',
+                format: [canvas.height, canvas.width],
+                compress: false, // Disable compression for higher quality
+                precision: 16 // Maximum precision
+            });
+            
+            // Convert high-res canvas to image and add to PDF
+            const imgData = highResCanvas.toDataURL('image/jpeg', 1.0); // JPEG at maximum quality
+            pdf.addImage(imgData, 'JPEG', 0, 0, canvas.width, canvas.height, undefined, 'FAST');
+            
+            // Download the PDF
+            const fileName = `Blood_Donation_Certificate_${donorName.replace(/\s+/g, '_')}_${Date.now()}.pdf`;
+            pdf.save(fileName);
+        })
+        .catch((error) => {
+            console.error('Error loading jsPDF:', error);
+            // Fallback to PNG download if jsPDF fails to load
+            const link = document.createElement('a');
+            const fileName = `Blood_Donation_Certificate_${donorName.replace(/\s+/g, '_')}_${Date.now()}.png`;
+            link.download = fileName;
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+        });
 }
 
 // Share certificate on social media
