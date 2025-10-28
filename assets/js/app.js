@@ -1099,6 +1099,18 @@ function deleteMember(memberId) {
     });
 }
 window.onload = function () {
+    // Loader logic
+    const pageLoader = document.getElementById('page-loader');
+    if (pageLoader) {
+        pageLoader.style.opacity = '1';
+        setTimeout(() => {
+            pageLoader.style.opacity = '0';
+            setTimeout(() => {
+                pageLoader.style.display = 'none';
+            }, 500);
+        }, 2000); 
+    }
+
     // Initialize language system first
     initLanguageSystem();
     

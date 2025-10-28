@@ -1,3 +1,66 @@
+#page-loader .loader-icon-circle {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    min-height: 120px;
+    position: relative;
+}
+
+#page-loader .drops-row {
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    gap: 5px;
+    margin-bottom: 38px;
+}
+
+#page-loader .drops-row {
+    position: absolute;
+    left: 50%;
+    top: 58px;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 12px;
+    z-index: 2;
+}
+
+#page-loader .drop-bounce {
+    width: 32px;
+    height: 32px;
+    animation: bounce-drop 1.2s cubic-bezier(0.4,0,0.2,1) infinite;
+    animation-delay: calc(0.2s * var(--i));
+    filter: drop-shadow(0 2px 8px #e11d48aa);
+}
+
+@keyframes bounce-drop {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-18px); }
+}
+
+#page-loader .circle-spin {
+    position: relative;
+    width: 100px;
+    height: 100px;
+    display: block;
+    animation: spin-blood-group 1.2s linear infinite;
+}
+
+/* For 3 drops, use 120deg spacing */
+#page-loader .circle-drop {
+    position: absolute;
+    width: 32px;
+    height: 32px;
+    left: 50%;
+    top: 50%;
+    transform: rotate(calc(120deg * var(--i))) translate(40px) rotate(calc(-120deg * var(--i)));
+    filter: drop-shadow(0 2px 8px #e11d48aa);
+}
+
+@keyframes spin-blood-group {
+    100% { transform: rotate(360deg); }
+}
 #recentDonorCarousel .carousel-control-prev,
 #recentDonorCarousel .carousel-control-next {
     opacity: 0;
@@ -25,6 +88,37 @@
 }
 
 /* Language Switcher Button Styles */
+#page-loader {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    background: transparent;
+    transition: opacity 0.5s;
+}
+
+#page-loader .loader-icon img {
+    width: 64px;
+    height: 64px;
+    animation: spin-blood-drop 1.2s linear infinite;
+}
+
+@keyframes spin-blood-drop {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+#page-loader .loader-title {
+    font-size: 2rem;
+    font-weight: 800;
+    color: #e11d48;
+    letter-spacing: 0.04em;
+    text-align: center;
+    margin-top: 0;
+}
 #language-toggle {
     animation: slideInRight 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
