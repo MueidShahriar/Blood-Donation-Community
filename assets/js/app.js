@@ -440,6 +440,307 @@ function refreshDashboardCharts() {
     updateMonthlyDonorChart();
     updateBloodGroupChart();
 }
+function formatDateDisplay(value) {
+    if (!value) return '—';
+    if (value instanceof Date && !Number.isNaN(value.getTime())) {
+        return value.toLocaleDateString();
+    }
+    const date = new Date(value);
+    if (!Number.isNaN(date.getTime())) {
+        return date.toLocaleDateString();
+    }
+    return typeof value === 'string' ? value : '—';
+}
+function formatWeightValue(value) {
+    if (value == null || value === '') return '—';
+    const str = String(value).trim();
+    if (!str) return '—';
+    return /kg$/i.test(str) ? str : `${str} kg`;
+}
+function getDonationDetailData(donation, dateObj) {
+    if (!donation) return null;
+    const displayDate = dateObj ? formatDateDisplay(dateObj) : formatDateDisplay(donation.date || donation.donationDate);
+    const donorName = donation.name || donation.donorName || donation.fullName || 'Anonymous Donor';
+    const blood = donation.bloodGroup || donation.blood_group || donation.blood || '—';
+    const location = (donation.location ?? '').toString().trim() || '—';
+    const department = (donation.department ?? donation.dept ?? '').toString().trim() || '—';
+    const batch = (donation.batch ?? donation.batchNo ?? '').toString().trim() || '—';
+    const ageValue = donation.age ?? donation.donorAge;
+    const age = (ageValue == null || ageValue === '') ? '—' : String(ageValue);
+    const weight = formatWeightValue(donation.weight);
+    const notes = (donation.notes ?? '').toString().trim();
+    const comment = (donation.publicComment ?? '').toString().trim();
+    return {
+        displayDate,
+        donorName,
+        bloodGroup: blood,
+        location,
+        department,
+        batch,
+        age,
+        weight,
+        notes,
+        comment
+    };
+}
+function groupRecentDonationsByMonth(donations) {
+    const monthGroups = chartLabels.months.map(() => []);
+    const undated = [];
+    donations.forEach(entry => {
+        if (!entry) return;
+        const rawDate = entry.date || entry.donationDate;
+        const dateObj = rawDate ? new Date(rawDate) : null;
+        if (!dateObj || Number.isNaN(dateObj.getTime())) {
+            undated.push({ donation: entry, dateObj: null });
+            return;
+        }
+        monthGroups[dateObj.getMonth()]?.push({ donation: entry, dateObj });
+    });
+    monthGroups.forEach(group => {
+        group.sort((a, b) => {
+            const aTime = a.dateObj ? a.dateObj.getTime() : 0;
+            const bTime = b.dateObj ? b.dateObj.getTime() : 0;
+            return bTime - aTime;
+        });
+    });
+    undated.sort((a, b) => {
+        const aName = (a.donation?.name || a.donation?.donorName || '').toString().toLowerCase();
+        const bName = (b.donation?.name || b.donation?.donorName || '').toString().toLowerCase();
+        return aName.localeCompare(bName);
+    });
+    return { monthGroups, undated };
+}
+async function loadJsPdf() {
+    if (window.jspdf?.jsPDF) return window.jspdf.jsPDF;
+    await import('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js');
+    return window.jspdf?.jsPDF || null;
+}
+let isMonthlyReportGenerating = false;
+async function downloadMonthlyReportPdf(triggerEl) {
+    if (isMonthlyReportGenerating) return;
+    isMonthlyReportGenerating = true;
+    if (triggerEl) {
+        triggerEl.setAttribute('disabled', 'disabled');
+        triggerEl.setAttribute('aria-busy', 'true');
+    }
+    try {
+        refreshDashboardCharts();
+        ensureDashboardCharts();
+        await new Promise(requestAnimationFrame);
+        const jsPdfCtor = await loadJsPdf();
+        if (!jsPdfCtor) throw new Error('jsPDF unavailable');
+        const donationEntries = Array.isArray(recentDonationsList) ? [...recentDonationsList] : [];
+        const { monthGroups, undated } = groupRecentDonationsByMonth(donationEntries);
+        const monthCounts = monthGroups.map(group => group.length);
+        const totalDonations = donationEntries.length;
+        const countedByMonths = monthCounts.reduce((sum, value) => sum + Number(value || 0), 0);
+        let peakIndex = -1;
+        let peakValue = -1;
+        monthCounts.forEach((value, idx) => {
+            if (Number(value || 0) > peakValue) {
+                peakValue = Number(value || 0);
+                peakIndex = idx;
+            }
+        });
+        const doc = new jsPdfCtor({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+        const marginX = 20;
+        const marginY = 20;
+        const bottomMargin = 20;
+        const pageWidth = doc.internal.pageSize.getWidth();
+        const pageHeight = doc.internal.pageSize.getHeight();
+        const contentWidth = pageWidth - marginX * 2;
+        let cursorY = marginY;
+        const ensureSpace = (needed = 6) => {
+            if (cursorY + needed > pageHeight - bottomMargin) {
+                doc.addPage();
+                cursorY = marginY;
+            }
+        };
+        const writeWrappedText = (text, indent = 0, lineGap = 6) => {
+            const segments = doc.splitTextToSize(String(text), contentWidth - indent);
+            segments.forEach(segment => {
+                ensureSpace(lineGap);
+                doc.text(segment, marginX + indent, cursorY);
+                cursorY += lineGap;
+            });
+        };
+        const writeInlineSegments = (segments, indent = 0, lineGap = 5) => {
+            ensureSpace(lineGap);
+            let currentX = marginX + indent;
+            segments.forEach(segment => {
+                if (!segment) return;
+                const text = (segment.text ?? '').toString();
+                if (!text) return;
+                const isBold = !!segment.bold;
+                doc.setFont('helvetica', isBold ? 'bold' : 'normal');
+                doc.text(text, currentX, cursorY);
+                currentX += doc.getTextWidth(text);
+            });
+            cursorY += lineGap;
+            doc.setFont('helvetica', 'normal');
+        };
+        const addGap = (gap = 6) => {
+            ensureSpace(gap);
+            cursorY += gap;
+        };
+        const writeDonationEntry = (entryNumber, detail) => {
+            if (!detail) return;
+            const firstLineSegments = [
+                { text: `${entryNumber}. `, bold: true },
+                { text: `${detail.displayDate} - `, bold: false },
+                { text: `${detail.donorName} `, bold: false }
+            ];
+            if (detail.bloodGroup && detail.bloodGroup !== '—') {
+                firstLineSegments.push({ text: '(', bold: false });
+                firstLineSegments.push({ text: 'Blood: ', bold: true });
+                firstLineSegments.push({ text: `${detail.bloodGroup}`, bold: false });
+                firstLineSegments.push({ text: ')', bold: false });
+            }
+            writeInlineSegments(firstLineSegments, 0, 6);
+            const locationSegments = [
+                { text: 'Location: ', bold: true },
+                { text: detail.location || '—', bold: false },
+                { text: ' | ', bold: false },
+                { text: 'Department: ', bold: true },
+                { text: detail.department || '—', bold: false },
+                { text: ' | ', bold: false },
+                { text: 'Batch: ', bold: true },
+                { text: detail.batch || '—', bold: false }
+            ];
+            writeInlineSegments(locationSegments, 8, 5);
+            const ageWeightSegments = [
+                { text: 'Age: ', bold: true },
+                { text: detail.age || '—', bold: false },
+                { text: ' | ', bold: false },
+                { text: 'Weight: ', bold: true },
+                { text: detail.weight || '—', bold: false }
+            ];
+            writeInlineSegments(ageWeightSegments, 8, 5);
+            if (detail.notes) {
+                writeInlineSegments([
+                    { text: 'Notes: ', bold: true },
+                    { text: detail.notes, bold: false }
+                ], 8, 5);
+            }
+            if (detail.comment) {
+                writeInlineSegments([
+                    { text: 'Comment: ', bold: true },
+                    { text: detail.comment, bold: false }
+                ], 8, 5);
+            }
+        };
+        const now = new Date();
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(18);
+        doc.setTextColor(220, 38, 38);
+        writeWrappedText('Monthly Blood Donation Report', 0, 9);
+        addGap(3);
+        doc.setFont('helvetica', 'normal');
+        doc.setFontSize(11);
+        doc.setTextColor(33, 37, 41);
+        writeWrappedText(`Generated on ${now.toLocaleString()}`, 0, 6);
+        writeWrappedText(`Total recorded donations: ${totalDonations}`, 0, 6);
+        if (undated.length) {
+            writeWrappedText(`Entries without valid month assigned: ${undated.length}`, 0, 6);
+        }
+        if (totalDonations && countedByMonths !== totalDonations) {
+            writeWrappedText(`Donations matched to calendar months: ${countedByMonths}`, 0, 6);
+        }
+        if (peakIndex >= 0 && peakValue > 0) {
+            writeWrappedText(`Peak month: ${chartLabels.months[peakIndex]} (${peakValue})`, 0, 6);
+        } else {
+            writeWrappedText('Peak month: No monthly donation records available', 0, 6);
+        }
+        addGap(6);
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(12);
+        doc.setTextColor(220, 38, 38);
+        writeWrappedText('Monthly totals', 0, 7);
+        doc.setFont('helvetica', 'normal');
+        doc.setFontSize(10);
+        doc.setTextColor(33, 37, 41);
+        monthCounts.forEach((value, idx) => {
+            writeWrappedText(`${chartLabels.months[idx]}: ${Number(value || 0)}`, 6, 5);
+        });
+        addGap(6);
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(12);
+        doc.setTextColor(220, 38, 38);
+        writeWrappedText('Donation details by month', 0, 7);
+        doc.setFont('helvetica', 'normal');
+        doc.setFontSize(10);
+        doc.setTextColor(33, 37, 41);
+        let printedAnyDetails = false;
+        monthGroups.forEach((entries, idx) => {
+            if (!entries.length) return;
+            printedAnyDetails = true;
+            doc.setFont('helvetica', 'bold');
+            doc.setFontSize(11);
+            doc.setTextColor(220, 38, 38);
+            writeWrappedText(`${chartLabels.months[idx]} (${entries.length})`, 0, 6);
+            doc.setFont('helvetica', 'normal');
+            doc.setFontSize(10);
+            doc.setTextColor(33, 37, 41);
+            entries.forEach(({ donation, dateObj }, entryIdx) => {
+                const detail = getDonationDetailData(donation, dateObj) || {
+                    displayDate: formatDateDisplay(dateObj),
+                    donorName: donation?.name || 'Details unavailable',
+                    bloodGroup: donation?.bloodGroup || '—',
+                    location: '—',
+                    department: '—',
+                    batch: '—',
+                    age: '—',
+                    weight: '—',
+                    notes: '',
+                    comment: ''
+                };
+                writeDonationEntry(entryIdx + 1, detail);
+                addGap(3);
+            });
+            addGap(4);
+        });
+        if (undated.length) {
+            doc.setFont('helvetica', 'bold');
+            doc.setFontSize(11);
+            doc.setTextColor(220, 38, 38);
+            writeWrappedText(`No Date Provided (${undated.length})`, 0, 6);
+            doc.setFont('helvetica', 'normal');
+            doc.setFontSize(10);
+            doc.setTextColor(33, 37, 41);
+            undated.forEach(({ donation }, entryIdx) => {
+                const detail = getDonationDetailData(donation, null) || {
+                    displayDate: '—',
+                    donorName: donation?.name || 'Details unavailable',
+                    bloodGroup: donation?.bloodGroup || '—',
+                    location: '—',
+                    department: '—',
+                    batch: '—',
+                    age: '—',
+                    weight: '—',
+                    notes: '',
+                    comment: ''
+                };
+                writeDonationEntry(entryIdx + 1, detail);
+                addGap(3);
+            });
+            addGap(4);
+        }
+        if (!printedAnyDetails && !undated.length) {
+            writeWrappedText('No donation entries are available for the selected period.', 0, 6);
+        }
+        const fileName = `monthly-donation-report-${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}.pdf`;
+        doc.save(fileName);
+    } catch (error) {
+        console.error('Failed to generate monthly report:', error);
+        showModalMessage('success-modal', 'Unable to generate monthly report. Please try again.', 'Error');
+    } finally {
+        if (triggerEl) {
+            triggerEl.removeAttribute('disabled');
+            triggerEl.removeAttribute('aria-busy');
+        }
+        isMonthlyReportGenerating = false;
+    }
+}
 function openModal(modal) {
     if (!modal) return;
     modal.classList.remove('hidden');
@@ -1099,7 +1400,6 @@ function deleteMember(memberId) {
     });
 }
 window.onload = function () {
-    // Loader logic
     const pageLoader = document.getElementById('page-loader');
     if (pageLoader) {
         pageLoader.style.opacity = '1';
@@ -1111,10 +1411,8 @@ window.onload = function () {
         }, 2000); 
     }
 
-    // Initialize language system first
     initLanguageSystem();
     
-    // Listen for language changes and update login button
     window.addEventListener('languageChanged', () => {
         updateLoginButtonState();
     });
@@ -1634,7 +1932,6 @@ window.onload = function () {
         });
     });
     
-    // Certificate generation button
     const pfCertificate = document.getElementById('pf-certificate');
     pfCertificate?.addEventListener('click', async () => {
         if (!currentUser) {
@@ -1754,6 +2051,8 @@ window.onload = function () {
             });
         });
     }
+    const adminMonthlyReportBtn = document.getElementById('admin-monthly-report-btn');
+    adminMonthlyReportBtn?.addEventListener('click', () => downloadMonthlyReportPdf(adminMonthlyReportBtn));
     const fastScrollTo = (el, duration = 250) => {
         const root = document.documentElement;
         const headerH = parseFloat(getComputedStyle(root).getPropertyValue('--header-height')) || 0;
@@ -1761,7 +2060,7 @@ window.onload = function () {
         const startY = window.pageYOffset;
         const distance = targetY - startY;
         const start = performance.now();
-        const ease = (t) => 1 - Math.pow(1 - t, 3); // easeOutCubic
+    const ease = (t) => 1 - Math.pow(1 - t, 3);
         const step = (now) => {
             const p = Math.min(1, (now - start) / duration);
             const y = startY + distance * ease(p);

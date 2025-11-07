@@ -20,7 +20,6 @@
 </head>
 
 <body class="bg-white text-gray-900">
-    <!-- Full Page Loader -->
     <div id="page-loader" class="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-white bg-opacity-95 transition-all duration-500">
         <div class="mb-6 flex flex-col items-center">
             <span class="loader-icon-circle mb-4">
@@ -549,9 +548,18 @@
         </section>
 
         <section id="admin-panel" class="py-12 hidden">
-            <h2 class="text-2xl font-extrabold text-red-700">Admin Dashboard</h2>
-            <p class="mt-2 text-gray-600">Welcome, Admin! Here you can manage community events, update donor information
-                and add recent donations.</p>
+            <div class="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+                <div>
+                    <h2 class="text-2xl font-extrabold text-red-700">Admin Dashboard</h2>
+                    <p class="mt-2 text-gray-600">Welcome, Admin! Here you can manage community events, update donor information
+                        and add recent donations.</p>
+                </div>
+                <button id="admin-monthly-report-btn" type="button"
+                    class="inline-flex items-center justify-center gap-2 self-start md:self-auto bg-red-600 text-white px-5 py-2.5 rounded-lg font-semibold shadow hover:bg-red-700 transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
+                    <i class="fa-solid fa-file-pdf"></i>
+                    <span>Monthly Donation Report (PDF)</span>
+                </button>
+            </div>
 
             <div class="mt-6 admin-tabs">
                 <button type="button" class="admin-tab active" data-tab="events"><i

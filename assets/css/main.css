@@ -47,7 +47,6 @@
     animation: spin-blood-group 1.2s linear infinite;
 }
 
-/* For 3 drops, use 120deg spacing */
 #page-loader .circle-drop {
     position: absolute;
     width: 32px;
@@ -87,7 +86,6 @@
     font-synthesis: none;
 }
 
-/* Language Switcher Button Styles */
 #page-loader {
     display: flex;
     flex-direction: column;
