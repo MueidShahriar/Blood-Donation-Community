@@ -724,6 +724,59 @@
                 <div data-panel="members" class="hidden">
                     <div class="bg-white p-6 rounded-xl shadow-lg">
                         <h3 class="text-xl font-bold text-red-600 mb-4">Member Management</h3>
+                        <div class="admin-member-search-panel">
+                            <div class="admin-member-search-panel__header">
+                                <div class="admin-member-search-panel__title">
+                                    <span class="admin-member-search-panel__icon">
+                                        <i class="fa-solid fa-magnifying-glass"></i>
+                                    </span>
+                                    <div>
+                                        <p class="admin-member-search-panel__label">Quick Member Search</p>
+                                        <p class="admin-member-search-panel__hint">Filter by donor name or blood group to reach the right profile instantly.</p>
+                                    </div>
+                                </div>
+                                <span id="admin-member-search-status" class="admin-member-search-panel__status">Showing all members</span>
+                            </div>
+                            <div class="admin-member-search-panel__grid">
+                                <div class="field-icon-left">
+                                    <i class="fi fa-solid fa-user"></i>
+                                    <input id="admin-member-search-name" type="search" placeholder=" "
+                                        class="peer block w-full rounded-lg border-2 border-white bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
+                                    <label for="admin-member-search-name"
+                                        class="absolute left-4 top-3 text-gray-400 transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-focus:-top-3 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Member name</label>
+                                </div>
+                                <div class="field-icon-left flex flex-col">
+                                    <label for="admin-member-search-blood" class="text-sm text-gray-600 mb-2">Blood group</label>
+                                    <div class="input-wrap">
+                                        <i class="fi fa-solid fa-droplet"></i>
+                                        <select id="admin-member-search-blood"
+                                            class="block w-full rounded-lg border-2 border-white bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none">
+                                            <option value="">All groups</option>
+                                            <option value="A+">A+</option>
+                                            <option value="A-">A-</option>
+                                            <option value="B+">B+</option>
+                                            <option value="B-">B-</option>
+                                            <option value="O+">O+</option>
+                                            <option value="O-">O-</option>
+                                            <option value="AB+">AB+</option>
+                                            <option value="AB-">AB-</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="admin-member-search-panel__actions">
+                                    <button type="button" id="admin-member-search-btn"
+                                        class="admin-member-search-panel__btn admin-member-search-panel__btn--primary">
+                                        <i class="fa-solid fa-search"></i>
+                                        <span>Search</span>
+                                    </button>
+                                    <button type="button" id="admin-member-search-reset"
+                                        class="admin-member-search-panel__btn admin-member-search-panel__btn--ghost">
+                                        <i class="fa-solid fa-rotate-left"></i>
+                                        <span>Reset</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
                         <form id="admin-member-form" class="grid grid-cols-1 gap-4">
                             <input type="hidden" id="admin-member-id" name="id" />
                             <div class="field-icon-left">

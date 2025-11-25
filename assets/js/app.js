@@ -112,6 +112,8 @@ const auth = getAuth(app);
 const database = getDatabase(app);
 let donorsList = [];
 let eventsList = [];
+let memberSearchName = '';
+let memberSearchBlood = '';
 let eventSearchTerm = '';
 let eventFilterMode = 'upcoming';
 let recentDonationsList = [];
@@ -951,9 +953,38 @@ function renderSearchResults(filteredDonors) {
     }
     setSearchLoading(false);
 }
+function getFilteredAdminMembers() {
+    const nameFilter = memberSearchName.trim().toLowerCase();
+    const bloodFilter = memberSearchBlood.trim().toUpperCase();
+    return donorsList.filter(member => {
+        const matchesName = !nameFilter || (member.fullName || '').toLowerCase().includes(nameFilter);
+        const matchesBlood = !bloodFilter || (member.bloodGroup || '').toUpperCase() === bloodFilter;
+        return matchesName && matchesBlood;
+    });
+}
+function hasActiveMemberSearchFilters() {
+    return Boolean(memberSearchName.trim() || memberSearchBlood.trim());
+}
+function updateAdminMemberSearchStatus() {
+    const statusEl = document.getElementById('admin-member-search-status');
+    if (!statusEl) return;
+    const nameFilter = memberSearchName.trim();
+    const bloodFilter = memberSearchBlood.trim();
+    let label = 'Showing all members';
+    if (nameFilter && bloodFilter) {
+        label = `Filtered by "${nameFilter}" • ${bloodFilter}`;
+    } else if (nameFilter) {
+        label = `Name contains "${nameFilter}"`;
+    } else if (bloodFilter) {
+        label = `Blood group: ${bloodFilter}`;
+    }
+    statusEl.textContent = label;
+    statusEl.classList.toggle('is-filtered', Boolean(nameFilter || bloodFilter));
+}
 function renderAdminMembersList() {
     const membersListDiv = document.getElementById('admin-members-list');
     if (!membersListDiv) return;
+    updateAdminMemberSearchStatus();
     if (!donorsList.length) {
         membersListDiv.innerHTML = `
             <div class="rounded-lg border border-dashed border-red-200 bg-red-50/40 p-6 text-center text-sm text-red-600">
@@ -962,7 +993,19 @@ function renderAdminMembersList() {
         `;
         return;
     }
-    membersListDiv.innerHTML = donorsList.map(renderDonorCardAdmin).join('');
+    const filteredMembers = getFilteredAdminMembers();
+    if (!filteredMembers.length) {
+        const emptyMessage = hasActiveMemberSearchFilters() ?
+            'No members match your search. Adjust the name or blood group filters or reset the search to view all members.' :
+            'No member records found yet. Once donors register, they\'ll appear here automatically.';
+        membersListDiv.innerHTML = `
+            <div class="rounded-lg border border-dashed border-red-200 bg-red-50/40 p-6 text-center text-sm text-red-600">
+                ${emptyMessage}
+            </div>
+        `;
+        return;
+    }
+    membersListDiv.innerHTML = filteredMembers.map(renderDonorCardAdmin).join('');
     membersListDiv.querySelectorAll('.edit-member-btn').forEach(button => {
         button.addEventListener('click', (ev) => {
             const memberId = ev.target.dataset.memberId;
@@ -991,6 +1034,22 @@ function renderAdminMembersList() {
             }
         });
     });
+}
+function applyAdminMemberSearchFilters() {
+    const nameInput = document.getElementById('admin-member-search-name');
+    const bloodSelect = document.getElementById('admin-member-search-blood');
+    memberSearchName = (nameInput?.value || '').trim();
+    memberSearchBlood = (bloodSelect?.value || '').trim();
+    renderAdminMembersList();
+}
+function resetAdminMemberSearchFilters() {
+    memberSearchName = '';
+    memberSearchBlood = '';
+    const nameInput = document.getElementById('admin-member-search-name');
+    const bloodSelect = document.getElementById('admin-member-search-blood');
+    if (nameInput) nameInput.value = '';
+    if (bloodSelect) bloodSelect.value = '';
+    renderAdminMembersList();
 }
 function renderAdminEventsList() {
     const eventsListDiv = document.getElementById('admin-events-list');
@@ -1897,6 +1956,19 @@ window.onload = function () {
     if (clearMemberBtn) {
         clearMemberBtn.addEventListener('click', clearAdminMemberForm);
     }
+    const adminMemberSearchBtn = document.getElementById('admin-member-search-btn');
+    adminMemberSearchBtn?.addEventListener('click', () => applyAdminMemberSearchFilters());
+    const adminMemberSearchResetBtn = document.getElementById('admin-member-search-reset');
+    adminMemberSearchResetBtn?.addEventListener('click', () => resetAdminMemberSearchFilters());
+    const adminMemberSearchBlood = document.getElementById('admin-member-search-blood');
+    adminMemberSearchBlood?.addEventListener('change', () => applyAdminMemberSearchFilters());
+    const adminMemberSearchName = document.getElementById('admin-member-search-name');
+    adminMemberSearchName?.addEventListener('keydown', (ev) => {
+        if (ev.key === 'Enter') {
+            ev.preventDefault();
+            applyAdminMemberSearchFilters();
+        }
+    });
     profileForm?.addEventListener('submit', (e) => {
         e.preventDefault();
         if (!currentUser) return;
