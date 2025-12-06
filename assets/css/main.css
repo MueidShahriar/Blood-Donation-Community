@@ -1458,6 +1458,17 @@ canvas {
         flex-wrap: wrap;
         gap: 0.35rem 0.5rem;
     }
+
+/* Stabilize Find Donors card (no float/hover motion) */
+#search .float-in,
+#search .search-card,
+#search .search-card:hover {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+    box-shadow: 0 8px 20px rgba(255, 255, 255, 0.5);
+}
     .card .btn-group,
     .donor-card .btn-group {
         width: 100%;

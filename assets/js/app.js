@@ -111,6 +111,7 @@ try {
 const auth = getAuth(app);
 const database = getDatabase(app);
 let donorsList = [];
+let donorsByGroup = new Map();
 let eventsList = [];
 let memberSearchName = '';
 let memberSearchBlood = '';
@@ -120,6 +121,8 @@ let recentDonationsList = [];
 let currentUser = null;
 let currentUserRole = 'member';
 let searchLoaderEl = null;
+let searchLoaderShownAt = 0;
+const SEARCH_LOADER_MIN_MS = 280;
 let searchRunTimeout = null;
 let recentLoaderEl = null;
 let recentLoaderState = true;
@@ -295,6 +298,20 @@ function computeAgeGroupCounts() {
     donorsList.forEach(addFromEntry);
     recentDonationsList.forEach(addFromEntry);
     return chartLabels.age.map(label => buckets.get(label) || 0);
+}
+
+function normalizeBloodGroup(value) {
+    return (value || '').toString().trim().toUpperCase();
+}
+
+function buildDonorIndex(list) {
+    donorsByGroup = new Map();
+    list.forEach((d) => {
+        const g = normalizeBloodGroup(d?.bloodGroup || d?.blood || d?.blood_group);
+        if (!g) return;
+        if (!donorsByGroup.has(g)) donorsByGroup.set(g, []);
+        donorsByGroup.get(g).push(d);
+    });
 }
 function computeBloodGroupCounts() {
     const counts = chartLabels.blood.map(() => 0);
@@ -828,7 +845,7 @@ const contactDesktop = d.isPhoneHidden
                 </div>
            </div>`;
     return `
-        <div class="donor-card float-in bg-white p-4 rounded-lg shadow-sm hover:shadow-md transition-all duration-300 flex flex-col sm:flex-row sm:items-center justify-between">
+        <div class="donor-card bg-white p-4 rounded-lg shadow-sm flex flex-col sm:flex-row sm:items-center justify-between">
             <div class="flex-1 min-w-0 mb-2 sm:mb-0">
                 <div class="font-bold text-red-700 truncate">${d.fullName}</div>
                 <div class="info-stack sm:hidden">
@@ -903,11 +920,17 @@ function renderDonorCardAdmin(d) {
 function setSearchLoading(isLoading) {
     if (!searchLoaderEl) return;
     if (isLoading) {
+        searchLoaderShownAt = performance.now ? performance.now() : Date.now();
         searchLoaderEl.classList.remove('hidden');
         searchLoaderEl.setAttribute('aria-hidden', 'false');
     } else {
-        searchLoaderEl.classList.add('hidden');
-        searchLoaderEl.setAttribute('aria-hidden', 'true');
+        const now = performance.now ? performance.now() : Date.now();
+        const elapsed = now - searchLoaderShownAt;
+        const remaining = Math.max(0, SEARCH_LOADER_MIN_MS - elapsed);
+        setTimeout(() => {
+            searchLoaderEl.classList.add('hidden');
+            searchLoaderEl.setAttribute('aria-hidden', 'true');
+        }, remaining);
     }
 }
 function setRecentLoading(isLoading) {
@@ -1216,6 +1239,7 @@ onValue(donorsRef, (snapshot) => {
             }
         }
     }
+    buildDonorIndex(donorsList);
     const searchForm = document.getElementById('search-form');
     if (searchForm) {
         const blood = document.getElementById('search-blood')?.value;
@@ -1225,10 +1249,8 @@ onValue(donorsRef, (snapshot) => {
             if (resultsEl) resultsEl.innerHTML = '';
             setSearchLoading(false);
         } else {
-            let filtered = donorsList;
-            if (blood && blood !== 'all' && blood !== 'select') {
-                filtered = filtered.filter(d => d.bloodGroup === blood);
-            }
+            const normalized = normalizeBloodGroup(blood);
+            let filtered = (blood && blood !== 'all' && blood !== 'select') ? (donorsByGroup.get(normalized) || []) : donorsList;
             if (eligibleOnly) {
                 const isEligible = (lastDonationDate) => {
                     if (!lastDonationDate) return true;
@@ -1767,17 +1789,12 @@ window.onload = function () {
         }
         setSearchLoading(true);
         searchResults.innerHTML = '';
-        searchRunTimeout = setTimeout(() => {
-            let filtered = donorsList;
-            if (blood && blood !== 'all' && blood !== 'select') {
-                filtered = filtered.filter(d => d.bloodGroup === blood);
-            }
-            if (showEligibleOnly) {
-                filtered = filtered.filter(d => isDonorEligible(d.lastDonateDate));
-            }
-            renderSearchResults(filtered);
-            searchRunTimeout = null;
-        }, 220);
+        const normalized = normalizeBloodGroup(blood);
+        let filtered = (blood && blood !== 'all' && blood !== 'select') ? (donorsByGroup.get(normalized) || []) : donorsList;
+        if (showEligibleOnly) {
+            filtered = filtered.filter(d => isDonorEligible(d.lastDonateDate));
+        }
+        renderSearchResults(filtered);
     }
    searchForm?.addEventListener('submit', (e) => {
         e.preventDefault();
