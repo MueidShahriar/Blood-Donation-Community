@@ -1,132 +1,268 @@
 # 🩸 Blood Donation Community Platform
 
-A web-based platform dedicated to connecting **blood donors** with individuals in urgent need, while also supporting **community-driven blood donation events**. This project centralizes donor data, accelerates emergency responses and strengthens community engagement in lifesaving initiatives.
+*A Community-Powered Blood Donation Management System*
+
+A fully client-side web application designed to **connect voluntary blood donors with patients in urgent need** and to **manage community-driven blood donation events efficiently**. The entire system runs securely in the browser and stores data using **Firebase Realtime Database and Authentication**.
 
 ---
 
 ## 🌟 Key Features
 
-* **🔍 Donor Registry & Search**
-  Register as a donor and search for nearby donors filtered by **blood group** and **location**.
+### 🔐 Donor Registration & Authentication
 
-* **👤 User Profile Management**
-  Donors can update personal information, **last donation date** and **current location**.
+* Secure email/password login system
+* Profile management with last donation tracking
+* Automatic eligibility indication (90+ days rule)
 
-* **📊 Admin Dashboard**
-  Administrators can oversee donor data, track recent donations and manage events.
+### 🔎 Smart Donor Search
 
-* **📅 Event Management**
-  Create, update and track blood donation drives with details like **time, location and description**.
+* Filter donors by blood group
+* Option to show only currently eligible donors
+* Quick access to verified donor details
 
-* **ℹ️ Eligibility & Guidance**
-  Clear guidelines for donation eligibility, safety measures, and FAQs.
+### 🛡️ Admin Dashboard
+
+* Create, update, and manage donation events
+* Approve and edit donor profiles
+* Log verified recent donations
+* Automatically update the **Lives Helped** counter
+
+### 📊 Analytics & Reporting
+
+* Live visual charts for:
+
+  * Age distribution
+  * Blood group availability
+  * Monthly donation trends
+* One-click **Monthly PDF Report** for administrators
+
+### 🧾 Certificates & Sharing
+
+* Generate blood donation certificates
+* Download and share instantly
+* **Bilingual interface** (English & Bangla)
+
+### 📝 Feedback System
+
+* Collect and store visitor feedback
+* Timestamped entries for tracking and review
+
+---
+
+## ⚙️ Quick Start Guide (No Backend Server Required)
+
+### 1️⃣ Clone the Repository
+
+```bash
+git clone https://github.com/mueidshahriar/Blood-Donation-Community.git
+cd Blood-Donation-Community
+```
+
+### 2️⃣ Create a Firebase Project
+
+* Enable **Authentication → Email/Password**
+* Create a **Realtime Database** (start in locked mode)
+* *(Optional)* Enable **Firebase Analytics**
+
+### 3️⃣ Configure Firebase
+
+* Open:
+
+  ```
+  assets/js/firebase-config.js
+  ```
+* Replace the placeholder keys with your Firebase credentials
+* Set your admin email using:
+
+  ```js
+  const ADMIN_EMAIL = "your-email@example.com";
+  ```
+
+### 4️⃣ Run Locally Using Any Static Server
+
+Because JavaScript modules are used, a server is required.
+
+* **PowerShell**
+
+  ```bash
+  python -m http.server 8000
+  ```
+
+  Then open: `http://localhost:8000/bdc.html`
+
+* **VS Code**
+  Use the **Live Server** extension
+
+* **Node.js**
+
+  ```bash
+  npx serve .
+  ```
+
+### 5️⃣ Deploy to a Hosting Platform
+
+You may deploy to:
+
+* Firebase Hosting
+* Netlify
+* Vercel
+* GitHub Pages
+
+⚠️ Remember to add your deployed domain inside:
+
+```
+Firebase Auth → Authorized Domains
+```
+
+---
+
+## 🗂️ Firebase Database Structure
+
+### ✅ Donors
+
+```
+donors/{uid}
+```
+
+Fields:
+
+* fullName
+* email
+* phone
+* bloodGroup
+* location
+* lastDonateDate
+* gender
+* isPhoneHidden
+* role (admin / member)
+* notes
+* timestamps
+
+---
+
+### ✅ Events
+
+```
+events/{eventId}
+```
+
+Fields:
+
+* title
+* date
+* time
+* location
+* description
+
+---
+
+### ✅ Recent Donations
+
+```
+recentDonations/{id}
+```
+
+Fields:
+
+* name
+* bloodGroup
+* location
+* department
+* batch
+* age
+* weight
+* date
+
+---
+
+### ✅ Statistics
+
+```
+stats/livesHelped
+```
+
+* Integer value increased whenever a verified donation is logged
+
+---
+
+### ✅ Feedback
+
+```
+feedback/{id}
+```
+
+Fields:
+
+* name
+* email
+* message
+* submittedAt
+* userId (optional)
+
+---
+
+### 🔑 Admin Authorization
+
+A user becomes an admin automatically if their email matches the value of:
+
+```js
+ADMIN_EMAIL
+```
+
+Their role is stored in:
+
+```
+donors/{uid}/role
+```
 
 ---
 
 ## 🛠️ Technology Stack
 
-| Category     | Technologies                                    |
-| ------------ | ----------------------------------------------- |
-| **Frontend** | HTML5, CSS3, JavaScript                         |
-| **Styling**  | Bootstrap (responsive, component-driven design) |
-| **Backend**  | JavaScript (Node.js / Express.js)               |
-| **Database** | Firebase Realtime Database / Firestore          |
+* **Frontend:** HTML5 + Vanilla JavaScript (ES Modules)
+* **Styling:** Tailwind CSS (CDN), Bootstrap 4 utilities, Custom CSS
+* **Backend:** Firebase v10
+
+  * Realtime Database
+  * Authentication
+  * Analytics (optional)
+* **Charts & Exports:**
+
+  * Chart.js 4.4.x
+  * jsPDF 2.5.x (Reports & Certificates)
 
 ---
 
-## 🚀 Getting Started
+## 🤝 Contribution Guidelines
 
-### ✅ Prerequisites
+We welcome community contributions:
 
-Ensure the following are installed:
+1. Fork the repository
+2. Create a new branch
 
-* **Node.js** (v16 or later)
-* **npm** (comes with Node.js)
-* **Firebase Project** (with API keys and configuration)
-
-### ⚙️ Installation
-
-```bash
-# Clone the repository
-git clone https://github.com/mueidshahriar/Blood-Donation-Community.git
-cd Blood-Donation-Community
-
-# Install dependencies
-npm install
-```
-
-### 🔑 Environment Setup
-
-Create a `.env` file in the root directory:
-
-```env
-PORT=5000
-FIREBASE_API_KEY=your_api_key
-FIREBASE_AUTH_DOMAIN=your_project_id.firebaseapp.com
-FIREBASE_PROJECT_ID=your_project_id
-FIREBASE_STORAGE_BUCKET=your_project_id.appspot.com
-FIREBASE_MESSAGING_SENDER_ID=your_messaging_id
-FIREBASE_APP_ID=your_app_id
-```
-
-### ▶️ Run the Application
-
-```bash
-npm start
-```
-
-Visit: [http://localhost:5000](http://localhost:5000)
-
----
-
-## 📝 Usage
-
-### 👥 Donors
-
-* Register with personal and donation details.
-* Update **profile, phone number and last donation date**.
-* Use the **Find Donors** page to locate nearby matches.
-
-### 👨‍💼 Admins
-
-* Access the **Admin Dashboard** via `/admin`.
-* Manage:
-
-  * **Events Tab** → Create & track upcoming blood drives.
-  * **Members Tab** → View and manage registered donors.
-  * **Recent Donations Tab** → Track activity and eligibility.
-
----
-
-## 🤝 Contributing
-
-We welcome contributions from the community!
-
-1. **Fork** the repository
-2. **Create** your feature branch (`git checkout -b feature/NewFeature`)
-3. **Commit** your changes (`git commit -m 'Add some NewFeature'`)
-4. **Push** to your branch (`git push origin feature/NewFeature`)
-5. **Open a Pull Request**
+   ```bash
+   git checkout -b feature/your-feature-name
+   ```
+3. Commit and push your changes
+4. Submit a Pull Request with a short description
 
 ---
 
 ## 📜 License
 
-Distributed under the **MIT License**.
-See [LICENSE](LICENSE) for details.
+This project is released under the **MIT License** — free to use, modify, and distribute.
 
 ---
 
-## 📞 Contact
+## 📞 Contact Information
 
 👤 **Md. Mueid Shahriar**
 📧 **Email:** [mdmueidshahriar16@gmail.com](mailto:mdmueidshahriar16@gmail.com)
-
-📘 **Facebook:** [facebook.com/mueid016](https://www.facebook.com/mueid016)
-
-
-🔗 **Project Link:** [Blood Donation Community](https://github.com/mueidshahriar/Blood-Donation-Community)
+🔗 **GitHub Project:**
+[https://github.com/mueidshahriar/Blood-Donation-Community](https://github.com/mueidshahriar/Blood-Donation-Community)
 
 ---
 
-✨ *Together, we can save lives - one donation at a time.*
+✨ *Together, we can save lives — one donation at a time.*
+
+---
