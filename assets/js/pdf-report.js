@@ -107,8 +107,9 @@ export function createMonthlyReportDownloader({
                 cursorY += boxHeight + 2;
                 doc.setDrawColor(0);
             };
-            const drawMonthHeader = (label, yearText, count) => {
-                ensureSpace(12);
+            const drawMonthHeader = (label, yearText, count, firstEntryHeight = 50) => {
+                // Ensure space for header + at least first entry to avoid orphan headers
+                ensureSpace(13 + firstEntryHeight);
                 doc.setFillColor(252, 231, 233);
                 doc.rect(marginX, cursorY, contentWidth, 9, 'F');
                 doc.setFont('helvetica', 'bold');
@@ -216,6 +217,28 @@ export function createMonthlyReportDownloader({
                 addGap(2);
             };
             drawReportHeader();
+            
+            // Group donations by year
+            const yearGroups = {};
+            donationEntries.forEach(entry => {
+                if (!entry) return;
+                const rawDate = entry.date || entry.donationDate;
+                const dateObj = rawDate ? new Date(rawDate) : null;
+                if (!dateObj || Number.isNaN(dateObj.getTime())) return;
+                const year = dateObj.getFullYear();
+                if (!yearGroups[year]) yearGroups[year] = [];
+                yearGroups[year].push(entry);
+            });
+            
+            // Sort years ascending (2025 first, then 2026)
+            const sortedYears = Object.keys(yearGroups).map(Number).sort((a, b) => a - b);
+            
+            // Count donations per year
+            const yearlyCounts = sortedYears.map(year => ({
+                year,
+                count: yearGroups[year].length
+            }));
+            
             const summaryLines = [
                 `Total donations: ${totalDonations}`,
                 `Matched to months: ${countedByMonths}/${totalDonations || 0}`,
@@ -223,41 +246,143 @@ export function createMonthlyReportDownloader({
                 peakIndex >= 0 && peakValue > 0 ? `Peak month: ${chartLabels.months[peakIndex]} (${peakValue})` : 'Peak month: No monthly records'
             ];
             writeSummaryBox(summaryLines);
-            drawSectionTitle('Monthly totals');
-            monthCounts.forEach((value, idx) => {
-                writeWrappedText(`${chartLabels.months[idx]}: ${Number(value || 0)}`, 6, 5);
+            
+            // Yearly Summary Section
+            drawSectionTitle('Yearly Summary');
+            yearlyCounts.forEach(({ year, count }) => {
+                writeWrappedText(`${year}: ${count} donation${count !== 1 ? 's' : ''}`, 6, 5);
             });
+            if (yearlyCounts.length === 0) {
+                writeWrappedText('No yearly data available', 6, 5);
+            }
             addGap(6);
-            drawSectionTitle('Donation details by month');
-            let printedAnyDetails = false;
-            monthGroups.forEach((entries, idx) => {
-                if (!entries.length) return;
-                printedAnyDetails = true;
-                const firstDate = entries[0]?.dateObj;
-                const yearText = firstDate && Number.isFinite(firstDate.getFullYear()) ? String(firstDate.getFullYear()) : String(now.getFullYear());
-                drawMonthHeader(chartLabels.months[idx], yearText, entries.length);
-                entries.forEach(({ donation, dateObj }, entryIdx) => {
-                    const hasNotes = Boolean((donation?.notes ?? '').toString().trim());
-                    const hasComment = Boolean((donation?.publicComment ?? '').toString().trim());
-                    const estimated = 16 /* first + location */ + 8 /* batch/age/weight */ + (hasNotes ? 6 : 0) + (hasComment ? 6 : 0) + 6 /* divider */;
-                    ensureEntrySpace(estimated);
-                    const detail = getDonationDetailData(donation, dateObj) || {
-                        displayDate: formatDateDisplay(dateObj),
-                        donorName: donation?.name || 'Details unavailable',
-                        bloodGroup: donation?.bloodGroup || '—',
-                        location: '—',
-                        department: '—',
-                        batch: '—',
-                        age: '—',
-                        weight: '—',
-                        notes: '',
-                        comment: ''
-                    };
-                    writeDonationEntry(entryIdx + 1, detail);
-                    addGap(4);
-                    drawDivider();
+            
+            // Monthly Summary Section (side-by-side table format)
+            drawSectionTitle('Monthly Summary');
+            if (sortedYears.length > 0) {
+                // Calculate monthly counts for each year
+                const yearlyMonthData = sortedYears.map(year => {
+                    const yearDonations = yearGroups[year];
+                    const monthlyCountsForYear = chartLabels.months.map(() => 0);
+                    yearDonations.forEach(entry => {
+                        const rawDate = entry.date || entry.donationDate;
+                        const dateObj = rawDate ? new Date(rawDate) : null;
+                        if (dateObj && !Number.isNaN(dateObj.getTime())) {
+                            monthlyCountsForYear[dateObj.getMonth()]++;
+                        }
+                    });
+                    return { year, counts: monthlyCountsForYear };
                 });
-                addGap(6);
+                
+                // Draw table header
+                const colWidth = (contentWidth - 30) / sortedYears.length;
+                const tableStartX = marginX;
+                const monthColWidth = 30;
+                
+                ensureSpace(12);
+                doc.setFont('helvetica', 'bold');
+                doc.setFontSize(10);
+                setTextColor(palette.text);
+                doc.text('Month', tableStartX + 2, cursorY);
+                sortedYears.forEach((year, idx) => {
+                    doc.setTextColor(...palette.primary);
+                    doc.text(String(year), tableStartX + monthColWidth + (idx * colWidth) + colWidth / 2 - 10, cursorY);
+                });
+                cursorY += 6;
+                
+                // Draw horizontal line under header
+                doc.setDrawColor(...palette.border);
+                doc.setLineWidth(0.3);
+                doc.line(marginX, cursorY, marginX + contentWidth, cursorY);
+                cursorY += 3;
+                
+                // Draw each month row
+                doc.setFont('helvetica', 'normal');
+                chartLabels.months.forEach((month, monthIdx) => {
+                    ensureSpace(6);
+                    setTextColor(palette.text);
+                    doc.text(month, tableStartX + 2, cursorY);
+                    
+                    yearlyMonthData.forEach((yearData, yearIdx) => {
+                        const count = yearData.counts[monthIdx];
+                        const displayValue = count === 0 ? 'No Donation' : String(count);
+                        const textColor = count === 0 ? palette.muted : palette.text;
+                        doc.setTextColor(...textColor);
+                        doc.text(displayValue, tableStartX + monthColWidth + (yearIdx * colWidth) + colWidth / 2 - 10, cursorY);
+                    });
+                    cursorY += 5;
+                });
+                
+                setTextColor(palette.text);
+            } else {
+                writeWrappedText('No monthly data available', 6, 5);
+            }
+            addGap(6);
+            
+            drawSectionTitle('Donation details by date');
+            let printedAnyDetails = false;
+            
+            // Process years in ascending order (2025, then 2026, etc.)
+            sortedYears.forEach(year => {
+                const yearDonations = yearGroups[year];
+                
+                // Group by month within each year
+                const monthGroupsForYear = chartLabels.months.map(() => []);
+                yearDonations.forEach(entry => {
+                    const rawDate = entry.date || entry.donationDate;
+                    const dateObj = rawDate ? new Date(rawDate) : null;
+                    if (dateObj && !Number.isNaN(dateObj.getTime())) {
+                        monthGroupsForYear[dateObj.getMonth()].push({ donation: entry, dateObj });
+                    }
+                });
+                
+                // Sort each month's entries by date ascending
+                monthGroupsForYear.forEach(group => {
+                    group.sort((a, b) => {
+                        const aTime = a.dateObj ? a.dateObj.getTime() : 0;
+                        const bTime = b.dateObj ? b.dateObj.getTime() : 0;
+                        return aTime - bTime; // ascending order
+                    });
+                });
+                
+                monthGroupsForYear.forEach((entries, idx) => {
+                    if (!entries.length) return;
+                    printedAnyDetails = true;
+                    
+                    // Calculate first entry height to pass to header
+                    const firstEntry = entries[0];
+                    const firstHasNotes = Boolean((firstEntry?.donation?.notes ?? '').toString().trim());
+                    const firstHasComment = Boolean((firstEntry?.donation?.publicComment ?? '').toString().trim());
+                    const firstEntryHeight = 24 + 12 + (firstHasNotes ? 8 : 0) + (firstHasComment ? 8 : 0) + 10;
+                    
+                    drawMonthHeader(chartLabels.months[idx], String(year), entries.length, firstEntryHeight);
+                    entries.forEach(({ donation, dateObj }, entryIdx) => {
+                        const hasNotes = Boolean((donation?.notes ?? '').toString().trim());
+                        const hasComment = Boolean((donation?.publicComment ?? '').toString().trim());
+                        // Increased estimated height to prevent page cuts - ensure full entry fits
+                        const estimated = 24 /* first + location */ + 12 /* batch/age/weight */ + (hasNotes ? 8 : 0) + (hasComment ? 8 : 0) + 10 /* divider + padding */;
+                        // Skip space check for first entry since header already ensured space
+                        if (entryIdx > 0) {
+                            ensureEntrySpace(estimated);
+                        }
+                        const detail = getDonationDetailData(donation, dateObj) || {
+                            displayDate: formatDateDisplay(dateObj),
+                            donorName: donation?.name || 'Details unavailable',
+                            bloodGroup: donation?.bloodGroup || '—',
+                            location: '—',
+                            department: '—',
+                            batch: '—',
+                            age: '—',
+                            weight: '—',
+                            notes: '',
+                            comment: ''
+                        };
+                        writeDonationEntry(entryIdx + 1, detail);
+                        addGap(4);
+                        drawDivider();
+                    });
+                    addGap(6);
+                });
             });
             if (undated.length) {
                 drawSectionTitle(`No Date Provided (${undated.length})`);
