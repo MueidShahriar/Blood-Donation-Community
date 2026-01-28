@@ -1,0 +1,1174 @@
+﻿<!DOCTYPE html>
+<html lang="en" class="antialiased scroll-smooth">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Blood Donation Community</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="shortcut icon" href="image/blood-drop.png" type="image/x-icon">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="assets/css/main.css">
+
+    <meta name="description"
+        content="Community-driven blood donation platform. Register as a donor, search donors by blood group and location.">
+</head>
+
+<body class="bg-white text-gray-900">
+    <div id="page-loader" class="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-white bg-opacity-95 transition-all duration-500">
+        <div class="mb-6 flex flex-col items-center">
+            <span class="loader-icon-circle mb-4">
+                <span class="drops-row">
+                    <img src="image/blood-drop.png" alt="Blood Drop" class="drop-bounce" style="--i:0;" />
+                    <img src="image/blood-drop.png" alt="Blood Drop" class="drop-bounce" style="--i:1;" />
+                    <img src="image/blood-drop.png" alt="Blood Drop" class="drop-bounce" style="--i:2;" />
+                </span>
+            </span>
+        </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.6/dist/chart.umd.min.js"></script>
+    <script src="assets/js/viewport.js"></script>
+    <script type="module" src="assets/js/language-ui.js"></script>
+    <script type="module" src="assets/js/certificate.js"></script>
+    <script type="module" src="assets/js/app.js"></script>
+
+
+    <header class="fixed top-0 left-0 right-0 z-40 bg-white/90 backdrop-blur shadow-lg rounded-b-xl">
+        <nav class="max-w-6xl mx-auto flex items-center justify-between px-4 sm:px-5 lg:px-6 py-2">
+            <div class="flex items-center gap-3">
+                <img src="image/blood-drop.png" alt="logo" class="h-10 w-10 header-logo border-red-600" />
+                <span class="text-2xl font-extrabold text-red-700 tracking-tight site-title" data-i18n="siteTitle">Blood Donation
+                    Community</span>
+                <span id="admin-badge"
+                    class="hidden items-center gap-1 text-xs font-bold px-2 py-1 rounded bg-red-600 text-white shadow" data-i18n="adminBadge">Admin</span>
+            </div>
+            <div class="hidden md:flex items-center gap-1 text-base font-medium flex-1">
+                <a id="nav-about-link" href="#about"
+                    class="px-3 py-2 rounded hover:bg-red-50 text-red-700" data-i18n="navAbout">About</a>
+                <a id="nav-how-link" href="#how" class="px-3 py-2 rounded hover:bg-red-50 text-red-700" data-i18n="navHow">Donation
+                    Guide</a>
+                <a id="nav-events-link" href="#events"
+                    class="px-3 py-2 rounded hover:bg-red-50 text-red-700" data-i18n="navEvents">Events</a>
+                <a id="nav-join-link" href="#join" class="px-3 py-2 rounded hover:bg-red-50 text-red-700" data-i18n="navJoin">Join</a>
+                <a id="nav-search-link" href="#search"
+                    class="px-3 py-2 rounded hover:bg-red-50 text-red-700" data-i18n="navSearch">Search</a>
+                <a id="nav-contact-link" href="#contact"
+                    class="px-3 py-2 rounded hover:bg-red-50 text-red-700" data-i18n="navContact">Contact</a>
+            </div>
+            <div class="flex items-center gap-4">
+                <a id="admin-nav-link" href="#admin-panel"
+                    class="hidden admin-desktop-only px-3 py-2 rounded hover:bg-red-50 text-red-700" data-i18n="navDashboard">Dashboard</a>
+                <button id="login-btn"
+                    class="desktop-only inline-flex bg-red-600 text-white px-4 py-2 rounded-lg font-semibold shadow hover:bg-red-700 transition items-center justify-center" data-i18n="btnLogin">Login</button>
+            </div>
+
+            <div class="flex items-center gap-2">
+                <button id="menu-toggle" class="md:hidden p-2 rounded-lg bg-red-100 text-red-700 hover:bg-red-200"
+                    aria-label="Open menu" aria-controls="mobile-menu" aria-expanded="false" type="button">
+                    <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M4 6h16M4 12h16M4 18h16" />
+                    </svg>
+                </button>
+            </div>
+        </nav>
+        <div id="mobile-menu" class="md:hidden hidden bg-white/95 shadow-lg rounded-b-xl">
+            <div class="px-4 py-4 flex flex-col gap-2 text-red-700">
+                <a id="mobile-about-link" href="#about" class="block px-3 py-2 rounded hover:bg-red-50" data-i18n="navAbout">About</a>
+                <a id="mobile-how-link" href="#how" class="block px-3 py-2 rounded hover:bg-red-50" data-i18n="navHow">Donation Guide</a>
+                <a id="mobile-events-link" href="#events" class="block px-3 py-2 rounded hover:bg-red-50" data-i18n="navEvents">Events</a>
+                <a id="mobile-join-link" href="#join" class="block px-3 py-2 rounded hover:bg-red-50" data-i18n="navJoin">Join</a>
+                <a id="mobile-search-link" href="#search" class="block px-3 py-2 rounded hover:bg-red-50" data-i18n="navSearch">Search</a>
+                <a id="mobile-contact-link" href="#contact" class="block px-3 py-2 rounded hover:bg-red-50" data-i18n="navContact">Contact</a>
+                <a id="admin-mobile-link" href="#admin-panel"
+                    class="hidden block px-3 py-2 rounded hover:bg-red-50" data-i18n="navDashboard">Dashboard</a>
+                <button id="mobile-login-btn"
+                    class="block text-left px-3 py-2 rounded hover:bg-red-50 text-red-700 font-medium" data-i18n="btnLogin">Login</button>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-6xl mx-auto px-4 sm:px-4 lg:px-6">
+        <section id="hero" class="relative flex flex-col md:flex-row items-center justify-between pt-4 pb-12 gap-6">
+            <div class="flex-1 flex flex-col items-center justify-center text-center md:items-start md:text-left">
+                <h1
+                    class="text-4xl sm:text-5xl font-extrabold text-red-700 mb-4 tracking-tight break-words leading-tight hero-title" data-i18n="heroTitle">
+                    Donate Blood Save Life
+                </h1>
+                <p class="mb-8 text-lg text-gray-700 max-w-xl mx-auto md:mx-0" data-i18n="heroDescription">Be a hero in your community. Register as
+                    a donor,
+                    find blood matches and join our events to help save lives every day.</p>
+                <div
+                    class="flex flex-col sm:flex-row gap-4 w-full sm:w-auto items-center justify-center md:justify-start">
+                    <a href="#join"
+                        class="w-full sm:w-auto text-center bg-gradient-to-r from-red-600 to-red-400 text-white px-8 py-3 rounded-lg font-semibold shadow-lg hover:scale-105 transition inline-flex items-center justify-center gap-2 btn-breathe">
+                        <i class="fa-solid fa-hand-holding-droplet"></i>
+                        <span data-i18n="btnBecomeDonor">Become a Donor</span>
+                    </a>
+                    <a href="#search"
+                        class="w-full sm:w-auto text-center bg-white border-2 border-red-600 text-red-600 px-8 py-3 rounded-lg font-semibold shadow hover:bg-red-50 hover:scale-105 transition inline-flex items-center justify-center gap-2 btn-breathe">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        <span data-i18n="btnSearchDonors">Search Donors</span>
+                    </a>
+                </div>
+            </div>
+            <div class="flex-1 flex justify-center items-center">
+                <div class="relative">
+                    <img src="image/blood-drop.png" alt="blood drop"
+                        class="w-56 h-56 object-contain drop-shadow-xl animate-bounce-slow" />
+                    <div
+                        class="absolute bottom-0 left-1/2 -translate-x-1/2 w-40 h-8 bg-red-200 rounded-full blur-xl opacity-60">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="recent-donor" class="py-12">
+            <div id="recent-loading" class="loading-banner" role="status" aria-live="polite">
+                <span class="loading-banner__spinner" aria-hidden="true"></span>
+                <span class="loading-banner__text" data-i18n="recentLoading">Fetching recent donations...</span>
+            </div>
+            <div id="recentDonorCarousel" class="carousel slide" data-ride="carousel" data-interval="9000"
+                data-pause="hover">
+                <ol class="carousel-indicators">
+                </ol>
+                <div class="carousel-inner">
+                </div>
+                <a class="carousel-control-prev" href="#recentDonorCarousel" role="button" data-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="sr-only" data-i18n="recentPrevious">Previous</span>
+                </a>
+                <a class="carousel-control-next" href="#recentDonorCarousel" role="button" data-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="sr-only" data-i18n="recentNext">Next</span>
+                </a>
+            </div>
+        </section>
+
+        <section id="dashboard-insights" class="py-12">
+            <div class="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
+                <div class="text-left">
+                    <h2 class="text-2xl font-extrabold text-red-700" data-i18n="dashboardTitle">Live Donor Insights</h2>
+                    <p class="mt-1 text-sm text-gray-600 max-w-2xl" data-i18n="dashboardDescription">These snapshots refresh instantly whenever new donors join or donations are logged.</p>
+                </div>
+                <span class="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-red-600"><i class="fa-solid fa-signal"></i><span data-i18n="dashboardRealtime">Realtime</span></span>
+            </div>
+            <div class="mt-6 grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+                <article class="how-card accent-emerald tint-emerald rounded-xl shadow-lg p-6 transform transition hover:scale-105 float-in flex flex-col">
+                    <span class="insight-chip insight-chip-emerald"><i class="fa-solid fa-chart-pie" aria-hidden="true"></i><span data-i18n="insightAgeProfile">Age Profile</span></span>
+                    <div class="flex items-center gap-4">
+                        <span class="icon-circle-sm"><i class="fa-solid fa-children" aria-hidden="true"></i></span>
+                        <h3 class="text-lg font-bold text-red-700" data-i18n="insightAgeTitle">Donor Age Groups</h3>
+                    </div>
+                    <p class="mt-2 text-sm text-gray-600" data-i18n="insightAgeDesc">Tracks how many active donors fall into each age band so outreach stays balanced.</p>
+                    <div class="mt-4 h-64">
+                        <canvas id="ageGroupChart" class="w-full h-full" aria-label="Donor age group breakdown" role="img"></canvas>
+                    </div>
+                    <p id="ageGroupChartEmpty" class="mt-3 text-sm text-gray-500 hidden" data-i18n="chartEmptyAge">No donor age data available yet. Add ages to donor profiles to populate this chart.</p>
+                </article>
+
+                <article class="how-card accent-amber tint-amber rounded-xl shadow-lg p-6 transform transition hover:scale-105 float-in flex flex-col">
+                    <span class="insight-chip insight-chip-amber"><i class="fa-solid fa-clock-rotate-left" aria-hidden="true"></i><span data-i18n="insightMonthlyPulse">Monthly Pulse</span></span>
+                    <div class="flex items-center gap-4">
+                        <span class="icon-circle-sm"><i class="fa-solid fa-calendar-check" aria-hidden="true"></i></span>
+                        <h3 class="text-lg font-bold text-red-700" data-i18n="insightMonthlyTitle">Monthly Donations</h3>
+                    </div>
+                    <p class="mt-2 text-sm text-gray-600" data-i18n="insightMonthlyDesc">Visualises donation activity by month so you can spot seasonal trends at a glance.</p>
+                    <div class="mt-4 h-64">
+                        <canvas id="monthlyDonorChart" class="w-full h-full" aria-label="Monthly donation distribution" role="img"></canvas>
+                    </div>
+                    <p id="monthlyDonorChartEmpty" class="mt-3 text-sm text-gray-500 hidden" data-i18n="chartEmptyMonthly">No donation records found for this year. Log donations to activate this chart.</p>
+                </article>
+
+                <article class="how-card accent-indigo tint-indigo rounded-xl shadow-lg p-6 transform transition hover:scale-105 float-in flex flex-col">
+                    <span class="insight-chip insight-chip-indigo"><i class="fa-solid fa-droplet" aria-hidden="true"></i><span data-i18n="insightBloodInventory">Blood Inventory</span></span>
+                    <div class="flex items-center gap-4">
+                        <span class="icon-circle-sm"><i class="fa-solid fa-droplet" aria-hidden="true"></i></span>
+                        <h3 class="text-lg font-bold text-red-700" data-i18n="insightBloodTitle">Blood Group Mix</h3>
+                    </div>
+                    <p class="mt-2 text-sm text-gray-600" data-i18n="insightBloodDesc">Shows how your donor pool is distributed by blood type so you immediately see gaps.</p>
+                    <div class="mt-4 h-64">
+                        <canvas id="bloodGroupChart" class="w-full h-full" aria-label="Blood group distribution" role="img"></canvas>
+                    </div>
+                    <p id="bloodGroupChartEmpty" class="mt-3 text-sm text-gray-500 hidden" data-i18n="chartEmptyBlood">No blood group records to display yet. Add donors to populate this view.</p>
+                </article>
+            </div>
+        </section>
+
+        <section id="about" class="py-12">
+            <div
+                class="how-card tint-rose accent-rose rounded-xl shadow-lg p-8 transform transition hover:scale-105 float-in flex flex-col md:flex-row gap-8 items-start">
+                <div
+                    class="flex-shrink-0 flex items-center justify-center w-20 h-20 bg-red-100 rounded-full shadow icon-circle">
+                    <svg class="w-12 h-12 text-red-600" fill="none" stroke="currentColor" stroke-width="2"
+                        viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M12 2C12 2 7 8.5 7 12a5 5 0 0010 0c0-3.5-5-10-5-10z" />
+                    </svg>
+                </div>
+                <div class="flex-1">
+                    <h2 class="text-3xl font-extrabold text-red-700 mb-2 tracking-tight flex items-center gap-2">
+                        <span data-i18n="aboutTitle">About Us</span>
+                        <span
+                            class="inline-block bg-red-600 text-white text-xs font-bold px-2 py-1 rounded" data-i18n="aboutBadge">Community</span>
+                    </h2>
+                    <p class="text-justify">
+                        <span class="font-semibold text-red-700" data-i18n="aboutName">Blood Donation Community</span> <span data-i18n="aboutDescription">is a passionate,
+                        volunteer-driven
+                        organization dedicated to saving lives through the power of blood donation. We connect willing
+                        donors with
+                        patients in urgent need, organize regular blood drives and partner with hospitals and local
+                        groups to ensure
+                        a safe and reliable blood supply for all.</span>
+                    </p>
+                    <ul class="mt-6 list-disc pl-6 text-gray-700 space-y-2">
+                        <li><span class="font-bold text-red-700" data-i18n="aboutMission">Our Mission:</span> <span data-i18n="aboutMissionText">To eliminate blood shortages and
+                            make
+                            lifesaving blood accessible to everyone, everywhere.</span></li>
+                        <li><span class="font-bold text-red-700" data-i18n="aboutWhatWeDo">What We Do:</span> <span data-i18n="aboutWhatWeDoText">Host donation events, maintain a
+                            donor registry,
+                            provide emergency matching and raise awareness about the importance of regular blood
+                            donation.</span></li>
+                        <li><span class="font-bold text-red-700" data-i18n="aboutImpact">Community Impact:</span> <span data-i18n="aboutImpactText">Hundreds of lives saved each
+                            year through
+                            our network of donors and volunteers. We support hospitals, disaster relief and urgent
+                            medical cases.</span></li>
+                        <li><span class="font-bold text-red-700" data-i18n="aboutGetInvolved">Get Involved:</span> <span data-i18n="aboutGetInvolvedText">Anyone can join as a donor,
+                            volunteer or
+                            supporter. Together, we build a caring, responsive community that puts compassion into
+                            action.</span></li>
+                    </ul>
+                    <p class="mt-6 text-gray-700 text-base">
+                        <span class="font-semibold text-red-700" data-i18n="aboutJoinUs">Join us to make a difference</span> <span data-i18n="aboutJoinUsText">- your single
+                        donation can save
+                        up to three lives. Stay connected for upcoming events, success stories and ways to help.</span>
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <section id="how" class="py-12">
+            <div class="how-sticky-container">
+                <div class="grid md:grid-cols-3 gap-6">
+                    <article
+                        class="how-card accent-amber tint-amber rounded-xl shadow-lg p-6 transform transition hover:scale-105 float-in">
+                        <div class="flex items-center gap-4">
+                            <div
+                                class="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center text-red-600">
+                                <i class="fa-solid fa-clipboard-check text-xl" aria-hidden="true"></i>
+                            </div>
+                            <h4 class="text-lg font-bold text-red-700" data-i18n="howEligibilityTitle">Check Eligibility</h4>
+                        </div>
+                        <p class="mt-4 text-gray-600" data-i18n="howEligibilityDesc">Be 18–60 years old, 50kg+, feeling well and fever‑free, with at
+                            least 90 days since your last donation. Certain medicines, recent travel and illnesses may
+                            defer donation.</p>
+                        <a href="#" class="mt-4 inline-block text-sm text-red-600 font-medium hover:underline" data-i18n="howEligibilityLink">Learn
+                            more
+                            →</a>
+                    </article>
+
+                    <article
+                        class="how-card accent-emerald tint-emerald rounded-xl shadow-lg p-6 transform transition hover:scale-105 float-in">
+                        <div class="flex items-center gap-4">
+                            <div
+                                class="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center text-red-600">
+                                <i class="fa-solid fa-user-plus text-xl" aria-hidden="true"></i>
+                            </div>
+                            <h4 class="text-lg font-bold text-red-700" data-i18n="howRegisterTitle">Register</h4>
+                        </div>
+                        <p class="mt-4 text-gray-600" data-i18n="howRegisterDesc">Create your donor profile in minutes and keep your details up to
+                            date. Choose privacy options (e.g., hide phone), track donations and get notified about
+                            nearby
+                            needs and events.</p>
+                        <a href="#join"
+                            class="mt-4 inline-block text-sm text-red-600 font-medium hover:underline" data-i18n="howRegisterLink">Register
+                            now →</a>
+                    </article>
+
+                    <article
+                        class="how-card accent-indigo tint-indigo rounded-xl shadow-lg p-6 transform transition hover:scale-105 float-in">
+                        <div class="flex items-center gap-4">
+                            <div
+                                class="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center text-red-600">
+                                <i class="fa-solid fa-hand-holding-droplet text-xl" aria-hidden="true"></i>
+                            </div>
+                            <h4 class="text-lg font-bold text-red-700" data-i18n="howDonateTitle">Donate & Save</h4>
+                        </div>
+                        <p class="mt-4 text-gray-600" data-i18n="howDonateDesc">Book a slot, bring a photo ID, eat light, stay hydrated and rest
+                            for
+                            a short while after. Safe, professional teams guide you through a 8–10 minute donation.</p>
+                        <a href="#events" class="mt-4 inline-block text-sm text-red-600 font-medium hover:underline" data-i18n="howDonateLink">See
+                            events →</a>
+                    </article>
+                </div>
+            </div>
+
+            <div
+                class="mt-8 how-card tint-rose rounded-xl shadow-lg p-6 transform transition hover:scale-105 float-in flex flex-col md:flex-row items-center justify-between gap-6">
+                <div class="stats-grid w-full md:w-auto">
+                    <div class="stat-card text-center accent-indigo">
+                        <div class="icon-circle-sm"><i class="fa-solid fa-users" aria-hidden="true"></i></div>
+                        <div id="donor-count" class="num" data-count-to="0">0</div>
+                        <div class="label" data-i18n="statDonors">Registered Donors</div>
+                    </div>
+                    <div class="stat-card text-center accent-rose">
+                        <div class="icon-circle-sm"><i class="fa-solid fa-heart-pulse" aria-hidden="true"></i></div>
+                        <div id="lives-helped-count" class="num" data-count-to="0">0</div>
+                        <div class="label" data-i18n="statLivesHelped">Lives Helped</div>
+                    </div>
+                    <div class="stat-card text-center accent-amber">
+                        <div class="icon-circle-sm"><i class="fa-solid fa-calendar-days" aria-hidden="true"></i></div>
+                        <div id="event-count" class="num" data-count-to="0">0</div>
+                        <div class="label" data-i18n="statEvents">Events This Year</div>
+                    </div>
+                </div>
+                <div class="w-full md:w-auto">
+                    <a href="#join"
+                        class="w-full inline-flex items-center justify-center gap-2 bg-red-600 text-white px-5 py-2 rounded-md font-semibold">
+                        <i class="fa-solid fa-user-plus" aria-hidden="true"></i>
+                        <span data-i18n="statJoinNetwork">Join Our Donor Network</span>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <section id="events" class="py-12">
+            <h2 class="text-2xl font-extrabold text-red-700" data-i18n="eventsTitle">Upcoming Events</h2>
+            <p class="mt-2 text-gray-600" data-i18n="eventsDescription">Join our community drives and help save lives - see the event details and
+                register
+                to participate.</p>
+            <div class="mt-4 flex flex-col sm:flex-row gap-3 event-filter-bar">
+                <label for="event-search" class="sr-only" data-i18n="eventsSearchLabel">Search events</label>
+                <div class="relative flex-1">
+                    <i class="fa-solid fa-magnifying-glass text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" aria-hidden="true"></i>
+                    <input id="event-search" type="search" placeholder="Search by title or location" autocomplete="off"
+                        class="w-full pl-10 pr-3 py-2 rounded-lg border border-gray-200 bg-white text-sm focus:border-red-300 focus:ring-0"
+                        aria-label="Search events" data-i18n-placeholder="eventsSearchPlaceholder">
+                </div>
+                <div class="flex items-center gap-2">
+                    <label for="event-filter" class="text-sm font-semibold text-gray-600 whitespace-nowrap" data-i18n="eventsFilterShow">Show</label>
+                    <select id="event-filter" class="border border-gray-200 rounded-lg px-3 py-2 text-sm focus:border-red-300 focus:ring-0"
+                        aria-label="Filter events">
+                        <option value="upcoming" selected data-i18n="eventsFilterUpcoming">Upcoming</option>
+                        <option value="all" data-i18n="eventsFilterAll">All</option>
+                        <option value="past" data-i18n="eventsFilterPast">Past</option>
+                    </select>
+                </div>
+            </div>
+            <div id="events-empty" class="hidden mt-6 text-sm text-center text-gray-600 bg-red-50/60 border border-dashed border-red-200 rounded-lg px-4 py-6" data-i18n="eventsEmpty">
+                No events match your filters right now. Try adjusting your search or check back soon.
+            </div>
+            <div id="public-events-list" class="mt-6 grid md:grid-cols-2 gap-6">
+            </div>
+        </section>
+
+        <section id="search" class="py-12">
+            <div class="bg-gradient-to-r from-red-50 to-white p-6 rounded-xl shadow-lg">
+                <div class="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
+                    <div>
+                        <h2 class="text-2xl font-extrabold text-red-700" data-i18n="searchTitle">Find Donors</h2>
+                        <p class="mt-2 text-sm text-gray-600 max-w-xl" data-i18n="searchDescription">Search by blood group to find nearby donors
+                            quickly. Connect directly once you locate a match.</p>
+                    </div>
+                    <div
+                        class="w-full md:w-auto how-card compact search-card accent-sky flex flex-col items-center md:items-start md:self-start gap-2">
+                        <div class="flex items-center gap-2 -mb-1">
+                            <div class="icon-circle-sm"><i class="fa-solid fa-magnifying-glass text-sm"
+                                    aria-hidden="true"></i></div>
+                            <h3 class="text-base font-bold text-red-700" data-i18n="searchTitle">Find Donors</h3>
+                        </div>
+                        <form id="search-form" class="flex flex-col sm:flex-row items-center gap-2 w-full">
+                            <div class="field-icon-left w-full sm:flex-1">
+                                <i class="fi fa-solid fa-droplet" style="top: 1.15rem"></i>
+                                <select id="search-blood" aria-label="Blood group"
+                                    class="w-full h-9 pl-10 pr-3 rounded-lg border border-gray-100 bg-white text-gray-700 text-sm">
+                                    <option value="select" selected data-i18n="searchSelectDonor">Select donor</option>
+                                    <option value="all" data-i18n="searchAllDonors">All Donor(s)</option>
+                                    <option value="A+">A+</option>
+                                    <option value="A-">A-</option>
+                                    <option value="B+">B+</option>
+                                    <option value="B-">B-</option>
+                                    <option value="O+">O+</option>
+                                    <option value="O-">O-</option>
+                                    <option value="AB+">AB+</option>
+                                    <option value="AB-">AB-</option>
+                                </select>
+                            </div>
+                        </form>
+                        <div class="w-full flex justify-center items-center">
+                            <input type="checkbox" id="eligible-only"
+                                class="h-4 w-4 text-red-600 border-gray-300 rounded focus:ring-red-500">
+                            <label for="eligible-only"
+                                class="ml-2 text-sm text-gray-700 font-medium whitespace-nowrap" data-i18n="searchEligibleOnly">Show only
+                                eligible donors</label>
+                        </div>
+                    </div>
+                </div>
+                <div id="search-loading" class="search-loading hidden mt-6" aria-live="polite" aria-hidden="true">
+                    <span class="search-loading__spinner" aria-hidden="true"></span>
+                    <span class="search-loading__text" data-i18n="searchLoading">Loading donors...</span>
+                </div>
+                <div id="search-results" class="mt-6 flex flex-col gap-4">
+                    <div class="text-gray-500 italic" data-i18n="searchNoResults">No results yet. Perform a search to display donor entries here.
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="join" class="py-12">
+            <div class="how-card gentle tint-emerald accent-emerald rounded-xl shadow-lg p-8 max-w-lg mx-auto">
+                <div class="text-center flex flex-col items-center gap-2">
+                    <div class="icon-circle"><i class="fa-solid fa-user-check text-xl" aria-hidden="true"></i></div>
+                    <h2 class="text-2xl font-extrabold text-red-700" data-i18n="joinTitle">Join us as a donor</h2>
+                    <p class="mt-1 text-gray-600" data-i18n="joinDescription">Register to become part of our verified donor network. Add your
+                        details and
+                        create an account to manage your donations.</p>
+                </div>
+
+                <div id="join-feedback" class="hidden mt-6 rounded-lg px-4 py-3 text-sm font-semibold" role="status"></div>
+
+                <form id="join-form" class="mt-4 grid grid-cols-1 gap-4">
+                    <div class="field-icon-left">
+                        <i class="fi fa-solid fa-user"></i>
+                        <input name="fullName" id="fullName" type="text" placeholder=" " required
+                            class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:bg-white focus:outline-none" />
+                        <label for="fullName"
+                            class="absolute left-4 top-3 text-gray-400 transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-focus:-top-3.5 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3.5 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1" data-i18n="joinFullName">Full
+                            name</label>
+                    </div>
+
+                    <div class="field-icon-left">
+                        <i class="fi fa-solid fa-envelope"></i>
+                        <input name="email" id="email" type="email" placeholder=" " required autocomplete="email"
+                            class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:bg-white focus:outline-none" />
+                        <label for="email"
+                            class="absolute left-4 top-3 text-gray-400 transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-focus:-top-3.5 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3.5 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1" data-i18n="joinEmail">Email</label>
+                    </div>
+
+                    <div class="field-icon-left flex flex-col">
+                        <label for="gender" class="text-sm text-gray-600 mb-2" data-i18n="joinGender">Gender</label>
+                        <div class="input-wrap">
+                            <i class="fi fa-solid fa-venus-mars"></i>
+                            <select name="gender" id="gender" required
+                                class="block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:bg-white focus:outline-none">
+                                <option value="" data-i18n="joinSelectGender">Select gender</option>
+                                <option data-i18n="joinMale">Male</option>
+                                <option data-i18n="joinFemale">Female</option>
+                                <option data-i18n="joinOther">Other</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="field-icon-left">
+                        <i class="fi fa-solid fa-phone"></i>
+                        <input name="phone" id="phone" type="tel" placeholder=" " required autocomplete="tel"
+                                inputmode="tel"
+                            class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:bg-white focus:outline-none" />
+                        <label for="phone"
+                            class="absolute left-4 top-3 text-gray-400 transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-focus:-top-3.5 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3.5 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1" data-i18n="joinPhone">Phone
+                            number</label>
+                    </div>
+
+                    <div class="field-icon-left flex flex-col">
+                        <label for="bloodGroup" class="text-sm text-gray-600 mb-2" data-i18n="joinBloodGroup">Blood group</label>
+                        <div class="input-wrap">
+                            <i class="fi fa-solid fa-droplet"></i>
+                            <select name="bloodGroup" id="bloodGroup" required
+                                class="block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:bg-white focus:outline-none">
+                                <option value="" data-i18n="joinSelectGroup">Select group</option>
+                                <option>A+</option>
+                                <option>A-</option>
+                                <option>B+</option>
+                                <option>B-</option>
+                                <option>O+</option>
+                                <option>O-</option>
+                                <option>AB+</option>
+                                <option>AB-</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="field-icon-left">
+                        <i class="fi fa-solid fa-location-dot"></i>
+                        <input name="location" id="location" type="text" placeholder=" " required
+                            autocomplete="address-level2"
+                            class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:bg-white focus:outline-none" />
+                        <label for="location"
+                            class="absolute left-4 top-3 text-gray-400 transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-focus:-top-3.5 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3.5 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1" data-i18n="joinLocation">Current
+                            Location</label>
+                    </div>
+
+                    <div class="field-icon-left">
+                        <i class="fi fa-solid fa-calendar-day"></i>
+                        <input name="lastDonateDate" id="lastDonateDate" type="date" placeholder=" "
+                            class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:bg-white focus:outline-none" />
+                        <label for="lastDonateDate"
+                            class="absolute left-4 top-3 text-gray-400 transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-focus:-top-3.5 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3.5 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1" data-i18n="joinLastDonation">Last
+                            blood donation</label>
+                    </div>
+
+                    <div class="field-icon-left">
+                        <i class="fi fa-solid fa-lock"></i>
+                        <input name="password" id="password" type="password" placeholder=" " required
+                            autocomplete="new-password"
+                            class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:bg-white focus:outline-none" />
+                        <label for="password"
+                            class="absolute left-4 top-3 text-gray-400 transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-focus:-top-3.5 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3.5 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1" data-i18n="joinPassword">Password</label>
+                    </div>
+
+                    <div class="field-icon-left">
+                        <i class="fi fa-solid fa-lock"></i>
+                        <input name="confirmPassword" id="confirmPassword" type="password" placeholder=" " required
+                            autocomplete="new-password"
+                            class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:bg-white focus:outline-none" />
+                        <label for="confirmPassword"
+                            class="absolute left-4 top-3 text-gray-400 transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-focus:-top-3.5 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3.5 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1" data-i18n="joinConfirmPassword">Confirm
+                            password</label>
+                    </div>
+                    <div class="flex gap-3">
+                        <button id="join-submit" type="submit"
+                            class="bg-red-600 text-white px-6 py-3 rounded-lg font-semibold shadow hover:bg-red-700 flex-1 md:flex-none inline-flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-user-plus" aria-hidden="true"></i>
+                            <span data-i18n="joinRegister">Register</span>
+                        </button>
+                        <button id="join-clear" type="button"
+                            class="border border-gray-300 px-4 py-3 rounded-lg flex-1 md:flex-none" data-i18n="joinClear">Clear</button>
+                    </div>
+                </form>
+            </div>
+        </section>
+
+        <section id="admin-panel" class="py-12 hidden">
+            <div class="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+                <div>
+                    <h2 class="text-2xl font-extrabold text-red-700">Admin Dashboard</h2>
+                    <p class="mt-2 text-gray-600">Welcome, Admin! Here you can manage community events, update donor information
+                        and add recent donations.</p>
+                </div>
+                <button id="admin-monthly-report-btn" type="button"
+                    class="inline-flex items-center justify-center gap-2 self-start md:self-auto bg-red-600 text-white px-5 py-2.5 rounded-lg font-semibold shadow hover:bg-red-700 transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
+                    <i class="fa-solid fa-file-pdf"></i>
+                    <span>Monthly Donation Report (PDF)</span>
+                </button>
+            </div>
+
+            <div class="mt-6 admin-tabs">
+                <button type="button" class="admin-tab active" data-tab="events"><i
+                        class="fa-solid fa-calendar-days"></i><span>Events</span></button>
+                <button type="button" class="admin-tab" data-tab="recent"><i
+                        class="fa-solid fa-hand-holding-droplet"></i><span>Recent Donor</span></button>
+                <button type="button" class="admin-tab" data-tab="members"><i
+                        class="fa-solid fa-users"></i><span>Members</span></button>
+            </div>
+
+            <div class="admin-tabpanel">
+                <div data-panel="events">
+                    <div class="bg-white p-6 rounded-xl shadow-lg">
+                        <h3 class="text-xl font-bold text-red-600 mb-4">Event Details</h3>
+                        <form id="admin-event-form" class="grid grid-cols-1 gap-4">
+                            <input type="hidden" id="admin-event-id" name="id" />
+                            <div class="field-icon-left">
+                                <i class="fi fa-solid fa-heading"></i>
+                                <input name="title" id="event-title" type="text" placeholder=" " required
+                                    class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
+                                <label for="event-title"
+                                    class="absolute left-4 top-3 text-gray-400 transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-focus:-top-3 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Event
+                                    Title</label>
+                            </div>
+                            <div class="field-icon-left">
+                                <i class="fi fa-solid fa-calendar-day"></i>
+                                <input name="date" id="event-date" type="date" placeholder=" " required
+                                    class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
+                                <label for="event-date"
+                                    class="absolute left-4 top-3 text-gray-400 transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-focus:-top-3 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3.5 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Event
+                                    Date</label>
+                            </div>
+                            <div class="field-icon-left">
+                                <i class="fi fa-solid fa-clock"></i>
+                                <input name="time" id="event-time" type="time" placeholder=" " required
+                                    class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
+                                <label for="event-time"
+                                    class="absolute left-4 top-3 text-gray-400 transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-focus:-top-3 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Event
+                                    Time</label>
+                            </div>
+                            <div class="field-icon-left">
+                                <i class="fi fa-solid fa-location-dot"></i>
+                                <input name="location" id="event-location" type="text" placeholder=" " required
+                                    class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
+                                <label for="event-location"
+                                    class="absolute left-4 top-3 text-gray-400 transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-focus:-top-3 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Location</label>
+                            </div>
+                            <div class="field-icon-left">
+                                <i class="fi fa-solid fa-align-left"></i>
+                                <textarea name="description" id="event-description" placeholder=" " required rows="2"
+                                    class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none"></textarea>
+                                <label for="event-description"
+                                    class="absolute left-4 top-3 text-gray-400 transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-focus:-top-3 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Description</label>
+                            </div>
+                            <div class="flex gap-3">
+                                <button type="submit"
+                                    class="bg-red-600 text-white px-6 py-3 rounded-lg font-semibold shadow hover:bg-red-700 flex-1 md:flex-none inline-flex items-center justify-center gap-2">
+                                    <i class="fa-solid fa-calendar-plus" aria-hidden="true"></i>
+                                    <span>Add Event</span>
+                                </button>
+                                <button type="button" id="clear-event-btn"
+                                    class="border border-gray-300 px-6 py-3 rounded-lg font-semibold flex-1 md:flex-none inline-flex items-center justify-center gap-2 text-gray-700 hover:bg-gray-100">Clear</button>
+                            </div>
+                        </form>
+                        <div id="admin-events-list" class="mt-6 flex flex-col gap-4">
+                        </div>
+                    </div>
+                </div>
+
+                <div data-panel="recent" class="hidden">
+                    <div class="bg-white p-6 rounded-xl shadow-lg">
+                        <h3 class="text-xl font-bold text-red-600 mb-4">Recent Donor</h3>
+                        <form id="admin-recent-donor-form" class="grid grid-cols-1 gap-4 mb-6">
+                            <div class="field-icon-left">
+                                <i class="fi fa-solid fa-user"></i>
+                                <input name="donor-name" id="donor-name" type="text" placeholder=" " required
+                                    class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
+                                <label for="donor-name"
+                                    class="absolute left-4 top-3 text-gray-400 transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-focus:-top-3 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Donor
+                                    Name</label>
+                            </div>
+                            <div class="field-icon-left">
+                                <label for="donor-blood-group" class="text-sm text-gray-600 mb-2 block">Blood Group</label>
+                                <div class="input-wrap">
+                                    <i class="fi fa-solid fa-droplet"></i>
+                                    <select name="donor-blood-group" id="donor-blood-group" required
+                                        class="block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none">
+                                        <option value="">Select group</option>
+                                        <option>A+</option>
+                                        <option>A-</option>
+                                        <option>B+</option>
+                                        <option>B-</option>
+                                        <option>O+</option>
+                                        <option>O-</option>
+                                        <option>AB+</option>
+                                        <option>AB-</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="field-icon-left">
+                                <i class="fi fa-solid fa-location-dot"></i>
+                                <input name="donor-location" id="donor-location" type="text" placeholder=" " required
+                                    class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
+                                <label for="donor-location"
+                                    class="absolute left-4 top-3 text-gray-400 transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-focus:-top-3 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Location</label>
+                            </div>
+                            <div class="field-icon-left">
+                                <label for="donor-department"
+                                    class="text-sm font-medium text-red-700 mb-1 block">Department</label>
+                                <div class="input-wrap">
+                                    <i class="fi fa-solid fa-building-columns"></i>
+                                    <input name="donor-department" id="donor-department" type="text"
+                                        class="block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
+                                </div>
+                            </div>
+                            <div class="field-icon-left">
+                                <label for="donor-batch" class="text-sm font-medium text-red-700 mb-1 block">Batch</label>
+                                <div class="input-wrap">
+                                    <i class="fi fa-solid fa-layer-group"></i>
+                                    <input name="donor-batch" id="donor-batch" type="text"
+                                        class="block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
+                                </div>
+                            </div>
+                            <div class="field-icon-left">
+                                <label for="donor-age" class="text-sm font-medium text-red-700 mb-1 block">Age</label>
+                                <div class="input-wrap">
+                                    <i class="fi fa-solid fa-person"></i>
+                                    <input name="donor-age" id="donor-age" type="number"
+                                        class="block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
+                                </div>
+                            </div>
+                            <div class="field-icon-left">
+                                <label for="donor-weight" class="text-sm font-medium text-red-700 mb-1 block">Weight
+                                    (kg)</label>
+                                <div class="input-wrap">
+                                    <i class="fi fa-solid fa-weight-scale"></i>
+                                    <input name="donor-weight" id="donor-weight" type="number"
+                                        class="block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
+                                </div>
+                            </div>
+                            <div class="field-icon-left">
+                                <i class="fi fa-solid fa-calendar-day"></i>
+                                <input name="donation-date" id="donation-date" type="date" placeholder=" " required
+                                    class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
+                                <label for="donation-date"
+                                    class="absolute left-4 top-3 text-gray-400 transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-focus:-top-3 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Donation
+                                    Date</label>
+                            </div>
+                            <div class="flex flex-col sm:flex-row gap-3">
+                                <button type="submit"
+                                    class="bg-red-600 text-white px-6 py-3 rounded-lg font-semibold shadow hover:bg-red-700 flex-1 md:flex-none inline-flex items-center justify-center gap-2">
+                                    <i class="fa-solid fa-hand-holding-droplet" aria-hidden="true"></i>
+                                    <span>Add Recent Donor Info</span>
+                                </button>
+                                <button type="button" id="clear-recent-donor-btn"
+                                    class="border border-gray-300 px-6 py-3 rounded-lg font-semibold flex-1 md:flex-none inline-flex items-center justify-center gap-2 text-gray-700 hover:bg-gray-100">Clear</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <div data-panel="members" class="hidden">
+                    <div class="bg-white p-6 rounded-xl shadow-lg">
+                        <h3 class="text-xl font-bold text-red-600 mb-4">Member Management</h3>
+                        <div class="admin-member-search-panel">
+                            <div class="admin-member-search-panel__header">
+                                <div class="admin-member-search-panel__title">
+                                    <span class="admin-member-search-panel__icon">
+                                        <i class="fa-solid fa-magnifying-glass"></i>
+                                    </span>
+                                    <div>
+                                        <p class="admin-member-search-panel__label">Quick Member Search</p>
+                                        <p class="admin-member-search-panel__hint">Filter by donor name or blood group to reach the right profile instantly.</p>
+                                    </div>
+                                </div>
+                                <span id="admin-member-search-status" class="admin-member-search-panel__status">Showing all members</span>
+                            </div>
+                            <div class="admin-member-search-panel__grid">
+                                <div class="field-icon-left">
+                                    <i class="fi fa-solid fa-user"></i>
+                                    <input id="admin-member-search-name" type="search" placeholder=" "
+                                        class="peer block w-full rounded-lg border-2 border-white bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
+                                    <label for="admin-member-search-name"
+                                        class="absolute left-4 top-3 text-gray-400 transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-focus:-top-3 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Member name</label>
+                                </div>
+                                <div class="field-icon-left flex flex-col">
+                                    <label for="admin-member-search-blood" class="text-sm text-gray-600 mb-2">Blood group</label>
+                                    <div class="input-wrap">
+                                        <i class="fi fa-solid fa-droplet"></i>
+                                        <select id="admin-member-search-blood"
+                                            class="block w-full rounded-lg border-2 border-white bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none">
+                                            <option value="">All groups</option>
+                                            <option value="A+">A+</option>
+                                            <option value="A-">A-</option>
+                                            <option value="B+">B+</option>
+                                            <option value="B-">B-</option>
+                                            <option value="O+">O+</option>
+                                            <option value="O-">O-</option>
+                                            <option value="AB+">AB+</option>
+                                            <option value="AB-">AB-</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="admin-member-search-panel__actions">
+                                    <button type="button" id="admin-member-search-btn"
+                                        class="admin-member-search-panel__btn admin-member-search-panel__btn--primary">
+                                        <i class="fa-solid fa-search"></i>
+                                        <span>Search</span>
+                                    </button>
+                                    <button type="button" id="admin-member-search-reset"
+                                        class="admin-member-search-panel__btn admin-member-search-panel__btn--ghost">
+                                        <i class="fa-solid fa-rotate-left"></i>
+                                        <span>Reset</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <form id="admin-member-form" class="grid grid-cols-1 gap-4">
+                            <input type="hidden" id="admin-member-id" name="id" />
+                            <div class="field-icon-left">
+                                <i class="fi fa-solid fa-user"></i>
+                                <input name="fullName" id="admin-member-fullname" type="text" placeholder=" " required
+                                    class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
+                                <label for="admin-member-fullname"
+                                    class="absolute left-4 top-3 text-gray-400 transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-focus:-top-3 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Full
+                                    name</label>
+                            </div>
+                            <div class="field-icon-left">
+                                <div class="input-wrap">
+                                    <i class="fi fa-solid fa-phone"></i>
+                                    <input name="phone" id="admin-member-phone" type="tel" placeholder=" " required
+                                        class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
+                                    <label for="admin-member-phone"
+                                        class="absolute left-4 top-3 text-gray-400 transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-focus:-top-3 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Phone
+                                        number</label>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <input type="checkbox" id="admin-member-hide-phone" name="isPhoneHidden"
+                                    class="h-4 w-4 text-red-600 border-gray-300 rounded focus:ring-red-500">
+                                <label for="admin-member-hide-phone" class="text-sm text-gray-700 font-medium">Hide
+                                    phone
+                                    number from public</label>
+                            </div>
+                            <div class="field-icon-left">
+                                <i class="fi fa-solid fa-comment-dots"></i>
+                                <textarea name="publicComment" id="admin-member-comment"
+                                    placeholder="Optional comment for public" rows="2"
+                                    class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none"></textarea>
+                                <label for="admin-member-comment"
+                                    class="absolute left-4 top-3 text-gray-400 transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-focus:-top-3 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Public
+                                    comment (e.g., "Contact admin")</label>
+                            </div>
+                            <div class="field-icon-left flex flex-col">
+                                <label for="admin-member-bloodGroup" class="text-sm text-gray-600 mb-2">Blood
+                                    group</label>
+                                <div class="input-wrap">
+                                    <i class="fi fa-solid fa-droplet"></i>
+                                    <select name="bloodGroup" id="admin-member-bloodGroup" required
+                                        class="block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none">
+                                        <option value="">Select group</option>
+                                        <option>A+</option>
+                                        <option>A-</option>
+                                        <option>B+</option>
+                                        <option>B-</option>
+                                        <option>O+</option>
+                                        <option>O-</option>
+                                        <option>AB+</option>
+                                        <option>AB-</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="field-icon-left">
+                                <i class="fi fa-solid fa-location-dot"></i>
+                                <input name="location" id="admin-member-location" type="text" placeholder=" " required
+                                    class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
+                                <label for="admin-member-location"
+                                    class="absolute left-4 top-3 text-gray-400 transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-focus:-top-3 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Current
+                                    Location</label>
+                            </div>
+                            <div class="field-icon-left">
+                                <i class="fi fa-solid fa-calendar-day"></i>
+                                <input name="lastDonateDate" id="admin-member-lastDonateDate" type="date"
+                                    placeholder=" "
+                                    class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
+                                <label for="admin-member-lastDonateDate"
+                                    class="absolute left-4 top-3 text-gray-400 transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-focus:-top-3 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Last
+                                    blood donation</label>
+                            </div>
+                            <div class="flex flex-col sm:flex-row gap-3 mt-4">
+                                <button type="submit"
+                                    class="bg-red-600 text-white px-6 py-3 rounded-lg font-semibold shadow hover:bg-red-700 flex-1 md:flex-none inline-flex items-center justify-center gap-2">
+                                    <i class="fa-solid fa-floppy-disk" aria-hidden="true"></i>
+                                    <span>Save Changes</span>
+                                </button>
+                                <button type="button" id="clear-member-btn"
+                                    class="border border-gray-300 px-6 py-3 rounded-lg font-semibold flex-1 md:flex-none inline-flex items-center justify-center gap-2 text-gray-700 hover:bg-gray-100">Clear</button>
+                            </div>
+                        </form>
+                        <div id="admin-members-list" class="mt-6 flex flex-col gap-4">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="contact" class="py-12">
+            <div
+                class="how-card gentle tint-rose accent-rose rounded-xl shadow-lg p-10 max-w-3xl mx-auto text-center static-card">
+                <h2 class="text-2xl font-extrabold text-red-700" data-i18n="contactTitle">Contact</h2>
+                <p class="mt-3 text-gray-600" data-i18n="contactDescription">Have questions or want to get involved? Reach out to us.</p>
+                <div class="mt-6 flex flex-col sm:flex-row sm:items-center sm:justify-center gap-4">
+                    <a href="mailto:bdc@bloodlife.org"
+                        class="contact-chip inline-flex items-center gap-3 px-5 py-3 rounded-xl border border-red-100 bg-red-50/70 text-red-800 shadow-sm hover:shadow-md">
+                        <span class="icon-circle-sm"><i class="fa-solid fa-at" aria-hidden="true"></i></span>
+                        <span class="text-sm font-medium" data-i18n="contactEmail">bdc@bloodlife.org</span>
+                    </a>
+                    <a href="tel:+8801712460423"
+                        class="contact-chip inline-flex items-center gap-3 px-5 py-3 rounded-xl border border-red-100 bg-red-50/70 text-red-800 shadow-sm hover:shadow-md">
+                        <span class="icon-circle-sm"><i class="fa-solid fa-phone" aria-hidden="true"></i></span>
+                        <span class="text-sm font-medium" data-i18n="contactPhone">+8801712460423</span>
+                    </a>
+                </div>
+                <div class="mt-6">
+                    <a href="#join"
+                        class="inline-flex items-center gap-2 bg-red-600 text-white px-6 py-3 rounded-lg font-semibold shadow hover:bg-red-700 btn-breathe">
+                        <i class="fa-solid fa-user-plus" aria-hidden="true"></i>
+                        <span data-i18n="contactJoinDonor">Join as a Donor</span>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer
+        class="mt-16 relative text-gray-300 bg-slate-900/95 backdrop-blur rounded-t-2xl shadow-[0_-12px_40px_rgba(2,6,23,0.45)] overflow-hidden">
+        <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-red-500/60 to-transparent">
+        </div>
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center py-8">
+            <p class="mb-3 footer-text opacity-90" data-i18n="footerCopyright">© 2025 Life is Beautiful 💜</p>
+            <div class="flex justify-center socials mt-2">
+                <a href="https://github.com/MueidShahriar" aria-label="GitHub" target="_blank" rel="noopener noreferrer"
+                    class="inline-flex items-center justify-center social-link rounded-full border border-white/10 bg-white/5 hover:bg-white/10 hover:border-white/20 text-white transition shadow-sm">
+                    <i class="fab fa-github"></i>
+                </a>
+                <a href="https://www.facebook.com/mueid016" aria-label="Facebook" target="_blank"
+                    rel="noopener noreferrer"
+                    class="inline-flex items-center justify-center social-link rounded-full border border-white/10 bg-white/5 hover:bg-white/10 hover:border-white/20 text-white transition shadow-sm">
+                    <i class="fab fa-facebook"></i>
+                </a>
+            </div>
+            <div class="mt-4">
+                <button id="feedback-btn" type="button"
+                    class="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-red-600 text-white font-semibold shadow hover:bg-red-700 transition">
+                    <i class="fa-solid fa-comment-dots" aria-hidden="true"></i>
+                    <span data-i18n="footerFeedback">Share Feedback</span>
+                </button>
+            </div>
+            <p class="mt-5 footer-text opacity-90" data-i18n="footerDeveloper">Developed by Md. Mueid Shahriar<br />CSE-16th, BAUET</p>
+        </div>
+    </footer>
+
+    <div id="success-modal" class="fixed inset-0 hidden items-center justify-center z-[60]">
+        <div class="absolute inset-0 bg-black opacity-40"></div>
+        <div class="bg-white rounded-lg shadow-xl p-6 max-w-md mx-4 z-10">
+            <h3 class="text-lg font-bold text-red-700">Success!</h3>
+            <p class="mt-2 text-gray-700"></p>
+            <div class="mt-4 text-right">
+                <button id="success-close" class="px-4 py-2 bg-red-600 text-white rounded">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="login-modal" class="fixed inset-0 hidden items-center justify-center z-50">
+        <div class="absolute inset-0 bg-black opacity-40"></div>
+        <div class="bg-white modal-panel p-6 max-w-md mx-4 z-10">
+            <div class="modal-title">
+                <span class="icon-circle-sm"><i class="fa-solid fa-right-to-bracket" aria-hidden="true"></i></span>
+                <h3 class="text-lg font-extrabold text-red-700">Login</h3>
+            </div>
+            <form id="login-form" class="mt-4">
+                <div class="mb-3 field-icon-left">
+                    <label for="login-email" class="block text-sm text-gray-600 mb-1">Email</label>
+                    <div class="input-wrap">
+                        <i class="fi fa-solid fa-at"></i>
+                        <input id="login-email" type="email" required
+                            class="w-full rounded-lg border-2 border-gray-100 bg-white p-3 shadow-sm focus:border-red-300 focus:outline-none" />
+                    </div>
+                </div>
+                <div class="mb-3 field-icon-left field-icon-right">
+                    <label for="login-password" class="block text-sm text-gray-600 mb-1">Password</label>
+                    <div class="input-wrap">
+                        <i class="fi fa-solid fa-key"></i>
+                        <input id="login-password" type="password" required
+                            class="w-full rounded-lg border-2 border-gray-100 bg-white p-3 shadow-sm focus:border-red-300 focus:outline-none" />
+                        <button type="button" id="toggle-password" aria-label="Show password" title="Show password"
+                            class="fr">
+                            <i class="fa-solid fa-eye"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="flex items-center justify-end gap-4 mt-2">
+                    <div class="flex gap-2 items-center">
+                        <button type="submit"
+                            class="bg-gradient-to-r from-red-600 to-red-500 text-white px-4 py-2 rounded font-semibold shadow hover:from-red-700 hover:to-red-600 transition inline-flex items-center gap-2">
+                            <i class="fa-solid fa-right-to-bracket"></i>
+                            <span>Sign in</span>
+                        </button>
+                        <button id="login-cancel" type="button"
+                            class="border border-gray-300 text-gray-700 px-4 py-2 rounded font-semibold shadow hover:bg-gray-100 transition inline-flex items-center gap-2">
+                            <i class="fa-solid fa-xmark"></i>
+                            <span>Cancel</span>
+                        </button>
+                    </div>
+                </div>
+                <a id="forgot-password-link" href="#"
+                    class="block text-center mt-2 text-xs text-red-700 hover:underline hover:text-red-900 transition-colors duration-200 inline-flex items-center justify-center gap-1 w-full">
+                    <i class="fa-solid fa-circle-question"></i>
+                    <span>Forgot Password?</span>
+                </a>
+            </form>
+        </div>
+    </div>
+
+    <div id="profile-modal" class="fixed inset-0 hidden items-center justify-center z-50 overflow-y-auto">
+        <div class="absolute inset-0 bg-black opacity-40"></div>
+        <div class="bg-white rounded-lg shadow-2xl p-6 max-w-xl mx-auto my-8 z-10">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-lg font-bold text-red-700">My Profile</h3>
+                <button id="pf-close" class="text-gray-400 hover:text-gray-600 transition">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+            <form id="profile-form" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="field-icon-left">
+                    <i class="fi fa-solid fa-user"></i>
+                    <input name="fullName" id="profile-fullName" type="text" placeholder=" " required
+                        class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
+                    <label for="profile-fullName"
+                        class="absolute left-4 top-3 text-gray-400 transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-focus:-top-3 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Full
+                        name</label>
+                </div>
+                <div class="field-icon-left">
+                    <i class="fi fa-solid fa-envelope"></i>
+                    <input name="email" id="profile-email" type="email" placeholder=" " required readonly
+                        class="peer block w-full rounded-lg border-2 border-gray-100 bg-gray-100 cursor-not-allowed p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
+                    <label for="profile-email" class="absolute left-4 top-3 text-gray-400 transition-all 
+                        peer-placeholder-shown:top-3 peer-placeholder-shown:text-base 
+                        peer-focus:-top-3 peer-focus:text-sm peer-focus:text-red-700 
+                        peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 
+                        pointer-events-none bg-gray-100 px-1"> Email (cannot be changed)
+                    </label>
+                </div>
+                <div class="field-icon-left">
+                    <div class="input-wrap">
+                        <i class="fi fa-solid fa-phone"></i>
+                        <input name="phone" id="profile-phone" type="tel" placeholder=" " required
+                            class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
+                        <label for="profile-phone"
+                            class="absolute left-4 top-3 text-gray-400 transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-focus:-top-3 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Phone
+                            number</label>
+                    </div>
+                </div>
+                <div class="field-icon-left flex flex-col">
+                    <label for="profile-bloodGroup" class="text-sm text-gray-600 mb-2">Blood group</label>
+                    <div class="input-wrap">
+                        <i class="fi fa-solid fa-droplet"></i>
+                        <select name="bloodGroup" id="profile-bloodGroup" required
+                            class="block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none">
+                            <option value="">Select group</option>
+                            <option>A+</option>
+                            <option>A-</option>
+                            <option>B+</option>
+                            <option>B-</option>
+                            <option>O+</option>
+                            <option>O-</option>
+                            <option>AB+</option>
+                            <option>AB-</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="field-icon-left">
+                    <i class="fi fa-solid fa-location-dot"></i>
+                    <input name="location" id="profile-location" type="text" placeholder=" " required
+                        class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
+                    <label for="profile-location"
+                        class="absolute left-4 top-3 text-gray-400 transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-focus:-top-3 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Current
+                        Location</label>
+                </div>
+                <div class="field-icon-left">
+                    <i class="fi fa-solid fa-calendar-day"></i>
+                    <input name="lastDonateDate" id="profile-lastDonateDate" type="date" placeholder=" "
+                        class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
+                    <label for="profile-lastDonateDate"
+                        class="absolute left-4 top-3 text-gray-400 transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-focus:-top-3 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Last
+                        blood donation</label>
+                </div>
+                <div class="field-icon-left md:col-span-2">
+                    <i class="fi fa-solid fa-note-sticky"></i>
+                    <textarea name="notes" id="profile-notes" placeholder=" " rows="2"
+                        class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none"></textarea>
+                    <label for="profile-notes"
+                        class="absolute left-4 top-3 text-gray-400 transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-focus:-top-3 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Additional
+                        Notes</label>
+                </div>
+                <div class="relative hidden">
+                    <input name="role" id="profile-role" type="text" readonly
+                        class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-4 pl-10 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
+                    <label for="profile-role"
+                        class="absolute left-10 top-4 text-gray-400 transition-all peer-placeholder-shown:top-4 peer-placeholder-shown:text-base peer-focus:-top-3 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">User
+                        Role</label>
+                </div>
+                <div class="grid grid-cols-2 gap-3 mt-6 md:col-span-2">
+                    <button type="submit"
+                        class="bg-red-600 text-white px-5 py-2.5 rounded-lg font-semibold shadow hover:bg-red-700 transition text-sm">
+                        <i class="fa-solid fa-save mr-1.5"></i>Save Changes
+                    </button>
+                    <button id="pf-certificate" type="button"
+                        class="bg-blue-600 text-white px-5 py-2.5 rounded-lg font-semibold shadow hover:bg-blue-700 transition text-sm">
+                        <i class="fa-solid fa-certificate mr-1.5"></i>
+                        <span data-i18n="certGenerate">Generate Certificate</span>
+                    </button>
+                    <button id="pf-logout" type="button"
+                        class="border-2 border-gray-300 text-gray-700 px-5 py-2.5 rounded-lg font-medium hover:bg-gray-50 transition text-sm">
+                        <i class="fa-solid fa-sign-out-alt mr-1.5"></i>Logout
+                    </button>
+                    <button id="pf-delete" type="button"
+                        class="border-2 border-red-300 text-red-600 px-5 py-2.5 rounded-lg font-medium hover:bg-red-50 transition text-sm">
+                        <i class="fa-solid fa-trash-alt mr-1.5"></i>Delete Profile
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="feedback-modal" class="fixed inset-0 hidden items-center justify-center z-50">
+        <div class="absolute inset-0 bg-black opacity-40"></div>
+        <div class="bg-white rounded-lg shadow-xl p-6 max-w-md mx-4 z-10 w-full">
+            <div class="flex items-start justify-between mb-3">
+                <div>
+                    <h3 class="text-lg font-bold text-red-700">Share Your Feedback</h3>
+                    <p class="text-sm text-gray-600">Let us know how we can improve the Blood Donation Community.</p>
+                </div>
+                <button type="button" id="feedback-close" class="text-gray-400 hover:text-gray-600" aria-label="Close feedback form">
+                    <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+                </button>
+            </div>
+            <form id="feedback-form" class="grid gap-4">
+                <div class="field-icon-left">
+                    <i class="fi fa-solid fa-user"></i>
+                    <input name="name" id="feedback-name" type="text" placeholder=" "
+                        class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
+                    <label for="feedback-name"
+                        class="absolute left-4 top-3 text-gray-400 transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-focus:-top-3.5 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3.5 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Name</label>
+                </div>
+                <div class="field-icon-left">
+                    <i class="fi fa-solid fa-envelope"></i>
+                    <input name="email" id="feedback-email" type="email" placeholder=" " autocomplete="email"
+                        class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
+                    <label for="feedback-email"
+                        class="absolute left-4 top-3 text-gray-400 transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-focus:-top-3.5 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3.5 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Email (optional)</label>
+                </div>
+                <div class="field-icon-left">
+                    <i class="fi fa-solid fa-comment"></i>
+                    <textarea name="message" id="feedback-message" placeholder=" " required rows="4"
+                        class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none"></textarea>
+                    <label for="feedback-message"
+                        class="absolute left-4 top-3 text-gray-400 transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-focus:-top-3 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Your feedback</label>
+                </div>
+                <div class="flex justify-end gap-3">
+                    <button type="button" id="feedback-cancel" class="px-4 py-2 rounded-lg border border-gray-200">Cancel</button>
+                    <button type="submit" class="px-5 py-2 rounded-lg bg-red-600 text-white font-semibold hover:bg-red-700 flex items-center gap-2">
+                        <i class="fa-solid fa-paper-plane" aria-hidden="true"></i>
+                        <span>Send</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="delete-confirm-modal" class="fixed inset-0 hidden items-center justify-center z-50">
+        <div class="absolute inset-0 bg-black opacity-40"></div>
+        <div class="bg-white rounded-lg shadow-xl p-6 max-w-sm mx-4 z-10 text-center">
+            <h3 class="text-xl font-bold text-red-700 mb-2">Are you sure?</h3>
+            <p class="text-gray-700">Deleting your profile is permanent and cannot be undone. All your donor information
+                will be removed.</p>
+            <div class="mt-6 flex justify-center gap-4">
+                <button id="delete-cancel"
+                    class="px-5 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50">Cancel</button>
+                <button id="delete-confirm" class="px-5 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700">Delete
+                    Permanently</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="fab-wrap" class="fixed bottom-6 right-6 z-40 flex flex-col items-end gap-2">
+        <a href="#" id="back-to-top"
+            class="bg-red-600 text-white w-12 h-12 rounded-full shadow-lg hover:bg-red-700 transition-all text-lg flex items-center justify-center">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M5 10l7-7m0 0l7 7m-7-7v18" />
+            </svg>
+        </a>
+    </div>
+
+</body>
+
+</html>
