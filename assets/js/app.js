@@ -678,22 +678,40 @@ const contactDesktop = d.isPhoneHidden
     `;
 }
 function renderDonorCardAdmin(d) {
-    const lastDate = d.lastDonateDate ? new Date(d.lastDonateDate).toLocaleDateString() : '-';
-    const phone = d.phone || '-';
+    const lastDate = d.lastDonateDate ? new Date(d.lastDonateDate + 'T00:00:00').toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) : 'Not recorded';
+    const phone = d.phone || '—';
+    const initials = (d.fullName || 'U')
+        .split(/\s+/).filter(Boolean)
+        .map(p => p[0]).join('').slice(0, 2).toUpperCase() || '?';
+    const isEligible = d.lastDonateDate ? 
+        (Math.floor((new Date() - new Date(d.lastDonateDate + 'T00:00:00')) / (1000*60*60*24)) >= 90) : null;
+    const eligibleBadge = isEligible === null ? '' :
+        isEligible ? '<span class="admin-member-badge admin-member-badge--eligible"><i class="fa-solid fa-circle-check"></i> Eligible</span>' :
+        '<span class="admin-member-badge admin-member-badge--waiting"><i class="fa-solid fa-hourglass-half"></i> Waiting</span>';
     return `
-        <div class="bg-white p-4 rounded-lg shadow-sm flex flex-col sm:flex-row sm:items-center justify-between border-l-4 border-red-600">
-            <div class="flex-1 min-w-0 mb-2 sm:mb-0">
-                <div class="font-bold text-red-700 truncate">${d.fullName}</div>
-                <div class="text-xs text-gray-600 mt-1"><span class="font-bold">ID:</span> <span>${d.id}</span></div>
-                <div class="text-xs text-gray-600"><span class="font-bold">Email:</span> <span>${d.email}</span></div>
-                <div class="text-xs text-gray-600"><span class="font-bold">Blood Group:</span> <span>${d.bloodGroup}</span></div>
-                <div class="text-xs text-gray-600"><span class="font-bold">Location:</span> <span>${d.location || '-'}</span></div>
-                <div class="text-xs text-gray-600"><span class="font-bold">Phone:</span> <span>${phone}</span></div>
-                <div class="text-xs text-gray-600"><span class="font-bold">Last Donated:</span> <span>${lastDate}</span></div>
+        <div class="admin-member-card">
+            <div class="admin-member-card__avatar">${initials}</div>
+            <div class="admin-member-card__body">
+                <div class="admin-member-card__top">
+                    <h4 class="admin-member-card__name">${d.fullName || 'Unknown'}</h4>
+                    <span class="admin-member-card__blood"><i class="fa-solid fa-droplet"></i> ${d.bloodGroup || '—'}</span>
+                    ${eligibleBadge}
+                </div>
+                <div class="admin-member-card__info">
+                    <span><i class="fa-solid fa-envelope"></i> ${d.email || '—'}</span>
+                    <span><i class="fa-solid fa-phone"></i> ${phone}</span>
+                    <span><i class="fa-solid fa-location-dot"></i> ${d.location || '—'}</span>
+                    <span><i class="fa-solid fa-calendar-check"></i> Last: ${lastDate}</span>
+                </div>
+                <div class="admin-member-card__id">ID: ${d.id}</div>
             </div>
-            <div class="flex-shrink-0 mt-4 sm:mt-0 flex gap-2">
-                <button data-member-id="${d.id}" class="edit-member-btn px-3 py-1 text-sm bg-gray-200 rounded hover:bg-gray-300">Edit</button>
-                <button data-member-id="${d.id}" class="delete-member-btn px-3 py-1 text-sm bg-red-600 text-white rounded hover:bg-red-700">Delete</button>
+            <div class="admin-member-card__actions">
+                <button data-member-id="${d.id}" class="edit-member-btn admin-action-btn admin-action-btn--edit" title="Edit">
+                    <i class="fa-solid fa-pen-to-square" data-member-id="${d.id}"></i>
+                </button>
+                <button data-member-id="${d.id}" class="delete-member-btn admin-action-btn admin-action-btn--delete" title="Delete">
+                    <i class="fa-solid fa-trash-can" data-member-id="${d.id}"></i>
+                </button>
             </div>
         </div>
     `;
@@ -812,7 +830,7 @@ function renderAdminMembersList() {
     membersListDiv.innerHTML = filteredMembers.map(renderDonorCardAdmin).join('');
     membersListDiv.querySelectorAll('.edit-member-btn').forEach(button => {
         button.addEventListener('click', (ev) => {
-            const memberId = ev.target.dataset.memberId;
+            const memberId = ev.target.closest('[data-member-id]')?.dataset.memberId || ev.target.dataset.memberId;
             const memberData = donorsList.find(d => d.id === memberId);
             if (memberData) {
                 document.getElementById('admin-member-id').value = memberData.id;
@@ -831,7 +849,7 @@ function renderAdminMembersList() {
     });
     membersListDiv.querySelectorAll('.delete-member-btn').forEach(button => {
         button.addEventListener('click', (ev) => {
-            const memberId = ev.target.dataset.memberId;
+            const memberId = ev.target.closest('[data-member-id]')?.dataset.memberId || ev.target.dataset.memberId;
             const memberData = donorsList.find(d => d.id === memberId);
             if (memberId && memberData) {
                 deleteMember(memberId);
@@ -867,21 +885,43 @@ function renderAdminEventsList() {
         return;
     }
     const sortedEvents = sortEventsByDate(eventsList, 'asc');
-    eventsListDiv.innerHTML = sortedEvents.map(e => `
-        <div class="bg-white p-4 rounded-lg shadow-sm flex items-center justify-between">
-            <div class="flex-1 min-w-0">
-                <div class="font-bold text-red-700 truncate">${e.title}</div>
-                <div class="text-sm text-gray-600">${e.date} at ${e.time}</div>
+    eventsListDiv.innerHTML = sortedEvents.map(e => {
+        const eventDate = e.date ? new Date(e.date + 'T00:00:00') : null;
+        const monthStr = eventDate ? eventDate.toLocaleDateString('en-US', { month: 'short' }).toUpperCase() : '—';
+        const dayStr = eventDate ? eventDate.getDate() : '—';
+        const fullDate = eventDate ? eventDate.toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'long', year: 'numeric' }) : e.date;
+        const isPast = eventDate && eventDate < new Date(new Date().toDateString());
+        return `
+        <div class="admin-event-card ${isPast ? 'admin-event-card--past' : ''}">
+            <div class="admin-event-card__date-badge">
+                <span class="admin-event-card__month">${monthStr}</span>
+                <span class="admin-event-card__day">${dayStr}</span>
             </div>
-            <div class="flex-shrink-0 flex gap-2">
-                <button data-event-id="${e.id}" class="edit-event-btn px-3 py-1 text-sm bg-gray-200 rounded hover:bg-gray-300">Edit</button>
-                <button data-event-id="${e.id}" class="delete-event-btn px-3 py-1 text-sm bg-red-600 text-white rounded hover:bg-red-700">Delete</button>
+            <div class="admin-event-card__body">
+                <div class="admin-event-card__title">${e.title}</div>
+                <div class="admin-event-card__meta">
+                    <span><i class="fa-regular fa-calendar"></i> ${fullDate}</span>
+                    <span><i class="fa-regular fa-clock"></i> ${e.time || '—'}</span>
+                </div>
+                <div class="admin-event-card__meta">
+                    <span><i class="fa-solid fa-location-dot"></i> ${e.location || '—'}</span>
+                </div>
+                ${e.description ? `<p class="admin-event-card__desc">${e.description}</p>` : ''}
+            </div>
+            <div class="admin-event-card__actions">
+                <button data-event-id="${e.id}" class="edit-event-btn admin-action-btn admin-action-btn--edit" title="Edit">
+                    <i class="fa-solid fa-pen-to-square" data-event-id="${e.id}"></i>
+                </button>
+                <button data-event-id="${e.id}" class="delete-event-btn admin-action-btn admin-action-btn--delete" title="Delete">
+                    <i class="fa-solid fa-trash-can" data-event-id="${e.id}"></i>
+                </button>
             </div>
         </div>
-    `).join('');
+    `;
+    }).join('');
     eventsListDiv.querySelectorAll('.edit-event-btn').forEach(button => {
         button.addEventListener('click', (ev) => {
-            const eventId = ev.target.dataset.eventId;
+            const eventId = ev.target.closest('[data-event-id]')?.dataset.eventId || ev.target.dataset.eventId;
             const eventData = eventsList.find(e => e.id === eventId);
             if (eventData) {
                 document.getElementById('admin-event-id').value = eventData.id;
@@ -895,7 +935,7 @@ function renderAdminEventsList() {
     });
     eventsListDiv.querySelectorAll('.delete-event-btn').forEach(button => {
         button.addEventListener('click', (ev) => {
-            const eventId = ev.target.dataset.eventId;
+            const eventId = ev.target.closest('[data-event-id]')?.dataset.eventId || ev.target.dataset.eventId;
             if (eventId) {
                 deleteEvent(eventId);
             }
@@ -1121,6 +1161,7 @@ function updateLoginButtonState() {
     const howMobileLink = document.getElementById('mobile-how-link');
     const contactLink = document.getElementById('nav-contact-link');
     const contactMobileLink = document.getElementById('mobile-contact-link');
+    const mobileLogoutBtn = document.getElementById('mobile-logout-btn');
     if (!loginBtn || !mobileLoginBtn || !adminPanel) return;
     if (currentUser) {
         loginBtn.innerHTML = '<i class="fa-solid fa-user" aria-hidden="true"></i><span class="sr-only">' + t('btnProfile') + '</span>';
@@ -1132,6 +1173,10 @@ function updateLoginButtonState() {
         mobileLoginBtn.setAttribute('aria-label', t('btnProfile'));
         mobileLoginBtn.setAttribute('title', t('btnProfile'));
         mobileLoginBtn.removeAttribute('data-i18n');
+        if (mobileLogoutBtn) {
+            mobileLogoutBtn.classList.remove('hidden');
+            mobileLogoutBtn.classList.add('block');
+        }
         if (profileUserId) profileUserId.textContent = `User ID: ${currentUser.uid}`;
         const userRef = ref(database, `donors/${currentUser.uid}/role`);
         onValue(userRef, (snapshot) => {
@@ -1178,6 +1223,10 @@ function updateLoginButtonState() {
         loginBtn.setAttribute('data-i18n', 'btnLogin');
         mobileLoginBtn.textContent = t('btnLogin');
         mobileLoginBtn.setAttribute('data-i18n', 'btnLogin');
+        if (mobileLogoutBtn) {
+            mobileLogoutBtn.classList.add('hidden');
+            mobileLogoutBtn.classList.remove('block');
+        }
         if (profileUserId) profileUserId.textContent = '';
         adminPanel.classList.add('hidden');
         document.body.classList.remove('admin-mode');
@@ -1287,11 +1336,11 @@ window.onload = function () {
     const loginCancel = document.getElementById('login-cancel');
     loginCancel?.addEventListener('click', () => closeModal(loginModal));
     loginModal?.querySelector('.absolute.inset-0')?.addEventListener('click', () => closeModal(loginModal));
-    const profileModal = document.getElementById('profile-modal');
-    const pfClose = document.getElementById('pf-close');
-    const pfLogout = document.getElementById('pf-logout');
-    const pfDelete = document.getElementById('pf-delete');
-    const profileForm = document.getElementById('profile-form');
+    const profileModal = null;
+    const pfClose = null;
+    const pfLogout = null;
+    const pfDelete = null;
+    const profileForm = null;
     const deleteConfirmModal = document.getElementById('delete-confirm-modal');
     const deleteCancelBtn = document.getElementById('delete-cancel');
     const deleteConfirmBtn = document.getElementById('delete-confirm');
@@ -1328,8 +1377,6 @@ window.onload = function () {
     }
     deleteCancelBtn?.addEventListener('click', () => closeModal(deleteConfirmModal));
     deleteConfirmModal?.querySelector('.absolute.inset-0')?.addEventListener('click', () => closeModal(deleteConfirmModal));
-    pfClose?.addEventListener('click', () => closeModal(profileModal));
-    profileModal?.querySelector('.absolute.inset-0')?.addEventListener('click', () => closeModal(profileModal));
     const menuToggle = document.getElementById('menu-toggle');
     const mobileMenu = document.getElementById('mobile-menu');
     function setMenuOpen(open) {
@@ -1500,9 +1547,9 @@ window.onload = function () {
             setJoinFeedback('Passwords do not match. Please re-enter them.', 'error');
             return;
         }
-        const strongPassword = /^(?=.*[A-Za-z])(?=.*\d).{8,}$/.test(password);
-        if (!strongPassword) {
-            setJoinFeedback('Password must be at least 8 characters and include a number.', 'error');
+        const validPassword = password.length >= 6;
+        if (!validPassword) {
+            setJoinFeedback('Password must be at least 6 characters.', 'error');
             return;
         }
         createUserWithEmailAndPassword(auth, email, password)
@@ -1588,23 +1635,7 @@ window.onload = function () {
     const loginForm = document.getElementById('login-form');
     function handleLoginClick() {
         if (currentUser) {
-            const userRef = ref(database, `donors/${currentUser.uid}`);
-            onValue(userRef, (snapshot) => {
-                const userData = snapshot.val() || {};
-                if (profileModal) {
-                    document.getElementById('profile-fullName').value = userData.fullName || '';
-                    document.getElementById('profile-email').value = userData.email || currentUser.email || '';
-                    document.getElementById('profile-phone').value = userData.phone || '';
-                    document.getElementById('profile-bloodGroup').value = userData.bloodGroup || '';
-                    document.getElementById('profile-location').value = userData.location || '';
-                    document.getElementById('profile-lastDonateDate').value = userData.lastDonateDate || '';
-                    document.getElementById('profile-notes').value = userData.notes || '';
-                    document.getElementById('profile-role').value = userData.role || 'member';
-                    openModal(profileModal);
-                }
-            }, {
-                onlyOnce: true
-            });
+            window.location.href = 'profile.html';
         } else {
             openModal(loginModal);
         }
@@ -1613,6 +1644,16 @@ window.onload = function () {
     mobileLoginBtn?.addEventListener('click', () => {
         closeModal(mobileMenu);
         handleLoginClick();
+    });
+    const mobileLogoutBtn = document.getElementById('mobile-logout-btn');
+    mobileLogoutBtn?.addEventListener('click', () => {
+        closeModal(mobileMenu);
+        signOut(auth).then(() => {
+            showModalMessage('success-modal', 'You have been logged out successfully.', 'Logout Successful');
+        }).catch((error) => {
+            console.error('Logout failed:', error);
+            showModalMessage('success-modal', 'An error occurred during logout.', 'Logout Failed');
+        });
     });
     loginForm?.addEventListener('submit', (ev) => {
         ev.preventDefault();
@@ -1623,7 +1664,7 @@ window.onload = function () {
                 currentUser = userCredential.user;
                 updateLoginButtonState();
                 closeModal(loginModal);
-                handleLoginClick();
+                window.location.href = 'profile.html';
             })
             .catch((error) => {
                 const errorMessage = error.message;
@@ -1767,102 +1808,9 @@ window.onload = function () {
             applyAdminMemberSearchFilters();
         }
     });
-    profileForm?.addEventListener('submit', (e) => {
-        e.preventDefault();
-        if (!currentUser) return;
-        const fd = new FormData(profileForm);
-        const updatedData = {
-            fullName: fd.get('fullName')?.toString().trim(),
-            phone: fd.get('phone')?.toString().trim(),
-            bloodGroup: fd.get('bloodGroup')?.toString().trim(),
-            location: fd.get('location')?.toString().trim(),
-            lastDonateDate: fd.get('lastDonateDate')?.toString() || '',
-            notes: fd.get('notes')?.toString() || '',
-            email: currentUser.email,
-            role: fd.get('role')?.toString().trim()
-        };
-        const userRef = ref(database, 'donors/' + currentUser.uid);
-        set(userRef, updatedData)
-            .then(() => {
-                showModalMessage('success-modal', 'Your profile has been updated successfully!', 'Success');
-                closeModal(profileModal);
-            })
-            .catch((error) => {
-                console.error("Error updating profile:", error);
-                showModalMessage('success-modal', `Failed to update profile: ${error.message}`, 'Error');
-            });
-    });
-    pfLogout?.addEventListener('click', () => {
-        signOut(auth).then(() => {
-            closeModal(profileModal);
-            showModalMessage('success-modal', 'You have been logged out successfully.', 'Logout Successful');
-        }).catch((error) => {
-            console.error("Logout failed:", error);
-            showModalMessage('success-modal', 'An error occurred during logout.', 'Logout Failed');
-        });
-    });
-    
-    const pfCertificate = document.getElementById('pf-certificate');
-    pfCertificate?.addEventListener('click', async () => {
-        if (!currentUser) {
-            showModalMessage('success-modal', 'You must be logged in to generate a certificate.', 'Error');
-            return;
-        }
-        
-        try {
-            const { showCertificateModal } = await import('./certificate.js');
-            const donorData = {
-                fullName: document.getElementById('profile-fullName').value,
-                email: document.getElementById('profile-email').value,
-                bloodGroup: document.getElementById('profile-bloodGroup').value,
-                location: document.getElementById('profile-location').value,
-                lastDonateDate: document.getElementById('profile-lastDonateDate').value,
-                phone: document.getElementById('profile-phone').value
-            };
-            
-            showCertificateModal(donorData);
-        } catch (error) {
-            console.error("Error generating certificate:", error);
-            showModalMessage('success-modal', 'Failed to generate certificate. Please try again.', 'Error');
-        }
-    });
-    
-    pfDelete?.addEventListener('click', () => {
-        if (!currentUser) {
-            showModalMessage('success-modal', 'You must be logged in to delete your profile.', 'Error');
-            return;
-        }
-        attachConfirmHandler(() => {
-            const user = auth.currentUser;
-            if (!user) {
-                showModalMessage('success-modal', 'You must be logged in to delete your profile.', 'Error');
-                return;
-            }
-            const donorRef = ref(database, 'donors/' + user.uid);
-            remove(donorRef)
-                .then(() => deleteUser(user))
-                .then(() => {
-                    closeModal(document.getElementById('delete-confirm-modal'));
-                    closeModal(profileModal);
-                    showModalMessage('success-modal', 'Your profile has been deleted successfully.', 'Profile Deleted');
-                })
-                .catch((error) => {
-                    if (error && error.code === 'auth/requires-recent-login') {
-                        showModalMessage('success-modal', 'Please log in again to delete your profile.', 'Re-login Required');
-                        signOut(auth);
-                    } else {
-                        console.error("Error deleting profile:", error);
-                        showModalMessage('success-modal', `Failed to delete profile: ${error && error.message}`, 'Error');
-                    }
-                });
-        }, {
-            title: 'Confirm Delete',
-            message: 'Deleting your profile is permanent and cannot be undone.'
-        });
-    });
     document.addEventListener('keydown', (ev) => {
         if (ev.key === 'Escape') {
-            [successModal, profileModal, loginModal, deleteConfirmModal].forEach(m => closeModal(m));
+            [successModal, loginModal, deleteConfirmModal].forEach(m => closeModal(m));
         }
     });
     const backToTopBtn = document.getElementById('back-to-top');

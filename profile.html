@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en" class="antialiased scroll-smooth">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>My Profile — Blood Donation Community</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="shortcut icon" href="image/blood-drop.png" type="image/x-icon">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="assets/css/main.css">
+    <link rel="stylesheet" href="assets/css/profile.css">
+    <meta name="description" content="Manage your donor profile at Blood Donation Community.">
+</head>
+
+<body class="bg-gray-50 text-gray-900" style="font-family:'Inter',sans-serif;">
+
+    <!-- Loading State -->
+    <div id="profile-page-loader"
+        class="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-white/95 transition-opacity duration-500">
+        <div class="flex flex-col items-center gap-4">
+            <div class="profile-loader-spinner"></div>
+            <p class="text-sm font-semibold text-red-600 tracking-wide">Loading your profile...</p>
+        </div>
+    </div>
+
+    <!-- Header -->
+    <header class="profile-header">
+        <nav class="max-w-5xl mx-auto flex items-center justify-between px-4 sm:px-6 py-3">
+            <a href="index.html" class="flex items-center gap-2.5 text-decoration-none group">
+                <img src="image/blood-drop.png" alt="logo" class="h-9 w-9 rounded-xl transition group-hover:scale-110" />
+                <span class="text-lg sm:text-xl font-extrabold text-red-700 tracking-tight">Blood Donation Community</span>
+            </a>
+            <div class="flex items-center gap-2">
+                <a href="index.html"
+                    class="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium text-gray-600 hover:text-red-700 hover:bg-red-50 transition">
+                    <i class="fa-solid fa-arrow-left text-xs"></i>
+                    <span class="hidden sm:inline">Back to Home</span>
+                    <span class="sm:hidden">Home</span>
+                </a>
+                <button id="pf-logout-header" type="button"
+                    class="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium text-red-600 hover:bg-red-50 border border-red-200 transition">
+                    <i class="fa-solid fa-sign-out-alt text-xs"></i>
+                    <span class="hidden sm:inline">Logout</span>
+                </button>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main class="profile-main">
+        <!-- Not Logged In State -->
+        <div id="not-logged-in" class="hidden">
+            <div class="profile-empty-state">
+                <div class="profile-empty-icon">
+                    <i class="fa-solid fa-user-lock"></i>
+                </div>
+                <h2 class="text-xl font-bold text-gray-800 mt-4">You're not logged in</h2>
+                <p class="text-sm text-gray-500 mt-2 max-w-sm mx-auto">Please log in from the home page to view and manage your donor profile.</p>
+                <a href="index.html"
+                    class="mt-6 inline-flex items-center gap-2 px-6 py-2.5 rounded-lg bg-red-600 text-white font-semibold shadow hover:bg-red-700 transition">
+                    <i class="fa-solid fa-arrow-left"></i>
+                    Go to Home
+                </a>
+            </div>
+        </div>
+
+        <!-- Profile Content (shown when logged in) -->
+        <div id="profile-content" class="hidden">
+            <!-- Profile Hero Card -->
+            <div class="profile-hero-card">
+                <div class="profile-hero-bg"></div>
+                <div class="profile-hero-inner">
+                    <div class="profile-avatar" id="profile-avatar">
+                        <span id="profile-avatar-text">?</span>
+                    </div>
+                    <div class="profile-hero-info">
+                        <h1 id="profile-display-name" class="text-xl sm:text-2xl font-extrabold text-gray-900">Donor Name</h1>
+                        <div class="flex flex-wrap items-center gap-2 mt-1.5">
+                            <span id="profile-display-blood"
+                                class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-red-100 text-red-700 text-xs font-bold">
+                                <i class="fa-solid fa-droplet text-[10px]"></i>
+                                <span>—</span>
+                            </span>
+                            <span id="profile-display-location"
+                                class="inline-flex items-center gap-1 text-xs text-gray-500 font-medium">
+                                <i class="fa-solid fa-location-dot text-[10px]"></i>
+                                <span>—</span>
+                            </span>
+                        </div>
+                        <p id="profile-display-email" class="text-xs text-gray-400 mt-1">email@example.com</p>
+                    </div>
+                </div>
+                <!-- Quick Stats -->
+                <div class="profile-quick-stats">
+                    <div class="profile-stat-item">
+                        <span class="profile-stat-icon"><i class="fa-solid fa-calendar-check"></i></span>
+                        <div>
+                            <p class="profile-stat-label">Last Donation</p>
+                            <p id="profile-stat-last" class="profile-stat-value">Not recorded</p>
+                        </div>
+                    </div>
+                    <div class="profile-stat-item">
+                        <span class="profile-stat-icon profile-stat-icon--green"><i class="fa-solid fa-circle-check"></i></span>
+                        <div>
+                            <p class="profile-stat-label">Eligibility</p>
+                            <p id="profile-stat-eligible" class="profile-stat-value">—</p>
+                        </div>
+                    </div>
+                    <div class="profile-stat-item">
+                        <span class="profile-stat-icon profile-stat-icon--blue"><i class="fa-solid fa-id-badge"></i></span>
+                        <div>
+                            <p class="profile-stat-label">Member Role</p>
+                            <p id="profile-stat-role" class="profile-stat-value">Member</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Edit Profile Form -->
+            <div class="profile-form-card">
+                <div class="profile-form-header">
+                    <div class="flex items-center gap-2.5">
+                        <span class="profile-form-header-icon"><i class="fa-solid fa-pen-to-square"></i></span>
+                        <div>
+                            <h2 class="text-base sm:text-lg font-bold text-gray-900">Edit Profile</h2>
+                            <p class="text-xs text-gray-500 mt-0.5">Update your personal and donation details</p>
+                        </div>
+                    </div>
+                </div>
+
+                <form id="profile-form" class="profile-form-body">
+                    <div class="profile-form-grid">
+                        <!-- Full Name -->
+                        <div class="pf-field">
+                            <label for="profile-fullName" class="pf-label">
+                                <i class="fa-solid fa-user pf-label-icon"></i> Full Name
+                            </label>
+                            <input name="fullName" id="profile-fullName" type="text" required
+                                class="pf-input" placeholder="Enter your full name" />
+                        </div>
+                        <!-- Email -->
+                        <div class="pf-field">
+                            <label for="profile-email" class="pf-label">
+                                <i class="fa-solid fa-envelope pf-label-icon"></i> Email
+                            </label>
+                            <input name="email" id="profile-email" type="email" required readonly
+                                class="pf-input pf-input--readonly" placeholder="Email" />
+                            <span class="pf-hint">Email cannot be changed</span>
+                        </div>
+                        <!-- Phone -->
+                        <div class="pf-field">
+                            <label for="profile-phone" class="pf-label">
+                                <i class="fa-solid fa-phone pf-label-icon"></i> Phone Number
+                            </label>
+                            <input name="phone" id="profile-phone" type="tel" required
+                                class="pf-input" placeholder="Enter phone number" />
+                        </div>
+                        <!-- Blood Group -->
+                        <div class="pf-field">
+                            <label for="profile-bloodGroup" class="pf-label">
+                                <i class="fa-solid fa-droplet pf-label-icon"></i> Blood Group
+                            </label>
+                            <select name="bloodGroup" id="profile-bloodGroup" required class="pf-input">
+                                <option value="">Select group</option>
+                                <option>A+</option>
+                                <option>A-</option>
+                                <option>B+</option>
+                                <option>B-</option>
+                                <option>O+</option>
+                                <option>O-</option>
+                                <option>AB+</option>
+                                <option>AB-</option>
+                            </select>
+                        </div>
+                        <!-- Location -->
+                        <div class="pf-field">
+                            <label for="profile-location" class="pf-label">
+                                <i class="fa-solid fa-location-dot pf-label-icon"></i> Current Location
+                            </label>
+                            <input name="location" id="profile-location" type="text" required
+                                class="pf-input" placeholder="Enter your location" />
+                        </div>
+                        <!-- Last Donation -->
+                        <div class="pf-field">
+                            <label for="profile-lastDonateDate" class="pf-label">
+                                <i class="fa-solid fa-calendar-day pf-label-icon"></i> Last Blood Donation
+                            </label>
+                            <input name="lastDonateDate" id="profile-lastDonateDate" type="date"
+                                class="pf-input" />
+                        </div>
+                        <!-- Notes (full width) -->
+                        <div class="pf-field pf-field--full">
+                            <label for="profile-notes" class="pf-label">
+                                <i class="fa-solid fa-note-sticky pf-label-icon"></i> Additional Notes
+                            </label>
+                            <textarea name="notes" id="profile-notes" rows="3"
+                                class="pf-input" placeholder="Any additional information you'd like to share..."></textarea>
+                        </div>
+                    </div>
+                    <!-- Hidden role field -->
+                    <input name="role" id="profile-role" type="hidden" />
+
+                    <!-- Actions -->
+                    <div class="profile-actions">
+                        <button type="submit" class="pf-btn pf-btn--primary">
+                            <i class="fa-solid fa-save"></i>
+                            <span>Save Changes</span>
+                        </button>
+                        <button id="pf-certificate" type="button" class="pf-btn pf-btn--blue">
+                            <i class="fa-solid fa-certificate"></i>
+                            <span>Generate Certificate</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Danger Zone -->
+            <div class="profile-danger-card">
+                <div class="flex items-center gap-2.5 mb-3">
+                    <span class="profile-danger-icon"><i class="fa-solid fa-triangle-exclamation"></i></span>
+                    <h3 class="text-sm font-bold text-red-700">Danger Zone</h3>
+                </div>
+                <p class="text-xs text-gray-500 mb-4">Permanently delete your account and all associated data. This action cannot be undone.</p>
+                <button id="pf-delete" type="button" class="pf-btn pf-btn--danger">
+                    <i class="fa-solid fa-trash-alt"></i>
+                    <span>Delete My Account</span>
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <!-- Toast notification -->
+    <div id="profile-toast" class="profile-toast hidden">
+        <div class="profile-toast-inner">
+            <i id="profile-toast-icon" class="fa-solid fa-check-circle"></i>
+            <span id="profile-toast-msg">Saved!</span>
+        </div>
+    </div>
+
+    <!-- Delete Confirm Modal -->
+    <div id="delete-confirm-modal" class="fixed inset-0 hidden items-center justify-center z-50">
+        <div class="absolute inset-0 bg-black/40 backdrop-blur-sm"></div>
+        <div class="bg-white rounded-2xl shadow-2xl p-6 max-w-sm mx-4 z-10 text-center">
+            <div class="w-14 h-14 mx-auto rounded-full bg-red-100 flex items-center justify-center mb-4">
+                <i class="fa-solid fa-triangle-exclamation text-red-600 text-xl"></i>
+            </div>
+            <h3 class="text-xl font-bold text-gray-900 mb-2">Delete your account?</h3>
+            <p class="text-sm text-gray-500">This will permanently remove your donor profile and all associated data. This cannot be undone.</p>
+            <div class="mt-6 flex justify-center gap-3">
+                <button id="delete-cancel"
+                    class="px-5 py-2.5 border border-gray-200 rounded-xl text-sm font-semibold text-gray-700 hover:bg-gray-50 transition">Cancel</button>
+                <button id="delete-confirm"
+                    class="px-5 py-2.5 bg-red-600 text-white rounded-xl text-sm font-semibold hover:bg-red-700 transition shadow">Delete Permanently</button>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="assets/js/profile.js"></script>
+</body>
+
+</html>
