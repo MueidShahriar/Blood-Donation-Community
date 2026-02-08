@@ -1,11 +1,6 @@
-/**
- * Certificate Generation Module
- * Generates donation certificates for donors
- */
 
 import { t } from './language-ui.js';
 
-// Generate certificate for a donor
 export function generateCertificate(donorData) {
     return new Promise((resolve, reject) => {
         const canvas = document.createElement('canvas');
@@ -13,7 +8,6 @@ export function generateCertificate(donorData) {
         canvas.height = 850;
         const ctx = canvas.getContext('2d');
 
-        // Load signature image
         const signImg = new Image();
         signImg.src = 'image/sign.png';
         
@@ -23,17 +17,14 @@ export function generateCertificate(donorData) {
         };
         
         signImg.onerror = function() {
-            // If image fails to load, draw certificate without signature image
             drawCertificate(canvas, ctx, donorData, null);
             resolve(canvas);
         };
     });
 }
 
-// Draw the complete certificate
 function drawCertificate(canvas, ctx, donorData, signImg) {
 
-    // Background with elegant gradient
     const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
     gradient.addColorStop(0, '#fef2f2');
     gradient.addColorStop(0.5, '#ffffff');
@@ -41,23 +32,19 @@ function drawCertificate(canvas, ctx, donorData, signImg) {
     ctx.fillStyle = gradient;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    // Outer decorative border
     ctx.strokeStyle = '#dc2626';
     ctx.lineWidth = 12;
     ctx.strokeRect(30, 30, canvas.width - 60, canvas.height - 60);
 
-    // Inner elegant border
     ctx.strokeStyle = '#ef4444';
     ctx.lineWidth = 3;
     ctx.strokeRect(50, 50, canvas.width - 100, canvas.height - 100);
 
-    // Decorative corner flourishes
     drawElegantCorner(ctx, 70, 70, 60);
     drawElegantCorner(ctx, canvas.width - 70, 70, 60, true);
     drawElegantCorner(ctx, 70, canvas.height - 70, 60, false, true);
     drawElegantCorner(ctx, canvas.width - 70, canvas.height - 70, 60, true, true);
 
-    // Title with shadow effect
     ctx.shadowColor = 'rgba(220, 38, 38, 0.2)';
     ctx.shadowBlur = 10;
     ctx.shadowOffsetX = 2;
@@ -72,18 +59,15 @@ function drawCertificate(canvas, ctx, donorData, signImg) {
     ctx.fillStyle = '#dc2626';
     ctx.fillText('OF APPRECIATION', canvas.width / 2, 150);
 
-    // Reset shadow
     ctx.shadowColor = 'transparent';
     ctx.shadowBlur = 0;
     ctx.shadowOffsetX = 0;
     ctx.shadowOffsetY = 0;
 
-    // Organization name with decorative line
     ctx.fillStyle = '#374151';
     ctx.font = 'italic 22px Georgia, serif';
     ctx.fillText('Blood Donation Community', canvas.width / 2, 185);
 
-    // Decorative horizontal line with dots
     ctx.fillStyle = '#dc2626';
     ctx.fillRect(350, 205, 500, 2);
     ctx.beginPath();
@@ -93,18 +77,15 @@ function drawCertificate(canvas, ctx, donorData, signImg) {
     ctx.arc(850, 206, 4, 0, Math.PI * 2);
     ctx.fill();
 
-    // "This certifies that" text
     ctx.fillStyle = '#6b7280';
     ctx.font = 'italic 22px Georgia, serif';
     ctx.fillText('This is proudly presented to', canvas.width / 2, 250);
 
-    // Donor Name with elegant styling
     ctx.fillStyle = '#1f2937';
     ctx.font = 'bold 48px Brush Script MT, cursive';
     const donorName = donorData.fullName || 'Donor Name';
     ctx.fillText(donorName, canvas.width / 2, 315);
 
-    // Elegant name underline
     const nameWidth = ctx.measureText(donorName).width;
     const gradient2 = ctx.createLinearGradient((canvas.width - nameWidth) / 2, 325, (canvas.width + nameWidth) / 2, 325);
     gradient2.addColorStop(0, 'rgba(220, 38, 38, 0)');
@@ -117,12 +98,10 @@ function drawCertificate(canvas, ctx, donorData, signImg) {
     ctx.lineTo((canvas.width + nameWidth) / 2 + 30, 330);
     ctx.stroke();
 
-    // Recognition text
     ctx.fillStyle = '#374151';
     ctx.font = '22px Georgia, serif';
     ctx.fillText('for the noble act of donating blood on', canvas.width / 2, 380);
 
-    // Last donation date in decorative box (user's actual donation date)
     const donationDate = donorData.lastDonateDate 
         ? new Date(donorData.lastDonateDate).toLocaleDateString('en-US', {
             year: 'numeric',
@@ -145,14 +124,12 @@ function drawCertificate(canvas, ctx, donorData, signImg) {
     ctx.font = 'bold 24px Georgia, serif';
     ctx.fillText(donationDate, canvas.width / 2, 433);
 
-    // Blood group badge with enhanced design
     const bloodGroup = donorData.bloodGroup || 'O+';
     ctx.fillStyle = '#dc2626';
     ctx.beginPath();
     ctx.roundRect(canvas.width / 2 - 80, 470, 160, 80, 10);
     ctx.fill();
     
-    // Inner white border
     ctx.strokeStyle = '#ffffff';
     ctx.lineWidth = 3;
     ctx.beginPath();
@@ -163,7 +140,6 @@ function drawCertificate(canvas, ctx, donorData, signImg) {
     ctx.font = 'bold 42px Arial';
     ctx.fillText(bloodGroup, canvas.width / 2, 523);
 
-    // Appreciation text
     ctx.fillStyle = '#1f2937';
     ctx.font = '21px Georgia, serif';
     ctx.fillText('Your selfless act has the potential to save up to three lives.', canvas.width / 2, 590);
@@ -171,7 +147,6 @@ function drawCertificate(canvas, ctx, donorData, signImg) {
     ctx.font = 'italic 20px Georgia, serif';
     ctx.fillText('Thank you for being a hero in our community!', canvas.width / 2, 620);
 
-    // Certificate ID with barcode-style background
     const certificateId = generateCertificateId(donorData);
     ctx.fillStyle = '#f3f4f6';
     ctx.fillRect(400, 670, 400, 30);
@@ -179,26 +154,21 @@ function drawCertificate(canvas, ctx, donorData, signImg) {
     ctx.font = '14px Courier New, monospace';
     ctx.fillText(`Certificate ID: ${certificateId}`, canvas.width / 2, 690);
 
-    // Signature section with enhanced design
     ctx.strokeStyle = '#374151';
     ctx.lineWidth = 2;
     
-    // Left signature line
     ctx.beginPath();
     ctx.moveTo(180, 735);
     ctx.lineTo(420, 735);
     ctx.stroke();
     
-    // Add signature image if available
     if (signImg) {
-        // Draw signature image above the line (centered and raised)
         const signWidth = 120;
         const signHeight = 60;
         const signX = 300 - signWidth / 2;
         const signY = 665; // Moved up more so it doesn't touch the line
         ctx.drawImage(signImg, signX, signY, signWidth, signHeight);
     } else {
-        // Fallback: Draw handwritten signature strokes
         ctx.strokeStyle = '#1f2937';
         ctx.lineWidth = 2;
         ctx.lineCap = 'round';
@@ -223,7 +193,6 @@ function drawCertificate(canvas, ctx, donorData, signImg) {
         ctx.stroke();
     }
     
-    // Right date line (certificate issue date - today's date)
     ctx.strokeStyle = '#374151';
     ctx.lineWidth = 2;
     ctx.beginPath();
@@ -236,7 +205,6 @@ function drawCertificate(canvas, ctx, donorData, signImg) {
     ctx.textAlign = 'center';
     ctx.fillText('Authorized Signature', 300, 760);
     
-    // Certificate issue date (download date) - above the line
     const issueDate = new Date().toLocaleDateString('en-US', {
         year: 'numeric',
         month: 'short',
@@ -246,7 +214,6 @@ function drawCertificate(canvas, ctx, donorData, signImg) {
     ctx.font = '18px Georgia, serif';
     ctx.fillText(issueDate, 900, 725); // Positioned above the line
 
-    // Add small decorative elements at bottom
     ctx.fillStyle = '#dc2626';
     for (let i = 0; i < 3; i++) {
         ctx.beginPath();
@@ -255,18 +222,15 @@ function drawCertificate(canvas, ctx, donorData, signImg) {
     }
 }
 
-// Draw elegant corner decoration
 function drawElegantCorner(ctx, x, y, size, flipX = false, flipY = false) {
     ctx.save();
     ctx.translate(x, y);
     if (flipX) ctx.scale(-1, 1);
     if (flipY) ctx.scale(1, -1);
     
-    // Ornate corner design
     ctx.strokeStyle = '#dc2626';
     ctx.lineWidth = 3;
     
-    // Main corner lines
     ctx.beginPath();
     ctx.moveTo(0, 0);
     ctx.lineTo(size, 0);
@@ -277,12 +241,10 @@ function drawElegantCorner(ctx, x, y, size, flipX = false, flipY = false) {
     ctx.lineTo(0, size);
     ctx.stroke();
     
-    // Decorative curves
     ctx.beginPath();
     ctx.arc(0, 0, size / 2, 0, Math.PI / 2);
     ctx.stroke();
     
-    // Small decorative circles
     ctx.fillStyle = '#dc2626';
     ctx.beginPath();
     ctx.arc(size * 0.7, size * 0.7, 5, 0, Math.PI * 2);
@@ -299,7 +261,6 @@ function drawElegantCorner(ctx, x, y, size, flipX = false, flipY = false) {
     ctx.restore();
 }
 
-// Generate unique certificate ID
 function generateCertificateId(donorData) {
     const timestamp = Date.now().toString(36).toUpperCase();
     const random = Math.random().toString(36).substring(2, 6).toUpperCase();
@@ -307,29 +268,23 @@ function generateCertificateId(donorData) {
     return `BDC-${bloodGroup}-${timestamp}-${random}`;
 }
 
-// Download certificate as PDF with high quality
 export function downloadCertificate(canvas, donorName) {
-    // Dynamically import jsPDF
     import('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js')
         .then((module) => {
             const { jsPDF } = window.jspdf;
             
-            // Create high-resolution canvas for better PDF quality
             const scale = 2; // 2x scaling for higher quality
             const highResCanvas = document.createElement('canvas');
             highResCanvas.width = canvas.width * scale;
             highResCanvas.height = canvas.height * scale;
             const highResCtx = highResCanvas.getContext('2d');
             
-            // Enable high-quality rendering
             highResCtx.imageSmoothingEnabled = true;
             highResCtx.imageSmoothingQuality = 'high';
             
-            // Scale and draw the original canvas
             highResCtx.scale(scale, scale);
             highResCtx.drawImage(canvas, 0, 0);
             
-            // Create PDF in landscape orientation to match certificate dimensions
             const pdf = new jsPDF({
                 orientation: 'landscape',
                 unit: 'px',
@@ -338,17 +293,14 @@ export function downloadCertificate(canvas, donorName) {
                 precision: 16 // Maximum precision
             });
             
-            // Convert high-res canvas to image and add to PDF
             const imgData = highResCanvas.toDataURL('image/jpeg', 1.0); // JPEG at maximum quality
             pdf.addImage(imgData, 'JPEG', 0, 0, canvas.width, canvas.height, undefined, 'FAST');
             
-            // Download the PDF
             const fileName = `Blood_Donation_Certificate_${donorName.replace(/\s+/g, '_')}_${Date.now()}.pdf`;
             pdf.save(fileName);
         })
         .catch((error) => {
             console.error('Error loading jsPDF:', error);
-            // Fallback to PNG download if jsPDF fails to load
             const link = document.createElement('a');
             const fileName = `Blood_Donation_Certificate_${donorName.replace(/\s+/g, '_')}_${Date.now()}.png`;
             link.download = fileName;
@@ -357,7 +309,6 @@ export function downloadCertificate(canvas, donorName) {
         });
 }
 
-// Share certificate on social media
 export function shareCertificate(canvas, donorName) {
     canvas.toBlob((blob) => {
         const file = new File([blob], 'certificate.png', { type: 'image/png' });
@@ -377,7 +328,6 @@ export function shareCertificate(canvas, donorName) {
     });
 }
 
-// Fallback share method - copy link or download
 function fallbackShare(canvas) {
     const shareOptions = `
         <div class="flex flex-col gap-3">
@@ -394,7 +344,6 @@ function fallbackShare(canvas) {
     showModal('Share Certificate', shareOptions);
 }
 
-// Show certificate modal
 export function showCertificateModal(donorData) {
     generateCertificate(donorData).then(canvas => {
         const imageUrl = canvas.toDataURL('image/png');
@@ -421,7 +370,6 @@ export function showCertificateModal(donorData) {
         
         showModal(t('certTitle') || 'Your Donation Certificate', modalContent);
         
-        // Store canvas globally for download/share functions
         window.currentCertificateCanvas = canvas;
         window.currentDonorName = donorData.fullName;
     }).catch(error => {
@@ -430,7 +378,6 @@ export function showCertificateModal(donorData) {
     });
 }
 
-// Global functions for modal buttons
 window.downloadCertificateFromModal = function(donorName) {
     if (window.currentCertificateCanvas) {
         downloadCertificate(window.currentCertificateCanvas, donorName || window.currentDonorName);
@@ -443,7 +390,6 @@ window.shareCertificateFromModal = function(donorName) {
     }
 };
 
-// Helper function to show modal
 function showModal(title, content) {
     const modal = document.getElementById('certificate-modal') || createCertificateModal();
     const modalTitle = modal.querySelector('#certificate-modal-title');
@@ -455,7 +401,6 @@ function showModal(title, content) {
     modal.classList.add('flex');
 }
 
-// Create certificate modal
 function createCertificateModal() {
     const modal = document.createElement('div');
     modal.id = 'certificate-modal';
@@ -474,7 +419,6 @@ function createCertificateModal() {
     return modal;
 }
 
-// Close certificate modal
 window.closeCertificateModal = function() {
     const modal = document.getElementById('certificate-modal');
     if (modal) {
@@ -483,7 +427,6 @@ window.closeCertificateModal = function() {
     }
 };
 
-// Initialize certificate feature
 export function initCertificateFeature() {
     createCertificateModal();
     console.log('Certificate feature initialized');

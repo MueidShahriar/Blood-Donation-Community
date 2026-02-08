@@ -1,11 +1,6 @@
-/**
- * Language Configuration Module
- * Supports Bangla and English translations
- */
 
 export const translations = {
     en: {
-        // Header & Navigation
         siteTitle: "Blood Donation Community",
         adminBadge: "Admin",
         navAbout: "About",
@@ -18,13 +13,11 @@ export const translations = {
         btnProfile: "Profile",
         btnLogin: "Login",
 
-        // Hero Section
         heroTitle: "Donate Blood Save Life",
         heroDescription: "Be a hero in your community. Register as a donor, find blood matches and join our events to help save lives every day.",
         btnBecomeDonor: "Become a Donor",
         btnSearchDonors: "Search Donors",
 
-        // Recent Donations
         recentDonationLoading: "Fetching recent donations...",
         recentDonationChip: "Recent Donation",
         recentDonationThankYou: "A huge thank you to",
@@ -37,7 +30,6 @@ export const translations = {
         recentDonationWeight: "Weight",
         recentDonationEmpty: "No recent donations to show.",
 
-        // Dashboard Insights
         dashboardTitle: "Live Donor Insights",
         dashboardDescription: "These snapshots refresh instantly whenever new donors join or donations are logged.",
         dashboardRealtime: "Realtime",
@@ -54,7 +46,6 @@ export const translations = {
         chartEmptyMonthly: "No donation records found for this year. Log donations to activate this chart.",
         chartEmptyBlood: "No blood group records to display yet. Add donors to populate this view.",
 
-        // About Section
         aboutTitle: "About Us",
         aboutBadge: "Community",
         aboutName: "Blood Donation Community",
@@ -70,12 +61,10 @@ export const translations = {
         aboutJoinUs: "Join us to make a difference",
         aboutJoinUsText: "- your single donation can save up to three lives. Stay connected for upcoming events, success stories and ways to help.",
 
-        // Recent Donor Section
         recentLoading: "Fetching recent donations...",
         recentPrevious: "Previous",
         recentNext: "Next",
 
-        // How to Donate Section
         howEligibilityTitle: "Check Eligibility",
         howEligibilityText: "Be 18–60 years old, 50kg+, feeling well and fever‑free, with at least 90 days since your last donation. Certain medicines, recent travel and illnesses may defer donation.",
         howRegisterTitle: "Register",
@@ -86,13 +75,11 @@ export const translations = {
         howRegisterNow: "Register now",
         howSeeEvents: "See events",
 
-        // Stats
         statDonors: "Registered Donors",
         statLivesHelped: "Lives Helped",
         statEvents: "Events This Year",
         statJoinNetwork: "Join Our Donor Network",
 
-        // Events Section
         eventsTitle: "Upcoming Events",
         eventsDescription: "Join our community drives and help save lives - see the event details and register to participate.",
         eventsSearchPlaceholder: "Search by title or location",
@@ -103,7 +90,6 @@ export const translations = {
         eventsEmpty: "No events match your filters right now. Try adjusting your search or check back soon.",
         eventsRegister: "Register",
 
-        // Search Section
         searchTitle: "Find Donors",
         searchDescription: "Search by blood group to find nearby donors quickly. Connect directly once you locate a match.",
         searchCardTitle: "Find Donors",
@@ -116,14 +102,12 @@ export const translations = {
         searchFoundDonors: "Found",
         searchDonorsText: "donor(s)",
 
-        // Donor Card
         donorBloodGroup: "Blood Group:",
         donorLocation: "Current Location:",
         donorLastDonated: "Last Donated:",
         donorContact: "Contact:",
         donorContactAdmin: "Contact Admin",
 
-        // Join Section
         joinTitle: "Join us as a donor",
         joinDescription: "Register to become part of our verified donor network. Add your details and create an account to manage your donations.",
         joinFullName: "Full name",
@@ -143,7 +127,6 @@ export const translations = {
         joinRegister: "Register",
         joinClear: "Clear",
 
-        // How to Donate Section
         howEligibilityTitle: "Check Eligibility",
         howEligibilityDesc: "Be 18–60 years old, 50kg+, feeling well and fever‑free, with at least 90 days since your last donation. Certain medicines, recent travel and illnesses may defer donation.",
         howEligibilityLink: "Learn more →",
@@ -154,14 +137,12 @@ export const translations = {
         howDonateDesc: "Book a slot, bring a photo ID, eat light, stay hydrated and rest for a short while after. Safe, professional teams guide you through a 8–10 minute donation.",
         howDonateLink: "See events →",
 
-        // Contact Section
         contactTitle: "Contact",
         contactDescription: "Have questions or want to get involved? Reach out to us.",
         contactEmail: "bdc@bloodlife.org",
         contactPhone: "+8801712460423",
         contactJoinDonor: "Join as a Donor",
 
-        // Certificate
         certTitle: "Your Donation Certificate",
         certDownload: "Download",
         certShare: "Share",
@@ -169,19 +150,16 @@ export const translations = {
         certSuccess: "Certificate generated successfully!",
         certError: "Unable to generate certificate. Please try again.",
 
-        // Footer
         footerCopyright: "© 2025 Life is Beautiful 💜",
         footerFeedback: "Share Feedback",
         footerDeveloper: "Developed by Md. Mueid Shahriar",
         footerDepartment: "CSE-16th, BAUET",
 
-        // Modals
         modalSuccess: "Success!",
         modalError: "Error",
         modalClose: "Close",
         modalCancel: "Cancel",
 
-        // Login Modal
         loginTitle: "Login",
         loginEmail: "Email",
         loginPassword: "Password",
@@ -190,7 +168,6 @@ export const translations = {
         loginShowPassword: "Show password",
         loginHidePassword: "Hide password",
 
-        // Profile Modal
         profileTitle: "My Profile",
         profileFullName: "Full name",
         profileEmailReadonly: "Email (cannot be changed)",
@@ -203,14 +180,12 @@ export const translations = {
         profileLogout: "Logout",
         profileDelete: "Delete Profile",
 
-        // Admin Dashboard
         adminTitle: "Admin Dashboard",
         adminDescription: "Welcome, Admin! Here you can manage community events, update donor information and add recent donations.",
         adminTabEvents: "Events",
         adminTabRecent: "Recent Donor",
         adminTabMembers: "Members",
 
-        // Admin Events
         adminEventTitle: "Event Details",
         adminEventTitleField: "Event Title",
         adminEventDate: "Event Date",
@@ -222,7 +197,6 @@ export const translations = {
         adminEventEdit: "Edit",
         adminEventDelete: "Delete",
 
-        // Admin Recent Donor
         adminRecentTitle: "Recent Donor",
         adminRecentName: "Donor Name",
         adminRecentBloodGroup: "Blood Group",
@@ -234,7 +208,6 @@ export const translations = {
         adminRecentDate: "Donation Date",
         adminRecentAdd: "Add Recent Donor Info",
 
-        // Admin Members
         adminMemberTitle: "Member Management",
         adminMemberFullName: "Full name",
         adminMemberPhone: "Phone number",
@@ -247,7 +220,6 @@ export const translations = {
         adminMemberNoRecords: "No member records found yet. Once donors register, they'll appear here automatically.",
         adminMemberID: "ID:",
 
-        // Feedback Modal
         feedbackTitle: "Share Your Feedback",
         feedbackDescription: "Let us know how we can improve the Blood Donation Community.",
         feedbackName: "Name",
@@ -255,12 +227,10 @@ export const translations = {
         feedbackMessage: "Your feedback",
         feedbackSend: "Send",
 
-        // Delete Confirmation
         deleteConfirmTitle: "Are you sure?",
         deleteConfirmMessage: "Deleting your profile is permanent and cannot be undone. All your donor information will be removed.",
         deleteConfirmButton: "Delete Permanently",
 
-        // Messages
         msgPasswordReset: "A password reset link has been sent to",
         msgCheckInbox: "Please check your inbox.",
         msgLogoutSuccess: "You have been logged out successfully.",
@@ -279,7 +249,6 @@ export const translations = {
         msgWelcome: "Welcome",
         msgProfileCreated: "Your donor profile was created successfully.",
 
-        // Validation Messages
         validationFullName: "Please enter your full name (minimum 3 characters).",
         validationEmail: "Please provide a valid email address.",
         validationBloodGroup: "Please select your blood group to help matches find you.",
@@ -294,7 +263,6 @@ export const translations = {
         validationRequiredFields: "Please fill all required fields: Donor Name, Blood Group, Location, and Donation Date.",
     },
     bn: {
-        // Header & Navigation
         siteTitle: "রক্তদান কমিউনিটি",
         adminBadge: "অ্যাডমিন",
         navAbout: "পরিচিতি",
@@ -307,13 +275,11 @@ export const translations = {
         btnProfile: "প্রোফাইল",
         btnLogin: "লগইন",
 
-        // Hero Section
         heroTitle: "রক্তদান করুন জীবন বাঁচান",
         heroDescription: "আপনার কমিউনিটিতে একজন হিরো হন। দাতা হিসেবে নিবন্ধন করুন, রক্তের ম্যাচ খুঁজুন এবং প্রতিদিন জীবন বাঁচাতে আমাদের ইভেন্টে যোগ দিন।",
         btnBecomeDonor: "দাতা হন",
         btnSearchDonors: "দাতা খুঁজুন",
 
-        // Recent Donations
         recentDonationLoading: "সাম্প্রতিক রক্তদান লোড হচ্ছে...",
         recentDonationChip: "সাম্প্রতিক রক্তদান",
         recentDonationThankYou: "অসংখ্য ধন্যবাদ",
@@ -326,7 +292,6 @@ export const translations = {
         recentDonationWeight: "ওজন",
         recentDonationEmpty: "এখনও কোন সাম্প্রতিক রক্তদান নেই।",
 
-        // Dashboard Insights
         dashboardTitle: "লাইভ দাতা তথ্য",
         dashboardDescription: "নতুন দাতা যোগ দিলে বা রক্তদান লগ হলে এই স্ন্যাপশটগুলি তাৎক্ষণিকভাবে রিফ্রেশ হয়।",
         dashboardRealtime: "রিয়েলটাইম",
@@ -343,7 +308,6 @@ export const translations = {
         chartEmptyMonthly: "এই বছরের জন্য কোন রক্তদান রেকর্ড পাওয়া যায়নি। এই চার্ট সক্রিয় করতে রক্তদান লগ করুন।",
         chartEmptyBlood: "এখনও প্রদর্শনের জন্য কোন রক্তের গ্রুপ রেকর্ড নেই। এই ভিউ পূরণ করতে দাতা যোগ করুন।",
 
-        // About Section
         aboutTitle: "আমাদের সম্পর্কে",
         aboutBadge: "কমিউনিটি",
         aboutName: "রক্তদান কমিউনিটি",
@@ -359,12 +323,10 @@ export const translations = {
         aboutJoinUs: "পরিবর্তন আনতে আমাদের সাথে যোগ দিন",
         aboutJoinUsText: "- আপনার একটি রক্তদান তিনটি পর্যন্ত জীবন বাঁচাতে পারে। আসন্ন ইভেন্ট, সফলতার গল্প এবং সাহায্যের উপায়ের জন্য সংযুক্ত থাকুন।",
 
-        // Recent Donor Section
         recentLoading: "সাম্প্রতিক রক্তদান আনা হচ্ছে...",
         recentPrevious: "পূর্ববর্তী",
         recentNext: "পরবর্তী",
 
-        // How to Donate Section
         howEligibilityTitle: "যোগ্যতা পরীক্ষা করুন",
         howEligibilityText: "১৮-৬০ বছর বয়সী হন, ৫০ কেজি+, সুস্থ বোধ করুন এবং জ্বরমুক্ত থাকুন, আপনার শেষ রক্তদান থেকে কমপক্ষে ৯০ দিন। কিছু ওষুধ, সাম্প্রতিক ভ্রমণ এবং অসুস্থতা রক্তদান স্থগিত করতে পারে।",
         howRegisterTitle: "নিবন্ধন করুন",
@@ -375,13 +337,11 @@ export const translations = {
         howRegisterNow: "এখনই নিবন্ধন করুন",
         howSeeEvents: "ইভেন্ট দেখুন",
 
-        // Stats
         statDonors: "নিবন্ধিত দাতা",
         statLivesHelped: "জীবন সাহায্য করেছে",
         statEvents: "এ বছরের ইভেন্ট",
         statJoinNetwork: "আমাদের দাতা নেটওয়ার্কে যোগ দিন",
 
-        // Events Section
         eventsTitle: "আসন্ন ইভেন্ট",
         eventsDescription: "আমাদের কমিউনিটি ড্রাইভে যোগ দিন এবং জীবন বাঁচাতে সাহায্য করুন - ইভেন্টের বিবরণ দেখুন এবং অংশগ্রহণের জন্য নিবন্ধন করুন।",
         eventsSearchPlaceholder: "শিরোনাম বা অবস্থান দ্বারা অনুসন্ধান করুন",
@@ -392,7 +352,6 @@ export const translations = {
         eventsEmpty: "এখন আপনার ফিল্টারের সাথে কোন ইভেন্ট মিলছে না। আপনার অনুসন্ধান সামঞ্জস্য করার চেষ্টা করুন বা শীঘ্রই আবার পরীক্ষা করুন।",
         eventsRegister: "নিবন্ধন করুন",
 
-        // Search Section
         searchTitle: "দাতা খুঁজুন",
         searchDescription: "দ্রুত কাছাকাছি দাতা খুঁজে পেতে রক্তের গ্রুপ দ্বারা অনুসন্ধান করুন। একটি ম্যাচ সনাক্ত করার পরে সরাসরি সংযোগ করুন।",
         searchCardTitle: "দাতা খুঁজুন",
@@ -405,14 +364,12 @@ export const translations = {
         searchFoundDonors: "পাওয়া গেছে",
         searchDonorsText: "জন দাতা",
 
-        // Donor Card
         donorBloodGroup: "রক্তের গ্রুপ:",
         donorLocation: "বর্তমান অবস্থান:",
         donorLastDonated: "শেষ রক্তদান:",
         donorContact: "যোগাযোগ:",
         donorContactAdmin: "অ্যাডমিনের সাথে যোগাযোগ করুন",
 
-        // Join Section
         joinTitle: "দাতা হিসেবে আমাদের সাথে যোগ দিন",
         joinDescription: "আমাদের যাচাইকৃত দাতা নেটওয়ার্কের অংশ হতে নিবন্ধন করুন। আপনার বিবরণ যোগ করুন এবং আপনার রক্তদান পরিচালনা করতে একটি অ্যাকাউন্ট তৈরি করুন।",
         joinFullName: "পুরো নাম",
@@ -432,7 +389,6 @@ export const translations = {
         joinRegister: "নিবন্ধন করুন",
         joinClear: "পরিষ্কার করুন",
 
-        // How to Donate Section
         howEligibilityTitle: "যোগ্যতা পরীক্ষা করুন",
         howEligibilityDesc: "১৮-৬০ বছর বয়সী, ৫০ কেজি+, সুস্থ এবং জ্বরমুক্ত থাকুন, আপনার শেষ রক্তদানের পর থেকে কমপক্ষে ৯০ দিন পার হতে হবে। নির্দিষ্ট ওষুধ, সাম্প্রতিক ভ্রমণ এবং অসুস্থতা রক্তদান স্থগিত করতে পারে।",
         howEligibilityLink: "আরও জানুন →",
@@ -443,14 +399,12 @@ export const translations = {
         howDonateDesc: "একটি স্লট বুক করুন, একটি ফটো আইডি আনুন, হালকা খাবার খান, হাইড্রেটেড থাকুন এবং পরে কিছুক্ষণ বিশ্রাম নিন। নিরাপদ, পেশাদার দল আপনাকে ৮-১০ মিনিটের রক্তদানের মাধ্যমে গাইড করবে।",
         howDonateLink: "ইভেন্ট দেখুন →",
 
-        // Contact Section
         contactTitle: "যোগাযোগ",
         contactDescription: "প্রশ্ন আছে বা জড়িত হতে চান? আমাদের সাথে যোগাযোগ করুন।",
         contactEmail: "bdc@bloodlife.org",
         contactPhone: "+৮৮০১৭১২৪৬০৪২৩",
         contactJoinDonor: "দাতা হিসেবে যোগ দিন",
 
-        // Certificate
         certTitle: "আপনার রক্তদান সার্টিফিকেট",
         certDownload: "ডাউনলোড করুন",
         certShare: "শেয়ার করুন",
@@ -458,22 +412,18 @@ export const translations = {
         certSuccess: "সার্টিফিকেট সফলভাবে তৈরি হয়েছে!",
         certError: "সার্টিফিকেট তৈরি করতে অক্ষম। অনুগ্রহ করে আবার চেষ্টা করুন।",
 
-        // Footer
         contactJoinDonor: "দাতা হিসেবে যোগ দিন",
 
-        // Footer
         footerCopyright: "© ২০২৫ জীবন সুন্দর 💜",
         footerFeedback: "প্রতিক্রিয়া শেয়ার করুন",
         footerDeveloper: "ডেভেলপ করেছেন মোঃ মুঈদ শাহরিয়ার",
         footerDepartment: "সিএসই-১৬তম, বাউয়েট",
 
-        // Modals
         modalSuccess: "সফল!",
         modalError: "ত্রুটি",
         modalClose: "বন্ধ করুন",
         modalCancel: "বাতিল",
 
-        // Login Modal
         loginTitle: "লগইন",
         loginEmail: "ইমেইল",
         loginPassword: "পাসওয়ার্ড",
@@ -482,7 +432,6 @@ export const translations = {
         loginShowPassword: "পাসওয়ার্ড দেখান",
         loginHidePassword: "পাসওয়ার্ড লুকান",
 
-        // Profile Modal
         profileTitle: "আমার প্রোফাইল",
         profileFullName: "পুরো নাম",
         profileEmailReadonly: "ইমেইল (পরিবর্তন করা যাবে না)",
@@ -495,14 +444,12 @@ export const translations = {
         profileLogout: "লগআউট",
         profileDelete: "প্রোফাইল মুছুন",
 
-        // Admin Dashboard
         adminTitle: "অ্যাডমিন ড্যাশবোর্ড",
         adminDescription: "স্বাগতম, অ্যাডমিন! এখানে আপনি কমিউনিটি ইভেন্ট পরিচালনা করতে, দাতার তথ্য আপডেট করতে এবং সাম্প্রতিক রক্তদান যোগ করতে পারেন।",
         adminTabEvents: "ইভেন্ট",
         adminTabRecent: "সাম্প্রতিক দাতা",
         adminTabMembers: "সদস্য",
 
-        // Admin Events
         adminEventTitle: "ইভেন্টের বিবরণ",
         adminEventTitleField: "ইভেন্টের শিরোনাম",
         adminEventDate: "ইভেন্টের তারিখ",
@@ -514,7 +461,6 @@ export const translations = {
         adminEventEdit: "সম্পাদনা",
         adminEventDelete: "মুছুন",
 
-        // Admin Recent Donor
         adminRecentTitle: "সাম্প্রতিক দাতা",
         adminRecentName: "দাতার নাম",
         adminRecentBloodGroup: "রক্তের গ্রুপ",
@@ -526,7 +472,6 @@ export const translations = {
         adminRecentDate: "রক্তদানের তারিখ",
         adminRecentAdd: "সাম্প্রতিক দাতার তথ্য যোগ করুন",
 
-        // Admin Members
         adminMemberTitle: "সদস্য ব্যবস্থাপনা",
         adminMemberFullName: "পুরো নাম",
         adminMemberPhone: "ফোন নম্বর",
@@ -539,7 +484,6 @@ export const translations = {
         adminMemberNoRecords: "এখনও কোন সদস্য রেকর্ড পাওয়া যায়নি। দাতারা নিবন্ধন করলে, তারা স্বয়ংক্রিয়ভাবে এখানে উপস্থিত হবে।",
         adminMemberID: "আইডি:",
 
-        // Feedback Modal
         feedbackTitle: "আপনার প্রতিক্রিয়া শেয়ার করুন",
         feedbackDescription: "রক্তদান কমিউনিটি কীভাবে উন্নত করতে পারি তা আমাদের জানান।",
         feedbackName: "নাম",
@@ -547,12 +491,10 @@ export const translations = {
         feedbackMessage: "আপনার প্রতিক্রিয়া",
         feedbackSend: "পাঠান",
 
-        // Delete Confirmation
         deleteConfirmTitle: "আপনি কি নিশ্চিত?",
         deleteConfirmMessage: "আপনার প্রোফাইল মুছে ফেলা স্থায়ী এবং পূর্বাবস্থায় ফেরানো যাবে না। আপনার সমস্ত দাতার তথ্য সরানো হবে।",
         deleteConfirmButton: "স্থায়ীভাবে মুছুন",
 
-        // Messages
         msgPasswordReset: "একটি পাসওয়ার্ড রিসেট লিঙ্ক পাঠানো হয়েছে",
         msgCheckInbox: "অনুগ্রহ করে আপনার ইনবক্স পরীক্ষা করুন।",
         msgLogoutSuccess: "আপনি সফলভাবে লগআউট করেছেন।",
@@ -571,7 +513,6 @@ export const translations = {
         msgWelcome: "স্বাগতম",
         msgProfileCreated: "আপনার দাতা প্রোফাইল সফলভাবে তৈরি করা হয়েছে।",
 
-        // Validation Messages
         validationFullName: "অনুগ্রহ করে আপনার পুরো নাম লিখুন (কমপক্ষে ৩টি অক্ষর)।",
         validationEmail: "অনুগ্রহ করে একটি বৈধ ইমেইল ঠিকানা প্রদান করুন।",
         validationBloodGroup: "দয়া করে আপনার রক্তের গ্রুপ নির্বাচন করুন যাতে ম্যাচগুলি আপনাকে খুঁজে পেতে পারে।",
@@ -587,12 +528,10 @@ export const translations = {
     }
 };
 
-// Get current language from localStorage or default to English
 export function getCurrentLanguage() {
     return localStorage.getItem('language') || 'en';
 }
 
-// Set language preference
 export function setLanguage(lang) {
     if (lang !== 'en' && lang !== 'bn') {
         console.warn('Invalid language code. Using English as default.');
@@ -603,11 +542,9 @@ export function setLanguage(lang) {
     return lang;
 }
 
-// Get translated text
 export function t(key) {
     const lang = getCurrentLanguage();
     return translations[lang][key] || translations['en'][key] || key;
 }
 
-// Export translations object for direct access
 export { translations as default };

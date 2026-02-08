@@ -530,7 +530,6 @@ function groupRecentDonationsByMonth(donations) {
     });
     return { monthGroups, undated };
 }
-// PDF report generation is now handled in assets/js/pdf-report.js
 function openModal(modal) {
     if (!modal) return;
     modal.classList.remove('hidden');

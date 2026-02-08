@@ -1,8 +1,4 @@
-/* ========================================
-   Profile Page Styles
-   ======================================== */
 
-/* Loader */
 .profile-loader-spinner {
     width: 40px;
     height: 40px;
@@ -16,7 +12,6 @@
     to { transform: rotate(360deg); }
 }
 
-/* Header */
 .profile-header {
     position: sticky;
     top: 0;
@@ -28,14 +23,12 @@
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
 }
 
-/* Main Layout */
 .profile-main {
     max-width: 720px;
     margin: 0 auto;
     padding: 1.5rem 1rem 3rem;
 }
 
-/* Empty State */
 .profile-empty-state {
     text-align: center;
     padding: 4rem 1.5rem;
@@ -54,7 +47,6 @@
     margin: 0 auto;
 }
 
-/* Hero Card */
 .profile-hero-card {
     position: relative;
     background: #ffffff;
@@ -109,7 +101,6 @@
     padding-bottom: 2px;
 }
 
-/* Quick Stats */
 .profile-quick-stats {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -169,7 +160,6 @@
     margin-top: 1px;
 }
 
-/* Form Card */
 .profile-form-card {
     margin-top: 1.25rem;
     background: #ffffff;
@@ -207,7 +197,6 @@
     gap: 1.15rem;
 }
 
-/* Field styles */
 .pf-field {
     display: flex;
     flex-direction: column;
@@ -282,7 +271,6 @@ textarea.pf-input {
     min-height: 80px;
 }
 
-/* Action Buttons */
 .profile-actions {
     margin-top: 1.5rem;
     display: flex;
@@ -339,7 +327,6 @@ textarea.pf-input {
     border-color: rgba(220, 38, 38, 0.5);
 }
 
-/* Danger Zone */
 .profile-danger-card {
     margin-top: 1.25rem;
     padding: 1.25rem 1.5rem;
@@ -361,7 +348,6 @@ textarea.pf-input {
     font-size: 0.85rem;
 }
 
-/* Toast */
 .profile-toast {
     position: fixed;
     bottom: 1.5rem;
@@ -403,10 +389,6 @@ textarea.pf-input {
 .profile-toast--error .profile-toast-inner {
     background: linear-gradient(135deg, #b91c1c, #dc2626);
 }
-
-/* ═══════════════════════════════════
-   RESPONSIVE
-   ═══════════════════════════════════ */
 
 @media (max-width: 640px) {
     .profile-main {
@@ -493,7 +475,6 @@ textarea.pf-input {
     }
 }
 
-/* Smooth page entrance */
 @keyframes pf-fadeIn {
     from {
         opacity: 0;

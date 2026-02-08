@@ -1,7 +1,3 @@
-/**
- * Profile Page — Standalone JS Module
- * Handles Firebase auth state, profile load/save, certificate, delete, logout.
- */
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import {
@@ -23,13 +19,11 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const database = getDatabase(app);
 
-/* ── DOM Refs ──────────────────────────────── */
 const loader = document.getElementById('profile-page-loader');
 const notLoggedIn = document.getElementById('not-logged-in');
 const profileContent = document.getElementById('profile-content');
 const profileForm = document.getElementById('profile-form');
 
-/* hero display */
 const avatarText = document.getElementById('profile-avatar-text');
 const displayName = document.getElementById('profile-display-name');
 const displayBlood = document.getElementById('profile-display-blood');
@@ -39,7 +33,6 @@ const statLast = document.getElementById('profile-stat-last');
 const statEligible = document.getElementById('profile-stat-eligible');
 const statRole = document.getElementById('profile-stat-role');
 
-/* form fields */
 const fFullName = document.getElementById('profile-fullName');
 const fEmail = document.getElementById('profile-email');
 const fPhone = document.getElementById('profile-phone');
@@ -49,7 +42,6 @@ const fLastDonate = document.getElementById('profile-lastDonateDate');
 const fNotes = document.getElementById('profile-notes');
 const fRole = document.getElementById('profile-role');
 
-/* buttons */
 const logoutHeaderBtn = document.getElementById('pf-logout-header');
 const deleteBtn = document.getElementById('pf-delete');
 const certBtn = document.getElementById('pf-certificate');
@@ -57,12 +49,10 @@ const deleteModal = document.getElementById('delete-confirm-modal');
 const deleteCancelBtn = document.getElementById('delete-cancel');
 const deleteConfirmBtn = document.getElementById('delete-confirm');
 
-/* toast */
 const toast = document.getElementById('profile-toast');
 const toastIcon = document.getElementById('profile-toast-icon');
 const toastMsg = document.getElementById('profile-toast-msg');
 
-/* ── Helpers ───────────────────────────────── */
 function hideLoader() {
     if (loader) {
         loader.style.opacity = '0';
@@ -115,14 +105,12 @@ function isDonorEligible(lastDonateDate) {
     return `${90 - diffDays} days left`;
 }
 
-/* ── Populate UI ───────────────────────────── */
 function populateProfile(data, email) {
     const name = data.fullName || 'Donor';
     const blood = data.bloodGroup || '—';
     const loc = data.location || '—';
     const role = data.role || 'member';
 
-    /* Hero card */
     if (avatarText) avatarText.textContent = getInitials(name);
     if (displayName) displayName.textContent = name;
     if (displayBlood) displayBlood.querySelector('span:last-child').textContent = blood;
@@ -136,7 +124,6 @@ function populateProfile(data, email) {
     }
     if (statRole) statRole.textContent = role.charAt(0).toUpperCase() + role.slice(1);
 
-    /* Form fields */
     if (fFullName) fFullName.value = data.fullName || '';
     if (fEmail) fEmail.value = email || '';
     if (fPhone) fPhone.value = data.phone || '';
@@ -147,7 +134,6 @@ function populateProfile(data, email) {
     if (fRole) fRole.value = role;
 }
 
-/* ── Open / Close Modal ────────────────────── */
 function openModal(m) {
     if (!m) return;
     m.classList.remove('hidden');
@@ -159,7 +145,6 @@ function closeModal(m) {
     m.classList.remove('flex');
 }
 
-/* ── Auth State ────────────────────────────── */
 let currentUser = null;
 
 onAuthStateChanged(auth, (user) => {
@@ -171,7 +156,6 @@ onAuthStateChanged(auth, (user) => {
         return;
     }
 
-    /* Fetch profile data */
     const userRef = ref(database, `donors/${user.uid}`);
     onValue(userRef, (snapshot) => {
         const data = snapshot.val() || {};
@@ -182,7 +166,6 @@ onAuthStateChanged(auth, (user) => {
     }, { onlyOnce: true });
 });
 
-/* ── Save Profile ──────────────────────────── */
 profileForm?.addEventListener('submit', (e) => {
     e.preventDefault();
     if (!currentUser) return;
@@ -209,7 +192,6 @@ profileForm?.addEventListener('submit', (e) => {
         });
 });
 
-/* ── Logout ────────────────────────────────── */
 function handleLogout() {
     signOut(auth).then(() => {
         showToast('Logged out', 'success');
@@ -221,7 +203,6 @@ function handleLogout() {
 }
 logoutHeaderBtn?.addEventListener('click', handleLogout);
 
-/* ── Certificate ───────────────────────────── */
 certBtn?.addEventListener('click', async () => {
     if (!currentUser) {
         showToast('You must be logged in.', 'error');
@@ -244,7 +225,6 @@ certBtn?.addEventListener('click', async () => {
     }
 });
 
-/* ── Delete Account ────────────────────────── */
 deleteBtn?.addEventListener('click', () => {
     openModal(deleteModal);
 });
@@ -279,7 +259,6 @@ deleteConfirmBtn?.addEventListener('click', () => {
         });
 });
 
-/* ── Keyboard ──────────────────────────────── */
 document.addEventListener('keydown', (ev) => {
     if (ev.key === 'Escape') {
         closeModal(deleteModal);

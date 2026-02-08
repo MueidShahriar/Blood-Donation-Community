@@ -108,7 +108,6 @@ export function createMonthlyReportDownloader({
                 doc.setDrawColor(0);
             };
             const drawMonthHeader = (label, yearText, count, firstEntryHeight = 50) => {
-                // Ensure space for header + at least first entry to avoid orphan headers
                 ensureSpace(13 + firstEntryHeight);
                 doc.setFillColor(252, 231, 233);
                 doc.rect(marginX, cursorY, contentWidth, 9, 'F');
@@ -218,7 +217,6 @@ export function createMonthlyReportDownloader({
             };
             drawReportHeader();
             
-            // Group donations by year
             const yearGroups = {};
             donationEntries.forEach(entry => {
                 if (!entry) return;
@@ -230,10 +228,8 @@ export function createMonthlyReportDownloader({
                 yearGroups[year].push(entry);
             });
             
-            // Sort years ascending (2025 first, then 2026)
             const sortedYears = Object.keys(yearGroups).map(Number).sort((a, b) => a - b);
             
-            // Count donations per year
             const yearlyCounts = sortedYears.map(year => ({
                 year,
                 count: yearGroups[year].length
@@ -247,7 +243,6 @@ export function createMonthlyReportDownloader({
             ];
             writeSummaryBox(summaryLines);
             
-            // Yearly Summary Section
             drawSectionTitle('Yearly Summary');
             yearlyCounts.forEach(({ year, count }) => {
                 writeWrappedText(`${year}: ${count} donation${count !== 1 ? 's' : ''}`, 6, 5);
@@ -257,10 +252,8 @@ export function createMonthlyReportDownloader({
             }
             addGap(6);
             
-            // Monthly Summary Section (side-by-side table format)
             drawSectionTitle('Monthly Summary');
             if (sortedYears.length > 0) {
-                // Calculate monthly counts for each year
                 const yearlyMonthData = sortedYears.map(year => {
                     const yearDonations = yearGroups[year];
                     const monthlyCountsForYear = chartLabels.months.map(() => 0);
@@ -274,7 +267,6 @@ export function createMonthlyReportDownloader({
                     return { year, counts: monthlyCountsForYear };
                 });
                 
-                // Draw table header
                 const colWidth = (contentWidth - 30) / sortedYears.length;
                 const tableStartX = marginX;
                 const monthColWidth = 30;
@@ -290,13 +282,11 @@ export function createMonthlyReportDownloader({
                 });
                 cursorY += 6;
                 
-                // Draw horizontal line under header
                 doc.setDrawColor(...palette.border);
                 doc.setLineWidth(0.3);
                 doc.line(marginX, cursorY, marginX + contentWidth, cursorY);
                 cursorY += 3;
                 
-                // Draw each month row
                 doc.setFont('helvetica', 'normal');
                 chartLabels.months.forEach((month, monthIdx) => {
                     ensureSpace(6);
@@ -322,11 +312,9 @@ export function createMonthlyReportDownloader({
             drawSectionTitle('Donation details by date');
             let printedAnyDetails = false;
             
-            // Process years in ascending order (2025, then 2026, etc.)
             sortedYears.forEach(year => {
                 const yearDonations = yearGroups[year];
                 
-                // Group by month within each year
                 const monthGroupsForYear = chartLabels.months.map(() => []);
                 yearDonations.forEach(entry => {
                     const rawDate = entry.date || entry.donationDate;
@@ -336,7 +324,6 @@ export function createMonthlyReportDownloader({
                     }
                 });
                 
-                // Sort each month's entries by date ascending
                 monthGroupsForYear.forEach(group => {
                     group.sort((a, b) => {
                         const aTime = a.dateObj ? a.dateObj.getTime() : 0;
@@ -349,7 +336,6 @@ export function createMonthlyReportDownloader({
                     if (!entries.length) return;
                     printedAnyDetails = true;
                     
-                    // Calculate first entry height to pass to header
                     const firstEntry = entries[0];
                     const firstHasNotes = Boolean((firstEntry?.donation?.notes ?? '').toString().trim());
                     const firstHasComment = Boolean((firstEntry?.donation?.publicComment ?? '').toString().trim());
@@ -359,9 +345,7 @@ export function createMonthlyReportDownloader({
                     entries.forEach(({ donation, dateObj }, entryIdx) => {
                         const hasNotes = Boolean((donation?.notes ?? '').toString().trim());
                         const hasComment = Boolean((donation?.publicComment ?? '').toString().trim());
-                        // Increased estimated height to prevent page cuts - ensure full entry fits
-                        const estimated = 24 /* first + location */ + 12 /* batch/age/weight */ + (hasNotes ? 8 : 0) + (hasComment ? 8 : 0) + 10 /* divider + padding */;
-                        // Skip space check for first entry since header already ensured space
+                        const estimated = 24 + 12 + (hasNotes ? 8 : 0) + (hasComment ? 8 : 0) + 10;
                         if (entryIdx > 0) {
                             ensureEntrySpace(estimated);
                         }

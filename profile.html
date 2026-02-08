@@ -21,7 +21,6 @@
 
 <body class="bg-gray-50 text-gray-900" style="font-family:'Inter',sans-serif;">
 
-    <!-- Loading State -->
     <div id="profile-page-loader"
         class="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-white/95 transition-opacity duration-500">
         <div class="flex flex-col items-center gap-4">
@@ -30,7 +29,6 @@
         </div>
     </div>
 
-    <!-- Header -->
     <header class="profile-header">
         <nav class="max-w-5xl mx-auto flex items-center justify-between px-4 sm:px-6 py-3">
             <a href="index.html" class="flex items-center gap-2.5 text-decoration-none group">
@@ -53,9 +51,7 @@
         </nav>
     </header>
 
-    <!-- Main Content -->
     <main class="profile-main">
-        <!-- Not Logged In State -->
         <div id="not-logged-in" class="hidden">
             <div class="profile-empty-state">
                 <div class="profile-empty-icon">
@@ -71,9 +67,7 @@
             </div>
         </div>
 
-        <!-- Profile Content (shown when logged in) -->
         <div id="profile-content" class="hidden">
-            <!-- Profile Hero Card -->
             <div class="profile-hero-card">
                 <div class="profile-hero-bg"></div>
                 <div class="profile-hero-inner">
@@ -97,7 +91,6 @@
                         <p id="profile-display-email" class="text-xs text-gray-400 mt-1">email@example.com</p>
                     </div>
                 </div>
-                <!-- Quick Stats -->
                 <div class="profile-quick-stats">
                     <div class="profile-stat-item">
                         <span class="profile-stat-icon"><i class="fa-solid fa-calendar-check"></i></span>
@@ -123,7 +116,6 @@
                 </div>
             </div>
 
-            <!-- Edit Profile Form -->
             <div class="profile-form-card">
                 <div class="profile-form-header">
                     <div class="flex items-center gap-2.5">
@@ -137,7 +129,6 @@
 
                 <form id="profile-form" class="profile-form-body">
                     <div class="profile-form-grid">
-                        <!-- Full Name -->
                         <div class="pf-field">
                             <label for="profile-fullName" class="pf-label">
                                 <i class="fa-solid fa-user pf-label-icon"></i> Full Name
@@ -145,7 +136,6 @@
                             <input name="fullName" id="profile-fullName" type="text" required
                                 class="pf-input" placeholder="Enter your full name" />
                         </div>
-                        <!-- Email -->
                         <div class="pf-field">
                             <label for="profile-email" class="pf-label">
                                 <i class="fa-solid fa-envelope pf-label-icon"></i> Email
@@ -154,7 +144,6 @@
                                 class="pf-input pf-input--readonly" placeholder="Email" />
                             <span class="pf-hint">Email cannot be changed</span>
                         </div>
-                        <!-- Phone -->
                         <div class="pf-field">
                             <label for="profile-phone" class="pf-label">
                                 <i class="fa-solid fa-phone pf-label-icon"></i> Phone Number
@@ -162,7 +151,6 @@
                             <input name="phone" id="profile-phone" type="tel" required
                                 class="pf-input" placeholder="Enter phone number" />
                         </div>
-                        <!-- Blood Group -->
                         <div class="pf-field">
                             <label for="profile-bloodGroup" class="pf-label">
                                 <i class="fa-solid fa-droplet pf-label-icon"></i> Blood Group
@@ -179,7 +167,6 @@
                                 <option>AB-</option>
                             </select>
                         </div>
-                        <!-- Location -->
                         <div class="pf-field">
                             <label for="profile-location" class="pf-label">
                                 <i class="fa-solid fa-location-dot pf-label-icon"></i> Current Location
@@ -187,7 +174,6 @@
                             <input name="location" id="profile-location" type="text" required
                                 class="pf-input" placeholder="Enter your location" />
                         </div>
-                        <!-- Last Donation -->
                         <div class="pf-field">
                             <label for="profile-lastDonateDate" class="pf-label">
                                 <i class="fa-solid fa-calendar-day pf-label-icon"></i> Last Blood Donation
@@ -195,7 +181,6 @@
                             <input name="lastDonateDate" id="profile-lastDonateDate" type="date"
                                 class="pf-input" />
                         </div>
-                        <!-- Notes (full width) -->
                         <div class="pf-field pf-field--full">
                             <label for="profile-notes" class="pf-label">
                                 <i class="fa-solid fa-note-sticky pf-label-icon"></i> Additional Notes
@@ -204,10 +189,8 @@
                                 class="pf-input" placeholder="Any additional information you'd like to share..."></textarea>
                         </div>
                     </div>
-                    <!-- Hidden role field -->
                     <input name="role" id="profile-role" type="hidden" />
 
-                    <!-- Actions -->
                     <div class="profile-actions">
                         <button type="submit" class="pf-btn pf-btn--primary">
                             <i class="fa-solid fa-save"></i>
@@ -221,7 +204,6 @@
                 </form>
             </div>
 
-            <!-- Danger Zone -->
             <div class="profile-danger-card">
                 <div class="flex items-center gap-2.5 mb-3">
                     <span class="profile-danger-icon"><i class="fa-solid fa-triangle-exclamation"></i></span>
@@ -236,7 +218,6 @@
         </div>
     </main>
 
-    <!-- Toast notification -->
     <div id="profile-toast" class="profile-toast hidden">
         <div class="profile-toast-inner">
             <i id="profile-toast-icon" class="fa-solid fa-check-circle"></i>
@@ -244,7 +225,6 @@
         </div>
     </div>
 
-    <!-- Delete Confirm Modal -->
     <div id="delete-confirm-modal" class="fixed inset-0 hidden items-center justify-center z-50">
         <div class="absolute inset-0 bg-black/40 backdrop-blur-sm"></div>
         <div class="bg-white rounded-2xl shadow-2xl p-6 max-w-sm mx-4 z-10 text-center">
