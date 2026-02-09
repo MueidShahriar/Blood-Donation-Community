@@ -45,17 +45,3 @@ export function attachConfirmHandler(callback, opts = {}) {
     }, { once: true });
     openModal(modal);
 }
-
-export function initModalCloseButtons() {
-    document.querySelectorAll('[data-modal-close]').forEach(btn => {
-        btn.addEventListener('click', () => {
-            const modal = btn.closest('.fixed');
-            if (modal) closeModal(modal);
-        });
-    });
-    document.querySelectorAll('.fixed[id$="-modal"]').forEach(modal => {
-        modal.addEventListener('click', e => {
-            if (e.target === modal) closeModal(modal);
-        });
-    });
-}

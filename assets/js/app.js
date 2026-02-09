@@ -1,9 +1,4 @@
-/* ═══════════════════════════════════════════════════════════════
-   Blood Donation Community – main entry point (ES module)
-   All heavy logic lives in ./modules/*; this file wires them up.
-   ═══════════════════════════════════════════════════════════════ */
 
-// ── Firebase SDK ──────────────────────────────────────────────
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getAnalytics, isSupported as analyticsIsSupported } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-analytics.js";
 import {
@@ -14,13 +9,11 @@ import {
     getDatabase, ref, push, set, onValue, remove, update, query, limitToLast
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
-// ── Project configs ───────────────────────────────────────────
 import { firebaseConfig, ADMIN_EMAIL } from "./modules/firebase-config.js";
 import { chartLabels, chartColors, getPieChartOptions } from "./modules/chart-config.js";
 import { initLanguageSystem, t } from "./modules/language-ui.js";
 import { createMonthlyReportDownloader } from "./modules/pdf-report.js";
 
-// ── Modules ───────────────────────────────────────────────────
 import state from "./modules/state.js";
 import { initPreloader } from "./modules/preloader.js";
 import { initHeader, initMobileMenu } from "./modules/header.js";
@@ -54,7 +47,6 @@ import { updateLoginButtonState, initAuth } from "./modules/auth.js";
 import { initJoinForm } from "./modules/join-form.js";
 import { initFeedback } from "./modules/feedback.js";
 
-// ── Firebase bootstrap ────────────────────────────────────────
 const app = initializeApp(firebaseConfig);
 try { analyticsIsSupported().then(ok => { if (ok) getAnalytics(app); }); } catch (_) {}
 const auth = getAuth(app);
@@ -66,7 +58,6 @@ const statsRef         = ref(database, 'stats');
 const recentDonationsRef = ref(database, 'recentDonations');
 const feedbackRef      = ref(database, 'feedback');
 
-// ── PDF report helper (needs several module fns) ─────────────
 const downloadMonthlyReportPdf = createMonthlyReportDownloader({
     getRecentDonations: () => Array.isArray(state.recentDonationsList) ? [...state.recentDonationsList] : [],
     groupRecentDonationsByMonth: (donations) => groupRecentDonationsByMonth(donations, chartLabels),
@@ -78,7 +69,6 @@ const downloadMonthlyReportPdf = createMonthlyReportDownloader({
     showModalMessage
 });
 
-// ── CRUD helpers (need Firebase refs) ─────────────────────────
 function saveEvent(eventData) {
     if (!state.currentUser || state.currentUserRole !== 'admin') {
         showModalMessage('success-modal', 'You do not have permission to perform this action.', 'Permission Denied');
@@ -124,13 +114,11 @@ function deleteMember(memberId) {
     }, { title: 'Delete Member', message: 'Deleting this member profile is permanent and cannot be undone.' });
 }
 
-// ── Convenience wrapper ───────────────────────────────────────
 function callUpdateLogin() {
     updateLoginButtonState(database, ref, onValue,
         renderAdminMembersList, renderAdminEventsList, deleteMember, deleteEvent);
 }
 
-// ── Firebase realtime listeners ───────────────────────────────
 onValue(donorsRef, (snapshot) => {
     const data = snapshot.val();
     state.donorsList = [];
@@ -200,7 +188,6 @@ onValue(recentDonationsRef, (snapshot) => {
     setRecentLoading(false);
 }, err => { console.error("Failed to load recent donations:", err); setRecentLoading(false); });
 
-// ── Contact-section smooth scroll ─────────────────────────────
 function initContactScroll() {
     const fastScrollTo = (el, duration = 250) => {
         const root = document.documentElement;
@@ -236,17 +223,12 @@ function initContactScroll() {
     });
 }
 
-// ══════════════════════════════════════════════════════════════
-//  window.onload – wire everything together
-// ══════════════════════════════════════════════════════════════
 window.onload = function () {
-    // Core UI
     initPreloader();
     initHeader();
     initLanguageSystem();
     window.addEventListener('languageChanged', () => callUpdateLogin());
 
-    // Modals
     const successModal      = document.getElementById('success-modal');
     const loginModal         = document.getElementById('login-modal');
     const deleteConfirmModal = document.getElementById('delete-confirm-modal');
@@ -260,7 +242,6 @@ window.onload = function () {
         if (ev.key === 'Escape') [successModal, loginModal, deleteConfirmModal].forEach(m => closeModal(m));
     });
 
-    // Feature modules
     initMobileMenu();
     setupStatsVisibilityObserver();
     initDashboardRefreshTimer();
@@ -273,7 +254,6 @@ window.onload = function () {
     initFloatObserver();
     initStatsCounter();
 
-    // Modules that need Firebase deps injected
     initFeedback(feedbackRef, push);
     initJoinForm({ auth, database, ref, set, createUserWithEmailAndPassword });
     initAuth({
@@ -286,7 +266,6 @@ window.onload = function () {
         updateLoginFn: callUpdateLogin
     });
 
-    // ── Admin forms (stay here – they need Firebase refs) ─────
     const adminEventForm = document.getElementById('admin-event-form');
     adminEventForm?.addEventListener('submit', ev => {
         ev.preventDefault();

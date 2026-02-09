@@ -11,15 +11,19 @@ import {
     ref,
     onValue,
     set,
-    remove
+    remove,
+    push
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 import { firebaseConfig } from "./modules/firebase-config.js";
+import { initLanguageSystem, updatePageLanguage } from "./modules/language-ui.js";
+import { initBackToTop } from "./modules/back-to-top.js";
+import { initFeedback } from "./modules/feedback.js";
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const database = getDatabase(app);
 
-const loader = document.getElementById('profile-page-loader');
+const loader = document.getElementById('page-loader');
 const notLoggedIn = document.getElementById('not-logged-in');
 const profileContent = document.getElementById('profile-content');
 const profileForm = document.getElementById('profile-form');
@@ -53,10 +57,18 @@ const toast = document.getElementById('profile-toast');
 const toastIcon = document.getElementById('profile-toast-icon');
 const toastMsg = document.getElementById('profile-toast-msg');
 
+initLanguageSystem();
+window.addEventListener('languageChanged', () => updatePageLanguage());
+
+const feedbackRef = ref(database, 'feedback');
+initBackToTop();
+initFeedback(feedbackRef, push);
+
 function hideLoader() {
     if (loader) {
-        loader.style.opacity = '0';
-        setTimeout(() => { loader.style.display = 'none'; }, 400);
+        loader.classList.add('fade-out');
+        document.body.classList.remove('loading');
+        setTimeout(() => { loader.style.display = 'none'; }, 500);
     }
 }
 

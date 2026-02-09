@@ -328,7 +328,7 @@ export function createMonthlyReportDownloader({
                     group.sort((a, b) => {
                         const aTime = a.dateObj ? a.dateObj.getTime() : 0;
                         const bTime = b.dateObj ? b.dateObj.getTime() : 0;
-                        return aTime - bTime; // ascending order
+                        return aTime - bTime;
                     });
                 });
                 

@@ -166,7 +166,7 @@ function drawCertificate(canvas, ctx, donorData, signImg) {
         const signWidth = 120;
         const signHeight = 60;
         const signX = 300 - signWidth / 2;
-        const signY = 665; // Moved up more so it doesn't touch the line
+        const signY = 665;
         ctx.drawImage(signImg, signX, signY, signWidth, signHeight);
     } else {
         ctx.strokeStyle = '#1f2937';
@@ -212,7 +212,7 @@ function drawCertificate(canvas, ctx, donorData, signImg) {
     });
     ctx.fillStyle = '#1f2937';
     ctx.font = '18px Georgia, serif';
-    ctx.fillText(issueDate, 900, 725); // Positioned above the line
+    ctx.fillText(issueDate, 900, 725);
 
     ctx.fillStyle = '#dc2626';
     for (let i = 0; i < 3; i++) {
@@ -273,7 +273,7 @@ export function downloadCertificate(canvas, donorName) {
         .then((module) => {
             const { jsPDF } = window.jspdf;
             
-            const scale = 2; // 2x scaling for higher quality
+            const scale = 2;
             const highResCanvas = document.createElement('canvas');
             highResCanvas.width = canvas.width * scale;
             highResCanvas.height = canvas.height * scale;
@@ -289,11 +289,11 @@ export function downloadCertificate(canvas, donorName) {
                 orientation: 'landscape',
                 unit: 'px',
                 format: [canvas.height, canvas.width],
-                compress: false, // Disable compression for higher quality
-                precision: 16 // Maximum precision
+                compress: false,
+                precision: 16
             });
             
-            const imgData = highResCanvas.toDataURL('image/jpeg', 1.0); // JPEG at maximum quality
+            const imgData = highResCanvas.toDataURL('image/jpeg', 1.0);
             pdf.addImage(imgData, 'JPEG', 0, 0, canvas.width, canvas.height, undefined, 'FAST');
             
             const fileName = `Blood_Donation_Certificate_${donorName.replace(/\s+/g, '_')}_${Date.now()}.pdf`;

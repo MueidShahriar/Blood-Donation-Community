@@ -17,24 +17,28 @@ export function updateLoginButtonState(database, ref, onValue, renderAdminMember
     const contactLink = document.getElementById('nav-contact-link');
     const contactMobileLink = document.getElementById('mobile-contact-link');
     const mobileLogoutBtn = document.getElementById('mobile-logout-btn');
-    if (!loginBtn || !mobileLoginBtn || !adminPanel) return;
+    if (!loginBtn && !mobileLoginBtn) return;
     if (state.currentUser) {
-        loginBtn.innerHTML = '<i class="fa-solid fa-user" aria-hidden="true"></i><span class="sr-only">' + t('btnProfile') + '</span>';
-        loginBtn.setAttribute('aria-label', t('btnProfile'));
-        loginBtn.setAttribute('title', t('btnProfile'));
-        loginBtn.dataset.state = 'loggedin';
-        loginBtn.removeAttribute('data-i18n');
-        mobileLoginBtn.textContent = t('btnProfile');
-        mobileLoginBtn.setAttribute('aria-label', t('btnProfile'));
-        mobileLoginBtn.setAttribute('title', t('btnProfile'));
-        mobileLoginBtn.removeAttribute('data-i18n');
+        if (loginBtn) {
+            loginBtn.innerHTML = '<i class="fa-solid fa-user" aria-hidden="true"></i><span class="sr-only">' + t('btnProfile') + '</span>';
+            loginBtn.setAttribute('aria-label', t('btnProfile'));
+            loginBtn.setAttribute('title', t('btnProfile'));
+            loginBtn.dataset.state = 'loggedin';
+            loginBtn.removeAttribute('data-i18n');
+        }
+        if (mobileLoginBtn) {
+            mobileLoginBtn.textContent = t('btnProfile');
+            mobileLoginBtn.setAttribute('aria-label', t('btnProfile'));
+            mobileLoginBtn.setAttribute('title', t('btnProfile'));
+            mobileLoginBtn.removeAttribute('data-i18n');
+        }
         if (mobileLogoutBtn) { mobileLogoutBtn.classList.remove('hidden'); mobileLogoutBtn.classList.add('block'); }
         if (profileUserId) profileUserId.textContent = `User ID: ${state.currentUser.uid}`;
         const userRef = ref(database, `donors/${state.currentUser.uid}/role`);
         onValue(userRef, (snapshot) => {
             state.currentUserRole = snapshot.val() || 'member';
             if (state.currentUserRole === 'admin') {
-                adminPanel.classList.remove('hidden');
+                adminPanel?.classList.remove('hidden');
                 document.body.classList.add('admin-mode');
                 if (adminBadge) { adminBadge.classList.remove('hidden'); adminBadge.classList.add('inline-flex'); }
                 adminNavLink?.classList.remove('hidden');
@@ -48,7 +52,7 @@ export function updateLoginButtonState(database, ref, onValue, renderAdminMember
                 renderAdminMembersList(deleteMemberFn);
                 renderAdminEventsList(deleteEventFn);
             } else {
-                adminPanel.classList.add('hidden');
+                adminPanel?.classList.add('hidden');
                 document.body.classList.remove('admin-mode');
                 if (adminBadge) { adminBadge.classList.add('hidden'); adminBadge.classList.remove('inline-flex'); }
                 adminNavLink?.classList.add('hidden');
@@ -62,14 +66,18 @@ export function updateLoginButtonState(database, ref, onValue, renderAdminMember
             }
         }, { onlyOnce: true });
     } else {
-        loginBtn.textContent = t('btnLogin');
-        loginBtn.dataset.state = 'loggedout';
-        loginBtn.setAttribute('data-i18n', 'btnLogin');
-        mobileLoginBtn.textContent = t('btnLogin');
-        mobileLoginBtn.setAttribute('data-i18n', 'btnLogin');
+        if (loginBtn) {
+            loginBtn.textContent = t('btnLogin');
+            loginBtn.dataset.state = 'loggedout';
+            loginBtn.setAttribute('data-i18n', 'btnLogin');
+        }
+        if (mobileLoginBtn) {
+            mobileLoginBtn.textContent = t('btnLogin');
+            mobileLoginBtn.setAttribute('data-i18n', 'btnLogin');
+        }
         if (mobileLogoutBtn) { mobileLogoutBtn.classList.add('hidden'); mobileLogoutBtn.classList.remove('block'); }
         if (profileUserId) profileUserId.textContent = '';
-        adminPanel.classList.add('hidden');
+        adminPanel?.classList.add('hidden');
         document.body.classList.remove('admin-mode');
         adminBadge?.classList.add('hidden');
         adminNavLink?.classList.add('hidden');
