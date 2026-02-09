@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Events - Blood Donation Community</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="shortcut icon" href="image/blood-drop.png" type="image/x-icon">
@@ -52,6 +52,11 @@
                 <a href="index.html#search" class="px-3 py-2 rounded hover:bg-red-50 text-red-700">Search</a>
                 <a href="index.html#contact" class="px-3 py-2 rounded hover:bg-red-50 text-red-700">Contact</a>
             </div>
+            <div class="flex items-center gap-4">
+                <button id="login-btn"
+                    class="desktop-only inline-flex bg-red-600 text-white px-4 py-2 rounded-lg font-semibold shadow hover:bg-red-700 transition items-center justify-center"
+                    data-i18n="btnLogin">Login</button>
+            </div>
             <div class="flex items-center gap-2">
                 <button id="menu-toggle" class="md:hidden p-2 rounded-lg bg-red-100 text-red-700 hover:bg-red-200"
                     aria-label="Open menu" type="button">
@@ -71,15 +76,22 @@
                 <a href="join.html" class="block px-3 py-2 rounded hover:bg-red-50">Join</a>
                 <a href="index.html#search" class="block px-3 py-2 rounded hover:bg-red-50">Search</a>
                 <a href="index.html#contact" class="block px-3 py-2 rounded hover:bg-red-50">Contact</a>
+                <button id="mobile-login-btn"
+                    class="block text-left px-3 py-2 rounded hover:bg-red-50 text-red-700 font-medium"
+                    data-i18n="btnLogin">Login</button>
+                <button id="mobile-logout-btn"
+                    class="hidden text-left px-3 py-2 rounded hover:bg-red-50 text-red-600 font-medium">
+                    <i class="fa-solid fa-sign-out-alt"></i> Logout
+                </button>
             </div>
         </div>
     </header>
 
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.6/dist/chart.umd.min.js"></script>
-    <script src="assets/js/viewport.js"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" defer></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.6/dist/chart.umd.min.js" defer></script>
+    <script src="assets/js/viewport.js" defer></script>
     <script type="module" src="assets/js/app.js"></script>
 
     <main class="max-w-6xl mx-auto px-4 sm:px-4 lg:px-6 pt-24 pb-12">
@@ -126,7 +138,7 @@
                         <img src="image/blood-drop.png" alt="Blood Donation Community" />
                         <span data-i18n="siteTitle">Blood Donation Community</span>
                     </div>
-                    <p>A passionate, volunteer-driven organization dedicated to saving lives through the power of blood donation. We connect donors with patients in urgent need.</p>
+                    <p data-i18n="footerBrandDesc">A passionate, volunteer-driven organization dedicated to saving lives through the power of blood donation. We connect donors with patients in urgent need.</p>
                     <div class="footer-socials mt-2">
                         <a href="https://github.com/MueidShahriar" class="social-github" aria-label="GitHub" target="_blank" rel="noopener noreferrer">
                             <i class="fab fa-github"></i>
@@ -140,7 +152,7 @@
                     </div>
                 </div>
                 <div>
-                    <h4 class="footer-col-title">QUICK LINKS</h4>
+                    <h4 class="footer-col-title" data-i18n="footerQuickLinks">QUICK LINKS</h4>
                     <ul class="footer-links">
                         <li><a href="about.html"><i class="fa-solid fa-chevron-right"></i> <span data-i18n="navAbout">About</span></a></li>
                         <li><a href="donationGuide.html"><i class="fa-solid fa-chevron-right"></i> <span data-i18n="navHow">Donation Guide</span></a></li>
@@ -150,7 +162,7 @@
                     </ul>
                 </div>
                 <div>
-                    <h4 class="footer-col-title">Contact Info</h4>
+                    <h4 class="footer-col-title" data-i18n="footerContactInfo">Contact Info</h4>
                     <ul class="footer-links">
                         <li><a href="mailto:bauet.bdc@gmail.com"><i class="fa-solid fa-envelope"></i> <span>bauet.bdc@gmail.com</span></a></li>
                         <li><a href="tel:+8801712460423"><i class="fa-solid fa-phone"></i> <span>+8801712460423</span></a></li>
@@ -185,6 +197,57 @@
                 <path stroke-linecap="round" stroke-linejoin="round" d="M5 10l7-7m0 0l7 7m-7-7v18" />
             </svg>
         </a>
+    </div>
+
+    <div id="login-modal" class="fixed inset-0 hidden items-center justify-center z-50">
+        <div class="absolute inset-0 bg-black opacity-40"></div>
+        <div class="bg-white modal-panel p-6 max-w-md mx-4 z-10">
+            <div class="modal-title">
+                <span class="icon-circle-sm"><i class="fa-solid fa-right-to-bracket" aria-hidden="true"></i></span>
+                <h3 class="text-lg font-extrabold text-red-700">Login</h3>
+            </div>
+            <form id="login-form" class="mt-4">
+                <div class="mb-3 field-icon-left">
+                    <label for="login-email" class="block text-sm text-gray-600 mb-1">Email</label>
+                    <div class="input-wrap">
+                        <i class="fi fa-solid fa-at"></i>
+                        <input id="login-email" type="email" required
+                            class="w-full rounded-lg border-2 border-gray-100 bg-white p-3 shadow-sm focus:border-red-300 focus:outline-none" />
+                    </div>
+                </div>
+                <div class="mb-3 field-icon-left field-icon-right">
+                    <label for="login-password" class="block text-sm text-gray-600 mb-1">Password</label>
+                    <div class="input-wrap">
+                        <i class="fi fa-solid fa-key"></i>
+                        <input id="login-password" type="password" required
+                            class="w-full rounded-lg border-2 border-gray-100 bg-white p-3 shadow-sm focus:border-red-300 focus:outline-none" />
+                        <button type="button" id="toggle-password" aria-label="Show password" title="Show password"
+                            class="fr">
+                            <i class="fa-solid fa-eye"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="flex items-center justify-end gap-4 mt-2">
+                    <div class="flex gap-2 items-center">
+                        <button type="submit"
+                            class="bg-gradient-to-r from-red-600 to-red-500 text-white px-4 py-2 rounded font-semibold shadow hover:from-red-700 hover:to-red-600 transition inline-flex items-center gap-2">
+                            <i class="fa-solid fa-right-to-bracket"></i>
+                            <span>Sign in</span>
+                        </button>
+                        <button id="login-cancel" type="button"
+                            class="border border-gray-300 text-gray-700 px-4 py-2 rounded font-semibold shadow hover:bg-gray-100 transition inline-flex items-center gap-2">
+                            <i class="fa-solid fa-xmark"></i>
+                            <span>Cancel</span>
+                        </button>
+                    </div>
+                </div>
+                <a id="forgot-password-link" href="#"
+                    class="block text-center mt-2 text-xs text-red-700 hover:underline hover:text-red-900 transition-colors duration-200 inline-flex items-center justify-center gap-1 w-full">
+                    <i class="fa-solid fa-circle-question"></i>
+                    <span>Forgot Password?</span>
+                </a>
+            </form>
+        </div>
     </div>
 
     <div id="success-modal" class="fixed inset-0 hidden items-center justify-center z-[60]">

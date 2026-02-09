@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>About Us - Blood Donation Community</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="shortcut icon" href="image/blood-drop.png" type="image/x-icon">
@@ -14,7 +14,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
         crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="assets/css/common.css">
-    <link rel="stylesheet" href="assets/css/about.css">
     <meta name="description"
         content="Learn about Blood Donation Community - our mission, impact and how to get involved.">
     <style>
@@ -61,17 +60,22 @@
         <nav class="max-w-6xl mx-auto flex items-center justify-between px-4 sm:px-5 lg:px-6 py-2">
             <a href="index.html" class="flex items-center gap-3 text-decoration-none">
                 <img src="image/blood-drop.png" alt="logo" class="h-10 w-10 header-logo border-red-600" />
-                <span class="text-2xl font-extrabold text-red-700 tracking-tight site-title">Blood Donation
+                <span class="text-2xl font-extrabold text-red-700 tracking-tight site-title" data-i18n="siteTitle">Blood Donation
                     Community</span>
             </a>
             <div class="hidden md:flex items-center gap-1 text-base font-medium">
-                <a href="index.html" class="px-3 py-2 rounded hover:bg-red-50 text-red-700">Home</a>
-                <a href="about.html" class="px-3 py-2 rounded bg-red-50 text-red-700 font-bold">About</a>
-                <a href="donationGuide.html" class="px-3 py-2 rounded hover:bg-red-50 text-red-700">Donation Guide</a>
-                <a href="events.html" class="px-3 py-2 rounded hover:bg-red-50 text-red-700">Events</a>
-                <a href="join.html" class="px-3 py-2 rounded hover:bg-red-50 text-red-700">Join</a>
-                <a href="index.html#search" class="px-3 py-2 rounded hover:bg-red-50 text-red-700">Search</a>
-                <a href="index.html#contact" class="px-3 py-2 rounded hover:bg-red-50 text-red-700">Contact</a>
+                <a href="index.html" class="px-3 py-2 rounded hover:bg-red-50 text-red-700" data-i18n="navHome">Home</a>
+                <a href="about.html" class="px-3 py-2 rounded bg-red-50 text-red-700 font-bold" data-i18n="navAbout">About</a>
+                <a href="donationGuide.html" class="px-3 py-2 rounded hover:bg-red-50 text-red-700" data-i18n="navHow">Donation Guide</a>
+                <a href="events.html" class="px-3 py-2 rounded hover:bg-red-50 text-red-700" data-i18n="navEvents">Events</a>
+                <a href="join.html" class="px-3 py-2 rounded hover:bg-red-50 text-red-700" data-i18n="navJoin">Join</a>
+                <a href="index.html#search" class="px-3 py-2 rounded hover:bg-red-50 text-red-700" data-i18n="navSearch">Search</a>
+                <a href="index.html#contact" class="px-3 py-2 rounded hover:bg-red-50 text-red-700" data-i18n="navContact">Contact</a>
+            </div>
+            <div class="flex items-center gap-4">
+                <button id="login-btn"
+                    class="desktop-only inline-flex bg-red-600 text-white px-4 py-2 rounded-lg font-semibold shadow hover:bg-red-700 transition items-center justify-center"
+                    data-i18n="btnLogin">Login</button>
             </div>
             <div class="flex items-center gap-2">
                 <button id="menu-toggle" class="md:hidden p-2 rounded-lg bg-red-100 text-red-700 hover:bg-red-200"
@@ -85,13 +89,20 @@
         </nav>
         <div id="mobile-menu" class="md:hidden hidden bg-white/95 shadow-lg rounded-b-xl">
             <div class="px-4 py-4 flex flex-col gap-2 text-red-700">
-                <a href="index.html" class="block px-3 py-2 rounded hover:bg-red-50">Home</a>
-                <a href="about.html" class="block px-3 py-2 rounded bg-red-50 font-bold">About</a>
-                <a href="donationGuide.html" class="block px-3 py-2 rounded hover:bg-red-50">Donation Guide</a>
-                <a href="events.html" class="block px-3 py-2 rounded hover:bg-red-50">Events</a>
-                <a href="join.html" class="block px-3 py-2 rounded hover:bg-red-50">Join</a>
-                <a href="index.html#search" class="block px-3 py-2 rounded hover:bg-red-50">Search</a>
-                <a href="index.html#contact" class="block px-3 py-2 rounded hover:bg-red-50">Contact</a>
+                <a href="index.html" class="block px-3 py-2 rounded hover:bg-red-50" data-i18n="navHome">Home</a>
+                <a href="about.html" class="block px-3 py-2 rounded bg-red-50 font-bold" data-i18n="navAbout">About</a>
+                <a href="donationGuide.html" class="block px-3 py-2 rounded hover:bg-red-50" data-i18n="navHow">Donation Guide</a>
+                <a href="events.html" class="block px-3 py-2 rounded hover:bg-red-50" data-i18n="navEvents">Events</a>
+                <a href="join.html" class="block px-3 py-2 rounded hover:bg-red-50" data-i18n="navJoin">Join</a>
+                <a href="index.html#search" class="block px-3 py-2 rounded hover:bg-red-50" data-i18n="navSearch">Search</a>
+                <a href="index.html#contact" class="block px-3 py-2 rounded hover:bg-red-50" data-i18n="navContact">Contact</a>
+                <button id="mobile-login-btn"
+                    class="block text-left px-3 py-2 rounded hover:bg-red-50 text-red-700 font-medium"
+                    data-i18n="btnLogin">Login</button>
+                <button id="mobile-logout-btn"
+                    class="hidden text-left px-3 py-2 rounded hover:bg-red-50 text-red-600 font-medium">
+                    <i class="fa-solid fa-sign-out-alt"></i> Logout
+                </button>
             </div>
         </div>
     </header>
@@ -118,7 +129,7 @@
         </section>
 
         <section class="py-10">
-            <h2 class="text-2xl font-extrabold text-red-700 mb-8 text-center tracking-tight">Our Foundation</h2>
+            <h2 class="text-2xl font-extrabold text-red-700 mb-8 text-center tracking-tight" data-i18n="aboutFoundation">Our Foundation</h2>
             <div class="grid md:grid-cols-3 gap-6">
                 <div class="how-card accent-rose tint-rose rounded-xl shadow-lg p-6 text-center float-in">
                     <div class="inline-flex items-center justify-center w-14 h-14 bg-red-100 rounded-full mb-4">
@@ -133,8 +144,8 @@
                     <div class="inline-flex items-center justify-center w-14 h-14 bg-amber-100 rounded-full mb-4">
                         <i class="fa-solid fa-eye text-2xl text-amber-600"></i>
                     </div>
-                    <h3 class="text-lg font-bold text-red-700 mb-3">Our Vision</h3>
-                    <p class="text-gray-600 text-sm leading-relaxed">A world where every patient needing blood receives
+                    <h3 class="text-lg font-bold text-red-700 mb-3" data-i18n="aboutVision">Our Vision</h3>
+                    <p class="text-gray-600 text-sm leading-relaxed" data-i18n="aboutVisionText">A world where every patient needing blood receives
                         it within hours through a robust, community-powered donor network that bridges gaps between
                         hospitals and willing donors.</p>
                 </div>
@@ -142,8 +153,8 @@
                     <div class="inline-flex items-center justify-center w-14 h-14 bg-emerald-100 rounded-full mb-4">
                         <i class="fa-solid fa-heart text-2xl text-emerald-600"></i>
                     </div>
-                    <h3 class="text-lg font-bold text-red-700 mb-3">Our Values</h3>
-                    <p class="text-gray-600 text-sm leading-relaxed">Compassion, transparency, inclusivity and urgency
+                    <h3 class="text-lg font-bold text-red-700 mb-3" data-i18n="aboutValues">Our Values</h3>
+                    <p class="text-gray-600 text-sm leading-relaxed" data-i18n="aboutValuesText">Compassion, transparency, inclusivity and urgency
                         guide us. Every donor is a hero. Every drop matters. We are committed to safety, dignity and
                         gratitude in everything we do.</p>
                 </div>
@@ -159,8 +170,8 @@
                         <i class="fa-solid fa-calendar-check text-red-600 text-lg"></i>
                     </div>
                     <div>
-                        <h4 class="font-bold text-red-700 mb-1">Donation Drives & Events</h4>
-                        <p class="text-gray-600 text-sm leading-relaxed">We organize regular blood donation camps at
+                        <h4 class="font-bold text-red-700 mb-1" data-i18n="aboutDonationDrives">Donation Drives & Events</h4>
+                        <p class="text-gray-600 text-sm leading-relaxed" data-i18n="aboutDonationDrivesText">We organize regular blood donation camps at
                             universities, community centers, and public venues. Each event is staffed by trained medical
                             professionals ensuring a safe, comfortable experience for every donor.</p>
                     </div>
@@ -170,8 +181,8 @@
                         <i class="fa-solid fa-database text-red-600 text-lg"></i>
                     </div>
                     <div>
-                        <h4 class="font-bold text-red-700 mb-1">Verified Donor Registry</h4>
-                        <p class="text-gray-600 text-sm leading-relaxed">Our searchable registry connects patients with
+                        <h4 class="font-bold text-red-700 mb-1" data-i18n="aboutDonorRegistry">Verified Donor Registry</h4>
+                        <p class="text-gray-600 text-sm leading-relaxed" data-i18n="aboutDonorRegistryText">Our searchable registry connects patients with
                             verified donors by blood group and location. Donors can manage their profiles, track
                             donation history, and receive notifications about nearby needs.</p>
                     </div>
@@ -181,8 +192,8 @@
                         <i class="fa-solid fa-truck-medical text-red-600 text-lg"></i>
                     </div>
                     <div>
-                        <h4 class="font-bold text-red-700 mb-1">Emergency Matching</h4>
-                        <p class="text-gray-600 text-sm leading-relaxed">In critical situations, we rapidly match
+                        <h4 class="font-bold text-red-700 mb-1" data-i18n="aboutEmergencyMatching">Emergency Matching</h4>
+                        <p class="text-gray-600 text-sm leading-relaxed" data-i18n="aboutEmergencyMatchingText">In critical situations, we rapidly match
                             patients with compatible donors. Our alert system notifies nearby eligible donors instantly,
                             reducing wait times and saving precious minutes when lives hang in the balance.</p>
                     </div>
@@ -192,8 +203,8 @@
                         <i class="fa-solid fa-graduation-cap text-red-600 text-lg"></i>
                     </div>
                     <div>
-                        <h4 class="font-bold text-red-700 mb-1">Awareness & Education</h4>
-                        <p class="text-gray-600 text-sm leading-relaxed">We run campaigns to bust myths about blood
+                        <h4 class="font-bold text-red-700 mb-1" data-i18n="aboutAwareness">Awareness & Education</h4>
+                        <p class="text-gray-600 text-sm leading-relaxed" data-i18n="aboutAwarenessText">We run campaigns to bust myths about blood
                             donation, educate the public on eligibility requirements, and inspire first-time donors
                             through success stories and community outreach programs.</p>
                     </div>
@@ -202,37 +213,37 @@
         </section>
 
         <section class="py-10">
-            <h2 class="text-2xl font-extrabold text-red-700 mb-8 text-center tracking-tight">Why Donate Blood?</h2>
+            <h2 class="text-2xl font-extrabold text-red-700 mb-8 text-center tracking-tight" data-i18n="aboutWhyDonate">Why Donate Blood?</h2>
             <div class="grid md:grid-cols-2 gap-6">
                 <div class="how-card accent-indigo tint-indigo rounded-xl shadow p-6 float-in">
                     <h4 class="font-bold text-red-700 mb-3 flex items-center gap-2">
-                        <i class="fa-solid fa-droplet text-red-500"></i> Save Up to 3 Lives
+                        <i class="fa-solid fa-droplet text-red-500"></i> <span data-i18n="aboutSave3Lives">Save Up to 3 Lives</span>
                     </h4>
-                    <p class="text-gray-600 text-sm leading-relaxed">A single whole blood donation can be separated into
+                    <p class="text-gray-600 text-sm leading-relaxed" data-i18n="aboutSave3LivesText">A single whole blood donation can be separated into
                         red blood cells, platelets, and plasma - each component can help a different patient. One act of
                         generosity, three chances at life.</p>
                 </div>
                 <div class="how-card accent-indigo tint-indigo rounded-xl shadow p-6 float-in">
                     <h4 class="font-bold text-red-700 mb-3 flex items-center gap-2">
-                        <i class="fa-solid fa-clock text-red-500"></i> Quick & Safe Process
+                        <i class="fa-solid fa-clock text-red-500"></i> <span data-i18n="aboutQuickSafe">Quick & Safe Process</span>
                     </h4>
-                    <p class="text-gray-600 text-sm leading-relaxed">The actual donation takes only 8-10 minutes.
+                    <p class="text-gray-600 text-sm leading-relaxed" data-i18n="aboutQuickSafeText">The actual donation takes only 8-10 minutes.
                         Sterile, single-use equipment is always used. Professional medical staff supervise the entire
                         process to ensure your safety and comfort.</p>
                 </div>
                 <div class="how-card accent-indigo tint-indigo rounded-xl shadow p-6 float-in">
                     <h4 class="font-bold text-red-700 mb-3 flex items-center gap-2">
-                        <i class="fa-solid fa-stethoscope text-red-500"></i> Free Health Check
+                        <i class="fa-solid fa-stethoscope text-red-500"></i> <span data-i18n="aboutFreeHealth">Free Health Check</span>
                     </h4>
-                    <p class="text-gray-600 text-sm leading-relaxed">Before every donation, you receive a mini health
+                    <p class="text-gray-600 text-sm leading-relaxed" data-i18n="aboutFreeHealthText">Before every donation, you receive a mini health
                         screening including blood pressure, hemoglobin levels, and pulse check. Your blood is also
                         tested for infections, helping you stay informed about your health.</p>
                 </div>
                 <div class="how-card accent-indigo tint-indigo rounded-xl shadow p-6 float-in">
                     <h4 class="font-bold text-red-700 mb-3 flex items-center gap-2">
-                        <i class="fa-solid fa-rotate text-red-500"></i> Body Replenishes Quickly
+                        <i class="fa-solid fa-rotate text-red-500"></i> <span data-i18n="aboutBodyReplenish">Body Replenishes Quickly</span>
                     </h4>
-                    <p class="text-gray-600 text-sm leading-relaxed">Your body replaces the donated blood volume within
+                    <p class="text-gray-600 text-sm leading-relaxed" data-i18n="aboutBodyReplenishText">Your body replaces the donated blood volume within
                         24-48 hours. Red blood cells are fully regenerated within 4-6 weeks. Regular donation stimulates
                         the production of new, healthy blood cells.</p>
                 </div>
@@ -252,17 +263,17 @@
                     <a href="join.html"
                         class="inline-flex items-center gap-2 bg-red-600 text-white px-6 py-3 rounded-lg font-semibold shadow hover:bg-red-700 btn-breathe">
                         <i class="fa-solid fa-user-plus"></i>
-                        <span>Join as a Donor</span>
+                        <span data-i18n="aboutJoinAsDonor">Join as a Donor</span>
                     </a>
                     <a href="events.html"
                         class="inline-flex items-center gap-2 border-2 border-red-600 text-red-700 px-6 py-3 rounded-lg font-semibold hover:bg-red-50">
                         <i class="fa-solid fa-calendar-days"></i>
-                        <span>View Events</span>
+                        <span data-i18n="aboutViewEvents">View Events</span>
                     </a>
                     <a href="index.html#contact"
                         class="inline-flex items-center gap-2 border-2 border-gray-300 text-gray-700 px-6 py-3 rounded-lg font-semibold hover:bg-gray-50">
                         <i class="fa-solid fa-envelope"></i>
-                        <span>Contact Us</span>
+                        <span data-i18n="aboutContactUs">Contact Us</span>
                     </a>
                 </div>
             </div>
@@ -281,7 +292,7 @@
                         <img src="image/blood-drop.png" alt="Blood Donation Community" />
                         <span data-i18n="siteTitle">Blood Donation Community</span>
                     </div>
-                    <p>A passionate, volunteer-driven organization dedicated to saving lives through the power of blood
+                    <p data-i18n="footerBrandDesc">A passionate, volunteer-driven organization dedicated to saving lives through the power of blood
                         donation. We connect donors with patients in urgent need.</p>
                     <div class="footer-socials mt-2">
                         <a href="https://github.com/MueidShahriar" class="social-github" aria-label="GitHub" target="_blank"
@@ -299,7 +310,7 @@
                     </div>
                 </div>
                 <div>
-                    <h4 class="footer-col-title">QUICK LINKS</h4>
+                    <h4 class="footer-col-title" data-i18n="footerQuickLinks">QUICK LINKS</h4>
                     <ul class="footer-links">
                         <li><a href="about.html"><i class="fa-solid fa-chevron-right"></i> <span
                                     data-i18n="navAbout">About</span></a></li>
@@ -314,7 +325,7 @@
                     </ul>
                 </div>
                 <div>
-                    <h4 class="footer-col-title">Contact Info</h4>
+                    <h4 class="footer-col-title" data-i18n="footerContactInfo">Contact Info</h4>
                     <ul class="footer-links">
                         <li><a href="mailto:bauet.bdc@gmail.com"><i class="fa-solid fa-envelope"></i>
                                 <span>bauet.bdc@gmail.com</span></a></li>
@@ -354,7 +365,69 @@
         </a>
     </div>
 
-    <script src="assets/js/viewport.js"></script>
+    <div id="login-modal" class="fixed inset-0 hidden items-center justify-center z-50">
+        <div class="absolute inset-0 bg-black opacity-40"></div>
+        <div class="bg-white modal-panel p-6 max-w-md mx-4 z-10">
+            <div class="modal-title">
+                <span class="icon-circle-sm"><i class="fa-solid fa-right-to-bracket" aria-hidden="true"></i></span>
+                <h3 class="text-lg font-extrabold text-red-700" data-i18n="loginTitle">Login</h3>
+            </div>
+            <form id="login-form" class="mt-4">
+                <div class="mb-3 field-icon-left">
+                    <label for="login-email" class="block text-sm text-gray-600 mb-1" data-i18n="loginEmail">Email</label>
+                    <div class="input-wrap">
+                        <i class="fi fa-solid fa-at"></i>
+                        <input id="login-email" type="email" required
+                            class="w-full rounded-lg border-2 border-gray-100 bg-white p-3 shadow-sm focus:border-red-300 focus:outline-none" />
+                    </div>
+                </div>
+                <div class="mb-3 field-icon-left field-icon-right">
+                    <label for="login-password" class="block text-sm text-gray-600 mb-1" data-i18n="loginPassword">Password</label>
+                    <div class="input-wrap">
+                        <i class="fi fa-solid fa-key"></i>
+                        <input id="login-password" type="password" required
+                            class="w-full rounded-lg border-2 border-gray-100 bg-white p-3 shadow-sm focus:border-red-300 focus:outline-none" />
+                        <button type="button" id="toggle-password" aria-label="Show password" title="Show password"
+                            class="fr">
+                            <i class="fa-solid fa-eye"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="flex items-center justify-end gap-4 mt-2">
+                    <div class="flex gap-2 items-center">
+                        <button type="submit"
+                            class="bg-gradient-to-r from-red-600 to-red-500 text-white px-4 py-2 rounded font-semibold shadow hover:from-red-700 hover:to-red-600 transition inline-flex items-center gap-2">
+                            <i class="fa-solid fa-right-to-bracket"></i>
+                            <span data-i18n="loginSignIn">Sign in</span>
+                        </button>
+                        <button id="login-cancel" type="button"
+                            class="border border-gray-300 text-gray-700 px-4 py-2 rounded font-semibold shadow hover:bg-gray-100 transition inline-flex items-center gap-2">
+                            <i class="fa-solid fa-xmark"></i>
+                            <span data-i18n="modalCancel">Cancel</span>
+                        </button>
+                    </div>
+                </div>
+                <a id="forgot-password-link" href="#"
+                    class="block text-center mt-2 text-xs text-red-700 hover:underline hover:text-red-900 transition-colors duration-200 inline-flex items-center justify-center gap-1 w-full">
+                    <i class="fa-solid fa-circle-question"></i>
+                    <span data-i18n="loginForgotPassword">Forgot Password?</span>
+                </a>
+            </form>
+        </div>
+    </div>
+
+    <div id="success-modal" class="fixed inset-0 hidden items-center justify-center z-[60]">
+        <div class="absolute inset-0 bg-black opacity-40"></div>
+        <div class="bg-white rounded-lg shadow-xl p-6 max-w-md mx-4 z-10">
+            <h3 class="text-lg font-bold text-red-700">Success!</h3>
+            <p class="mt-2 text-gray-700"></p>
+            <div class="mt-4 text-right">
+                <button id="success-close" class="px-4 py-2 bg-red-600 text-white rounded">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="assets/js/viewport.js" defer></script>
     <script type="module" src="assets/js/page-common.js"></script>
 </body>
 

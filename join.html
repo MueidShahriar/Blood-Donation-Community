@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Join Us - Blood Donation Community</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="shortcut icon" href="image/blood-drop.png" type="image/x-icon">
@@ -52,6 +52,11 @@
                 <a href="index.html#search" class="px-3 py-2 rounded hover:bg-red-50 text-red-700">Search</a>
                 <a href="index.html#contact" class="px-3 py-2 rounded hover:bg-red-50 text-red-700">Contact</a>
             </div>
+            <div class="flex items-center gap-4">
+                <button id="login-btn"
+                    class="desktop-only inline-flex bg-red-600 text-white px-4 py-2 rounded-lg font-semibold shadow hover:bg-red-700 transition items-center justify-center"
+                    data-i18n="btnLogin">Login</button>
+            </div>
             <div class="flex items-center gap-2">
                 <button id="menu-toggle" class="md:hidden p-2 rounded-lg bg-red-100 text-red-700 hover:bg-red-200"
                     aria-label="Open menu" type="button">
@@ -71,15 +76,22 @@
                 <a href="join.html" class="block px-3 py-2 rounded bg-red-50 font-bold">Join</a>
                 <a href="index.html#search" class="block px-3 py-2 rounded hover:bg-red-50">Search</a>
                 <a href="index.html#contact" class="block px-3 py-2 rounded hover:bg-red-50">Contact</a>
+                <button id="mobile-login-btn"
+                    class="block text-left px-3 py-2 rounded hover:bg-red-50 text-red-700 font-medium"
+                    data-i18n="btnLogin">Login</button>
+                <button id="mobile-logout-btn"
+                    class="hidden text-left px-3 py-2 rounded hover:bg-red-50 text-red-600 font-medium">
+                    <i class="fa-solid fa-sign-out-alt"></i> Logout
+                </button>
             </div>
         </div>
     </header>
 
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.6/dist/chart.umd.min.js"></script>
-    <script src="assets/js/viewport.js"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" defer></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.6/dist/chart.umd.min.js" defer></script>
+    <script src="assets/js/viewport.js" defer></script>
     <script type="module" src="assets/js/app.js"></script>
 
     <main class="max-w-6xl mx-auto px-4 sm:px-4 lg:px-6 pt-24 pb-12">
@@ -219,7 +231,7 @@
                         <img src="image/blood-drop.png" alt="Blood Donation Community" />
                         <span data-i18n="siteTitle">Blood Donation Community</span>
                     </div>
-                    <p>A passionate, volunteer-driven organization dedicated to saving lives through the power of blood donation. We connect donors with patients in urgent need.</p>
+                    <p data-i18n="footerBrandDesc">A passionate, volunteer-driven organization dedicated to saving lives through the power of blood donation. We connect donors with patients in urgent need.</p>
                     <div class="footer-socials mt-2">
                         <a href="https://github.com/MueidShahriar" class="social-github" aria-label="GitHub" target="_blank" rel="noopener noreferrer">
                             <i class="fab fa-github"></i>
@@ -233,7 +245,7 @@
                     </div>
                 </div>
                 <div>
-                    <h4 class="footer-col-title">QUICK LINKS</h4>
+                    <h4 class="footer-col-title" data-i18n="footerQuickLinks">QUICK LINKS</h4>
                     <ul class="footer-links">
                         <li><a href="about.html"><i class="fa-solid fa-chevron-right"></i> <span data-i18n="navAbout">About</span></a></li>
                         <li><a href="donationGuide.html"><i class="fa-solid fa-chevron-right"></i> <span data-i18n="navHow">Donation Guide</span></a></li>
@@ -243,7 +255,7 @@
                     </ul>
                 </div>
                 <div>
-                    <h4 class="footer-col-title">Contact Info</h4>
+                    <h4 class="footer-col-title" data-i18n="footerContactInfo">Contact Info</h4>
                     <ul class="footer-links">
                         <li><a href="mailto:bauet.bdc@gmail.com"><i class="fa-solid fa-envelope"></i> <span>bauet.bdc@gmail.com</span></a></li>
                         <li><a href="tel:+8801712460423"><i class="fa-solid fa-phone"></i> <span>+8801712460423</span></a></li>

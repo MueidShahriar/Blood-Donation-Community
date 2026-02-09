@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Donation Guide - Blood Donation Community</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="shortcut icon" href="image/blood-drop.png" type="image/x-icon">
@@ -14,7 +14,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
         crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="assets/css/common.css">
-    <link rel="stylesheet" href="assets/css/donationGuide.css">
     <meta name="description" content="Learn how to donate blood - eligibility, registration process, and donation steps.">
     <style>
         #page-loader{position:fixed;top:0;left:0;width:100%;height:100%;background:#fff;z-index:9999;display:flex;justify-content:center;align-items:center}
@@ -40,16 +39,21 @@
         <nav class="max-w-6xl mx-auto flex items-center justify-between px-4 sm:px-5 lg:px-6 py-2">
             <a href="index.html" class="flex items-center gap-3 text-decoration-none">
                 <img src="image/blood-drop.png" alt="logo" class="h-10 w-10 header-logo border-red-600" />
-                <span class="text-2xl font-extrabold text-red-700 tracking-tight site-title">Blood Donation Community</span>
+                <span class="text-2xl font-extrabold text-red-700 tracking-tight site-title" data-i18n="siteTitle">Blood Donation Community</span>
             </a>
             <div class="hidden md:flex items-center gap-1 text-base font-medium">
-                <a href="index.html" class="px-3 py-2 rounded hover:bg-red-50 text-red-700">Home</a>
-                <a href="about.html" class="px-3 py-2 rounded hover:bg-red-50 text-red-700">About</a>
-                <a href="donationGuide.html" class="px-3 py-2 rounded bg-red-50 text-red-700 font-bold">Donation Guide</a>
-                <a href="events.html" class="px-3 py-2 rounded hover:bg-red-50 text-red-700">Events</a>
-                <a href="join.html" class="px-3 py-2 rounded hover:bg-red-50 text-red-700">Join</a>
-                <a href="index.html#search" class="px-3 py-2 rounded hover:bg-red-50 text-red-700">Search</a>
-                <a href="index.html#contact" class="px-3 py-2 rounded hover:bg-red-50 text-red-700">Contact</a>
+                <a href="index.html" class="px-3 py-2 rounded hover:bg-red-50 text-red-700" data-i18n="navHome">Home</a>
+                <a href="about.html" class="px-3 py-2 rounded hover:bg-red-50 text-red-700" data-i18n="navAbout">About</a>
+                <a href="donationGuide.html" class="px-3 py-2 rounded bg-red-50 text-red-700 font-bold" data-i18n="navHow">Donation Guide</a>
+                <a href="events.html" class="px-3 py-2 rounded hover:bg-red-50 text-red-700" data-i18n="navEvents">Events</a>
+                <a href="join.html" class="px-3 py-2 rounded hover:bg-red-50 text-red-700" data-i18n="navJoin">Join</a>
+                <a href="index.html#search" class="px-3 py-2 rounded hover:bg-red-50 text-red-700" data-i18n="navSearch">Search</a>
+                <a href="index.html#contact" class="px-3 py-2 rounded hover:bg-red-50 text-red-700" data-i18n="navContact">Contact</a>
+            </div>
+            <div class="flex items-center gap-4">
+                <button id="login-btn"
+                    class="desktop-only inline-flex bg-red-600 text-white px-4 py-2 rounded-lg font-semibold shadow hover:bg-red-700 transition items-center justify-center"
+                    data-i18n="btnLogin">Login</button>
             </div>
             <div class="flex items-center gap-2">
                 <button id="menu-toggle" class="md:hidden p-2 rounded-lg bg-red-100 text-red-700 hover:bg-red-200"
@@ -63,13 +67,20 @@
         </nav>
         <div id="mobile-menu" class="md:hidden hidden bg-white/95 shadow-lg rounded-b-xl">
             <div class="px-4 py-4 flex flex-col gap-2 text-red-700">
-                <a href="index.html" class="block px-3 py-2 rounded hover:bg-red-50">Home</a>
-                <a href="about.html" class="block px-3 py-2 rounded hover:bg-red-50">About</a>
-                <a href="donationGuide.html" class="block px-3 py-2 rounded bg-red-50 font-bold">Donation Guide</a>
-                <a href="events.html" class="block px-3 py-2 rounded hover:bg-red-50">Events</a>
-                <a href="join.html" class="block px-3 py-2 rounded hover:bg-red-50">Join</a>
-                <a href="index.html#search" class="block px-3 py-2 rounded hover:bg-red-50">Search</a>
-                <a href="index.html#contact" class="block px-3 py-2 rounded hover:bg-red-50">Contact</a>
+                <a href="index.html" class="block px-3 py-2 rounded hover:bg-red-50" data-i18n="navHome">Home</a>
+                <a href="about.html" class="block px-3 py-2 rounded hover:bg-red-50" data-i18n="navAbout">About</a>
+                <a href="donationGuide.html" class="block px-3 py-2 rounded bg-red-50 font-bold" data-i18n="navHow">Donation Guide</a>
+                <a href="events.html" class="block px-3 py-2 rounded hover:bg-red-50" data-i18n="navEvents">Events</a>
+                <a href="join.html" class="block px-3 py-2 rounded hover:bg-red-50" data-i18n="navJoin">Join</a>
+                <a href="index.html#search" class="block px-3 py-2 rounded hover:bg-red-50" data-i18n="navSearch">Search</a>
+                <a href="index.html#contact" class="block px-3 py-2 rounded hover:bg-red-50" data-i18n="navContact">Contact</a>
+                <button id="mobile-login-btn"
+                    class="block text-left px-3 py-2 rounded hover:bg-red-50 text-red-700 font-medium"
+                    data-i18n="btnLogin">Login</button>
+                <button id="mobile-logout-btn"
+                    class="hidden text-left px-3 py-2 rounded hover:bg-red-50 text-red-600 font-medium">
+                    <i class="fa-solid fa-sign-out-alt"></i> Logout
+                </button>
             </div>
         </div>
     </header>
@@ -88,13 +99,13 @@
                 <div class="inline-flex items-center justify-center w-10 h-10 bg-white/20 backdrop-blur rounded-full mb-2">
                     <i class="fa-solid fa-hand-holding-droplet text-base text-white"></i>
                 </div>
-                <h1 class="text-xl md:text-2xl font-extrabold tracking-tight mb-1">Donation Guide</h1>
-                <p class="max-w-xl mx-auto text-xs text-red-100">Everything you need to know before, during, and after donating blood.</p>
+                <h1 class="text-xl md:text-2xl font-extrabold tracking-tight mb-1" data-i18n="guideHeroTitle">Donation Guide</h1>
+                <p class="max-w-xl mx-auto text-xs text-red-100" data-i18n="guideHeroSubtitle">Everything you need to know before, during, and after donating blood.</p>
             </div>
         </section>
 
         <section id="how" class="py-10">
-            <h2 class="text-2xl font-extrabold text-red-700 mb-8 tracking-tight text-center">3 Simple Steps</h2>
+            <h2 class="text-2xl font-extrabold text-red-700 mb-8 tracking-tight text-center" data-i18n="guide3Steps">3 Simple Steps</h2>
             <div class="how-sticky-container">
                 <div class="grid md:grid-cols-3 gap-6">
                     <article class="how-card accent-amber tint-amber rounded-xl shadow-lg p-6 transform transition hover:scale-105 float-in">
@@ -134,147 +145,147 @@
         </section>
 
         <section id="eligibility-detail" class="py-10">
-            <h2 class="text-2xl font-extrabold text-red-700 mb-8 text-center tracking-tight">Eligibility Requirements</h2>
+            <h2 class="text-2xl font-extrabold text-red-700 mb-8 text-center tracking-tight" data-i18n="guideEligibilityTitle">Eligibility Requirements</h2>
             <div class="grid md:grid-cols-2 gap-6">
                 <div class="how-card tint-emerald rounded-xl shadow p-6 float-in">
                     <h4 class="font-bold text-emerald-700 mb-3 flex items-center gap-2">
-                        <i class="fa-solid fa-circle-check text-emerald-500"></i> You CAN Donate If
+                        <i class="fa-solid fa-circle-check text-emerald-500"></i> <span data-i18n="guideCanDonate">You CAN Donate If</span>
                     </h4>
                     <ul class="space-y-2 text-sm text-gray-900">
-                        <li class="flex items-start gap-2"><i class="fa-solid fa-check text-emerald-500 mt-1 text-xs"></i> You are between 18 and 60 years old</li>
-                        <li class="flex items-start gap-2"><i class="fa-solid fa-check text-emerald-500 mt-1 text-xs"></i> You weigh at least 50 kg (110 lbs)</li>
-                        <li class="flex items-start gap-2"><i class="fa-solid fa-check text-emerald-500 mt-1 text-xs"></i> You are in good general health and feeling well</li>
-                        <li class="flex items-start gap-2"><i class="fa-solid fa-check text-emerald-500 mt-1 text-xs"></i> At least 90 days have passed since your last whole blood donation</li>
-                        <li class="flex items-start gap-2"><i class="fa-solid fa-check text-emerald-500 mt-1 text-xs"></i> Your hemoglobin level is above 12.5 g/dL (female) or 13.0 g/dL (male)</li>
-                        <li class="flex items-start gap-2"><i class="fa-solid fa-check text-emerald-500 mt-1 text-xs"></i> You have no fever, cold, or flu symptoms</li>
+                        <li class="flex items-start gap-2"><i class="fa-solid fa-check text-emerald-500 mt-1 text-xs"></i> <span data-i18n="guideElig1">You are between 18 and 60 years old</span></li>
+                        <li class="flex items-start gap-2"><i class="fa-solid fa-check text-emerald-500 mt-1 text-xs"></i> <span data-i18n="guideElig2">You weigh at least 50 kg (110 lbs)</span></li>
+                        <li class="flex items-start gap-2"><i class="fa-solid fa-check text-emerald-500 mt-1 text-xs"></i> <span data-i18n="guideElig3">You are in good general health and feeling well</span></li>
+                        <li class="flex items-start gap-2"><i class="fa-solid fa-check text-emerald-500 mt-1 text-xs"></i> <span data-i18n="guideElig4">At least 90 days have passed since your last whole blood donation</span></li>
+                        <li class="flex items-start gap-2"><i class="fa-solid fa-check text-emerald-500 mt-1 text-xs"></i> <span data-i18n="guideElig5">Your hemoglobin level is above 12.5 g/dL (female) or 13.0 g/dL (male)</span></li>
+                        <li class="flex items-start gap-2"><i class="fa-solid fa-check text-emerald-500 mt-1 text-xs"></i> <span data-i18n="guideElig6">You have no fever, cold, or flu symptoms</span></li>
                     </ul>
                 </div>
                 <div class="how-card tint-rose rounded-xl shadow p-6 float-in">
                     <h4 class="font-bold text-red-700 mb-3 flex items-center gap-2">
-                        <i class="fa-solid fa-circle-xmark text-red-500"></i> You Should Wait If
+                        <i class="fa-solid fa-circle-xmark text-red-500"></i> <span data-i18n="guideShouldWait">You Should Wait If</span>
                     </h4>
                     <ul class="space-y-2 text-sm text-gray-900">
-                        <li class="flex items-start gap-2"><i class="fa-solid fa-xmark text-red-400 mt-1 text-xs"></i> You have taken antibiotics in the last 7 days</li>
-                        <li class="flex items-start gap-2"><i class="fa-solid fa-xmark text-red-400 mt-1 text-xs"></i> You have had a tattoo or piercing in the last 6 months</li>
-                        <li class="flex items-start gap-2"><i class="fa-solid fa-xmark text-red-400 mt-1 text-xs"></i> You are pregnant, breastfeeding, or had a baby in the last 6 months</li>
-                        <li class="flex items-start gap-2"><i class="fa-solid fa-xmark text-red-400 mt-1 text-xs"></i> You had major surgery in the last 6 months</li>
-                        <li class="flex items-start gap-2"><i class="fa-solid fa-xmark text-red-400 mt-1 text-xs"></i> You recently traveled to a malaria-endemic area</li>
-                        <li class="flex items-start gap-2"><i class="fa-solid fa-xmark text-red-400 mt-1 text-xs"></i> You have an active infection or are on certain medications</li>
+                        <li class="flex items-start gap-2"><i class="fa-solid fa-xmark text-red-400 mt-1 text-xs"></i> <span data-i18n="guideWait1">You have taken antibiotics in the last 7 days</span></li>
+                        <li class="flex items-start gap-2"><i class="fa-solid fa-xmark text-red-400 mt-1 text-xs"></i> <span data-i18n="guideWait2">You have had a tattoo or piercing in the last 6 months</span></li>
+                        <li class="flex items-start gap-2"><i class="fa-solid fa-xmark text-red-400 mt-1 text-xs"></i> <span data-i18n="guideWait3">You are pregnant, breastfeeding, or had a baby in the last 6 months</span></li>
+                        <li class="flex items-start gap-2"><i class="fa-solid fa-xmark text-red-400 mt-1 text-xs"></i> <span data-i18n="guideWait4">You had major surgery in the last 6 months</span></li>
+                        <li class="flex items-start gap-2"><i class="fa-solid fa-xmark text-red-400 mt-1 text-xs"></i> <span data-i18n="guideWait5">You recently traveled to a malaria-endemic area</span></li>
+                        <li class="flex items-start gap-2"><i class="fa-solid fa-xmark text-red-400 mt-1 text-xs"></i> <span data-i18n="guideWait6">You have an active infection or are on certain medications</span></li>
                     </ul>
                 </div>
             </div>
         </section>
 
         <section class="py-10">
-            <h2 class="text-2xl font-extrabold text-red-700 mb-8 text-center tracking-tight">Your Donation Journey</h2>
+            <h2 class="text-2xl font-extrabold text-red-700 mb-8 text-center tracking-tight" data-i18n="guideDonationJourney">Your Donation Journey</h2>
             <div class="grid md:grid-cols-3 gap-6">
                 <div class="how-card accent-amber tint-amber rounded-xl shadow-lg p-6 float-in">
                     <div class="flex items-center gap-3 mb-4">
                         <span class="inline-flex items-center justify-center w-10 h-10 bg-amber-200 text-amber-800 rounded-full font-extrabold text-lg">1</span>
-                        <h4 class="font-bold text-red-700">Before Donation</h4>
+                        <h4 class="font-bold text-red-700" data-i18n="guideBefore">Before Donation</h4>
                     </div>
                     <ul class="space-y-2 text-sm text-gray-900">
-                        <li class="flex gap-2"><i class="fa-solid fa-utensils text-amber-500 mt-0.5"></i> Eat a healthy, iron-rich meal 2-3 hours before</li>
-                        <li class="flex gap-2"><i class="fa-solid fa-glass-water text-amber-500 mt-0.5"></i> Drink plenty of water (at least 500ml extra)</li>
-                        <li class="flex gap-2"><i class="fa-solid fa-bed text-amber-500 mt-0.5"></i> Get a good night's sleep (7-8 hours)</li>
-                        <li class="flex gap-2"><i class="fa-solid fa-id-card text-amber-500 mt-0.5"></i> Bring a valid photo ID</li>
-                        <li class="flex gap-2"><i class="fa-solid fa-shirt text-amber-500 mt-0.5"></i> Wear loose, comfortable sleeves</li>
-                        <li class="flex gap-2"><i class="fa-solid fa-ban text-amber-500 mt-0.5"></i> Avoid alcohol for 24 hours before</li>
+                        <li class="flex gap-2"><i class="fa-solid fa-utensils text-amber-500 mt-0.5"></i> <span data-i18n="guideBefore1">Eat a healthy, iron-rich meal 2-3 hours before</span></li>
+                        <li class="flex gap-2"><i class="fa-solid fa-glass-water text-amber-500 mt-0.5"></i> <span data-i18n="guideBefore2">Drink plenty of water (at least 500ml extra)</span></li>
+                        <li class="flex gap-2"><i class="fa-solid fa-bed text-amber-500 mt-0.5"></i> <span data-i18n="guideBefore3">Get a good night's sleep (7-8 hours)</span></li>
+                        <li class="flex gap-2"><i class="fa-solid fa-id-card text-amber-500 mt-0.5"></i> <span data-i18n="guideBefore4">Bring a valid photo ID</span></li>
+                        <li class="flex gap-2"><i class="fa-solid fa-shirt text-amber-500 mt-0.5"></i> <span data-i18n="guideBefore5">Wear loose, comfortable sleeves</span></li>
+                        <li class="flex gap-2"><i class="fa-solid fa-ban text-amber-500 mt-0.5"></i> <span data-i18n="guideBefore6">Avoid alcohol for 24 hours before</span></li>
                     </ul>
                 </div>
                 <div class="how-card accent-rose tint-rose rounded-xl shadow-lg p-6 float-in">
                     <div class="flex items-center gap-3 mb-4">
                         <span class="inline-flex items-center justify-center w-10 h-10 bg-red-200 text-red-800 rounded-full font-extrabold text-lg">2</span>
-                        <h4 class="font-bold text-red-700">During Donation</h4>
+                        <h4 class="font-bold text-red-700" data-i18n="guideDuring">During Donation</h4>
                     </div>
                     <ul class="space-y-2 text-sm text-gray-900">
-                        <li class="flex gap-2"><i class="fa-solid fa-clipboard-list text-red-400 mt-0.5"></i> Complete a brief health questionnaire</li>
-                        <li class="flex gap-2"><i class="fa-solid fa-stethoscope text-red-400 mt-0.5"></i> Quick health check (BP, pulse, hemoglobin)</li>
-                        <li class="flex gap-2"><i class="fa-solid fa-syringe text-red-400 mt-0.5"></i> Sterile needle insertion (slight pinch)</li>
-                        <li class="flex gap-2"><i class="fa-solid fa-clock text-red-400 mt-0.5"></i> Relax for 8-10 minutes while donating ~450ml</li>
-                        <li class="flex gap-2"><i class="fa-solid fa-hand text-red-400 mt-0.5"></i> Gently squeeze the provided ball periodically</li>
-                        <li class="flex gap-2"><i class="fa-solid fa-user-nurse text-red-400 mt-0.5"></i> Medical staff monitor you throughout</li>
+                        <li class="flex gap-2"><i class="fa-solid fa-clipboard-list text-red-400 mt-0.5"></i> <span data-i18n="guideDuring1">Complete a brief health questionnaire</span></li>
+                        <li class="flex gap-2"><i class="fa-solid fa-stethoscope text-red-400 mt-0.5"></i> <span data-i18n="guideDuring2">Quick health check (BP, pulse, hemoglobin)</span></li>
+                        <li class="flex gap-2"><i class="fa-solid fa-syringe text-red-400 mt-0.5"></i> <span data-i18n="guideDuring3">Sterile needle insertion (slight pinch)</span></li>
+                        <li class="flex gap-2"><i class="fa-solid fa-clock text-red-400 mt-0.5"></i> <span data-i18n="guideDuring4">Relax for 8-10 minutes while donating ~450ml</span></li>
+                        <li class="flex gap-2"><i class="fa-solid fa-hand text-red-400 mt-0.5"></i> <span data-i18n="guideDuring5">Gently squeeze the provided ball periodically</span></li>
+                        <li class="flex gap-2"><i class="fa-solid fa-user-nurse text-red-400 mt-0.5"></i> <span data-i18n="guideDuring6">Medical staff monitor you throughout</span></li>
                     </ul>
                 </div>
                 <div class="how-card accent-emerald tint-emerald rounded-xl shadow-lg p-6 float-in">
                     <div class="flex items-center gap-3 mb-4">
                         <span class="inline-flex items-center justify-center w-10 h-10 bg-emerald-200 text-emerald-800 rounded-full font-extrabold text-lg">3</span>
-                        <h4 class="font-bold text-red-700">After Donation</h4>
+                        <h4 class="font-bold text-red-700" data-i18n="guideAfter">After Donation</h4>
                     </div>
                     <ul class="space-y-2 text-sm text-gray-900">
-                        <li class="flex gap-2"><i class="fa-solid fa-cookie text-emerald-500 mt-0.5"></i> Enjoy refreshments at the resting area</li>
-                        <li class="flex gap-2"><i class="fa-solid fa-couch text-emerald-500 mt-0.5"></i> Rest for 10-15 minutes before leaving</li>
-                        <li class="flex gap-2"><i class="fa-solid fa-glass-water text-emerald-500 mt-0.5"></i> Drink extra fluids for the next 24 hours</li>
-                        <li class="flex gap-2"><i class="fa-solid fa-dumbbell text-emerald-500 mt-0.5"></i> Avoid heavy lifting or exercise for 24 hours</li>
-                        <li class="flex gap-2"><i class="fa-solid fa-bandage text-emerald-500 mt-0.5"></i> Keep the bandage on for at least 4 hours</li>
-                        <li class="flex gap-2"><i class="fa-solid fa-certificate text-emerald-500 mt-0.5"></i> Receive your donation certificate!</li>
+                        <li class="flex gap-2"><i class="fa-solid fa-cookie text-emerald-500 mt-0.5"></i> <span data-i18n="guideAfter1">Enjoy refreshments at the resting area</span></li>
+                        <li class="flex gap-2"><i class="fa-solid fa-couch text-emerald-500 mt-0.5"></i> <span data-i18n="guideAfter2">Rest for 10-15 minutes before leaving</span></li>
+                        <li class="flex gap-2"><i class="fa-solid fa-glass-water text-emerald-500 mt-0.5"></i> <span data-i18n="guideAfter3">Drink extra fluids for the next 24 hours</span></li>
+                        <li class="flex gap-2"><i class="fa-solid fa-dumbbell text-emerald-500 mt-0.5"></i> <span data-i18n="guideAfter4">Avoid heavy lifting or exercise for 24 hours</span></li>
+                        <li class="flex gap-2"><i class="fa-solid fa-bandage text-emerald-500 mt-0.5"></i> <span data-i18n="guideAfter5">Keep the bandage on for at least 4 hours</span></li>
+                        <li class="flex gap-2"><i class="fa-solid fa-certificate text-emerald-500 mt-0.5"></i> <span data-i18n="guideAfter6">Receive your donation certificate!</span></li>
                     </ul>
                 </div>
             </div>
         </section>
 
         <section class="py-10">
-            <h2 class="text-2xl font-extrabold text-red-700 mb-8 text-center tracking-tight">Blood Type Compatibility</h2>
+            <h2 class="text-2xl font-extrabold text-red-700 mb-8 text-center tracking-tight" data-i18n="guideBloodType">Blood Type Compatibility</h2>
             <div class="how-card tint-rose rounded-xl shadow-lg p-6 float-in overflow-x-auto">
                 <table class="w-full text-sm text-center border-collapse">
                     <thead>
                         <tr class="bg-red-50">
-                            <th class="border border-red-100 px-3 py-2 font-bold text-red-700">Blood Type</th>
-                            <th class="border border-red-100 px-3 py-2 font-bold text-red-700">Can Donate To</th>
-                            <th class="border border-red-100 px-3 py-2 font-bold text-red-700">Can Receive From</th>
+                            <th class="border border-red-100 px-3 py-2 font-bold text-red-700" data-i18n="guideBloodTypeCol">Blood Type</th>
+                            <th class="border border-red-100 px-3 py-2 font-bold text-red-700" data-i18n="guideCanDonateTo">Can Donate To</th>
+                            <th class="border border-red-100 px-3 py-2 font-bold text-red-700" data-i18n="guideCanReceiveFrom">Can Receive From</th>
                         </tr>
                     </thead>
                     <tbody class="text-gray-900">
-                        <tr><td class="border border-red-100 px-3 py-2 font-bold text-red-700">O-</td><td class="border border-red-100 px-3 py-2">All Types (Universal Donor)</td><td class="border border-red-100 px-3 py-2">O-</td></tr>
+                        <tr><td class="border border-red-100 px-3 py-2 font-bold text-red-700">O-</td><td class="border border-red-100 px-3 py-2" data-i18n="guideUniversalDonor">All Types (Universal Donor)</td><td class="border border-red-100 px-3 py-2">O-</td></tr>
                         <tr class="bg-red-50/30"><td class="border border-red-100 px-3 py-2 font-bold text-red-700">O+</td><td class="border border-red-100 px-3 py-2">O+, A+, B+, AB+</td><td class="border border-red-100 px-3 py-2">O+, O-</td></tr>
                         <tr><td class="border border-red-100 px-3 py-2 font-bold text-red-700">A-</td><td class="border border-red-100 px-3 py-2">A-, A+, AB-, AB+</td><td class="border border-red-100 px-3 py-2">A-, O-</td></tr>
                         <tr class="bg-red-50/30"><td class="border border-red-100 px-3 py-2 font-bold text-red-700">A+</td><td class="border border-red-100 px-3 py-2">A+, AB+</td><td class="border border-red-100 px-3 py-2">A+, A-, O+, O-</td></tr>
                         <tr><td class="border border-red-100 px-3 py-2 font-bold text-red-700">B-</td><td class="border border-red-100 px-3 py-2">B-, B+, AB-, AB+</td><td class="border border-red-100 px-3 py-2">B-, O-</td></tr>
                         <tr class="bg-red-50/30"><td class="border border-red-100 px-3 py-2 font-bold text-red-700">B+</td><td class="border border-red-100 px-3 py-2">B+, AB+</td><td class="border border-red-100 px-3 py-2">B+, B-, O+, O-</td></tr>
                         <tr><td class="border border-red-100 px-3 py-2 font-bold text-red-700">AB-</td><td class="border border-red-100 px-3 py-2">AB-, AB+</td><td class="border border-red-100 px-3 py-2">A-, B-, AB-, O-</td></tr>
-                        <tr class="bg-red-50/30"><td class="border border-red-100 px-3 py-2 font-bold text-red-700">AB+</td><td class="border border-red-100 px-3 py-2">AB+</td><td class="border border-red-100 px-3 py-2">All Types (Universal Receiver)</td></tr>
+                        <tr class="bg-red-50/30"><td class="border border-red-100 px-3 py-2 font-bold text-red-700">AB+</td><td class="border border-red-100 px-3 py-2">AB+</td><td class="border border-red-100 px-3 py-2" data-i18n="guideUniversalReceiver">All Types (Universal Receiver)</td></tr>
                     </tbody>
                 </table>
             </div>
         </section>
 
         <section class="py-10">
-            <h2 class="text-2xl font-extrabold text-red-700 mb-8 text-center tracking-tight">Frequently Asked Questions</h2>
+            <h2 class="text-2xl font-extrabold text-red-700 mb-8 text-center tracking-tight" data-i18n="guideFAQ">Frequently Asked Questions</h2>
             <div class="space-y-4 max-w-3xl mx-auto">
                 <details class="how-card tint-rose rounded-xl shadow p-5 group">
                     <summary class="font-bold text-red-700 cursor-pointer flex items-center justify-between">
-                        <span>How long does the whole process take?</span>
+                        <span data-i18n="guideFAQ1Q">How long does the whole process take?</span>
                         <i class="fa-solid fa-chevron-down text-sm text-red-400 transition-transform group-open:rotate-180"></i>
                     </summary>
-                    <p class="mt-3 text-sm text-gray-900 leading-relaxed">The entire process from registration to leaving takes about 45-60 minutes. The actual blood collection only takes 8-10 minutes. The rest is registration, health screening, and post-donation rest.</p>
+                    <p class="mt-3 text-sm text-gray-900 leading-relaxed" data-i18n="guideFAQ1A">The entire process from registration to leaving takes about 45-60 minutes. The actual blood collection only takes 8-10 minutes. The rest is registration, health screening, and post-donation rest.</p>
                 </details>
                 <details class="how-card tint-rose rounded-xl shadow p-5 group">
                     <summary class="font-bold text-red-700 cursor-pointer flex items-center justify-between">
-                        <span>Does donating blood hurt?</span>
+                        <span data-i18n="guideFAQ2Q">Does donating blood hurt?</span>
                         <i class="fa-solid fa-chevron-down text-sm text-red-400 transition-transform group-open:rotate-180"></i>
                     </summary>
-                    <p class="mt-3 text-sm text-gray-900 leading-relaxed">You may feel a brief pinch when the needle is inserted, similar to a small prick. After that, most donors report little to no discomfort during the donation process. Our trained staff ensures your comfort throughout.</p>
+                    <p class="mt-3 text-sm text-gray-900 leading-relaxed" data-i18n="guideFAQ2A">You may feel a brief pinch when the needle is inserted, similar to a small prick. After that, most donors report little to no discomfort during the donation process. Our trained staff ensures your comfort throughout.</p>
                 </details>
                 <details class="how-card tint-rose rounded-xl shadow p-5 group">
                     <summary class="font-bold text-red-700 cursor-pointer flex items-center justify-between">
-                        <span>How often can I donate blood?</span>
+                        <span data-i18n="guideFAQ3Q">How often can I donate blood?</span>
                         <i class="fa-solid fa-chevron-down text-sm text-red-400 transition-transform group-open:rotate-180"></i>
                     </summary>
-                    <p class="mt-3 text-sm text-gray-900 leading-relaxed">You can donate whole blood every 90 days (about 3 months). This allows your body to fully replenish the donated blood cells. Platelet donations can be made more frequently - every 7 days, up to 24 times a year.</p>
+                    <p class="mt-3 text-sm text-gray-900 leading-relaxed" data-i18n="guideFAQ3A">You can donate whole blood every 90 days (about 3 months). This allows your body to fully replenish the donated blood cells. Platelet donations can be made more frequently - every 7 days, up to 24 times a year.</p>
                 </details>
                 <details class="how-card tint-rose rounded-xl shadow p-5 group">
                     <summary class="font-bold text-red-700 cursor-pointer flex items-center justify-between">
-                        <span>Will I feel weak after donating?</span>
+                        <span data-i18n="guideFAQ4Q">Will I feel weak after donating?</span>
                         <i class="fa-solid fa-chevron-down text-sm text-red-400 transition-transform group-open:rotate-180"></i>
                     </summary>
-                    <p class="mt-3 text-sm text-gray-900 leading-relaxed">Some donors may feel slightly lightheaded immediately after donating. This is normal and passes quickly. Eating well before, staying hydrated, and resting for 10-15 minutes afterwards helps prevent any discomfort. You can resume normal activities within a few hours.</p>
+                    <p class="mt-3 text-sm text-gray-900 leading-relaxed" data-i18n="guideFAQ4A">Some donors may feel slightly lightheaded immediately after donating. This is normal and passes quickly. Eating well before, staying hydrated, and resting for 10-15 minutes afterwards helps prevent any discomfort. You can resume normal activities within a few hours.</p>
                 </details>
                 <details class="how-card tint-rose rounded-xl shadow p-5 group">
                     <summary class="font-bold text-red-700 cursor-pointer flex items-center justify-between">
-                        <span>Is blood donation safe?</span>
+                        <span data-i18n="guideFAQ5Q">Is blood donation safe?</span>
                         <i class="fa-solid fa-chevron-down text-sm text-red-400 transition-transform group-open:rotate-180"></i>
                     </summary>
-                    <p class="mt-3 text-sm text-gray-900 leading-relaxed">Absolutely. All equipment is sterile and for single use only. There is zero risk of contracting any infection from donating blood. Every donation site follows strict medical protocols supervised by qualified healthcare professionals.</p>
+                    <p class="mt-3 text-sm text-gray-900 leading-relaxed" data-i18n="guideFAQ5A">Absolutely. All equipment is sterile and for single use only. There is zero risk of contracting any infection from donating blood. Every donation site follows strict medical protocols supervised by qualified healthcare professionals.</p>
                 </details>
             </div>
         </section>
@@ -291,7 +302,7 @@
                         <img src="image/blood-drop.png" alt="Blood Donation Community" />
                         <span data-i18n="siteTitle">Blood Donation Community</span>
                     </div>
-                    <p>A passionate, volunteer-driven organization dedicated to saving lives through the power of blood donation. We connect donors with patients in urgent need.</p>
+                    <p data-i18n="footerBrandDesc">A passionate, volunteer-driven organization dedicated to saving lives through the power of blood donation. We connect donors with patients in urgent need.</p>
                     <div class="footer-socials mt-2">
                         <a href="https://github.com/MueidShahriar" class="social-github" aria-label="GitHub" target="_blank" rel="noopener noreferrer">
                             <i class="fab fa-github"></i>
@@ -305,7 +316,7 @@
                     </div>
                 </div>
                 <div>
-                    <h4 class="footer-col-title">QUICK LINKS</h4>
+                    <h4 class="footer-col-title" data-i18n="footerQuickLinks">QUICK LINKS</h4>
                     <ul class="footer-links">
                         <li><a href="about.html"><i class="fa-solid fa-chevron-right"></i> <span data-i18n="navAbout">About</span></a></li>
                         <li><a href="donationGuide.html"><i class="fa-solid fa-chevron-right"></i> <span data-i18n="navHow">Donation Guide</span></a></li>
@@ -315,7 +326,7 @@
                     </ul>
                 </div>
                 <div>
-                    <h4 class="footer-col-title">Contact Info</h4>
+                    <h4 class="footer-col-title" data-i18n="footerContactInfo">Contact Info</h4>
                     <ul class="footer-links">
                         <li><a href="mailto:bauet.bdc@gmail.com"><i class="fa-solid fa-envelope"></i> <span>bauet.bdc@gmail.com</span></a></li>
                         <li><a href="tel:+8801712460423"><i class="fa-solid fa-phone"></i> <span>+8801712460423</span></a></li>
@@ -352,7 +363,69 @@
         </a>
     </div>
 
-    <script src="assets/js/viewport.js"></script>
+    <div id="login-modal" class="fixed inset-0 hidden items-center justify-center z-50">
+        <div class="absolute inset-0 bg-black opacity-40"></div>
+        <div class="bg-white modal-panel p-6 max-w-md mx-4 z-10">
+            <div class="modal-title">
+                <span class="icon-circle-sm"><i class="fa-solid fa-right-to-bracket" aria-hidden="true"></i></span>
+                <h3 class="text-lg font-extrabold text-red-700" data-i18n="loginTitle">Login</h3>
+            </div>
+            <form id="login-form" class="mt-4">
+                <div class="mb-3 field-icon-left">
+                    <label for="login-email" class="block text-sm text-gray-600 mb-1" data-i18n="loginEmail">Email</label>
+                    <div class="input-wrap">
+                        <i class="fi fa-solid fa-at"></i>
+                        <input id="login-email" type="email" required
+                            class="w-full rounded-lg border-2 border-gray-100 bg-white p-3 shadow-sm focus:border-red-300 focus:outline-none" />
+                    </div>
+                </div>
+                <div class="mb-3 field-icon-left field-icon-right">
+                    <label for="login-password" class="block text-sm text-gray-600 mb-1" data-i18n="loginPassword">Password</label>
+                    <div class="input-wrap">
+                        <i class="fi fa-solid fa-key"></i>
+                        <input id="login-password" type="password" required
+                            class="w-full rounded-lg border-2 border-gray-100 bg-white p-3 shadow-sm focus:border-red-300 focus:outline-none" />
+                        <button type="button" id="toggle-password" aria-label="Show password" title="Show password"
+                            class="fr">
+                            <i class="fa-solid fa-eye"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="flex items-center justify-end gap-4 mt-2">
+                    <div class="flex gap-2 items-center">
+                        <button type="submit"
+                            class="bg-gradient-to-r from-red-600 to-red-500 text-white px-4 py-2 rounded font-semibold shadow hover:from-red-700 hover:to-red-600 transition inline-flex items-center gap-2">
+                            <i class="fa-solid fa-right-to-bracket"></i>
+                            <span data-i18n="loginSignIn">Sign in</span>
+                        </button>
+                        <button id="login-cancel" type="button"
+                            class="border border-gray-300 text-gray-700 px-4 py-2 rounded font-semibold shadow hover:bg-gray-100 transition inline-flex items-center gap-2">
+                            <i class="fa-solid fa-xmark"></i>
+                            <span data-i18n="modalCancel">Cancel</span>
+                        </button>
+                    </div>
+                </div>
+                <a id="forgot-password-link" href="#"
+                    class="block text-center mt-2 text-xs text-red-700 hover:underline hover:text-red-900 transition-colors duration-200 inline-flex items-center justify-center gap-1 w-full">
+                    <i class="fa-solid fa-circle-question"></i>
+                    <span data-i18n="loginForgotPassword">Forgot Password?</span>
+                </a>
+            </form>
+        </div>
+    </div>
+
+    <div id="success-modal" class="fixed inset-0 hidden items-center justify-center z-[60]">
+        <div class="absolute inset-0 bg-black opacity-40"></div>
+        <div class="bg-white rounded-lg shadow-xl p-6 max-w-md mx-4 z-10">
+            <h3 class="text-lg font-bold text-red-700">Success!</h3>
+            <p class="mt-2 text-gray-700"></p>
+            <div class="mt-4 text-right">
+                <button id="success-close" class="px-4 py-2 bg-red-600 text-white rounded">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="assets/js/viewport.js" defer></script>
     <script type="module" src="assets/js/page-common.js"></script>
 </body>
 
