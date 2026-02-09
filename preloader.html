@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Preloader - Blood Donation Community</title>
+    <style>
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        #page-loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #ffffff;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 0.5s ease, visibility 0.5s;
+        }
+
+        #page-loader.fade-out {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        #page-loader .logo-wrapper {
+            position: relative;
+            width: 120px;
+            height: 120px;
+        }
+
+        #page-loader .logo-wrapper img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            display: block;
+        }
+
+        #page-loader .logo-base {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0.18;
+            filter: grayscale(1);
+        }
+
+        #page-loader .logo-fill {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            clip-path: inset(100% 0 0 0);
+            animation: loadUp 2s ease-in-out forwards;
+        }
+
+        @keyframes loadUp {
+            0% {
+                clip-path: inset(100% 0 0 0);
+            }
+            100% {
+                clip-path: inset(0 0 0 0);
+            }
+        }
+
+        body.loading > *:not(#page-loader):not(script) {
+            opacity: 0 !important;
+            visibility: hidden !important;
+        }
+    </style>
+</head>
+<body class="loading">
+    <div id="page-loader">
+        <div class="logo-wrapper">
+            <div class="logo-base">
+                <img src="image/blood-drop.png" alt="" />
+            </div>
+            <div class="logo-fill">
+                <img src="image/blood-drop.png" alt="Loading" />
+            </div>
+        </div>
+    </div>
+
+    <script>
+        window.addEventListener('load', function () {
+            var loader = document.getElementById('page-loader');
+            if (loader) {
+                setTimeout(function () {
+                    loader.classList.add('fade-out');
+                    document.body.classList.remove('loading');
+                    setTimeout(function () {
+                        loader.style.display = 'none';
+                    }, 500);
+                }, 2200);
+            }
+        });
+    </script>
+</body>
+</html>

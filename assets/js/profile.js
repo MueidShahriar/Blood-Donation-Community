@@ -13,7 +13,7 @@ import {
     set,
     remove
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
-import { firebaseConfig } from "./firebase-config.js";
+import { firebaseConfig } from "./modules/firebase-config.js";
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
@@ -209,7 +209,7 @@ certBtn?.addEventListener('click', async () => {
         return;
     }
     try {
-        const { showCertificateModal } = await import('./certificate.js');
+        const { showCertificateModal } = await import('./modules/certificate.js');
         const donorData = {
             fullName: fFullName?.value || '',
             email: fEmail?.value || '',

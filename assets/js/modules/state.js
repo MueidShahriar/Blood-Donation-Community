@@ -1,0 +1,26 @@
+const state = {
+    donorsList: [],
+    donorsByGroup: new Map(),
+    eventsList: [],
+    memberSearchName: '',
+    memberSearchBlood: '',
+    eventSearchTerm: '',
+    eventFilterMode: 'upcoming',
+    recentDonationsList: [],
+    currentUser: null,
+    currentUserRole: 'member',
+    searchLoaderEl: null,
+    searchLoaderShownAt: 0,
+    SEARCH_LOADER_MIN_MS: 280,
+    searchRunTimeout: null,
+    recentLoaderEl: null,
+    recentLoaderState: true,
+    ageGroupChart: null,
+    bloodGroupChart: null,
+    publicEventsListEl: null,
+    eventsEmptyStateEl: null,
+    joinFeedbackEl: null,
+    dashboardRefreshTimer: null,
+    isStatsObserverInitialized: false
+};
+export default state;
