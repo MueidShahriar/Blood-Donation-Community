@@ -437,10 +437,10 @@ img, .animate-bounce-slow, .float-in, .btn-breathe {
     }
     .recent-card__stat--blood,
     .recent-card__stat--batch,
-    .recent-card__stat--department {
+    .recent-card__stat--age {
         grid-column: span 2 !important;
     }
-    .recent-card__stat--age,
+    .recent-card__stat--department,
     .recent-card__stat--weight {
         grid-column: span 3 !important;
     }

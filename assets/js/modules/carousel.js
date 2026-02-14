@@ -69,13 +69,13 @@ export function renderRecentDonorsCarousel(donors) {
                             <span class="recent-card__stat-label"><i class="fa-solid fa-layer-group" aria-hidden="true"></i>Batch</span>
                             <span class="recent-card__stat-value">${batch}</span>
                         </div>
-                        <div class="recent-card__stat recent-card__stat--department">
-                            <span class="recent-card__stat-label"><i class="fa-solid fa-building-columns" aria-hidden="true"></i>Department</span>
-                            <span class="recent-card__stat-value">${department}</span>
-                        </div>
                         <div class="recent-card__stat recent-card__stat--age">
                             <span class="recent-card__stat-label"><i class="fa-solid fa-user" aria-hidden="true"></i>Age</span>
                             <span class="recent-card__stat-value">${age}</span>
+                        </div>
+                        <div class="recent-card__stat recent-card__stat--department">
+                            <span class="recent-card__stat-label"><i class="fa-solid fa-building-columns" aria-hidden="true"></i>Department</span>
+                            <span class="recent-card__stat-value">${department}</span>
                         </div>
                         <div class="recent-card__stat recent-card__stat--weight">
                             <span class="recent-card__stat-label"><i class="fa-solid fa-weight-scale" aria-hidden="true"></i>Weight</span>
