@@ -957,10 +957,10 @@ header.scrolled {
     transition: all 0.25s ease;
 }
 
-.footer-socials a.social-github {
-    color: #ffffff;
-    background: rgba(255,255,255,0.08);
-    border-color: rgba(255,255,255,0.15);
+.footer-socials a.social-facebook {
+    color: #1877f2;
+    background: rgba(24,119,242,0.1);
+    border-color: rgba(24,119,242,0.2);
 }
 
 .footer-socials a.social-linkedin {
@@ -979,9 +979,9 @@ header.scrolled {
     transform: translateY(-2px);
 }
 
-.footer-socials a.social-github:hover {
-    background: rgba(255,255,255,0.15);
-    border-color: rgba(255,255,255,0.3);
+.footer-socials a.social-facebook:hover {
+    background: rgba(24,119,242,0.2);
+    border-color: rgba(24,119,242,0.4);
 }
 
 .footer-socials a.social-linkedin:hover {
