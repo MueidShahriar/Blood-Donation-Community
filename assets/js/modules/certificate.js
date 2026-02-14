@@ -378,6 +378,317 @@ export function showCertificateModal(donorData) {
     });
 }
 
+export function showDonorCardModal(donorData) {
+    const esc = (value) => {
+        const text = value == null || value === '' ? '—' : String(value);
+        return text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+    };
+
+    const name = esc(donorData.fullName || 'Donor');
+    const blood = esc(donorData.bloodGroup || '—');
+    const location = esc(donorData.location || '—');
+    const phone = esc(donorData.phone || '—');
+    const email = esc(donorData.email || '—');
+    const initials = (donorData.fullName || 'D').split(/\s+/).filter(Boolean).map(p => p[0]).join('').slice(0,2).toUpperCase();
+    const lastDonate = donorData.lastDonateDate
+        ? new Date(donorData.lastDonateDate + 'T00:00:00').toLocaleDateString('en-GB', { day:'numeric', month:'short', year:'numeric' })
+        : 'Not recorded';
+
+    const cardHtml = `
+        <div class="flex flex-col items-center gap-5" id="donor-card-wrapper">
+            <!-- Live preview card -->
+            <div id="donor-card-preview" class="w-full max-w-md">
+                <div style="position:relative;border-radius:1.5rem;overflow:hidden;background:linear-gradient(135deg,#b91c1c 0%,#dc2626 25%,#ef4444 50%,#f97316 75%,#fbbf24 100%);padding:3px;box-shadow:0 16px 50px rgba(185,28,28,0.25),0 0 0 1px rgba(255,255,255,0.1)">
+                    <div style="border-radius:1.35rem;background:linear-gradient(170deg,#ffffff 0%,#fffbfb 35%,#fff1f2 60%,#fce7f3 85%,#fdf2f8 100%);padding:0;position:relative;overflow:hidden">
+                        <!-- Decorative circles -->
+                        <div style="position:absolute;top:-30px;right:-30px;width:120px;height:120px;border-radius:50%;background:radial-gradient(circle,rgba(239,68,68,0.08) 0%,transparent 70%)"></div>
+                        <div style="position:absolute;bottom:40px;left:-20px;width:80px;height:80px;border-radius:50%;background:radial-gradient(circle,rgba(249,115,22,0.06) 0%,transparent 70%)"></div>
+                        <!-- Header -->
+                        <div style="display:flex;align-items:center;justify-content:space-between;padding:1.1rem 1.25rem 0.75rem;border-bottom:2px solid transparent;border-image:linear-gradient(90deg,rgba(220,38,38,0.2),rgba(249,115,22,0.2),rgba(220,38,38,0.05)) 1">
+                            <div style="display:flex;align-items:center;gap:0.6rem">
+                                <img src="image/blood-drop.png" alt="" style="width:30px;height:30px;filter:drop-shadow(0 2px 4px rgba(220,38,38,0.3))" />
+                                <div>
+                                    <div style="font-size:0.6rem;letter-spacing:0.18em;text-transform:uppercase;color:#ef4444;font-weight:700;text-shadow:0 0 20px rgba(239,68,68,0.15)">Blood Donation Community</div>
+                                    <div style="font-size:0.9rem;font-weight:900;background:linear-gradient(135deg,#991b1b,#dc2626);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-top:1px">DONOR CARD</div>
+                                </div>
+                            </div>
+                            <div style="background:linear-gradient(135deg,#b91c1c,#dc2626,#ef4444);color:#fff;font-size:1.2rem;font-weight:900;padding:0.5rem 0.9rem;border-radius:0.8rem;box-shadow:0 6px 20px rgba(185,28,28,0.35),inset 0 1px 0 rgba(255,255,255,0.2);letter-spacing:0.03em;line-height:1;text-shadow:0 1px 2px rgba(0,0,0,0.2)">${blood}</div>
+                        </div>
+                        <!-- Body -->
+                        <div style="display:flex;gap:1rem;padding:1.1rem 1.25rem;align-items:center">
+                            <div id="donor-card-photo-area" style="width:78px;height:78px;border-radius:1.1rem;background:linear-gradient(135deg,#b91c1c,#dc2626,#f97316);color:#fff;display:flex;align-items:center;justify-content:center;font-size:1.6rem;font-weight:900;flex-shrink:0;overflow:hidden;border:3px solid #fff;box-shadow:0 6px 20px rgba(185,28,28,0.2),0 0 0 2px rgba(220,38,38,0.1);cursor:pointer;position:relative" title="Click to upload photo">
+                                <span id="donor-card-initials">${initials}</span>
+                                <img id="donor-card-photo-img" src="" alt="" style="display:none;width:100%;height:100%;object-fit:cover;position:absolute;inset:0" />
+                            </div>
+                            <div style="min-width:0;flex:1">
+                                <div style="font-size:1.15rem;font-weight:800;color:#1f2937;line-height:1.2">${name}</div>
+                                <div style="font-size:0.72rem;color:#6b7280;margin-top:4px">${email}</div>
+                            </div>
+                        </div>
+                        <!-- Info grid -->
+                        <div style="display:grid;grid-template-columns:1fr 1fr;gap:0;border-top:2px solid transparent;border-image:linear-gradient(90deg,rgba(220,38,38,0.12),rgba(249,115,22,0.12)) 1">
+                            <div style="padding:0.7rem 1.25rem;border-right:1px solid rgba(225,29,72,0.08);border-bottom:1px solid rgba(225,29,72,0.08);background:linear-gradient(135deg,rgba(254,242,242,0.5),transparent)">
+                                <div style="font-size:0.62rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:#ef4444"><i class="fa-solid fa-location-dot" style="color:#dc2626;margin-right:3px;font-size:0.6rem"></i>Recent Location</div>
+                                <div style="font-size:0.85rem;font-weight:700;color:#1f2937;margin-top:3px">${location}</div>
+                            </div>
+                            <div style="padding:0.7rem 1.25rem;border-bottom:1px solid rgba(225,29,72,0.08);background:linear-gradient(135deg,transparent,rgba(254,242,242,0.5))">
+                                <div style="font-size:0.62rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:#ef4444"><i class="fa-solid fa-phone" style="color:#dc2626;margin-right:3px;font-size:0.6rem"></i>Phone</div>
+                                <div style="font-size:0.85rem;font-weight:700;color:#1f2937;margin-top:3px">${phone}</div>
+                            </div>
+                            <div style="padding:0.7rem 1.25rem;grid-column:span 2;background:linear-gradient(135deg,rgba(254,242,242,0.3),rgba(252,231,243,0.3))">
+                                <div style="font-size:0.62rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:#ef4444"><i class="fa-solid fa-calendar" style="color:#dc2626;margin-right:3px;font-size:0.6rem"></i>Last Donation</div>
+                                <div style="font-size:0.85rem;font-weight:700;color:#1f2937;margin-top:3px">${lastDonate}</div>
+                            </div>
+                        </div>
+                        <!-- Footer -->
+                        <div style="display:flex;align-items:center;justify-content:center;padding:0.7rem 1.25rem;background:linear-gradient(135deg,rgba(185,28,28,0.06),rgba(249,115,22,0.04));border-radius:0 0 1.35rem 1.35rem">
+                            <span style="font-size:0.65rem;font-weight:700;background:linear-gradient(135deg,#b91c1c,#dc2626);-webkit-background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:0.08em"><i class="fa-solid fa-heart" style="margin-right:4px;-webkit-text-fill-color:#dc2626"></i>Donate Blood, Save Lives</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Upload + download area -->
+            <div class="flex flex-col items-center gap-3 w-full max-w-md">
+                <label id="donor-card-upload-label" style="display:inline-flex;align-items:center;gap:0.5rem;padding:0.55rem 1.1rem;border-radius:0.7rem;border:1.5px dashed rgba(220,38,38,0.3);background:rgba(254,242,242,0.6);color:#dc2626;font-size:0.82rem;font-weight:600;cursor:pointer;transition:all 0.2s" onmouseover="this.style.borderColor='#dc2626';this.style.background='#fef2f2'" onmouseout="this.style.borderColor='rgba(220,38,38,0.3)';this.style.background='rgba(254,242,242,0.6)'">
+                    <i class="fa-solid fa-camera"></i>
+                    <span id="donor-card-upload-text">Upload Photo</span>
+                    <input type="file" id="donor-card-photo-input" accept="image/*" style="display:none" />
+                </label>
+                <button id="donor-card-download-btn" onclick="window.__downloadDonorCard()" disabled style="display:inline-flex;align-items:center;gap:0.5rem;padding:0.6rem 1.5rem;border-radius:0.7rem;background:#d1d5db;color:#fff;font-size:0.85rem;font-weight:700;border:none;cursor:not-allowed;box-shadow:none;transition:all 0.2s;opacity:0.7">
+                    <i class="fa-solid fa-download"></i>
+                    Download Donor Card
+                </button>
+                <p id="donor-card-photo-hint" style="font-size:0.72rem;color:#dc2626;text-align:center;font-weight:600"><i class="fa-solid fa-circle-info" style="margin-right:3px"></i>Please upload your photo first to download the card.</p>
+            </div>
+        </div>
+    `;
+
+    showModal('Your Donor Card', cardHtml);
+
+    // Wire up photo upload
+    setTimeout(() => {
+        const fileInput = document.getElementById('donor-card-photo-input');
+        const photoArea = document.getElementById('donor-card-photo-area');
+        const photoImg = document.getElementById('donor-card-photo-img');
+        const initialsEl = document.getElementById('donor-card-initials');
+        const uploadText = document.getElementById('donor-card-upload-text');
+
+        photoArea?.addEventListener('click', () => fileInput?.click());
+
+        fileInput?.addEventListener('change', (e) => {
+            const file = e.target.files?.[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = (ev) => {
+                if (photoImg) {
+                    photoImg.src = ev.target.result;
+                    photoImg.style.display = 'block';
+                }
+                if (initialsEl) initialsEl.style.display = 'none';
+                if (uploadText) uploadText.textContent = 'Change Photo';
+                // Enable download button
+                const dlBtn = document.getElementById('donor-card-download-btn');
+                if (dlBtn) {
+                    dlBtn.disabled = false;
+                    dlBtn.style.background = 'linear-gradient(135deg,#0f766e,#14b8a6)';
+                    dlBtn.style.cursor = 'pointer';
+                    dlBtn.style.opacity = '1';
+                    dlBtn.style.boxShadow = '0 4px 14px rgba(20,184,166,0.2)';
+                    dlBtn.onmouseover = function(){ this.style.transform='translateY(-1px)'; this.style.boxShadow='0 6px 20px rgba(20,184,166,0.3)'; };
+                    dlBtn.onmouseout = function(){ this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 14px rgba(20,184,166,0.2)'; };
+                }
+                const hint = document.getElementById('donor-card-photo-hint');
+                if (hint) { hint.style.color = '#10b981'; hint.innerHTML = '<i class="fa-solid fa-circle-check" style="margin-right:3px"></i>Photo uploaded! You can now download your card.'; }
+            };
+            reader.readAsDataURL(file);
+        });
+
+        // Download handler
+        window.__downloadDonorCard = function() {
+            const preview = document.getElementById('donor-card-preview');
+            if (!preview) return;
+            if (!photoImg?.src || photoImg.style.display === 'none') {
+                const hint = document.getElementById('donor-card-photo-hint');
+                if (hint) { hint.style.color = '#dc2626'; hint.innerHTML = '<i class="fa-solid fa-triangle-exclamation" style="margin-right:3px"></i>Photo is required! Please upload your photo first.'; }
+                return;
+            }
+            _renderDonorCardCanvas(donorData, photoImg.src)
+                .then(canvas => {
+                    const link = document.createElement('a');
+                    link.download = `Donor_Card_${(donorData.fullName || 'card').replace(/\s+/g, '_')}.png`;
+                    link.href = canvas.toDataURL('image/png');
+                    link.click();
+                });
+        };
+    }, 100);
+}
+
+function _renderDonorCardCanvas(donorData, photoSrc) {
+    return new Promise((resolve) => {
+        const SCALE = 3;
+        const W = 700, H = 400;
+        const canvas = document.createElement('canvas');
+        canvas.width = W * SCALE; canvas.height = H * SCALE;
+        canvas.style.width = W + 'px'; canvas.style.height = H + 'px';
+        const ctx = canvas.getContext('2d');
+        ctx.scale(SCALE, SCALE);
+
+        // Background with warm gradient
+        const bg = ctx.createLinearGradient(0,0,W,H);
+        bg.addColorStop(0,'#ffffff'); bg.addColorStop(0.35,'#fffbfb'); bg.addColorStop(0.6,'#fff1f2'); bg.addColorStop(0.85,'#fce7f3'); bg.addColorStop(1,'#fdf2f8');
+        ctx.fillStyle = bg; ctx.fillRect(0,0,W,H);
+
+        // Decorative background circles
+        ctx.fillStyle = 'rgba(239,68,68,0.04)';
+        ctx.beginPath(); ctx.arc(W-60, 60, 100, 0, Math.PI*2); ctx.fill();
+        ctx.fillStyle = 'rgba(249,115,22,0.03)';
+        ctx.beginPath(); ctx.arc(40, H-60, 70, 0, Math.PI*2); ctx.fill();
+
+        // Top gradient bar (thicker, richer)
+        const topBar = ctx.createLinearGradient(0,0,W,0);
+        topBar.addColorStop(0,'#b91c1c'); topBar.addColorStop(0.3,'#dc2626'); topBar.addColorStop(0.6,'#ef4444'); topBar.addColorStop(0.85,'#f97316'); topBar.addColorStop(1,'#fbbf24');
+        ctx.fillStyle = topBar; ctx.fillRect(0,0,W,8);
+
+        // Bottom gradient bar
+        const btmBar = ctx.createLinearGradient(0,0,W,0);
+        btmBar.addColorStop(0,'#fbbf24'); btmBar.addColorStop(0.5,'#f97316'); btmBar.addColorStop(1,'#dc2626');
+        ctx.fillStyle = btmBar; ctx.fillRect(0,H-4,W,4);
+
+        // Corner accents (bolder)
+        ctx.strokeStyle = 'rgba(220,38,38,0.2)'; ctx.lineWidth = 2.5;
+        ctx.beginPath(); ctx.moveTo(18,38); ctx.lineTo(18,18); ctx.lineTo(38,18); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(W-18,38); ctx.lineTo(W-18,18); ctx.lineTo(W-38,18); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(18,H-38); ctx.lineTo(18,H-18); ctx.lineTo(38,H-18); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(W-18,H-38); ctx.lineTo(W-18,H-18); ctx.lineTo(W-38,H-18); ctx.stroke();
+
+        // Header text
+        ctx.fillStyle = '#ef4444'; ctx.font = '700 10px Arial'; ctx.letterSpacing = '3px';
+        ctx.fillText('BLOOD DONATION COMMUNITY', 30, 46);
+        ctx.fillStyle = '#991b1b'; ctx.font = '900 18px Arial';
+        ctx.fillText('DONOR CARD', 30, 68);
+
+        // Blood group badge (bigger, with shadow effect)
+        // Shadow
+        ctx.fillStyle = 'rgba(185,28,28,0.15)';
+        ctx.beginPath(); ctx.roundRect(W-108, 32, 76, 44, 10); ctx.fill();
+        // Badge
+        const badgeGrad = ctx.createLinearGradient(W-105,28,W-105+76,28+44);
+        badgeGrad.addColorStop(0,'#b91c1c'); badgeGrad.addColorStop(0.5,'#dc2626'); badgeGrad.addColorStop(1,'#ef4444');
+        ctx.fillStyle = badgeGrad;
+        ctx.beginPath(); ctx.roundRect(W-110, 28, 76, 44, 10); ctx.fill();
+        ctx.fillStyle = '#ffffff'; ctx.font = '900 22px Arial'; ctx.textAlign = 'center';
+        ctx.fillText(donorData.bloodGroup || '—', W-72, 57);
+        ctx.textAlign = 'left';
+
+        // Divider (gradient)
+        const divGrad = ctx.createLinearGradient(30,0,W-30,0);
+        divGrad.addColorStop(0,'rgba(220,38,38,0.2)'); divGrad.addColorStop(0.5,'rgba(249,115,22,0.15)'); divGrad.addColorStop(1,'rgba(220,38,38,0.05)');
+        ctx.fillStyle = divGrad; ctx.fillRect(30, 82, W-60, 2);
+
+        // Photo / initials area (bigger)
+        const photoX = 36, photoY = 100, photoS = 78;
+        ctx.save();
+        ctx.beginPath(); ctx.roundRect(photoX, photoY, photoS, photoS, 16); ctx.clip();
+        const circGrad = ctx.createLinearGradient(photoX, photoY, photoX+photoS, photoY+photoS);
+        circGrad.addColorStop(0,'#b91c1c'); circGrad.addColorStop(0.5,'#dc2626'); circGrad.addColorStop(1,'#f97316');
+        ctx.fillStyle = circGrad; ctx.fillRect(photoX, photoY, photoS, photoS);
+        ctx.restore();
+
+        // Photo border glow
+        ctx.strokeStyle = 'rgba(220,38,38,0.12)'; ctx.lineWidth = 3;
+        ctx.beginPath(); ctx.roundRect(photoX-1, photoY-1, photoS+2, photoS+2, 17); ctx.stroke();
+
+        const drawRest = () => {
+            // Name
+            ctx.fillStyle = '#1f2937'; ctx.font = '800 22px Arial';
+            ctx.fillText(donorData.fullName || 'Donor', 128, 126);
+            // Email
+            ctx.fillStyle = '#6b7280'; ctx.font = '400 12px Arial';
+            ctx.fillText(donorData.email || '—', 128, 146);
+
+            // Info grid below
+            const gridY = 196;
+            // Gradient divider
+            const gridDiv = ctx.createLinearGradient(30,0,W-30,0);
+            gridDiv.addColorStop(0,'rgba(220,38,38,0.15)'); gridDiv.addColorStop(0.5,'rgba(249,115,22,0.1)'); gridDiv.addColorStop(1,'rgba(220,38,38,0.03)');
+            ctx.fillStyle = gridDiv; ctx.fillRect(30, gridY, W-60, 2);
+
+            // Row backgrounds
+            ctx.fillStyle = 'rgba(254,242,242,0.4)';
+            ctx.fillRect(30, gridY+2, (W-60)/2-1, 60);
+            ctx.fillStyle = 'rgba(252,231,243,0.3)';
+            ctx.fillRect(30+(W-60)/2+1, gridY+2, (W-60)/2-1, 60);
+
+            // Row 1: Recent Location | Phone
+            const col1X = 44, col2X = W/2+16;
+            ctx.fillStyle = '#ef4444'; ctx.font = '700 9px Arial';
+            ctx.fillText('\u{1F4CD} RECENT LOCATION', col1X, gridY+24);
+            ctx.fillStyle = '#1f2937'; ctx.font = '700 14px Arial';
+            ctx.fillText(donorData.location || '—', col1X, gridY+44);
+
+            ctx.fillStyle = '#ef4444'; ctx.font = '700 9px Arial';
+            ctx.fillText('\u{1F4DE} PHONE', col2X, gridY+24);
+            ctx.fillStyle = '#1f2937'; ctx.font = '700 14px Arial';
+            ctx.fillText(donorData.phone || '—', col2X, gridY+44);
+
+            // Divider
+            ctx.fillStyle = 'rgba(225,29,72,0.06)'; ctx.fillRect(30, gridY+62, W-60, 1);
+
+            // Row 2 background
+            ctx.fillStyle = 'rgba(254,242,242,0.25)';
+            ctx.fillRect(30, gridY+63, W-60, 55);
+
+            // Row 2: Last Donation
+            ctx.fillStyle = '#ef4444'; ctx.font = '700 9px Arial';
+            ctx.fillText('\u{1F4C5} LAST DONATION', col1X, gridY+84);
+            const lastD = donorData.lastDonateDate
+                ? new Date(donorData.lastDonateDate+'T00:00:00').toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'})
+                : 'Not recorded';
+            ctx.fillStyle = '#1f2937'; ctx.font = '700 14px Arial';
+            ctx.fillText(lastD, col1X, gridY+104);
+
+            // Footer
+            const footGrad = ctx.createLinearGradient(0,0,W,0);
+            footGrad.addColorStop(0,'rgba(185,28,28,0.06)'); footGrad.addColorStop(0.5,'rgba(249,115,22,0.04)'); footGrad.addColorStop(1,'rgba(185,28,28,0.06)');
+            ctx.fillStyle = footGrad; ctx.fillRect(0, H-40, W, 36);
+            ctx.fillStyle = '#b91c1c'; ctx.font = '700 11px Arial'; ctx.textAlign = 'center';
+            ctx.fillText('\u2764  Donate Blood, Save Lives', W/2, H-18);
+            ctx.textAlign = 'left';
+
+            // Outer border (gradient stroke)
+            ctx.strokeStyle = 'rgba(220,38,38,0.15)'; ctx.lineWidth = 2.5;
+            ctx.beginPath(); ctx.roundRect(1,1,W-2,H-2,18); ctx.stroke();
+
+            resolve(canvas);
+        };
+
+        if (photoSrc) {
+            const img = new Image();
+            img.crossOrigin = 'anonymous';
+            img.onload = () => {
+                ctx.save();
+                ctx.beginPath(); ctx.roundRect(photoX, photoY, photoS, photoS, 14); ctx.clip();
+                ctx.drawImage(img, photoX, photoY, photoS, photoS);
+                ctx.restore();
+                drawRest();
+            };
+            img.onerror = () => {
+                const init = (donorData.fullName||'D').split(/\s+/).filter(Boolean).map(p=>p[0]).join('').slice(0,2).toUpperCase();
+                ctx.fillStyle = '#ffffff'; ctx.font = '900 22px Arial'; ctx.textAlign = 'center';
+                ctx.fillText(init, photoX+photoS/2, photoY+photoS/2+8); ctx.textAlign = 'left';
+                drawRest();
+            };
+            img.src = photoSrc;
+        } else {
+            const init = (donorData.fullName||'D').split(/\s+/).filter(Boolean).map(p=>p[0]).join('').slice(0,2).toUpperCase();
+            ctx.fillStyle = '#ffffff'; ctx.font = '900 22px Arial'; ctx.textAlign = 'center';
+            ctx.fillText(init, photoX+photoS/2, photoY+photoS/2+8); ctx.textAlign = 'left';
+            drawRest();
+        }
+    });
+}
+
 window.downloadCertificateFromModal = function(donorName) {
     if (window.currentCertificateCanvas) {
         downloadCertificate(window.currentCertificateCanvas, donorName || window.currentDonorName);

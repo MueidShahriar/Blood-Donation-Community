@@ -13,7 +13,7 @@ export const translations = {
         btnProfile: "Profile",
         btnLogin: "Login",
 
-        heroTitle: "Donate Blood Save Life",
+        heroTitle: "Donate Blood, Save Lives",
         heroDescription: "Be a hero in your community. Register as a donor, find blood matches and join our events to help save lives every day.",
         btnBecomeDonor: "Become a Donor",
         btnSearchDonors: "Search Donors",

@@ -57,27 +57,27 @@ export function renderRecentDonorsCarousel(donors) {
                     </div>
                     <div class="recent-card__divider" aria-hidden="true"></div>
                     <div class="recent-card__stats">
-                        <div class="recent-card__stat recent-card__stat--accent">
+                        <div class="recent-card__stat recent-card__stat--wide recent-card__stat--donation-center">
+                            <span class="recent-card__stat-label"><i class="fa-solid fa-location-dot" aria-hidden="true"></i>Donation Center</span>
+                            <span class="recent-card__stat-value">${locationLabel}</span>
+                        </div>
+                        <div class="recent-card__stat recent-card__stat--accent recent-card__stat--blood">
                             <span class="recent-card__stat-label"><i class="fa-solid fa-droplet" aria-hidden="true"></i>Blood Group</span>
                             <span class="recent-card__stat-value">${bloodGroup}</span>
                         </div>
-                        <div class="recent-card__stat recent-card__stat--wide">
-                            <span class="recent-card__stat-label"><i class="fa-solid fa-location-dot" aria-hidden="true"></i>Location</span>
-                            <span class="recent-card__stat-value">${locationLabel}</span>
-                        </div>
-                        <div class="recent-card__stat">
-                            <span class="recent-card__stat-label"><i class="fa-solid fa-building-columns" aria-hidden="true"></i>Department</span>
-                            <span class="recent-card__stat-value">${department}</span>
-                        </div>
-                        <div class="recent-card__stat">
+                        <div class="recent-card__stat recent-card__stat--batch">
                             <span class="recent-card__stat-label"><i class="fa-solid fa-layer-group" aria-hidden="true"></i>Batch</span>
                             <span class="recent-card__stat-value">${batch}</span>
                         </div>
-                        <div class="recent-card__stat">
+                        <div class="recent-card__stat recent-card__stat--department">
+                            <span class="recent-card__stat-label"><i class="fa-solid fa-building-columns" aria-hidden="true"></i>Department</span>
+                            <span class="recent-card__stat-value">${department}</span>
+                        </div>
+                        <div class="recent-card__stat recent-card__stat--age">
                             <span class="recent-card__stat-label"><i class="fa-solid fa-user" aria-hidden="true"></i>Age</span>
                             <span class="recent-card__stat-value">${age}</span>
                         </div>
-                        <div class="recent-card__stat">
+                        <div class="recent-card__stat recent-card__stat--weight">
                             <span class="recent-card__stat-label"><i class="fa-solid fa-weight-scale" aria-hidden="true"></i>Weight</span>
                             <span class="recent-card__stat-value">${weight}</span>
                         </div>

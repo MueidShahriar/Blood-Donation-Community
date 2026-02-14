@@ -24,7 +24,7 @@ function renderDonorCardAdmin(d) {
                 <div class="admin-member-card__info">
                     <span><i class="fa-solid fa-envelope"></i> ${d.email || '—'}</span>
                     <span><i class="fa-solid fa-phone"></i> ${phone}</span>
-                    <span><i class="fa-solid fa-location-dot"></i> ${d.location || '—'}</span>
+                    <span><i class="fa-solid fa-location-dot"></i> Donation Center: ${d.location || '—'}</span>
                     <span><i class="fa-solid fa-calendar-check"></i> Last: ${lastDate}</span>
                 </div>
                 <div class="admin-member-card__id">ID: ${d.id}</div>
@@ -155,7 +155,7 @@ export function renderAdminEventsList(deleteEventFn) {
                     <span><i class="fa-regular fa-calendar"></i> ${fullDate}</span>
                     <span><i class="fa-regular fa-clock"></i> ${e.time || '—'}</span>
                 </div>
-                <div class="admin-event-card__meta"><span><i class="fa-solid fa-location-dot"></i> ${e.location || '—'}</span></div>
+                <div class="admin-event-card__meta"><span><i class="fa-solid fa-location-dot"></i> Donation Center: ${e.location || '—'}</span></div>
                 ${e.description ? `<p class="admin-event-card__desc">${e.description}</p>` : ''}
             </div>
             <div class="admin-event-card__actions">

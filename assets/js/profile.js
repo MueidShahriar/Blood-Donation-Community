@@ -49,6 +49,7 @@ const fRole = document.getElementById('profile-role');
 const logoutHeaderBtn = document.getElementById('pf-logout-header');
 const deleteBtn = document.getElementById('pf-delete');
 const certBtn = document.getElementById('pf-certificate');
+const donorCardBtn = document.getElementById('pf-donor-card');
 const deleteModal = document.getElementById('delete-confirm-modal');
 const deleteCancelBtn = document.getElementById('delete-cancel');
 const deleteConfirmBtn = document.getElementById('delete-confirm');
@@ -234,6 +235,28 @@ certBtn?.addEventListener('click', async () => {
     } catch (err) {
         console.error('Certificate error:', err);
         showToast('Failed to generate certificate.', 'error');
+    }
+});
+
+donorCardBtn?.addEventListener('click', async () => {
+    if (!currentUser) {
+        showToast('You must be logged in.', 'error');
+        return;
+    }
+    try {
+        const { showDonorCardModal } = await import('./modules/certificate.js');
+        const donorData = {
+            fullName: fFullName?.value || '',
+            email: fEmail?.value || '',
+            bloodGroup: fBloodGroup?.value || '',
+            location: fLocation?.value || '',
+            lastDonateDate: fLastDonate?.value || '',
+            phone: fPhone?.value || ''
+        };
+        showDonorCardModal(donorData);
+    } catch (err) {
+        console.error('Donor card error:', err);
+        showToast('Failed to load donor card.', 'error');
     }
 });
 

@@ -302,6 +302,17 @@ textarea.pf-input {
     box-shadow: 0 6px 18px rgba(37, 99, 235, 0.3);
 }
 
+.pf-btn--teal {
+    background: linear-gradient(135deg, #0f766e, #14b8a6);
+    color: #ffffff;
+    box-shadow: 0 4px 12px rgba(20, 184, 166, 0.22);
+}
+
+.pf-btn--teal:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 18px rgba(20, 184, 166, 0.32);
+}
+
 .pf-btn--danger {
     background: transparent;
     color: #dc2626;

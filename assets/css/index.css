@@ -424,10 +424,25 @@ img, .animate-bounce-slow, .float-in, .btn-breathe {
         font-size: 1.05rem;
     }
     .recent-card__stats {
-        grid-template-columns: 1fr;
+        grid-template-columns: repeat(6, minmax(0, 1fr)) !important;
+        gap: 0.65rem;
     }
-    .recent-card__stat--wide {
-        grid-column: span 1;
+    .recent-card__stat {
+        min-height: 62px;
+        padding: 0.6rem 0.75rem;
+    }
+    .recent-card__stat--wide,
+    .recent-card__stat--donation-center {
+        grid-column: 1 / -1 !important;
+    }
+    .recent-card__stat--blood,
+    .recent-card__stat--batch,
+    .recent-card__stat--department {
+        grid-column: span 2 !important;
+    }
+    .recent-card__stat--age,
+    .recent-card__stat--weight {
+        grid-column: span 3 !important;
     }
     .donor-card .info-stack {
         display: flex;
