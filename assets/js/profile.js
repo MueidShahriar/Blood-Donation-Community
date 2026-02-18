@@ -110,7 +110,8 @@ function formatDate(dateStr) {
     if (!dateStr) return 'Not recorded';
     try {
         const d = new Date(dateStr + 'T00:00:00');
-        return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+        const pad = n => String(n).padStart(2, '0');
+        return `${pad(d.getDate())}/${pad(d.getMonth() + 1)}/${d.getFullYear()}`;
     } catch {
         return dateStr;
     }
@@ -146,7 +147,9 @@ function populateProfile(data, email) {
 
     if (statMemberSince) {
         if (data.createdAt) {
-            statMemberSince.textContent = new Date(data.createdAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+            const _d = new Date(data.createdAt);
+            const _pad = n => String(n).padStart(2, '0');
+            statMemberSince.textContent = `${_pad(_d.getDate())}/${_pad(_d.getMonth() + 1)}/${_d.getFullYear()}`;
         } else {
             statMemberSince.textContent = '—';
         }
@@ -206,6 +209,7 @@ onAuthStateChanged(auth, (user) => {
         const role = data.role || 'member';
         const adminBadge = document.getElementById('admin-badge');
         const adminMobileLink = document.getElementById('admin-mobile-link');
+        const adminDesktopLink = document.getElementById('nav-dashboard-link');
         // All regular nav links (desktop + mobile)
         const navLinkIds = ['nav-home-link','nav-about-link','nav-how-link','nav-events-link','nav-join-link','nav-search-link','nav-contact-link'];
         const mobileNavIds = ['mobile-home-link','mobile-about-link','mobile-how-link','mobile-events-link','mobile-join-link','mobile-search-link','mobile-contact-link'];
@@ -214,6 +218,7 @@ onAuthStateChanged(auth, (user) => {
             document.body.classList.add('admin-mode');
             if (adminBadge) { adminBadge.classList.remove('hidden'); adminBadge.classList.add('inline-flex'); }
             adminMobileLink?.classList.remove('hidden');
+            if (adminDesktopLink) { adminDesktopLink.classList.remove('hidden'); }
             // Hide ALL regular nav links for admin
             navLinkIds.forEach(id => document.getElementById(id)?.classList.add('hidden'));
             mobileNavIds.forEach(id => document.getElementById(id)?.classList.add('hidden'));
@@ -221,6 +226,7 @@ onAuthStateChanged(auth, (user) => {
             document.body.classList.remove('admin-mode');
             if (adminBadge) { adminBadge.classList.add('hidden'); adminBadge.classList.remove('inline-flex'); }
             adminMobileLink?.classList.add('hidden');
+            if (adminDesktopLink) { adminDesktopLink.classList.add('hidden'); }
             navLinkIds.forEach(id => document.getElementById(id)?.classList.remove('hidden'));
             mobileNavIds.forEach(id => document.getElementById(id)?.classList.remove('hidden'));
         }

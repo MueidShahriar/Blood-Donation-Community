@@ -9,6 +9,7 @@ export function updateLoginButtonState(database, ref, onValue, renderAdminMember
     const adminPanel = document.getElementById('admin-panel');
     const adminBadge = document.getElementById('admin-badge');
     const adminMobileLink = document.getElementById('admin-mobile-link');
+    const adminDesktopLink = document.getElementById('nav-dashboard-link');
     const mobileLogoutBtn = document.getElementById('mobile-logout-btn');
     // All regular nav link IDs (desktop + mobile) to hide for admin
     const navLinkIds = ['nav-home-link','nav-about-link','nav-how-link','nav-events-link','nav-join-link','nav-search-link','nav-contact-link'];
@@ -37,10 +38,11 @@ export function updateLoginButtonState(database, ref, onValue, renderAdminMember
                 adminPanel?.classList.remove('hidden');
                 document.body.classList.add('admin-mode');
                 if (adminBadge) { adminBadge.classList.remove('hidden'); adminBadge.classList.add('inline-flex'); }
-                // Hide ALL regular nav links for admin (Dashboard not needed — already on dashboard)
+                // Hide ALL regular nav links for admin (show Dashboard instead)
                 navLinkIds.forEach(id => document.getElementById(id)?.classList.add('hidden'));
                 mobileNavIds.forEach(id => document.getElementById(id)?.classList.add('hidden'));
                 adminMobileLink?.classList.add('hidden');
+                if (adminDesktopLink) { adminDesktopLink.classList.remove('hidden'); }
                 renderAdminMembersList(deleteMemberFn);
                 renderAdminEventsList(deleteEventFn);
             } else {
@@ -48,6 +50,7 @@ export function updateLoginButtonState(database, ref, onValue, renderAdminMember
                 document.body.classList.remove('admin-mode');
                 if (adminBadge) { adminBadge.classList.add('hidden'); adminBadge.classList.remove('inline-flex'); }
                 adminMobileLink?.classList.add('hidden');
+                if (adminDesktopLink) { adminDesktopLink.classList.add('hidden'); }
                 navLinkIds.forEach(id => document.getElementById(id)?.classList.remove('hidden'));
                 mobileNavIds.forEach(id => document.getElementById(id)?.classList.remove('hidden'));
             }
@@ -68,6 +71,7 @@ export function updateLoginButtonState(database, ref, onValue, renderAdminMember
         document.body.classList.remove('admin-mode');
         adminBadge?.classList.add('hidden');
         adminMobileLink?.classList.add('hidden');
+        if (adminDesktopLink) { adminDesktopLink.classList.add('hidden'); }
         // Restore ALL regular nav links for public/logged-out view
         navLinkIds.forEach(id => document.getElementById(id)?.classList.remove('hidden'));
         mobileNavIds.forEach(id => document.getElementById(id)?.classList.remove('hidden'));

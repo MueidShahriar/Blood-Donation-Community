@@ -33,7 +33,7 @@ export function renderRecentDonorsCarousel(donors) {
         return;
     }
     donors.forEach((d, index) => {
-        const donationDate = d.date ? new Date(d.date).toLocaleDateString() : '—';
+        const donationDate = d.date ? (() => { const _d = new Date(d.date); const _p = n => String(n).padStart(2,'0'); return `${_p(_d.getDate())}/${_p(_d.getMonth()+1)}/${_d.getFullYear()}`; })() : '—';
         const donorName = d.name || 'Anonymous Donor';
         const locationLabel = d.location || '—';
         const department = d.department || '—';

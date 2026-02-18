@@ -3,7 +3,7 @@ import { sortEventsByDate } from './utils.js';
 import { openModal, closeModal, showModalMessage, attachConfirmHandler } from './modals.js';
 
 function renderDonorCardAdmin(d) {
-    const lastDate = d.lastDonateDate ? new Date(d.lastDonateDate + 'T00:00:00').toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) : 'Not recorded';
+    const lastDate = d.lastDonateDate ? (() => { const _d = new Date(d.lastDonateDate + 'T00:00:00'); const _p = n => String(n).padStart(2,'0'); return `${_p(_d.getDate())}/${_p(_d.getMonth()+1)}/${_d.getFullYear()}`; })() : 'Not recorded';
     const phone = d.phone || '—';
     const initials = (d.fullName || 'U').split(/\s+/).filter(Boolean).map(p => p[0]).join('').slice(0, 2).toUpperCase() || '?';
     const isEligible = d.lastDonateDate
@@ -141,7 +141,8 @@ export function renderAdminEventsList(deleteEventFn) {
         const eventDate = e.date ? new Date(e.date + 'T00:00:00') : null;
         const monthStr = eventDate ? eventDate.toLocaleDateString('en-US', { month: 'short' }).toUpperCase() : '—';
         const dayStr = eventDate ? eventDate.getDate() : '—';
-        const fullDate = eventDate ? eventDate.toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'long', year: 'numeric' }) : e.date;
+        const _p = n => String(n).padStart(2,'0');
+        const fullDate = eventDate ? `${_p(eventDate.getDate())}/${_p(eventDate.getMonth()+1)}/${eventDate.getFullYear()}` : e.date;
         const isPast = eventDate && eventDate < new Date(new Date().toDateString());
         return `
         <div class="admin-event-card ${isPast ? 'admin-event-card--past' : ''}">

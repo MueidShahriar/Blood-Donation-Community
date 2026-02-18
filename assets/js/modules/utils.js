@@ -6,12 +6,13 @@ export function getDateParts(dateStr) {
 
 export function formatDateDisplay(value) {
     if (!value) return '—';
+    const pad = n => String(n).padStart(2, '0');
     if (value instanceof Date && !Number.isNaN(value.getTime())) {
-        return value.toLocaleDateString();
+        return `${pad(value.getDate())}/${pad(value.getMonth() + 1)}/${value.getFullYear()}`;
     }
     const date = new Date(value);
     if (!Number.isNaN(date.getTime())) {
-        return date.toLocaleDateString();
+        return `${pad(date.getDate())}/${pad(date.getMonth() + 1)}/${date.getFullYear()}`;
     }
     return typeof value === 'string' ? value : '—';
 }

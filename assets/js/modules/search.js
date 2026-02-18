@@ -2,7 +2,7 @@ import state from './state.js';
 import { normalizeBloodGroup, isDonorEligible } from './utils.js';
 
 function renderDonorCardPublic(d) {
-    const lastDate = d.lastDonateDate ? new Date(d.lastDonateDate).toLocaleDateString() : '-';
+    const lastDate = d.lastDonateDate ? (() => { const _d = new Date(d.lastDonateDate); const _p = n => String(n).padStart(2,'0'); return `${_p(_d.getDate())}/${_p(_d.getMonth()+1)}/${_d.getFullYear()}`; })() : '-';
     const contactDesktop = d.isPhoneHidden
         ? `<a href="index.html#contact" class="flex items-center gap-1 text-red-700 hover:text-red-800 transition-colors">
             <i class="fa-solid fa-circle-info text-red-500"></i>

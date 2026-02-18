@@ -208,7 +208,8 @@ export function createMonthlyReportDownloader({
                 doc.text('Monthly Blood Donation Report', marginX + 4, cursorY + 9);
                 doc.setFont('helvetica', 'normal');
                 doc.setFontSize(9);
-                doc.text(`Generated on ${now.toLocaleString()}`, marginX + 4, cursorY + 13);
+                const _pR = n => String(n).padStart(2,'0');
+                doc.text(`Generated on ${_pR(now.getDate())}/${_pR(now.getMonth()+1)}/${now.getFullYear()}`, marginX + 4, cursorY + 13);
                 cursorY += 16;
                 doc.setFont('helvetica', 'normal');
                 doc.setFontSize(10);

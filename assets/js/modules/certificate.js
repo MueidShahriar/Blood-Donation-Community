@@ -109,17 +109,11 @@ function drawCertificate(canvas, ctx, donorData, signImg) {
     ctx.font = '22px Georgia, serif';
     ctx.fillText('for the noble act of donating blood on', canvas.width / 2, 380);
 
+    const _padCert = n => String(n).padStart(2, '0');
+    const _fmtDMY = dt => `${_padCert(dt.getDate())}/${_padCert(dt.getMonth()+1)}/${dt.getFullYear()}`;
     const donationDate = donorData.lastDonateDate 
-        ? new Date(donorData.lastDonateDate).toLocaleDateString('en-US', {
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric'
-        })
-        : new Date().toLocaleDateString('en-US', {
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric'
-        });
+        ? _fmtDMY(new Date(donorData.lastDonateDate))
+        : _fmtDMY(new Date());
     
     ctx.fillStyle = '#fef2f2';
     ctx.fillRect(canvas.width / 2 - 180, 400, 360, 50);
@@ -212,11 +206,9 @@ function drawCertificate(canvas, ctx, donorData, signImg) {
     ctx.textAlign = 'center';
     ctx.fillText('Authorized Signature', 300, 760);
     
-    const issueDate = new Date().toLocaleDateString('en-US', {
-        year: 'numeric',
-        month: 'short',
-        day: 'numeric'
-    });
+    const _issueDt = new Date();
+    const _pI = n => String(n).padStart(2,'0');
+    const issueDate = `${_pI(_issueDt.getDate())}/${_pI(_issueDt.getMonth()+1)}/${_issueDt.getFullYear()}`;
     ctx.fillStyle = '#1f2937';
     ctx.font = '18px Georgia, serif';
     ctx.fillText(issueDate, 900, 725);
@@ -399,7 +391,7 @@ export function showDonorCardModal(donorData, containerEl) {
     const gender = esc(donorData.gender || '—');
     const initials = (donorData.fullName || 'D').split(/\s+/).filter(Boolean).map(p => p[0]).join('').slice(0,2).toUpperCase();
     const lastDonate = donorData.lastDonateDate
-        ? new Date(donorData.lastDonateDate + 'T00:00:00').toLocaleDateString('en-GB', { day:'numeric', month:'short', year:'numeric' })
+        ? (() => { const _d = new Date(donorData.lastDonateDate + 'T00:00:00'); const _p = n => String(n).padStart(2,'0'); return `${_p(_d.getDate())}/${_p(_d.getMonth()+1)}/${_d.getFullYear()}`; })()
         : 'Not recorded';
 
     // Total donations count
@@ -414,7 +406,7 @@ export function showDonorCardModal(donorData, containerEl) {
         if (nextDate <= now) {
             nextEligible = '<span style="color:#059669;font-weight:800">✓ Eligible Now</span>';
         } else {
-            nextEligible = esc(nextDate.toLocaleDateString('en-GB', { day:'numeric', month:'short', year:'numeric' }));
+            nextEligible = esc((() => { const _p = n => String(n).padStart(2,'0'); return `${_p(nextDate.getDate())}/${_p(nextDate.getMonth()+1)}/${nextDate.getFullYear()}`; })());
         }
     }
 
@@ -671,7 +663,7 @@ function _renderDonorCardCanvas(donorData, photoSrc) {
         if (donorData.lastDonateDate) {
             const last = new Date(donorData.lastDonateDate + 'T00:00:00');
             const nextDate = new Date(last.getTime() + 90 * 24 * 60 * 60 * 1000);
-            nextEligible = nextDate <= new Date() ? 'Eligible Now' : nextDate.toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'});
+            nextEligible = nextDate <= new Date() ? 'Eligible Now' : (() => { const _p = n => String(n).padStart(2,'0'); return `${_p(nextDate.getDate())}/${_p(nextDate.getMonth()+1)}/${nextDate.getFullYear()}`; })();
         }
         let ageDisplay = '—';
         if (donorData.dateOfBirth) {
@@ -746,7 +738,7 @@ function _renderDonorCardCanvas(donorData, photoSrc) {
             ctx.fillStyle = '#ef4444'; ctx.font = '700 9px Arial';
             ctx.fillText('\u{1F5D3}\uFE0F LAST DONATION', col1X, gridY+66);
             const lastD = donorData.lastDonateDate
-                ? new Date(donorData.lastDonateDate+'T00:00:00').toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'})
+                ? (() => { const _d = new Date(donorData.lastDonateDate+'T00:00:00'); const _p = n => String(n).padStart(2,'0'); return `${_p(_d.getDate())}/${_p(_d.getMonth()+1)}/${_d.getFullYear()}`; })()
                 : 'Not recorded';
             ctx.fillStyle = '#1f2937'; ctx.font = '700 15px Arial';
             ctx.fillText(lastD, col1X, gridY+86);

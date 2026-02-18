@@ -199,8 +199,9 @@
                     // Period
                     const dates = recentDonations.map(d => d.date || d.donationDate || '').filter(Boolean).sort();
                     if (dates.length > 0) {
-                        const first = new Date(dates[0] + 'T00:00:00').toLocaleDateString('en-GB', { month: 'short', year: 'numeric' });
-                        const last = new Date(dates[dates.length-1] + 'T00:00:00').toLocaleDateString('en-GB', { month: 'short', year: 'numeric' });
+                        const _fD = dt => { const p = n => String(n).padStart(2,'0'); return `${p(dt.getDate())}/${p(dt.getMonth()+1)}/${dt.getFullYear()}`; };
+                        const first = _fD(new Date(dates[0] + 'T00:00:00'));
+                        const last = _fD(new Date(dates[dates.length-1] + 'T00:00:00'));
                         document.getElementById('pdf-period').textContent = first === last ? first : `${first} – ${last}`;
                     }
                 }, { onlyOnce: true });
@@ -233,7 +234,7 @@
                 pdf.setFontSize(11);
                 pdf.text('Monthly Donation Report', pageW / 2, 25, { align: 'center' });
                 pdf.setFontSize(8);
-                pdf.text('Generated: ' + new Date().toLocaleDateString('en-GB', { day:'numeric', month:'long', year:'numeric' }), pageW / 2, 32, { align: 'center' });
+                pdf.text('Generated: ' + (() => { const _d = new Date(); const _p = n => String(n).padStart(2,'0'); return `${_p(_d.getDate())}/${_p(_d.getMonth()+1)}/${_d.getFullYear()}`; })(), pageW / 2, 32, { align: 'center' });
 
                 y = 45;
                 pdf.setTextColor(31, 41, 55);
