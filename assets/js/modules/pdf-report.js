@@ -295,7 +295,7 @@ export function createMonthlyReportDownloader({
                     
                     yearlyMonthData.forEach((yearData, yearIdx) => {
                         const count = yearData.counts[monthIdx];
-                        const displayValue = count === 0 ? 'No Donation' : String(count);
+                        const displayValue = count === 0 ? '-' : String(count);
                         const textColor = count === 0 ? palette.muted : palette.text;
                         doc.setTextColor(...textColor);
                         doc.text(displayValue, tableStartX + monthColWidth + (yearIdx * colWidth) + colWidth / 2 - 10, cursorY);
