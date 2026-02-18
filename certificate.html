@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en" class="antialiased scroll-smooth">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Donation Certificate - Blood Donation Community</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="shortcut icon" href="image/blood-drop.png" type="image/x-icon">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="assets/css/common.css">
+    <link rel="stylesheet" href="assets/css/profile.css">
+    <meta name="description" content="Generate and download your blood donation certificate.">
+    <style>
+        #page-loader {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #fff; z-index: 9999; display: flex; justify-content: center; align-items: center;
+        }
+        #page-loader.fade-out { opacity: 0; visibility: hidden; transition: opacity .5s, visibility .5s; }
+        body.loading > *:not(#page-loader):not(script) { opacity: 0 !important; visibility: hidden !important; }
+        .cert-page-main {
+            min-height: calc(100vh - 80px); display: flex; flex-direction: column;
+            align-items: center; justify-content: flex-start; padding: 2rem 1rem;
+        }
+        .cert-hero { text-align: center; margin-bottom: 2rem; max-width: 600px; }
+        .cert-hero h1 { font-size: 1.5rem; font-weight: 800; color: #1f2937; }
+        .cert-hero p { font-size: 0.85rem; color: #6b7280; margin-top: 0.25rem; }
+        .cert-preview-wrap {
+            width: 100%; max-width: 700px; background: #f9fafb; border-radius: 1rem;
+            padding: 1.5rem; box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+        }
+        .cert-preview-wrap img { width: 100%; border-radius: 0.5rem; box-shadow: 0 2px 12px rgba(0,0,0,0.1); }
+        .cert-actions { display: flex; gap: 0.75rem; justify-content: center; margin-top: 1.5rem; flex-wrap: wrap; }
+        .cert-actions button {
+            display: inline-flex; align-items: center; gap: 0.5rem;
+            padding: 0.6rem 1.5rem; border-radius: 0.7rem; font-size: 0.85rem; font-weight: 700;
+            border: none; cursor: pointer; transition: all 0.2s; box-shadow: 0 4px 14px rgba(0,0,0,0.1);
+        }
+        .cert-btn-download { background: linear-gradient(135deg,#b91c1c,#dc2626); color: #fff; }
+        .cert-btn-download:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(185,28,28,0.3); }
+        .cert-btn-share { background: linear-gradient(135deg,#2563eb,#3b82f6); color: #fff; }
+        .cert-btn-share:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(37,99,235,0.3); }
+        @media (max-width: 480px) {
+            .cert-page-main { padding: 1rem 0.5rem; }
+            .cert-preview-wrap { padding: 0.75rem; }
+            .cert-hero h1 { font-size: 1.25rem; }
+        }
+    </style>
+</head>
+
+<body class="bg-gray-50 text-gray-900 loading" style="font-family:'Inter',sans-serif;">
+    <div id="page-loader">
+        <div class="logo-wrapper">
+            <div class="logo-base"><img src="image/blood-drop.png" alt="" /></div>
+            <div class="logo-fill"><img src="image/blood-drop.png" alt="Loading" /></div>
+        </div>
+    </div>
+
+    <header class="profile-header">
+        <nav class="max-w-5xl mx-auto flex items-center justify-between px-4 sm:px-6 py-3">
+            <a href="index.html" class="flex items-center gap-2.5 text-decoration-none group">
+                <img src="image/blood-drop.png" alt="logo" class="h-9 w-9 rounded-xl transition group-hover:scale-110" />
+                <span class="text-lg sm:text-xl font-extrabold text-red-700 tracking-tight">Certificate</span>
+            </a>
+            <div class="flex items-center gap-2">
+                <a href="profile.html"
+                    class="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium text-gray-600 hover:text-red-700 hover:bg-red-50 transition">
+                    <i class="fa-solid fa-user text-xs"></i>
+                    <span class="hidden sm:inline">Profile</span>
+                </a>
+                <a href="index.html"
+                    class="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium text-gray-600 hover:text-red-700 hover:bg-red-50 transition">
+                    <i class="fa-solid fa-arrow-left text-xs"></i>
+                    <span class="hidden sm:inline">Home</span>
+                </a>
+            </div>
+        </nav>
+    </header>
+
+    <main class="cert-page-main">
+        <div class="cert-hero">
+            <h1><i class="fa-solid fa-certificate text-red-500 mr-2"></i>Donation Certificate</h1>
+            <p>Generate, preview and download your personalized blood donation certificate</p>
+        </div>
+
+        <div id="not-logged-in" class="hidden">
+            <div class="profile-empty-state">
+                <div class="profile-empty-icon"><i class="fa-solid fa-user-lock"></i></div>
+                <h2 class="text-xl font-bold text-gray-800 mt-4">You're not logged in</h2>
+                <p class="text-sm text-gray-500 mt-2 max-w-sm mx-auto">Please log in to generate your certificate.</p>
+                <a href="index.html" class="mt-6 inline-flex items-center gap-2 px-6 py-2.5 rounded-lg bg-red-600 text-white font-semibold shadow hover:bg-red-700 transition">
+                    <i class="fa-solid fa-arrow-left"></i> Go to Home
+                </a>
+            </div>
+        </div>
+
+        <div id="cert-content" class="hidden" style="width:100%;max-width:700px;">
+            <div class="cert-preview-wrap">
+                <img id="cert-preview-img" src="" alt="Certificate Preview" />
+            </div>
+            <div class="cert-actions">
+                <button class="cert-btn-download" id="cert-download-btn">
+                    <i class="fa-solid fa-download"></i> Download PDF
+                </button>
+                <button class="cert-btn-share" id="cert-share-btn">
+                    <i class="fa-solid fa-share-nodes"></i> Share
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <script src="assets/js/viewport.js" defer></script>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+        import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+        import { firebaseConfig } from "./assets/js/modules/firebase-config.js";
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const database = getDatabase(app);
+        const loader = document.getElementById('page-loader');
+
+        function hideLoader() {
+            if (loader) {
+                loader.classList.add('fade-out');
+                document.body.classList.remove('loading');
+                setTimeout(() => { loader.style.display = 'none'; }, 500);
+            }
+        }
+
+        let certCanvas = null;
+        let donorName = '';
+
+        onAuthStateChanged(auth, (user) => {
+            if (!user) {
+                hideLoader();
+                document.getElementById('not-logged-in')?.classList.remove('hidden');
+                return;
+            }
+
+            const userRef = ref(database, `donors/${user.uid}`);
+            onValue(userRef, async (snapshot) => {
+                const data = snapshot.val() || {};
+                hideLoader();
+
+                try {
+                    const { generateCertificate, downloadCertificate, shareCertificate } = await import('./assets/js/modules/certificate.js');
+                    const donorData = { ...data, email: user.email, uid: user.uid };
+                    donorName = donorData.fullName || 'Donor';
+
+                    certCanvas = await generateCertificate(donorData);
+                    const imgUrl = certCanvas.toDataURL('image/png');
+
+                    document.getElementById('cert-content')?.classList.remove('hidden');
+                    const previewImg = document.getElementById('cert-preview-img');
+                    if (previewImg) previewImg.src = imgUrl;
+
+                    document.getElementById('cert-download-btn')?.addEventListener('click', () => {
+                        if (certCanvas) downloadCertificate(certCanvas, donorName);
+                    });
+                    document.getElementById('cert-share-btn')?.addEventListener('click', () => {
+                        if (certCanvas) shareCertificate(certCanvas, donorName);
+                    });
+                } catch (err) {
+                    console.error('Certificate error:', err);
+                    document.getElementById('cert-content').innerHTML =
+                        '<p class="text-center text-red-600 font-semibold py-8">Failed to generate certificate. Please try again.</p>';
+                    document.getElementById('cert-content')?.classList.remove('hidden');
+                }
+            }, { onlyOnce: true });
+        });
+    </script>
+</body>
+
+</html>

@@ -18,6 +18,7 @@ import { firebaseConfig } from "./modules/firebase-config.js";
 import { initLanguageSystem, updatePageLanguage } from "./modules/language-ui.js";
 import { initBackToTop } from "./modules/back-to-top.js";
 import { initFeedback } from "./modules/feedback.js";
+import { initHeader, initMobileMenu } from "./modules/header.js";
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
@@ -36,6 +37,7 @@ const displayEmail = document.getElementById('profile-display-email');
 const statLast = document.getElementById('profile-stat-last');
 const statEligible = document.getElementById('profile-stat-eligible');
 const statRole = document.getElementById('profile-stat-role');
+const statMemberSince = document.getElementById('profile-stat-member-since');
 
 const fFullName = document.getElementById('profile-fullName');
 const fEmail = document.getElementById('profile-email');
@@ -43,6 +45,9 @@ const fPhone = document.getElementById('profile-phone');
 const fBloodGroup = document.getElementById('profile-bloodGroup');
 const fLocation = document.getElementById('profile-location');
 const fLastDonate = document.getElementById('profile-lastDonateDate');
+const fDateOfBirth = document.getElementById('profile-dateOfBirth');
+const fGender = document.getElementById('profile-gender');
+
 const fNotes = document.getElementById('profile-notes');
 const fRole = document.getElementById('profile-role');
 
@@ -62,6 +67,8 @@ initLanguageSystem();
 window.addEventListener('languageChanged', () => updatePageLanguage());
 
 const feedbackRef = ref(database, 'feedback');
+initHeader();
+initMobileMenu();
 initBackToTop();
 initFeedback(feedbackRef, push);
 
@@ -137,12 +144,23 @@ function populateProfile(data, email) {
     }
     if (statRole) statRole.textContent = role.charAt(0).toUpperCase() + role.slice(1);
 
+    if (statMemberSince) {
+        if (data.createdAt) {
+            statMemberSince.textContent = new Date(data.createdAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+        } else {
+            statMemberSince.textContent = '—';
+        }
+    }
+
     if (fFullName) fFullName.value = data.fullName || '';
     if (fEmail) fEmail.value = email || '';
     if (fPhone) fPhone.value = data.phone || '';
     if (fBloodGroup) fBloodGroup.value = data.bloodGroup || '';
     if (fLocation) fLocation.value = data.location || '';
     if (fLastDonate) fLastDonate.value = data.lastDonateDate || '';
+    if (fDateOfBirth) fDateOfBirth.value = data.dateOfBirth || '';
+    if (fGender) fGender.value = data.gender || '';
+
     if (fNotes) fNotes.value = data.notes || '';
     if (fRole) fRole.value = role;
 }
@@ -159,23 +177,53 @@ function closeModal(m) {
 }
 
 let currentUser = null;
+let currentDonorData = {};
 
 onAuthStateChanged(auth, (user) => {
     currentUser = user;
+    const mobileLogoutBtn = document.getElementById('mobile-logout-btn');
     if (!user) {
         hideLoader();
         notLoggedIn?.classList.remove('hidden');
         profileContent?.classList.add('hidden');
+        if (logoutHeaderBtn) logoutHeaderBtn.style.display = 'none';
+        if (mobileLogoutBtn) mobileLogoutBtn.classList.add('hidden');
         return;
     }
+    if (logoutHeaderBtn) logoutHeaderBtn.style.display = '';
+    if (mobileLogoutBtn) mobileLogoutBtn.classList.remove('hidden');
 
     const userRef = ref(database, `donors/${user.uid}`);
     onValue(userRef, (snapshot) => {
         const data = snapshot.val() || {};
+        currentDonorData = { ...data, uid: user.uid };
         populateProfile(data, user.email);
         hideLoader();
         notLoggedIn?.classList.add('hidden');
         profileContent?.classList.remove('hidden');
+
+        // Admin vs Member navbar differentiation
+        const role = data.role || 'member';
+        const adminBadge = document.getElementById('admin-badge');
+        const adminMobileLink = document.getElementById('admin-mobile-link');
+        // All regular nav links (desktop + mobile)
+        const navLinkIds = ['nav-home-link','nav-about-link','nav-how-link','nav-events-link','nav-join-link','nav-search-link','nav-contact-link'];
+        const mobileNavIds = ['mobile-home-link','mobile-about-link','mobile-how-link','mobile-events-link','mobile-join-link','mobile-search-link','mobile-contact-link'];
+
+        if (role === 'admin') {
+            document.body.classList.add('admin-mode');
+            if (adminBadge) { adminBadge.classList.remove('hidden'); adminBadge.classList.add('inline-flex'); }
+            adminMobileLink?.classList.remove('hidden');
+            // Hide ALL regular nav links for admin
+            navLinkIds.forEach(id => document.getElementById(id)?.classList.add('hidden'));
+            mobileNavIds.forEach(id => document.getElementById(id)?.classList.add('hidden'));
+        } else {
+            document.body.classList.remove('admin-mode');
+            if (adminBadge) { adminBadge.classList.add('hidden'); adminBadge.classList.remove('inline-flex'); }
+            adminMobileLink?.classList.add('hidden');
+            navLinkIds.forEach(id => document.getElementById(id)?.classList.remove('hidden'));
+            mobileNavIds.forEach(id => document.getElementById(id)?.classList.remove('hidden'));
+        }
     }, { onlyOnce: true });
 });
 
@@ -184,15 +232,20 @@ profileForm?.addEventListener('submit', (e) => {
     if (!currentUser) return;
     const fd = new FormData(profileForm);
     const updatedData = {
+        ...currentDonorData,
         fullName: fd.get('fullName')?.toString().trim() || '',
         phone: fd.get('phone')?.toString().trim() || '',
         bloodGroup: fd.get('bloodGroup')?.toString().trim() || '',
         location: fd.get('location')?.toString().trim() || '',
         lastDonateDate: fd.get('lastDonateDate')?.toString() || '',
         notes: fd.get('notes')?.toString() || '',
+        dateOfBirth: fd.get('dateOfBirth')?.toString() || currentDonorData.dateOfBirth || '',
+
+        gender: fd.get('gender')?.toString() || currentDonorData.gender || '',
         email: currentUser.email,
         role: fd.get('role')?.toString().trim() || 'member'
     };
+    delete updatedData.uid;
     const userRef = ref(database, 'donors/' + currentUser.uid);
     set(userRef, updatedData)
         .then(() => {
@@ -215,6 +268,7 @@ function handleLogout() {
     });
 }
 logoutHeaderBtn?.addEventListener('click', handleLogout);
+document.getElementById('mobile-logout-btn')?.addEventListener('click', handleLogout);
 
 certBtn?.addEventListener('click', async () => {
     if (!currentUser) {
@@ -224,6 +278,7 @@ certBtn?.addEventListener('click', async () => {
     try {
         const { showCertificateModal } = await import('./modules/certificate.js');
         const donorData = {
+            ...currentDonorData,
             fullName: fFullName?.value || '',
             email: fEmail?.value || '',
             bloodGroup: fBloodGroup?.value || '',
@@ -246,12 +301,14 @@ donorCardBtn?.addEventListener('click', async () => {
     try {
         const { showDonorCardModal } = await import('./modules/certificate.js');
         const donorData = {
+            ...currentDonorData,
             fullName: fFullName?.value || '',
             email: fEmail?.value || '',
             bloodGroup: fBloodGroup?.value || '',
             location: fLocation?.value || '',
             lastDonateDate: fLastDonate?.value || '',
-            phone: fPhone?.value || ''
+            phone: fPhone?.value || '',
+            uid: currentUser?.uid || ''
         };
         showDonorCardModal(donorData);
     } catch (err) {

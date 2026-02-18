@@ -13,7 +13,7 @@
 .profile-main {
     max-width: 720px;
     margin: 0 auto;
-    padding: 1.5rem 1rem 3rem;
+    padding: 5rem 1rem 3rem;
 }
 
 .profile-empty-state {
@@ -390,7 +390,7 @@ textarea.pf-input {
 
 @media (max-width: 640px) {
     .profile-main {
-        padding: 1rem 0.75rem 2.5rem;
+        padding: 4.5rem 0.75rem 2.5rem;
     }
 
     .profile-hero-bg {

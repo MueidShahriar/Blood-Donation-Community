@@ -39,18 +39,23 @@
 
     <header class="fixed top-0 left-0 right-0 z-40 bg-white/90 backdrop-blur shadow-lg rounded-b-xl">
         <nav class="max-w-6xl mx-auto flex items-center justify-between px-4 sm:px-5 lg:px-6 py-2">
-            <a href="index.html" class="flex items-center gap-3 text-decoration-none">
-                <img src="image/blood-drop.png" alt="logo" class="h-10 w-10 header-logo border-red-600" />
-                <span class="text-2xl font-extrabold text-red-700 tracking-tight site-title">Blood Donation Community</span>
-            </a>
+            <div class="flex items-center gap-3">
+                <a href="index.html" class="flex items-center gap-3 text-decoration-none">
+                    <img src="image/blood-drop.png" alt="logo" class="h-10 w-10 header-logo border-red-600" />
+                    <span class="text-2xl font-extrabold text-red-700 tracking-tight site-title">Blood Donation Community</span>
+                </a>
+                <span id="admin-badge"
+                    class="hidden items-center gap-1 text-xs font-bold px-2 py-1 rounded bg-red-600 text-white shadow"
+                    data-i18n="adminBadge">Admin</span>
+            </div>
             <div class="hidden md:flex items-center gap-1 text-base font-medium">
-                <a href="index.html" class="px-3 py-2 rounded hover:bg-red-50 text-red-700">Home</a>
-                <a href="about.html" class="px-3 py-2 rounded hover:bg-red-50 text-red-700">About</a>
-                <a href="donationGuide.html" class="px-3 py-2 rounded hover:bg-red-50 text-red-700">Donation Guide</a>
-                <a href="events.html" class="px-3 py-2 rounded hover:bg-red-50 text-red-700">Events</a>
-                <a href="join.html" class="px-3 py-2 rounded bg-red-50 text-red-700 font-bold">Join</a>
-                <a href="index.html#search" class="px-3 py-2 rounded hover:bg-red-50 text-red-700">Search</a>
-                <a href="index.html#contact" class="px-3 py-2 rounded hover:bg-red-50 text-red-700">Contact</a>
+                <a id="nav-home-link" href="index.html" class="px-3 py-2 rounded hover:bg-red-50 text-red-700">Home</a>
+                <a id="nav-about-link" href="about.html" class="px-3 py-2 rounded hover:bg-red-50 text-red-700">About</a>
+                <a id="nav-how-link" href="donationGuide.html" class="px-3 py-2 rounded hover:bg-red-50 text-red-700">Donation Guide</a>
+                <a id="nav-events-link" href="events.html" class="px-3 py-2 rounded hover:bg-red-50 text-red-700">Events</a>
+                <a id="nav-join-link" href="join.html" class="px-3 py-2 rounded bg-red-50 text-red-700 font-bold">Join</a>
+                <a id="nav-search-link" href="search.html" class="px-3 py-2 rounded hover:bg-red-50 text-red-700">Search</a>
+                <a id="nav-contact-link" href="index.html#contact" class="px-3 py-2 rounded hover:bg-red-50 text-red-700">Contact</a>
             </div>
             <div class="flex items-center gap-4">
                 <button id="login-btn"
@@ -69,19 +74,22 @@
         </nav>
         <div id="mobile-menu" class="md:hidden hidden bg-white/95 shadow-lg rounded-b-xl">
             <div class="px-4 py-4 flex flex-col gap-2 text-red-700">
-                <a href="index.html" class="block px-3 py-2 rounded hover:bg-red-50">Home</a>
-                <a href="about.html" class="block px-3 py-2 rounded hover:bg-red-50">About</a>
-                <a href="donationGuide.html" class="block px-3 py-2 rounded hover:bg-red-50">Donation Guide</a>
-                <a href="events.html" class="block px-3 py-2 rounded hover:bg-red-50">Events</a>
-                <a href="join.html" class="block px-3 py-2 rounded bg-red-50 font-bold">Join</a>
-                <a href="index.html#search" class="block px-3 py-2 rounded hover:bg-red-50">Search</a>
-                <a href="index.html#contact" class="block px-3 py-2 rounded hover:bg-red-50">Contact</a>
+                <a id="mobile-home-link" href="index.html" class="block px-3 py-2 rounded hover:bg-red-50">Home</a>
+                <a id="mobile-about-link" href="about.html" class="block px-3 py-2 rounded hover:bg-red-50">About</a>
+                <a id="mobile-how-link" href="donationGuide.html" class="block px-3 py-2 rounded hover:bg-red-50">Donation Guide</a>
+                <a id="mobile-events-link" href="events.html" class="block px-3 py-2 rounded hover:bg-red-50">Events</a>
+                <a id="mobile-join-link" href="join.html" class="block px-3 py-2 rounded bg-red-50 font-bold">Join</a>
+                <a id="mobile-search-link" href="search.html" class="block px-3 py-2 rounded hover:bg-red-50">Search</a>
+                <a id="mobile-contact-link" href="index.html#contact" class="block px-3 py-2 rounded hover:bg-red-50">Contact</a>
+                <a id="admin-mobile-link" href="index.html#admin-panel" class="hidden px-3 py-2 rounded hover:bg-red-50"
+                    data-i18n="navDashboard">Dashboard</a>
+                <hr class="border-t border-red-200 my-1">
                 <button id="mobile-login-btn"
                     class="block text-left px-3 py-2 rounded hover:bg-red-50 text-red-700 font-medium"
-                    data-i18n="btnLogin">Login</button>
+                    data-i18n="btnLogin">🔑 Login</button>
                 <button id="mobile-logout-btn"
                     class="hidden text-left px-3 py-2 rounded hover:bg-red-50 text-red-600 font-medium">
-                    <i class="fa-solid fa-sign-out-alt"></i> Logout
+                    🚪 Logout
                 </button>
             </div>
         </div>
@@ -251,7 +259,9 @@
                         <li><a href="donationGuide.html"><i class="fa-solid fa-chevron-right"></i> <span data-i18n="navHow">Donation Guide</span></a></li>
                         <li><a href="events.html"><i class="fa-solid fa-chevron-right"></i> <span data-i18n="navEvents">Events</span></a></li>
                         <li><a href="join.html"><i class="fa-solid fa-chevron-right"></i> <span data-i18n="navJoin">Join</span></a></li>
-                        <li><a href="index.html#search"><i class="fa-solid fa-chevron-right"></i> <span data-i18n="navSearch">Search</span></a></li>
+                        <li><a href="search.html"><i class="fa-solid fa-chevron-right"></i> <span data-i18n="navSearch">Search</span></a></li>
+                        <li><a href="donor.html"><i class="fa-solid fa-chevron-right"></i> <span>Donor Card</span></a></li>
+                        <li><a href="certificate.html"><i class="fa-solid fa-chevron-right"></i> <span>Certificate</span></a></li>
                     </ul>
                 </div>
                 <div>

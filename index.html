@@ -91,9 +91,6 @@
                     data-i18n="navContact">Contact</a>
             </div>
             <div class="flex items-center gap-4">
-                <a id="admin-nav-link" href="#admin-panel"
-                    class="hidden admin-desktop-only px-3 py-2 rounded hover:bg-red-50 text-red-700"
-                    data-i18n="navDashboard">Dashboard</a>
                 <button id="login-btn"
                     class="desktop-only inline-flex bg-red-600 text-white px-4 py-2 rounded-lg font-semibold shadow hover:bg-red-700 transition items-center justify-center"
                     data-i18n="btnLogin">Login</button>
@@ -119,18 +116,19 @@
                     data-i18n="navEvents">Events</a>
                 <a id="mobile-join-link" href="join.html" class="block px-3 py-2 rounded hover:bg-red-50"
                     data-i18n="navJoin">Join</a>
-                <a id="mobile-search-link" href="#search" class="block px-3 py-2 rounded hover:bg-red-50"
+                <a id="mobile-search-link" href="search.html" class="block px-3 py-2 rounded hover:bg-red-50"
                     data-i18n="navSearch">Search</a>
                 <a id="mobile-contact-link" href="#contact" class="block px-3 py-2 rounded hover:bg-red-50"
                     data-i18n="navContact">Contact</a>
                 <a id="admin-mobile-link" href="#admin-panel" class="hidden px-3 py-2 rounded hover:bg-red-50"
                     data-i18n="navDashboard">Dashboard</a>
+                <hr class="border-t border-red-200 my-1">
                 <button id="mobile-login-btn"
                     class="block text-left px-3 py-2 rounded hover:bg-red-50 text-red-700 font-medium"
-                    data-i18n="btnLogin">Login</button>
+                    data-i18n="btnLogin">🔑 Login</button>
                 <button id="mobile-logout-btn"
                     class="hidden text-left px-3 py-2 rounded hover:bg-red-50 text-red-600 font-medium">
-                    <i class="fa-solid fa-sign-out-alt"></i> Logout
+                    ➜] Logout
                 </button>
             </div>
         </div>
@@ -154,7 +152,7 @@
                         <i class="fa-solid fa-hand-holding-droplet"></i>
                         <span data-i18n="btnBecomeDonor">Become a Donor</span>
                     </a>
-                    <a href="#search"
+                    <a href="search.html"
                         class="w-full sm:w-auto text-center bg-white border-2 border-red-600 text-red-600 px-8 py-3 rounded-lg font-semibold shadow hover:bg-red-50 hover:scale-105 transition inline-flex items-center justify-center gap-2 btn-breathe">
                         <i class="fa-solid fa-magnifying-glass"></i>
                         <span data-i18n="btnSearchDonors">Search Donors</span>
@@ -747,8 +745,10 @@
                                     data-i18n="navEvents">Events</span></a></li>
                         <li><a href="join.html"><i class="fa-solid fa-chevron-right"></i> <span
                                     data-i18n="navJoin">Join</span></a></li>
-                        <li><a href="#search"><i class="fa-solid fa-chevron-right"></i> <span
+                        <li><a href="search.html"><i class="fa-solid fa-chevron-right"></i> <span
                                     data-i18n="navSearch">Search</span></a></li>
+                        <li><a href="donor.html"><i class="fa-solid fa-chevron-right"></i> <span>Donor Card</span></a></li>
+                        <li><a href="certificate.html"><i class="fa-solid fa-chevron-right"></i> <span>Certificate</span></a></li>
                     </ul>
                 </div>
                 <div>

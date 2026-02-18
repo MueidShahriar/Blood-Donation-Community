@@ -10,7 +10,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
     <link rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
         crossorigin="anonymous" referrerpolicy="no-referrer" />
@@ -57,26 +57,59 @@
         </div>
     </div>
 
-    <header class="profile-header">
-        <nav class="max-w-5xl mx-auto flex items-center justify-between px-4 sm:px-6 py-3">
-            <a href="index.html" class="flex items-center gap-2.5 text-decoration-none group">
-                <img src="image/blood-drop.png" alt="logo" class="h-9 w-9 rounded-xl transition group-hover:scale-110" />
-                <span class="text-lg sm:text-xl font-extrabold text-red-700 tracking-tight" data-i18n="profileTitle">My Profile</span>
-            </a>
-            <div class="flex items-center gap-2">
-                <a href="index.html"
-                    class="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium text-gray-600 hover:text-red-700 hover:bg-red-50 transition">
-                    <i class="fa-solid fa-arrow-left text-xs"></i>
-                    <span class="hidden sm:inline" data-i18n="profileBackHome">Back to Home</span>
-                    <span class="sm:hidden" data-i18n="profileHome">Home</span>
+    <header class="fixed top-0 left-0 right-0 z-40 bg-white/90 backdrop-blur shadow-lg rounded-b-xl">
+        <nav class="max-w-6xl mx-auto flex items-center justify-between px-4 sm:px-5 lg:px-6 py-2">
+            <div class="flex items-center gap-3">
+                <a href="index.html" class="flex items-center gap-3 text-decoration-none">
+                    <img src="image/blood-drop.png" alt="logo" class="h-10 w-10 header-logo border-red-600" />
+                    <span class="text-2xl font-extrabold text-red-700 tracking-tight site-title" data-i18n="siteTitle">Blood Donation
+                        Community</span>
                 </a>
+                <span id="admin-badge"
+                    class="hidden items-center gap-1 text-xs font-bold px-2 py-1 rounded bg-red-600 text-white shadow"
+                    data-i18n="adminBadge">Admin</span>
+            </div>
+            <div class="hidden md:flex items-center gap-1 text-base font-medium">
+                <a id="nav-home-link" href="index.html" class="px-3 py-2 rounded hover:bg-red-50 text-red-700" data-i18n="navHome">Home</a>
+                <a id="nav-about-link" href="about.html" class="px-3 py-2 rounded hover:bg-red-50 text-red-700" data-i18n="navAbout">About</a>
+                <a id="nav-how-link" href="donationGuide.html" class="px-3 py-2 rounded hover:bg-red-50 text-red-700" data-i18n="navHow">Donation Guide</a>
+                <a id="nav-events-link" href="events.html" class="px-3 py-2 rounded hover:bg-red-50 text-red-700" data-i18n="navEvents">Events</a>
+                <a id="nav-join-link" href="join.html" class="px-3 py-2 rounded hover:bg-red-50 text-red-700" data-i18n="navJoin">Join</a>
+                <a id="nav-search-link" href="search.html" class="px-3 py-2 rounded hover:bg-red-50 text-red-700" data-i18n="navSearch">Search</a>
+                <a id="nav-contact-link" href="index.html#contact" class="px-3 py-2 rounded hover:bg-red-50 text-red-700" data-i18n="navContact">Contact</a>
+            </div>
+            <div class="flex items-center gap-2">
                 <button id="pf-logout-header" type="button"
-                    class="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium text-red-600 hover:bg-red-50 border border-red-200 transition">
-                    <i class="fa-solid fa-sign-out-alt text-xs"></i>
-                    <span class="hidden sm:inline" data-i18n="profileLogout">Logout</span>
+                    class="desktop-only inline-flex items-center gap-1.5 bg-red-600 text-white px-4 py-2 rounded-lg font-semibold shadow hover:bg-red-700 transition">
+                    🚪 <span data-i18n="profileLogout">Logout</span>
+                </button>
+                <button id="menu-toggle" class="md:hidden p-2 rounded-lg bg-red-100 text-red-700 hover:bg-red-200"
+                    aria-label="Open menu" type="button">
+                    <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M4 6h16M4 12h16M4 18h16" />
+                    </svg>
                 </button>
             </div>
         </nav>
+        <div id="mobile-menu" class="md:hidden hidden bg-white/95 shadow-lg rounded-b-xl">
+            <div class="px-4 py-4 flex flex-col gap-2 text-red-700">
+                <a id="mobile-home-link" href="index.html" class="block px-3 py-2 rounded hover:bg-red-50" data-i18n="navHome">Home</a>
+                <a id="mobile-about-link" href="about.html" class="block px-3 py-2 rounded hover:bg-red-50" data-i18n="navAbout">About</a>
+                <a id="mobile-how-link" href="donationGuide.html" class="block px-3 py-2 rounded hover:bg-red-50" data-i18n="navHow">Donation Guide</a>
+                <a id="mobile-events-link" href="events.html" class="block px-3 py-2 rounded hover:bg-red-50" data-i18n="navEvents">Events</a>
+                <a id="mobile-join-link" href="join.html" class="block px-3 py-2 rounded hover:bg-red-50" data-i18n="navJoin">Join</a>
+                <a id="mobile-search-link" href="search.html" class="block px-3 py-2 rounded hover:bg-red-50" data-i18n="navSearch">Search</a>
+                <a id="mobile-contact-link" href="index.html#contact" class="block px-3 py-2 rounded hover:bg-red-50" data-i18n="navContact">Contact</a>
+                <a id="admin-mobile-link" href="index.html#admin-panel" class="hidden px-3 py-2 rounded hover:bg-red-50"
+                    data-i18n="navDashboard">Dashboard</a>
+                <hr class="border-t border-red-200 my-1">
+                <button id="mobile-logout-btn"
+                    class="hidden text-left px-3 py-2 rounded hover:bg-red-50 text-red-600 font-medium">
+                    🚪 Logout
+                </button>
+            </div>
+        </div>
     </header>
 
     <main class="profile-main">
@@ -139,6 +172,13 @@
                         <div>
                             <p class="profile-stat-label" data-i18n="profileMemberRole">Member Role</p>
                             <p id="profile-stat-role" class="profile-stat-value">Member</p>
+                        </div>
+                    </div>
+                    <div class="profile-stat-item">
+                        <span class="profile-stat-icon profile-stat-icon--purple" style="background:rgba(124,58,237,0.1);color:#7c3aed"><i class="fa-solid fa-calendar-plus"></i></span>
+                        <div>
+                            <p class="profile-stat-label">Member Since</p>
+                            <p id="profile-stat-member-since" class="profile-stat-value">—</p>
                         </div>
                     </div>
                 </div>
@@ -209,6 +249,25 @@
                             <input name="lastDonateDate" id="profile-lastDonateDate" type="date"
                                 class="pf-input" />
                         </div>
+                        <div class="pf-field">
+                            <label for="profile-dateOfBirth" class="pf-label">
+                                <i class="fa-solid fa-cake-candles pf-label-icon"></i> <span>Date of Birth</span>
+                            </label>
+                            <input name="dateOfBirth" id="profile-dateOfBirth" type="date"
+                                class="pf-input" />
+                        </div>
+                        <div class="pf-field">
+                            <label for="profile-gender" class="pf-label">
+                                <i class="fa-solid fa-venus-mars pf-label-icon"></i> <span>Gender</span>
+                            </label>
+                            <select name="gender" id="profile-gender" class="pf-input">
+                                <option value="">Select</option>
+                                <option value="Male">Male</option>
+                                <option value="Female">Female</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+
                         <div class="pf-field pf-field--full">
                             <label for="profile-notes" class="pf-label">
                                 <i class="fa-solid fa-note-sticky pf-label-icon"></i> <span data-i18n="profileNotes">Additional Notes</span>
@@ -305,7 +364,9 @@
                         <li><a href="donationGuide.html"><i class="fa-solid fa-chevron-right"></i> <span data-i18n="navHow">Donation Guide</span></a></li>
                         <li><a href="events.html"><i class="fa-solid fa-chevron-right"></i> <span data-i18n="navEvents">Events</span></a></li>
                         <li><a href="join.html"><i class="fa-solid fa-chevron-right"></i> <span data-i18n="navJoin">Join</span></a></li>
-                        <li><a href="index.html#search"><i class="fa-solid fa-chevron-right"></i> <span data-i18n="navSearch">Search</span></a></li>
+                        <li><a href="search.html"><i class="fa-solid fa-chevron-right"></i> <span data-i18n="navSearch">Search</span></a></li>
+                        <li><a href="donor.html"><i class="fa-solid fa-chevron-right"></i> <span>Donor Card</span></a></li>
+                        <li><a href="certificate.html"><i class="fa-solid fa-chevron-right"></i> <span>Certificate</span></a></li>
                     </ul>
                 </div>
                 <div>

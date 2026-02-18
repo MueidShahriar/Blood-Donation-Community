@@ -8,15 +8,11 @@ export function updateLoginButtonState(database, ref, onValue, renderAdminMember
     const profileUserId = document.getElementById('profile-userId');
     const adminPanel = document.getElementById('admin-panel');
     const adminBadge = document.getElementById('admin-badge');
-    const adminNavLink = document.getElementById('admin-nav-link');
     const adminMobileLink = document.getElementById('admin-mobile-link');
-    const joinLink = document.getElementById('nav-join-link');
-    const joinMobileLink = document.getElementById('mobile-join-link');
-    const howLink = document.getElementById('nav-how-link');
-    const howMobileLink = document.getElementById('mobile-how-link');
-    const contactLink = document.getElementById('nav-contact-link');
-    const contactMobileLink = document.getElementById('mobile-contact-link');
     const mobileLogoutBtn = document.getElementById('mobile-logout-btn');
+    // All regular nav link IDs (desktop + mobile) to hide for admin
+    const navLinkIds = ['nav-home-link','nav-about-link','nav-how-link','nav-events-link','nav-join-link','nav-search-link','nav-contact-link'];
+    const mobileNavIds = ['mobile-home-link','mobile-about-link','mobile-how-link','mobile-events-link','mobile-join-link','mobile-search-link','mobile-contact-link'];
     if (!loginBtn && !mobileLoginBtn) return;
     if (state.currentUser) {
         if (loginBtn) {
@@ -27,7 +23,7 @@ export function updateLoginButtonState(database, ref, onValue, renderAdminMember
             loginBtn.removeAttribute('data-i18n');
         }
         if (mobileLoginBtn) {
-            mobileLoginBtn.textContent = t('btnProfile');
+            mobileLoginBtn.innerHTML = '\u{1F464} ' + t('btnProfile');
             mobileLoginBtn.setAttribute('aria-label', t('btnProfile'));
             mobileLoginBtn.setAttribute('title', t('btnProfile'));
             mobileLoginBtn.removeAttribute('data-i18n');
@@ -41,28 +37,19 @@ export function updateLoginButtonState(database, ref, onValue, renderAdminMember
                 adminPanel?.classList.remove('hidden');
                 document.body.classList.add('admin-mode');
                 if (adminBadge) { adminBadge.classList.remove('hidden'); adminBadge.classList.add('inline-flex'); }
-                adminNavLink?.classList.remove('hidden');
-                adminMobileLink?.classList.remove('hidden');
-                joinLink?.classList.add('hidden');
-                joinMobileLink?.classList.add('hidden');
-                howLink?.classList.add('hidden');
-                howMobileLink?.classList.add('hidden');
-                contactLink?.classList.add('hidden');
-                contactMobileLink?.classList.add('hidden');
+                // Hide ALL regular nav links for admin (Dashboard not needed — already on dashboard)
+                navLinkIds.forEach(id => document.getElementById(id)?.classList.add('hidden'));
+                mobileNavIds.forEach(id => document.getElementById(id)?.classList.add('hidden'));
+                adminMobileLink?.classList.add('hidden');
                 renderAdminMembersList(deleteMemberFn);
                 renderAdminEventsList(deleteEventFn);
             } else {
                 adminPanel?.classList.add('hidden');
                 document.body.classList.remove('admin-mode');
                 if (adminBadge) { adminBadge.classList.add('hidden'); adminBadge.classList.remove('inline-flex'); }
-                adminNavLink?.classList.add('hidden');
                 adminMobileLink?.classList.add('hidden');
-                joinLink?.classList.remove('hidden');
-                joinMobileLink?.classList.remove('hidden');
-                howLink?.classList.remove('hidden');
-                howMobileLink?.classList.remove('hidden');
-                contactLink?.classList.remove('hidden');
-                contactMobileLink?.classList.remove('hidden');
+                navLinkIds.forEach(id => document.getElementById(id)?.classList.remove('hidden'));
+                mobileNavIds.forEach(id => document.getElementById(id)?.classList.remove('hidden'));
             }
         }, { onlyOnce: true });
     } else {
@@ -72,7 +59,7 @@ export function updateLoginButtonState(database, ref, onValue, renderAdminMember
             loginBtn.setAttribute('data-i18n', 'btnLogin');
         }
         if (mobileLoginBtn) {
-            mobileLoginBtn.textContent = t('btnLogin');
+            mobileLoginBtn.innerHTML = '\u{1F511} ' + t('btnLogin');
             mobileLoginBtn.setAttribute('data-i18n', 'btnLogin');
         }
         if (mobileLogoutBtn) { mobileLogoutBtn.classList.add('hidden'); mobileLogoutBtn.classList.remove('block'); }
@@ -80,14 +67,10 @@ export function updateLoginButtonState(database, ref, onValue, renderAdminMember
         adminPanel?.classList.add('hidden');
         document.body.classList.remove('admin-mode');
         adminBadge?.classList.add('hidden');
-        adminNavLink?.classList.add('hidden');
         adminMobileLink?.classList.add('hidden');
-        joinLink?.classList.remove('hidden');
-        joinMobileLink?.classList.remove('hidden');
-        howLink?.classList.remove('hidden');
-        howMobileLink?.classList.remove('hidden');
-        contactLink?.classList.remove('hidden');
-        contactMobileLink?.classList.remove('hidden');
+        // Restore ALL regular nav links for public/logged-out view
+        navLinkIds.forEach(id => document.getElementById(id)?.classList.remove('hidden'));
+        mobileNavIds.forEach(id => document.getElementById(id)?.classList.remove('hidden'));
     }
 }
 
@@ -115,14 +98,19 @@ export function initAuth({
     });
 
     const mobileLogoutBtn = document.getElementById('mobile-logout-btn');
-    mobileLogoutBtn?.addEventListener('click', () => {
-        if (mobileMenu) closeModal(mobileMenu);
+
+    const doLogout = () => {
         signOut(auth).then(() => {
             showModalMessage('success-modal', 'You have been logged out successfully.', 'Logout Successful');
         }).catch((error) => {
             console.error('Logout failed:', error);
             showModalMessage('success-modal', 'An error occurred during logout.', 'Logout Failed');
         });
+    };
+
+    mobileLogoutBtn?.addEventListener('click', () => {
+        if (mobileMenu) closeModal(mobileMenu);
+        doLogout();
     });
 
     loginForm?.addEventListener('submit', (ev) => {

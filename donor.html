@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en" class="antialiased scroll-smooth">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Donor Card - Blood Donation Community</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="shortcut icon" href="image/blood-drop.png" type="image/x-icon">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="assets/css/common.css">
+    <link rel="stylesheet" href="assets/css/profile.css">
+    <meta name="description" content="View and download your digital donor card from Blood Donation Community.">
+    <style>
+        #page-loader {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #fff; z-index: 9999; display: flex; justify-content: center; align-items: center;
+        }
+        #page-loader.fade-out { opacity: 0; visibility: hidden; transition: opacity .5s, visibility .5s; }
+        body.loading > *:not(#page-loader):not(script) { opacity: 0 !important; visibility: hidden !important; }
+        .donor-page-main { min-height: calc(100vh - 80px); display: flex; align-items: flex-start; justify-content: center; padding: 2rem 1rem; }
+        .donor-page-card { width: 100%; max-width: 480px; }
+        .donor-page-hero { text-align: center; margin-bottom: 1.5rem; }
+        .donor-page-hero h1 { font-size: 1.5rem; font-weight: 800; color: #1f2937; }
+        .donor-page-hero p { font-size: 0.85rem; color: #6b7280; margin-top: 0.25rem; }
+        @media (max-width: 480px) {
+            .donor-page-main { padding: 1rem 0.5rem; }
+            .donor-page-hero h1 { font-size: 1.25rem; }
+        }
+    </style>
+</head>
+
+<body class="bg-gray-50 text-gray-900 loading" style="font-family:'Inter',sans-serif;">
+    <div id="page-loader">
+        <div class="logo-wrapper">
+            <div class="logo-base"><img src="image/blood-drop.png" alt="" /></div>
+            <div class="logo-fill"><img src="image/blood-drop.png" alt="Loading" /></div>
+        </div>
+    </div>
+
+    <header class="profile-header">
+        <nav class="max-w-5xl mx-auto flex items-center justify-between px-4 sm:px-6 py-3">
+            <a href="index.html" class="flex items-center gap-2.5 text-decoration-none group">
+                <img src="image/blood-drop.png" alt="logo" class="h-9 w-9 rounded-xl transition group-hover:scale-110" />
+                <span class="text-lg sm:text-xl font-extrabold text-red-700 tracking-tight">Donor Card</span>
+            </a>
+            <div class="flex items-center gap-2">
+                <a href="profile.html"
+                    class="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium text-gray-600 hover:text-red-700 hover:bg-red-50 transition">
+                    <i class="fa-solid fa-user text-xs"></i>
+                    <span class="hidden sm:inline">Profile</span>
+                </a>
+                <a href="index.html"
+                    class="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium text-gray-600 hover:text-red-700 hover:bg-red-50 transition">
+                    <i class="fa-solid fa-arrow-left text-xs"></i>
+                    <span class="hidden sm:inline">Home</span>
+                </a>
+            </div>
+        </nav>
+    </header>
+
+    <main class="donor-page-main">
+        <div class="donor-page-card">
+            <div class="donor-page-hero">
+                <h1><i class="fa-solid fa-id-card text-red-500 mr-2"></i>Your Donor Card</h1>
+                <p>View, customize and download your digital donor identity card</p>
+            </div>
+
+            <div id="not-logged-in" class="hidden">
+                <div class="profile-empty-state">
+                    <div class="profile-empty-icon"><i class="fa-solid fa-user-lock"></i></div>
+                    <h2 class="text-xl font-bold text-gray-800 mt-4">You're not logged in</h2>
+                    <p class="text-sm text-gray-500 mt-2 max-w-sm mx-auto">Please log in to view your donor card.</p>
+                    <a href="index.html" class="mt-6 inline-flex items-center gap-2 px-6 py-2.5 rounded-lg bg-red-600 text-white font-semibold shadow hover:bg-red-700 transition">
+                        <i class="fa-solid fa-arrow-left"></i> Go to Home
+                    </a>
+                </div>
+            </div>
+
+            <div id="donor-card-container" class="hidden"></div>
+        </div>
+    </main>
+
+    <script src="assets/js/viewport.js" defer></script>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+        import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+        import { firebaseConfig } from "./assets/js/modules/firebase-config.js";
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const database = getDatabase(app);
+        const loader = document.getElementById('page-loader');
+
+        function hideLoader() {
+            if (loader) {
+                loader.classList.add('fade-out');
+                document.body.classList.remove('loading');
+                setTimeout(() => { loader.style.display = 'none'; }, 500);
+            }
+        }
+
+        onAuthStateChanged(auth, (user) => {
+            if (!user) {
+                hideLoader();
+                document.getElementById('not-logged-in')?.classList.remove('hidden');
+                return;
+            }
+
+            const userRef = ref(database, `donors/${user.uid}`);
+            onValue(userRef, async (snapshot) => {
+                const data = snapshot.val() || {};
+                hideLoader();
+                document.getElementById('donor-card-container')?.classList.remove('hidden');
+
+                try {
+                    const { showDonorCardModal } = await import('./assets/js/modules/certificate.js');
+                    const donorData = {
+                        ...data,
+                        email: user.email,
+                        uid: user.uid
+                    };
+                    const container = document.getElementById('donor-card-container');
+                    showDonorCardModal(donorData, container);
+                } catch (err) {
+                    console.error('Donor card error:', err);
+                    document.getElementById('donor-card-container').innerHTML =
+                        '<p class="text-center text-red-600 font-semibold py-8">Failed to load donor card. Please try again.</p>';
+                }
+            }, { onlyOnce: true });
+        });
+    </script>
+</body>
+
+</html>

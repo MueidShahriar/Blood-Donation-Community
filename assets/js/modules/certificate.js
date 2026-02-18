@@ -8,17 +8,24 @@ export function generateCertificate(donorData) {
         canvas.height = 850;
         const ctx = canvas.getContext('2d');
 
+        // Ensure Dancing Script font is loaded for stylish donor name
+        const fontPromise = document.fonts.load('bold 48px "Dancing Script"').catch(() => {});
+
         const signImg = new Image();
         signImg.src = 'image/sign.png';
         
         signImg.onload = function() {
-            drawCertificate(canvas, ctx, donorData, signImg);
-            resolve(canvas);
+            fontPromise.then(() => {
+                drawCertificate(canvas, ctx, donorData, signImg);
+                resolve(canvas);
+            });
         };
         
         signImg.onerror = function() {
-            drawCertificate(canvas, ctx, donorData, null);
-            resolve(canvas);
+            fontPromise.then(() => {
+                drawCertificate(canvas, ctx, donorData, null);
+                resolve(canvas);
+            });
         };
     });
 }
@@ -82,7 +89,7 @@ function drawCertificate(canvas, ctx, donorData, signImg) {
     ctx.fillText('This is proudly presented to', canvas.width / 2, 250);
 
     ctx.fillStyle = '#1f2937';
-    ctx.font = 'bold 48px Brush Script MT, cursive';
+    ctx.font = 'bold 52px "Dancing Script", "Brush Script MT", cursive';
     const donorName = donorData.fullName || 'Donor Name';
     ctx.fillText(donorName, canvas.width / 2, 315);
 
@@ -378,7 +385,7 @@ export function showCertificateModal(donorData) {
     });
 }
 
-export function showDonorCardModal(donorData) {
+export function showDonorCardModal(donorData, containerEl) {
     const esc = (value) => {
         const text = value == null || value === '' ? '—' : String(value);
         return text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
@@ -389,82 +396,145 @@ export function showDonorCardModal(donorData) {
     const location = esc(donorData.location || '—');
     const phone = esc(donorData.phone || '—');
     const email = esc(donorData.email || '—');
+    const gender = esc(donorData.gender || '—');
     const initials = (donorData.fullName || 'D').split(/\s+/).filter(Boolean).map(p => p[0]).join('').slice(0,2).toUpperCase();
     const lastDonate = donorData.lastDonateDate
         ? new Date(donorData.lastDonateDate + 'T00:00:00').toLocaleDateString('en-GB', { day:'numeric', month:'short', year:'numeric' })
         : 'Not recorded';
 
+    // Total donations count
+    const totalDonations = donorData.totalDonations || 0;
+
+    // Next eligible date (last donation + 90 days)
+    let nextEligible = '—';
+    if (donorData.lastDonateDate) {
+        const last = new Date(donorData.lastDonateDate + 'T00:00:00');
+        const nextDate = new Date(last.getTime() + 90 * 24 * 60 * 60 * 1000);
+        const now = new Date();
+        if (nextDate <= now) {
+            nextEligible = '<span style="color:#059669;font-weight:800">✓ Eligible Now</span>';
+        } else {
+            nextEligible = esc(nextDate.toLocaleDateString('en-GB', { day:'numeric', month:'short', year:'numeric' }));
+        }
+    }
+
+    // Age from DOB
+    let ageDisplay = '—';
+    if (donorData.dateOfBirth) {
+        const dob = new Date(donorData.dateOfBirth + 'T00:00:00');
+        const now = new Date();
+        let age = now.getFullYear() - dob.getFullYear();
+        if (now.getMonth() < dob.getMonth() || (now.getMonth() === dob.getMonth() && now.getDate() < dob.getDate())) age--;
+        ageDisplay = `${age} years`;
+    }
+
+    // Badge/Rank based on donation count
+    let badgeLabel = 'New Donor';
+    let badgeColor = '#6b7280';
+    let badgeIcon = 'fa-seedling';
+    if (totalDonations >= 20) { badgeLabel = 'Platinum'; badgeColor = '#7c3aed'; badgeIcon = 'fa-gem'; }
+    else if (totalDonations >= 10) { badgeLabel = 'Gold'; badgeColor = '#d97706'; badgeIcon = 'fa-crown'; }
+    else if (totalDonations >= 5) { badgeLabel = 'Silver'; badgeColor = '#475569'; badgeIcon = 'fa-medal'; }
+    else if (totalDonations >= 2) { badgeLabel = 'Bronze'; badgeColor = '#b45309'; badgeIcon = 'fa-award'; }
+
     const cardHtml = `
-        <div class="flex flex-col items-center gap-5" id="donor-card-wrapper">
-            <!-- Live preview card -->
-            <div id="donor-card-preview" class="w-full max-w-md">
-                <div style="position:relative;border-radius:1.5rem;overflow:hidden;background:linear-gradient(135deg,#b91c1c 0%,#dc2626 25%,#ef4444 50%,#f97316 75%,#fbbf24 100%);padding:3px;box-shadow:0 16px 50px rgba(185,28,28,0.25),0 0 0 1px rgba(255,255,255,0.1)">
-                    <div style="border-radius:1.35rem;background:linear-gradient(170deg,#ffffff 0%,#fffbfb 35%,#fff1f2 60%,#fce7f3 85%,#fdf2f8 100%);padding:0;position:relative;overflow:hidden">
-                        <!-- Decorative circles -->
+        <div class="flex flex-col items-center gap-3 sm:gap-4" id="donor-card-wrapper">
+            <div id="donor-card-preview" class="w-full" style="max-width:min(28rem,100%)">
+                <div style="position:relative;border-radius:1.25rem;overflow:hidden;background:linear-gradient(135deg,#b91c1c 0%,#dc2626 25%,#ef4444 50%,#f97316 75%,#fbbf24 100%);padding:2.5px;box-shadow:0 16px 50px rgba(185,28,28,0.25),0 0 0 1px rgba(255,255,255,0.1)">
+                    <div style="border-radius:1.1rem;background:linear-gradient(170deg,#ffffff 0%,#fffbfb 35%,#fff1f2 60%,#fce7f3 85%,#fdf2f8 100%);padding:0;position:relative;overflow:hidden">
                         <div style="position:absolute;top:-30px;right:-30px;width:120px;height:120px;border-radius:50%;background:radial-gradient(circle,rgba(239,68,68,0.08) 0%,transparent 70%)"></div>
                         <div style="position:absolute;bottom:40px;left:-20px;width:80px;height:80px;border-radius:50%;background:radial-gradient(circle,rgba(249,115,22,0.06) 0%,transparent 70%)"></div>
                         <!-- Header -->
-                        <div style="display:flex;align-items:center;justify-content:space-between;padding:1.1rem 1.25rem 0.75rem;border-bottom:2px solid transparent;border-image:linear-gradient(90deg,rgba(220,38,38,0.2),rgba(249,115,22,0.2),rgba(220,38,38,0.05)) 1">
-                            <div style="display:flex;align-items:center;gap:0.6rem">
-                                <img src="image/blood-drop.png" alt="" style="width:30px;height:30px;filter:drop-shadow(0 2px 4px rgba(220,38,38,0.3))" />
+                        <div style="display:flex;align-items:center;justify-content:space-between;padding:0.85rem 1.1rem 0.6rem;border-bottom:2px solid transparent;border-image:linear-gradient(90deg,rgba(220,38,38,0.2),rgba(249,115,22,0.2),rgba(220,38,38,0.05)) 1">
+                            <div style="display:flex;align-items:center;gap:0.5rem">
+                                <img src="image/blood-drop.png" alt="" style="width:28px;height:28px;filter:drop-shadow(0 2px 4px rgba(220,38,38,0.3))" />
                                 <div>
-                                    <div style="font-size:0.6rem;letter-spacing:0.18em;text-transform:uppercase;color:#ef4444;font-weight:700;text-shadow:0 0 20px rgba(239,68,68,0.15)">Blood Donation Community</div>
-                                    <div style="font-size:0.9rem;font-weight:900;background:linear-gradient(135deg,#991b1b,#dc2626);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-top:1px">DONOR CARD</div>
+                                    <div style="font-size:0.62rem;letter-spacing:0.18em;text-transform:uppercase;color:#ef4444;font-weight:700">Blood Donation Community</div>
+                                    <div style="font-size:1rem;font-weight:900;background:linear-gradient(135deg,#991b1b,#dc2626);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-top:0px">DONOR CARD</div>
                                 </div>
                             </div>
-                            <div style="background:linear-gradient(135deg,#b91c1c,#dc2626,#ef4444);color:#fff;font-size:1.2rem;font-weight:900;padding:0.5rem 0.9rem;border-radius:0.8rem;box-shadow:0 6px 20px rgba(185,28,28,0.35),inset 0 1px 0 rgba(255,255,255,0.2);letter-spacing:0.03em;line-height:1;text-shadow:0 1px 2px rgba(0,0,0,0.2)">${blood}</div>
+                            <div style="background:linear-gradient(135deg,#b91c1c,#dc2626,#ef4444);color:#fff;font-size:1.35rem;font-weight:900;padding:0.45rem 0.85rem;border-radius:0.75rem;box-shadow:0 6px 20px rgba(185,28,28,0.35),inset 0 1px 0 rgba(255,255,255,0.2);letter-spacing:0.03em;line-height:1;text-shadow:0 1px 2px rgba(0,0,0,0.2)">${blood}</div>
                         </div>
                         <!-- Body -->
-                        <div style="display:flex;gap:1rem;padding:1.1rem 1.25rem;align-items:center">
-                            <div id="donor-card-photo-area" style="width:78px;height:78px;border-radius:1.1rem;background:linear-gradient(135deg,#b91c1c,#dc2626,#f97316);color:#fff;display:flex;align-items:center;justify-content:center;font-size:1.6rem;font-weight:900;flex-shrink:0;overflow:hidden;border:3px solid #fff;box-shadow:0 6px 20px rgba(185,28,28,0.2),0 0 0 2px rgba(220,38,38,0.1);cursor:pointer;position:relative" title="Click to upload photo">
+                        <div style="display:flex;gap:0.85rem;padding:0.75rem 1.1rem;align-items:center">
+                            <div id="donor-card-photo-area" style="width:68px;height:68px;border-radius:0.9rem;background:linear-gradient(135deg,#b91c1c,#dc2626,#f97316);color:#fff;display:flex;align-items:center;justify-content:center;font-size:1.4rem;font-weight:900;flex-shrink:0;overflow:hidden;border:3px solid #fff;box-shadow:0 6px 20px rgba(185,28,28,0.2),0 0 0 2px rgba(220,38,38,0.1);cursor:pointer;position:relative" title="Click to upload photo">
                                 <span id="donor-card-initials">${initials}</span>
                                 <img id="donor-card-photo-img" src="" alt="" style="display:none;width:100%;height:100%;object-fit:cover;position:absolute;inset:0" />
                             </div>
                             <div style="min-width:0;flex:1">
-                                <div style="font-size:1.15rem;font-weight:800;color:#1f2937;line-height:1.2">${name}</div>
-                                <div style="font-size:0.72rem;color:#6b7280;margin-top:4px">${email}</div>
+                                <div style="font-size:1.25rem;font-weight:800;color:#1f2937;line-height:1.2">${name}</div>
+                                <div style="font-size:0.78rem;color:#6b7280;margin-top:1px">${email}</div>
+                                <div style="display:flex;align-items:center;gap:0.4rem;margin-top:3px">
+                                    <span style="display:inline-flex;align-items:center;gap:3px;padding:2px 8px;border-radius:9999px;font-size:0.65rem;font-weight:700;color:${badgeColor};background:${badgeColor}18;border:1px solid ${badgeColor}30">
+                                        <i class="fa-solid ${badgeIcon}" style="font-size:0.58rem"></i>${badgeLabel}
+                                    </span>
+                                    <span style="font-size:0.65rem;color:#9ca3af;font-weight:600">${gender !== '—' ? gender : ''}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Stats row -->
+                        <div style="display:flex;justify-content:space-around;padding:0.45rem 1rem;background:linear-gradient(90deg,rgba(254,242,242,0.6),rgba(252,231,243,0.4));border-top:1px solid rgba(225,29,72,0.06);border-bottom:1px solid rgba(225,29,72,0.06)">
+                            <div style="text-align:center;flex:1">
+                                <div style="font-size:1.35rem;font-weight:900;color:#dc2626;line-height:1.2">${totalDonations}</div>
+                                <div style="font-size:0.65rem;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.05em">Donations</div>
+                            </div>
+                            <div style="width:1px;background:rgba(225,29,72,0.12)"></div>
+                            <div style="text-align:center;flex:1">
+                                <div style="font-size:1rem;font-weight:800;color:#1f2937;line-height:1.2">${ageDisplay}</div>
+                                <div style="font-size:0.65rem;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.05em">Age</div>
                             </div>
                         </div>
                         <!-- Info grid -->
-                        <div style="display:grid;grid-template-columns:1fr 1fr;gap:0;border-top:2px solid transparent;border-image:linear-gradient(90deg,rgba(220,38,38,0.12),rgba(249,115,22,0.12)) 1">
-                            <div style="padding:0.7rem 1.25rem;border-right:1px solid rgba(225,29,72,0.08);border-bottom:1px solid rgba(225,29,72,0.08);background:linear-gradient(135deg,rgba(254,242,242,0.5),transparent)">
-                                <div style="font-size:0.62rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:#ef4444"><i class="fa-solid fa-location-dot" style="color:#dc2626;margin-right:3px;font-size:0.6rem"></i>Recent Location</div>
-                                <div style="font-size:0.85rem;font-weight:700;color:#1f2937;margin-top:3px">${location}</div>
+                        <div style="display:grid;grid-template-columns:1fr 1fr;gap:0">
+                            <div style="padding:0.5rem 1rem;border-right:1px solid rgba(225,29,72,0.06);border-bottom:1px solid rgba(225,29,72,0.06)">
+                                <div style="font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;color:#ef4444"><i class="fa-solid fa-location-dot" style="color:#dc2626;margin-right:2px;font-size:0.6rem"></i>Location</div>
+                                <div style="font-size:0.92rem;font-weight:700;color:#1f2937;margin-top:1px">${location}</div>
                             </div>
-                            <div style="padding:0.7rem 1.25rem;border-bottom:1px solid rgba(225,29,72,0.08);background:linear-gradient(135deg,transparent,rgba(254,242,242,0.5))">
-                                <div style="font-size:0.62rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:#ef4444"><i class="fa-solid fa-phone" style="color:#dc2626;margin-right:3px;font-size:0.6rem"></i>Phone</div>
-                                <div style="font-size:0.85rem;font-weight:700;color:#1f2937;margin-top:3px">${phone}</div>
+                            <div style="padding:0.5rem 1rem;border-bottom:1px solid rgba(225,29,72,0.06)">
+                                <div style="font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;color:#ef4444"><i class="fa-solid fa-phone" style="color:#dc2626;margin-right:2px;font-size:0.6rem"></i>Phone</div>
+                                <div style="font-size:0.92rem;font-weight:700;color:#1f2937;margin-top:1px">${phone}</div>
                             </div>
-                            <div style="padding:0.7rem 1.25rem;grid-column:span 2;background:linear-gradient(135deg,rgba(254,242,242,0.3),rgba(252,231,243,0.3))">
-                                <div style="font-size:0.62rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:#ef4444"><i class="fa-solid fa-calendar" style="color:#dc2626;margin-right:3px;font-size:0.6rem"></i>Last Donation</div>
-                                <div style="font-size:0.85rem;font-weight:700;color:#1f2937;margin-top:3px">${lastDonate}</div>
+                            <div style="padding:0.5rem 1rem;border-right:1px solid rgba(225,29,72,0.06);border-bottom:1px solid rgba(225,29,72,0.06)">
+                                <div style="font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;color:#ef4444">🗓️ Last Donation</div>
+                                <div style="font-size:0.92rem;font-weight:700;color:#1f2937;margin-top:1px">${lastDonate}</div>
+                            </div>
+                            <div style="padding:0.5rem 1rem;border-bottom:1px solid rgba(225,29,72,0.06)">
+                                <div style="font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;color:#ef4444"><i class="fa-solid fa-calendar-check" style="color:#dc2626;margin-right:2px;font-size:0.6rem"></i>Next Eligible</div>
+                                <div style="font-size:0.92rem;font-weight:700;color:#1f2937;margin-top:1px">${nextEligible}</div>
                             </div>
                         </div>
                         <!-- Footer -->
-                        <div style="display:flex;align-items:center;justify-content:center;padding:0.7rem 1.25rem;background:linear-gradient(135deg,rgba(185,28,28,0.06),rgba(249,115,22,0.04));border-radius:0 0 1.35rem 1.35rem">
-                            <span style="font-size:0.65rem;font-weight:700;background:linear-gradient(135deg,#b91c1c,#dc2626);-webkit-background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:0.08em"><i class="fa-solid fa-heart" style="margin-right:4px;-webkit-text-fill-color:#dc2626"></i>Donate Blood, Save Lives</span>
+                        <div style="display:flex;align-items:center;justify-content:center;padding:0.45rem 1rem;background:linear-gradient(135deg,rgba(185,28,28,0.06),rgba(249,115,22,0.04));border-radius:0 0 1.1rem 1.1rem">
+                            <span style="font-size:0.68rem;font-weight:700;background:linear-gradient(135deg,#b91c1c,#dc2626);-webkit-background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:0.08em"><i class="fa-solid fa-heart" style="margin-right:4px;-webkit-text-fill-color:#dc2626"></i>Donate Blood, Save Lives</span>
                         </div>
                     </div>
                 </div>
             </div>
 
             <!-- Upload + download area -->
-            <div class="flex flex-col items-center gap-3 w-full max-w-md">
-                <label id="donor-card-upload-label" style="display:inline-flex;align-items:center;gap:0.5rem;padding:0.55rem 1.1rem;border-radius:0.7rem;border:1.5px dashed rgba(220,38,38,0.3);background:rgba(254,242,242,0.6);color:#dc2626;font-size:0.82rem;font-weight:600;cursor:pointer;transition:all 0.2s" onmouseover="this.style.borderColor='#dc2626';this.style.background='#fef2f2'" onmouseout="this.style.borderColor='rgba(220,38,38,0.3)';this.style.background='rgba(254,242,242,0.6)'">
+            <div class="flex flex-col items-center gap-2 w-full" style="max-width:min(28rem,100%)">
+                <label id="donor-card-upload-label" style="display:inline-flex;align-items:center;gap:0.5rem;padding:0.5rem 1rem;border-radius:0.7rem;border:1.5px dashed rgba(220,38,38,0.3);background:rgba(254,242,242,0.6);color:#dc2626;font-size:0.82rem;font-weight:600;cursor:pointer;transition:all 0.2s" onmouseover="this.style.borderColor='#dc2626';this.style.background='#fef2f2'" onmouseout="this.style.borderColor='rgba(220,38,38,0.3)';this.style.background='rgba(254,242,242,0.6)'">
                     <i class="fa-solid fa-camera"></i>
                     <span id="donor-card-upload-text">Upload Photo</span>
                     <input type="file" id="donor-card-photo-input" accept="image/*" style="display:none" />
                 </label>
-                <button id="donor-card-download-btn" onclick="window.__downloadDonorCard()" disabled style="display:inline-flex;align-items:center;gap:0.5rem;padding:0.6rem 1.5rem;border-radius:0.7rem;background:#d1d5db;color:#fff;font-size:0.85rem;font-weight:700;border:none;cursor:not-allowed;box-shadow:none;transition:all 0.2s;opacity:0.7">
+                <button id="donor-card-download-btn" onclick="window.__downloadDonorCard()" disabled style="display:inline-flex;align-items:center;gap:0.5rem;padding:0.5rem 1.3rem;border-radius:0.7rem;background:#d1d5db;color:#fff;font-size:0.85rem;font-weight:700;border:none;cursor:not-allowed;box-shadow:none;transition:all 0.2s;opacity:0.7">
                     <i class="fa-solid fa-download"></i>
                     Download Donor Card
                 </button>
-                <p id="donor-card-photo-hint" style="font-size:0.72rem;color:#dc2626;text-align:center;font-weight:600"><i class="fa-solid fa-circle-info" style="margin-right:3px"></i>Please upload your photo first to download the card.</p>
+                <p id="donor-card-photo-hint" style="font-size:0.72rem;color:#dc2626;text-align:center;font-weight:600;margin:0"><i class="fa-solid fa-circle-info" style="margin-right:3px"></i>Please upload your photo first to download the card.</p>
             </div>
         </div>
     `;
 
-    showModal('Your Donor Card', cardHtml);
+
+
+    // Render: inline into container or in modal
+    if (containerEl) {
+        containerEl.innerHTML = cardHtml;
+    } else {
+        showModal('Your Donor Card', cardHtml);
+    }
 
     // Wire up photo upload
     setTimeout(() => {
@@ -527,25 +597,25 @@ export function showDonorCardModal(donorData) {
 function _renderDonorCardCanvas(donorData, photoSrc) {
     return new Promise((resolve) => {
         const SCALE = 3;
-        const W = 700, H = 400;
+        const W = 750, H = 390;
         const canvas = document.createElement('canvas');
         canvas.width = W * SCALE; canvas.height = H * SCALE;
         canvas.style.width = W + 'px'; canvas.style.height = H + 'px';
         const ctx = canvas.getContext('2d');
         ctx.scale(SCALE, SCALE);
 
-        // Background with warm gradient
+        // Background
         const bg = ctx.createLinearGradient(0,0,W,H);
         bg.addColorStop(0,'#ffffff'); bg.addColorStop(0.35,'#fffbfb'); bg.addColorStop(0.6,'#fff1f2'); bg.addColorStop(0.85,'#fce7f3'); bg.addColorStop(1,'#fdf2f8');
         ctx.fillStyle = bg; ctx.fillRect(0,0,W,H);
 
-        // Decorative background circles
+        // Decorative circles
         ctx.fillStyle = 'rgba(239,68,68,0.04)';
         ctx.beginPath(); ctx.arc(W-60, 60, 100, 0, Math.PI*2); ctx.fill();
         ctx.fillStyle = 'rgba(249,115,22,0.03)';
         ctx.beginPath(); ctx.arc(40, H-60, 70, 0, Math.PI*2); ctx.fill();
 
-        // Top gradient bar (thicker, richer)
+        // Top gradient bar
         const topBar = ctx.createLinearGradient(0,0,W,0);
         topBar.addColorStop(0,'#b91c1c'); topBar.addColorStop(0.3,'#dc2626'); topBar.addColorStop(0.6,'#ef4444'); topBar.addColorStop(0.85,'#f97316'); topBar.addColorStop(1,'#fbbf24');
         ctx.fillStyle = topBar; ctx.fillRect(0,0,W,8);
@@ -555,108 +625,146 @@ function _renderDonorCardCanvas(donorData, photoSrc) {
         btmBar.addColorStop(0,'#fbbf24'); btmBar.addColorStop(0.5,'#f97316'); btmBar.addColorStop(1,'#dc2626');
         ctx.fillStyle = btmBar; ctx.fillRect(0,H-4,W,4);
 
-        // Corner accents (bolder)
+        // Corner accents
         ctx.strokeStyle = 'rgba(220,38,38,0.2)'; ctx.lineWidth = 2.5;
         ctx.beginPath(); ctx.moveTo(18,38); ctx.lineTo(18,18); ctx.lineTo(38,18); ctx.stroke();
         ctx.beginPath(); ctx.moveTo(W-18,38); ctx.lineTo(W-18,18); ctx.lineTo(W-38,18); ctx.stroke();
         ctx.beginPath(); ctx.moveTo(18,H-38); ctx.lineTo(18,H-18); ctx.lineTo(38,H-18); ctx.stroke();
         ctx.beginPath(); ctx.moveTo(W-18,H-38); ctx.lineTo(W-18,H-18); ctx.lineTo(W-38,H-18); ctx.stroke();
 
-        // Header text
-        ctx.fillStyle = '#ef4444'; ctx.font = '700 10px Arial'; ctx.letterSpacing = '3px';
-        ctx.fillText('BLOOD DONATION COMMUNITY', 30, 46);
-        ctx.fillStyle = '#991b1b'; ctx.font = '900 18px Arial';
-        ctx.fillText('DONOR CARD', 30, 68);
+        // Header
+        ctx.fillStyle = '#ef4444'; ctx.font = '700 11px Arial';
+        ctx.fillText('BLOOD DONATION COMMUNITY', 30, 44);
+        ctx.fillStyle = '#991b1b'; ctx.font = '900 20px Arial';
+        ctx.fillText('DONOR CARD', 30, 66);
 
-        // Blood group badge (bigger, with shadow effect)
-        // Shadow
+        // Blood group badge
         ctx.fillStyle = 'rgba(185,28,28,0.15)';
-        ctx.beginPath(); ctx.roundRect(W-108, 32, 76, 44, 10); ctx.fill();
-        // Badge
-        const badgeGrad = ctx.createLinearGradient(W-105,28,W-105+76,28+44);
+        ctx.beginPath(); ctx.roundRect(W-108, 30, 76, 44, 10); ctx.fill();
+        const badgeGrad = ctx.createLinearGradient(W-105,26,W-105+76,26+44);
         badgeGrad.addColorStop(0,'#b91c1c'); badgeGrad.addColorStop(0.5,'#dc2626'); badgeGrad.addColorStop(1,'#ef4444');
         ctx.fillStyle = badgeGrad;
-        ctx.beginPath(); ctx.roundRect(W-110, 28, 76, 44, 10); ctx.fill();
-        ctx.fillStyle = '#ffffff'; ctx.font = '900 22px Arial'; ctx.textAlign = 'center';
-        ctx.fillText(donorData.bloodGroup || '—', W-72, 57);
+        ctx.beginPath(); ctx.roundRect(W-110, 26, 76, 44, 10); ctx.fill();
+        ctx.fillStyle = '#ffffff'; ctx.font = '900 24px Arial'; ctx.textAlign = 'center';
+        ctx.fillText(donorData.bloodGroup || '—', W-72, 56);
         ctx.textAlign = 'left';
 
-        // Divider (gradient)
+        // Divider
         const divGrad = ctx.createLinearGradient(30,0,W-30,0);
         divGrad.addColorStop(0,'rgba(220,38,38,0.2)'); divGrad.addColorStop(0.5,'rgba(249,115,22,0.15)'); divGrad.addColorStop(1,'rgba(220,38,38,0.05)');
-        ctx.fillStyle = divGrad; ctx.fillRect(30, 82, W-60, 2);
+        ctx.fillStyle = divGrad; ctx.fillRect(30, 78, W-60, 2);
 
-        // Photo / initials area (bigger)
-        const photoX = 36, photoY = 100, photoS = 78;
+        // Photo area
+        const photoX = 36, photoY = 90, photoS = 68;
         ctx.save();
-        ctx.beginPath(); ctx.roundRect(photoX, photoY, photoS, photoS, 16); ctx.clip();
+        ctx.beginPath(); ctx.roundRect(photoX, photoY, photoS, photoS, 14); ctx.clip();
         const circGrad = ctx.createLinearGradient(photoX, photoY, photoX+photoS, photoY+photoS);
         circGrad.addColorStop(0,'#b91c1c'); circGrad.addColorStop(0.5,'#dc2626'); circGrad.addColorStop(1,'#f97316');
         ctx.fillStyle = circGrad; ctx.fillRect(photoX, photoY, photoS, photoS);
         ctx.restore();
-
-        // Photo border glow
         ctx.strokeStyle = 'rgba(220,38,38,0.12)'; ctx.lineWidth = 3;
-        ctx.beginPath(); ctx.roundRect(photoX-1, photoY-1, photoS+2, photoS+2, 17); ctx.stroke();
+        ctx.beginPath(); ctx.roundRect(photoX-1, photoY-1, photoS+2, photoS+2, 15); ctx.stroke();
+
+        // Computed values
+        const totalDonations = donorData.totalDonations || 0;
+        let nextEligible = '—';
+        if (donorData.lastDonateDate) {
+            const last = new Date(donorData.lastDonateDate + 'T00:00:00');
+            const nextDate = new Date(last.getTime() + 90 * 24 * 60 * 60 * 1000);
+            nextEligible = nextDate <= new Date() ? 'Eligible Now' : nextDate.toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'});
+        }
+        let ageDisplay = '—';
+        if (donorData.dateOfBirth) {
+            const dob = new Date(donorData.dateOfBirth + 'T00:00:00');
+            const now = new Date();
+            let age = now.getFullYear() - dob.getFullYear();
+            if (now.getMonth() < dob.getMonth() || (now.getMonth() === dob.getMonth() && now.getDate() < dob.getDate())) age--;
+            ageDisplay = age + ' yrs';
+        }
+        let badgeLabel = 'New Donor';
+        if (totalDonations >= 20) badgeLabel = 'Platinum';
+        else if (totalDonations >= 10) badgeLabel = 'Gold';
+        else if (totalDonations >= 5) badgeLabel = 'Silver';
+        else if (totalDonations >= 2) badgeLabel = 'Bronze';
 
         const drawRest = () => {
-            // Name
+            // Name and info
             ctx.fillStyle = '#1f2937'; ctx.font = '800 22px Arial';
-            ctx.fillText(donorData.fullName || 'Donor', 128, 126);
-            // Email
-            ctx.fillStyle = '#6b7280'; ctx.font = '400 12px Arial';
-            ctx.fillText(donorData.email || '—', 128, 146);
+            ctx.fillText(donorData.fullName || 'Donor', 118, 114);
+            ctx.fillStyle = '#6b7280'; ctx.font = '400 13px Arial';
+            ctx.fillText(donorData.email || '—', 118, 132);
+            // Badge + Gender
+            ctx.fillStyle = '#7c3aed'; ctx.font = '700 10px Arial';
+            ctx.fillText('\u{1F3C5} ' + badgeLabel, 118, 150);
+            if (donorData.gender && donorData.gender !== '—') {
+                ctx.fillStyle = '#9ca3af'; ctx.font = '600 10px Arial';
+                ctx.fillText('• ' + donorData.gender, 118 + ctx.measureText('\u{1F3C5} ' + badgeLabel).width + 10, 150);
+            }
 
-            // Info grid below
-            const gridY = 196;
-            // Gradient divider
-            const gridDiv = ctx.createLinearGradient(30,0,W-30,0);
-            gridDiv.addColorStop(0,'rgba(220,38,38,0.15)'); gridDiv.addColorStop(0.5,'rgba(249,115,22,0.1)'); gridDiv.addColorStop(1,'rgba(220,38,38,0.03)');
-            ctx.fillStyle = gridDiv; ctx.fillRect(30, gridY, W-60, 2);
+            // Stats bar
+            const statY = 168;
+            ctx.fillStyle = 'rgba(254,242,242,0.5)'; ctx.fillRect(30, statY, W-60, 40);
+            ctx.fillStyle = 'rgba(225,29,72,0.06)'; ctx.fillRect(30, statY, W-60, 1); ctx.fillRect(30, statY+39, W-60, 1);
+            const statW = (W-60)/2;
+            // Donations
+            ctx.fillStyle = '#dc2626'; ctx.font = '900 20px Arial'; ctx.textAlign = 'center';
+            ctx.fillText(String(totalDonations), 30+statW*0.5, statY+20);
+            ctx.fillStyle = '#9ca3af'; ctx.font = '700 9px Arial';
+            ctx.fillText('DONATIONS', 30+statW*0.5, statY+33);
+            // Age
+            ctx.fillStyle = '#1f2937'; ctx.font = '800 16px Arial';
+            ctx.fillText(ageDisplay, 30+statW*1.5, statY+20);
+            ctx.fillStyle = '#9ca3af'; ctx.font = '700 9px Arial';
+            ctx.fillText('AGE', 30+statW*1.5, statY+33);
+            // Vertical separator
+            ctx.fillStyle = 'rgba(225,29,72,0.12)';
+            ctx.fillRect(30+statW, statY+6, 1, 28);
+            ctx.textAlign = 'left';
 
-            // Row backgrounds
-            ctx.fillStyle = 'rgba(254,242,242,0.4)';
-            ctx.fillRect(30, gridY+2, (W-60)/2-1, 60);
-            ctx.fillStyle = 'rgba(252,231,243,0.3)';
-            ctx.fillRect(30+(W-60)/2+1, gridY+2, (W-60)/2-1, 60);
-
-            // Row 1: Recent Location | Phone
+            // Info grid
+            const gridY = 214;
             const col1X = 44, col2X = W/2+16;
+            const halfW = (W-60)/2;
+
+            // Row 1 backgrounds
+            ctx.fillStyle = 'rgba(254,242,242,0.4)'; ctx.fillRect(30, gridY, halfW-1, 48);
+            ctx.fillStyle = 'rgba(252,231,243,0.3)'; ctx.fillRect(30+halfW+1, gridY, halfW-1, 48);
+            // Location
             ctx.fillStyle = '#ef4444'; ctx.font = '700 9px Arial';
-            ctx.fillText('\u{1F4CD} RECENT LOCATION', col1X, gridY+24);
-            ctx.fillStyle = '#1f2937'; ctx.font = '700 14px Arial';
-            ctx.fillText(donorData.location || '—', col1X, gridY+44);
-
+            ctx.fillText('\u{1F4CD} LOCATION', col1X, gridY+16);
+            ctx.fillStyle = '#1f2937'; ctx.font = '700 15px Arial';
+            ctx.fillText(donorData.location || '—', col1X, gridY+36);
+            // Phone
             ctx.fillStyle = '#ef4444'; ctx.font = '700 9px Arial';
-            ctx.fillText('\u{1F4DE} PHONE', col2X, gridY+24);
-            ctx.fillStyle = '#1f2937'; ctx.font = '700 14px Arial';
-            ctx.fillText(donorData.phone || '—', col2X, gridY+44);
+            ctx.fillText('\u{1F4DE} PHONE', col2X, gridY+16);
+            ctx.fillStyle = '#1f2937'; ctx.font = '700 15px Arial';
+            ctx.fillText(donorData.phone || '—', col2X, gridY+36);
 
-            // Divider
-            ctx.fillStyle = 'rgba(225,29,72,0.06)'; ctx.fillRect(30, gridY+62, W-60, 1);
-
-            // Row 2 background
-            ctx.fillStyle = 'rgba(254,242,242,0.25)';
-            ctx.fillRect(30, gridY+63, W-60, 55);
-
-            // Row 2: Last Donation
+            // Row 2
+            ctx.fillStyle = 'rgba(225,29,72,0.04)'; ctx.fillRect(30, gridY+49, W-60, 48);
+            // Last Donation
             ctx.fillStyle = '#ef4444'; ctx.font = '700 9px Arial';
-            ctx.fillText('\u{1F4C5} LAST DONATION', col1X, gridY+84);
+            ctx.fillText('\u{1F5D3}\uFE0F LAST DONATION', col1X, gridY+66);
             const lastD = donorData.lastDonateDate
                 ? new Date(donorData.lastDonateDate+'T00:00:00').toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'})
                 : 'Not recorded';
-            ctx.fillStyle = '#1f2937'; ctx.font = '700 14px Arial';
-            ctx.fillText(lastD, col1X, gridY+104);
+            ctx.fillStyle = '#1f2937'; ctx.font = '700 15px Arial';
+            ctx.fillText(lastD, col1X, gridY+86);
+            // Next eligible
+            ctx.fillStyle = '#ef4444'; ctx.font = '700 9px Arial';
+            ctx.fillText('\u2705 NEXT ELIGIBLE', col2X, gridY+66);
+            ctx.fillStyle = nextEligible === 'Eligible Now' ? '#059669' : '#1f2937'; ctx.font = '700 15px Arial';
+            ctx.fillText(nextEligible, col2X, gridY+86);
 
             // Footer
             const footGrad = ctx.createLinearGradient(0,0,W,0);
             footGrad.addColorStop(0,'rgba(185,28,28,0.06)'); footGrad.addColorStop(0.5,'rgba(249,115,22,0.04)'); footGrad.addColorStop(1,'rgba(185,28,28,0.06)');
-            ctx.fillStyle = footGrad; ctx.fillRect(0, H-40, W, 36);
-            ctx.fillStyle = '#b91c1c'; ctx.font = '700 11px Arial'; ctx.textAlign = 'center';
-            ctx.fillText('\u2764  Donate Blood, Save Lives', W/2, H-18);
+            ctx.fillStyle = footGrad; ctx.fillRect(0, H-36, W, 32);
+            ctx.fillStyle = '#b91c1c'; ctx.font = '700 12px Arial'; ctx.textAlign = 'center';
+            ctx.fillText('\u2764  Donate Blood, Save Lives', W/2, H-16);
             ctx.textAlign = 'left';
 
-            // Outer border (gradient stroke)
+            // Outer border
             ctx.strokeStyle = 'rgba(220,38,38,0.15)'; ctx.lineWidth = 2.5;
             ctx.beginPath(); ctx.roundRect(1,1,W-2,H-2,18); ctx.stroke();
 
@@ -717,12 +825,12 @@ function createCertificateModal() {
     modal.id = 'certificate-modal';
     modal.className = 'fixed inset-0 hidden items-center justify-center z-[60]';
     modal.innerHTML = `
-        <div class="absolute inset-0 bg-black opacity-50" onclick="closeCertificateModal()"></div>
-        <div class="bg-white rounded-lg shadow-xl p-6 max-w-3xl mx-4 z-10 relative max-h-[90vh] overflow-y-auto">
-            <button onclick="closeCertificateModal()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition">
-                <i class="fa-solid fa-times text-xl"></i>
+        <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" onclick="closeCertificateModal()"></div>
+        <div class="bg-white rounded-2xl shadow-2xl p-5 sm:p-6 w-[95vw] sm:w-auto sm:max-w-3xl z-10 relative max-h-[92vh] overflow-y-auto overscroll-contain" style="-webkit-overflow-scrolling:touch;scroll-behavior:smooth">
+            <button onclick="closeCertificateModal()" class="absolute top-3 right-3 w-8 h-8 rounded-full bg-gray-100 hover:bg-red-50 text-gray-400 hover:text-red-500 flex items-center justify-center transition" aria-label="Close">
+                <i class="fa-solid fa-times text-sm"></i>
             </button>
-            <h3 id="certificate-modal-title" class="text-2xl font-bold text-red-700 mb-4"></h3>
+            <h3 id="certificate-modal-title" class="text-xl sm:text-2xl font-bold text-red-700 mb-4 pr-8"></h3>
             <div id="certificate-modal-content"></div>
         </div>
     `;

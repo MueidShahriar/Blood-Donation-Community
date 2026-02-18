@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>About Us - Blood Donation Community</title>
+    <title>Search Donors - Blood Donation Community</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="shortcut icon" href="image/blood-drop.png" type="image/x-icon">
     <script src="https://cdn.tailwindcss.com"></script>
@@ -14,8 +14,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
         crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="assets/css/common.css">
-    <meta name="description"
-        content="Learn about Blood Donation Community - our mission, impact and how to get involved.">
+    <link rel="stylesheet" href="assets/css/index.css">
+    <meta name="description" content="Search and find blood donors by blood group from Blood Donation Community.">
     <style>
         #page-loader {
             position: fixed;
@@ -70,11 +70,11 @@
             </div>
             <div class="hidden md:flex items-center gap-1 text-base font-medium">
                 <a id="nav-home-link" href="index.html" class="px-3 py-2 rounded hover:bg-red-50 text-red-700" data-i18n="navHome">Home</a>
-                <a id="nav-about-link" href="about.html" class="px-3 py-2 rounded bg-red-50 text-red-700 font-bold" data-i18n="navAbout">About</a>
+                <a id="nav-about-link" href="about.html" class="px-3 py-2 rounded hover:bg-red-50 text-red-700" data-i18n="navAbout">About</a>
                 <a id="nav-how-link" href="donationGuide.html" class="px-3 py-2 rounded hover:bg-red-50 text-red-700" data-i18n="navHow">Donation Guide</a>
                 <a id="nav-events-link" href="events.html" class="px-3 py-2 rounded hover:bg-red-50 text-red-700" data-i18n="navEvents">Events</a>
                 <a id="nav-join-link" href="join.html" class="px-3 py-2 rounded hover:bg-red-50 text-red-700" data-i18n="navJoin">Join</a>
-                <a id="nav-search-link" href="search.html" class="px-3 py-2 rounded hover:bg-red-50 text-red-700" data-i18n="navSearch">Search</a>
+                <a id="nav-search-link" href="search.html" class="px-3 py-2 rounded bg-red-50 text-red-700 font-bold" data-i18n="navSearch">Search</a>
                 <a id="nav-contact-link" href="index.html#contact" class="px-3 py-2 rounded hover:bg-red-50 text-red-700" data-i18n="navContact">Contact</a>
             </div>
             <div class="flex items-center gap-4">
@@ -95,11 +95,11 @@
         <div id="mobile-menu" class="md:hidden hidden bg-white/95 shadow-lg rounded-b-xl">
             <div class="px-4 py-4 flex flex-col gap-2 text-red-700">
                 <a id="mobile-home-link" href="index.html" class="block px-3 py-2 rounded hover:bg-red-50" data-i18n="navHome">Home</a>
-                <a id="mobile-about-link" href="about.html" class="block px-3 py-2 rounded bg-red-50 font-bold" data-i18n="navAbout">About</a>
+                <a id="mobile-about-link" href="about.html" class="block px-3 py-2 rounded hover:bg-red-50" data-i18n="navAbout">About</a>
                 <a id="mobile-how-link" href="donationGuide.html" class="block px-3 py-2 rounded hover:bg-red-50" data-i18n="navHow">Donation Guide</a>
                 <a id="mobile-events-link" href="events.html" class="block px-3 py-2 rounded hover:bg-red-50" data-i18n="navEvents">Events</a>
                 <a id="mobile-join-link" href="join.html" class="block px-3 py-2 rounded hover:bg-red-50" data-i18n="navJoin">Join</a>
-                <a id="mobile-search-link" href="search.html" class="block px-3 py-2 rounded hover:bg-red-50" data-i18n="navSearch">Search</a>
+                <a id="mobile-search-link" href="search.html" class="block px-3 py-2 rounded bg-red-50 font-bold" data-i18n="navSearch">Search</a>
                 <a id="mobile-contact-link" href="index.html#contact" class="block px-3 py-2 rounded hover:bg-red-50" data-i18n="navContact">Contact</a>
                 <a id="admin-mobile-link" href="index.html#admin-panel" class="hidden px-3 py-2 rounded hover:bg-red-50"
                     data-i18n="navDashboard">Dashboard</a>
@@ -115,174 +115,59 @@
         </div>
     </header>
 
-    <main class="max-w-6xl mx-auto px-4 sm:px-4 lg:px-6 pt-24 pb-12">
+    <main class="max-w-6xl mx-auto px-4 sm:px-4 lg:px-6" style="padding-top: 5rem;">
 
-        <section id="about" class="py-10">
-            <div class="how-card tint-rose accent-rose rounded-xl shadow-lg p-8 float-in">
-                <div class="flex-1">
-                    <h2 class="text-3xl font-extrabold text-red-700 mb-2 tracking-tight flex items-center gap-2">
-                        <span data-i18n="aboutTitle">About Us</span>
-                        <span class="inline-block bg-red-600 text-white text-xs font-bold px-2 py-1 rounded"
-                            data-i18n="aboutBadge">Community</span>
-                    </h2>
-                    <p class="text-justify text-gray-700 leading-relaxed">
-                        <span class="font-semibold text-red-700" data-i18n="aboutName">Blood Donation Community</span>
-                        <span data-i18n="aboutDescription">is a passionate, volunteer-driven organization dedicated to
-                            saving lives through the power of blood donation. We connect willing donors with patients in
-                            urgent need, organize regular blood drives and partner with hospitals and local groups to
-                            ensure a safe and reliable blood supply for all.</span>
-                    </p>
-                </div>
-            </div>
-        </section>
-
-        <section class="py-10">
-            <h2 class="text-2xl font-extrabold text-red-700 mb-8 text-center tracking-tight" data-i18n="aboutFoundation">Our Foundation</h2>
-            <div class="grid md:grid-cols-3 gap-6">
-                <div class="how-card accent-rose tint-rose rounded-xl shadow-lg p-6 text-center float-in">
-                    <div class="inline-flex items-center justify-center w-14 h-14 bg-red-100 rounded-full mb-4">
-                        <i class="fa-solid fa-bullseye text-2xl text-red-600"></i>
-                    </div>
-                    <h3 class="text-lg font-bold text-red-700 mb-3" data-i18n="aboutMission">Our Mission</h3>
-                    <p class="text-gray-600 text-sm leading-relaxed" data-i18n="aboutMissionText">To eliminate blood
-                        shortages and make lifesaving blood accessible to everyone, everywhere. We believe no life
-                        should be lost due to a lack of available blood.</p>
-                </div>
-                <div class="how-card accent-amber tint-amber rounded-xl shadow-lg p-6 text-center float-in">
-                    <div class="inline-flex items-center justify-center w-14 h-14 bg-amber-100 rounded-full mb-4">
-                        <i class="fa-solid fa-eye text-2xl text-amber-600"></i>
-                    </div>
-                    <h3 class="text-lg font-bold text-red-700 mb-3" data-i18n="aboutVision">Our Vision</h3>
-                    <p class="text-gray-600 text-sm leading-relaxed" data-i18n="aboutVisionText">A world where every patient needing blood receives
-                        it within hours through a robust, community-powered donor network that bridges gaps between
-                        hospitals and willing donors.</p>
-                </div>
-                <div class="how-card accent-emerald tint-emerald rounded-xl shadow-lg p-6 text-center float-in">
-                    <div class="inline-flex items-center justify-center w-14 h-14 bg-emerald-100 rounded-full mb-4">
-                        <i class="fa-solid fa-heart text-2xl text-emerald-600"></i>
-                    </div>
-                    <h3 class="text-lg font-bold text-red-700 mb-3" data-i18n="aboutValues">Our Values</h3>
-                    <p class="text-gray-600 text-sm leading-relaxed" data-i18n="aboutValuesText">Compassion, transparency, inclusivity and urgency
-                        guide us. Every donor is a hero. Every drop matters. We are committed to safety, dignity and
-                        gratitude in everything we do.</p>
-                </div>
-            </div>
-        </section>
-
-        <section class="py-10">
-            <h2 class="text-2xl font-extrabold text-red-700 mb-8 text-center tracking-tight" data-i18n="aboutWhatWeDo">
-                What We Do</h2>
-            <div class="grid md:grid-cols-2 gap-6">
-                <div class="how-card tint-rose rounded-xl shadow p-6 flex gap-4 items-start float-in">
-                    <div class="flex-shrink-0 w-12 h-12 rounded-full bg-red-100 flex items-center justify-center">
-                        <i class="fa-solid fa-calendar-check text-red-600 text-lg"></i>
-                    </div>
+        <section id="search" class="py-12">
+            <div class="bg-gradient-to-r from-red-50 to-white p-6 rounded-xl shadow-lg">
+                <div class="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
                     <div>
-                        <h4 class="font-bold text-red-700 mb-1" data-i18n="aboutDonationDrives">Donation Drives & Events</h4>
-                        <p class="text-gray-600 text-sm leading-relaxed" data-i18n="aboutDonationDrivesText">We organize regular blood donation camps at
-                            universities, community centers, and public venues. Each event is staffed by trained medical
-                            professionals ensuring a safe, comfortable experience for every donor.</p>
+                        <h2 class="text-2xl font-extrabold text-red-700" data-i18n="searchTitle">Find Donors</h2>
+                        <p class="mt-2 text-sm text-gray-600 max-w-xl" data-i18n="searchDescription">Search by blood
+                            group to find nearby donors
+                            quickly. Connect directly once you locate a match.</p>
+                    </div>
+                    <div
+                        class="w-full md:w-auto how-card compact search-card accent-sky flex flex-col items-center md:items-start md:self-start gap-2">
+                        <div class="flex items-center gap-2 -mb-1">
+                            <div class="icon-circle-sm"><i class="fa-solid fa-magnifying-glass text-sm"
+                                    aria-hidden="true"></i></div>
+                            <h3 class="text-base font-bold text-red-700" data-i18n="searchTitle">Find Donors</h3>
+                        </div>
+                        <form id="search-form" class="flex flex-col sm:flex-row items-center gap-2 w-full">
+                            <div class="field-icon-left w-full sm:flex-1">
+                                <i class="fi fa-solid fa-droplet" style="top: 1.15rem"></i>
+                                <select id="search-blood" aria-label="Blood group"
+                                    class="w-full h-9 pl-10 pr-3 rounded-lg border border-gray-100 bg-white text-gray-700 text-sm">
+                                    <option value="select" selected data-i18n="searchSelectDonor">Select donor</option>
+                                    <option value="all" data-i18n="searchAllDonors">All Donor(s)</option>
+                                    <option value="A+">A+</option>
+                                    <option value="A-">A-</option>
+                                    <option value="B+">B+</option>
+                                    <option value="B-">B-</option>
+                                    <option value="O+">O+</option>
+                                    <option value="O-">O-</option>
+                                    <option value="AB+">AB+</option>
+                                    <option value="AB-">AB-</option>
+                                </select>
+                            </div>
+                        </form>
+                        <div class="w-full flex justify-center items-center">
+                            <input type="checkbox" id="eligible-only"
+                                class="h-4 w-4 text-red-600 border-gray-300 rounded focus:ring-red-500">
+                            <label for="eligible-only" class="ml-2 text-sm text-gray-700 font-medium whitespace-nowrap"
+                                data-i18n="searchEligibleOnly">Show only
+                                eligible donors</label>
+                        </div>
                     </div>
                 </div>
-                <div class="how-card tint-rose rounded-xl shadow p-6 flex gap-4 items-start float-in">
-                    <div class="flex-shrink-0 w-12 h-12 rounded-full bg-red-100 flex items-center justify-center">
-                        <i class="fa-solid fa-database text-red-600 text-lg"></i>
+                <div id="search-loading" class="search-loading hidden mt-6" aria-live="polite" aria-hidden="true">
+                    <span class="search-loading__spinner" aria-hidden="true"></span>
+                    <span class="search-loading__text" data-i18n="searchLoading">Loading donors...</span>
+                </div>
+                <div id="search-results" class="mt-6 flex flex-col gap-4">
+                    <div class="text-gray-500 italic" data-i18n="searchNoResults">No results yet. Perform a search to
+                        display donor entries here.
                     </div>
-                    <div>
-                        <h4 class="font-bold text-red-700 mb-1" data-i18n="aboutDonorRegistry">Verified Donor Registry</h4>
-                        <p class="text-gray-600 text-sm leading-relaxed" data-i18n="aboutDonorRegistryText">Our searchable registry connects patients with
-                            verified donors by blood group and location. Donors can manage their profiles, track
-                            donation history, and receive notifications about nearby needs.</p>
-                    </div>
-                </div>
-                <div class="how-card tint-rose rounded-xl shadow p-6 flex gap-4 items-start float-in">
-                    <div class="flex-shrink-0 w-12 h-12 rounded-full bg-red-100 flex items-center justify-center">
-                        <i class="fa-solid fa-truck-medical text-red-600 text-lg"></i>
-                    </div>
-                    <div>
-                        <h4 class="font-bold text-red-700 mb-1" data-i18n="aboutEmergencyMatching">Emergency Matching</h4>
-                        <p class="text-gray-600 text-sm leading-relaxed" data-i18n="aboutEmergencyMatchingText">In critical situations, we rapidly match
-                            patients with compatible donors. Our alert system notifies nearby eligible donors instantly,
-                            reducing wait times and saving precious minutes when lives hang in the balance.</p>
-                    </div>
-                </div>
-                <div class="how-card tint-rose rounded-xl shadow p-6 flex gap-4 items-start float-in">
-                    <div class="flex-shrink-0 w-12 h-12 rounded-full bg-red-100 flex items-center justify-center">
-                        <i class="fa-solid fa-graduation-cap text-red-600 text-lg"></i>
-                    </div>
-                    <div>
-                        <h4 class="font-bold text-red-700 mb-1" data-i18n="aboutAwareness">Awareness & Education</h4>
-                        <p class="text-gray-600 text-sm leading-relaxed" data-i18n="aboutAwarenessText">We run campaigns to bust myths about blood
-                            donation, educate the public on eligibility requirements, and inspire first-time donors
-                            through success stories and community outreach programs.</p>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <section class="py-10">
-            <h2 class="text-2xl font-extrabold text-red-700 mb-8 text-center tracking-tight" data-i18n="aboutWhyDonate">Why Donate Blood?</h2>
-            <div class="grid md:grid-cols-2 gap-6">
-                <div class="how-card accent-indigo tint-indigo rounded-xl shadow p-6 float-in">
-                    <h4 class="font-bold text-red-700 mb-3 flex items-center gap-2">
-                        <i class="fa-solid fa-droplet text-red-500"></i> <span data-i18n="aboutSave3Lives">Save Up to 3 Lives</span>
-                    </h4>
-                    <p class="text-gray-600 text-sm leading-relaxed" data-i18n="aboutSave3LivesText">A single whole blood donation can be separated into
-                        red blood cells, platelets, and plasma - each component can help a different patient. One act of
-                        generosity, three chances at life.</p>
-                </div>
-                <div class="how-card accent-indigo tint-indigo rounded-xl shadow p-6 float-in">
-                    <h4 class="font-bold text-red-700 mb-3 flex items-center gap-2">
-                        <i class="fa-solid fa-clock text-red-500"></i> <span data-i18n="aboutQuickSafe">Quick & Safe Process</span>
-                    </h4>
-                    <p class="text-gray-600 text-sm leading-relaxed" data-i18n="aboutQuickSafeText">The actual donation takes only 8-10 minutes.
-                        Sterile, single-use equipment is always used. Professional medical staff supervise the entire
-                        process to ensure your safety and comfort.</p>
-                </div>
-                <div class="how-card accent-indigo tint-indigo rounded-xl shadow p-6 float-in">
-                    <h4 class="font-bold text-red-700 mb-3 flex items-center gap-2">
-                        <i class="fa-solid fa-stethoscope text-red-500"></i> <span data-i18n="aboutFreeHealth">Free Health Check</span>
-                    </h4>
-                    <p class="text-gray-600 text-sm leading-relaxed" data-i18n="aboutFreeHealthText">Before every donation, you receive a mini health
-                        screening including blood pressure, hemoglobin levels, and pulse check. Your blood is also
-                        tested for infections, helping you stay informed about your health.</p>
-                </div>
-                <div class="how-card accent-indigo tint-indigo rounded-xl shadow p-6 float-in">
-                    <h4 class="font-bold text-red-700 mb-3 flex items-center gap-2">
-                        <i class="fa-solid fa-rotate text-red-500"></i> <span data-i18n="aboutBodyReplenish">Body Replenishes Quickly</span>
-                    </h4>
-                    <p class="text-gray-600 text-sm leading-relaxed" data-i18n="aboutBodyReplenishText">Your body replaces the donated blood volume within
-                        24-48 hours. Red blood cells are fully regenerated within 4-6 weeks. Regular donation stimulates
-                        the production of new, healthy blood cells.</p>
-                </div>
-            </div>
-        </section>
-
-        <section class="py-10">
-            <div class="how-card gentle tint-emerald accent-emerald rounded-xl shadow-lg p-8 text-center float-in">
-                <div class="inline-flex items-center justify-center w-16 h-16 bg-red-100 rounded-full mb-4">
-                    <i class="fa-solid fa-hand-holding-heart text-3xl text-red-600"></i>
-                </div>
-                <h2 class="text-2xl font-extrabold text-red-700 mb-3" data-i18n="aboutGetInvolved">Get Involved</h2>
-                <p class="text-gray-600 max-w-xl mx-auto mb-6" data-i18n="aboutGetInvolvedText">Anyone can join as a
-                    donor, volunteer or supporter. Together, we build a caring, responsive community that puts
-                    compassion into action.</p>
-                <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
-                    <a href="join.html"
-                        class="inline-flex items-center gap-2 bg-red-600 text-white px-6 py-3 rounded-lg font-semibold shadow hover:bg-red-700 btn-breathe">
-                        <i class="fa-solid fa-user-plus"></i>
-                        <span data-i18n="aboutJoinAsDonor">Join as a Donor</span>
-                    </a>
-                    <a href="events.html"
-                        class="inline-flex items-center gap-2 border-2 border-red-600 text-red-700 px-6 py-3 rounded-lg font-semibold hover:bg-red-50">
-                        <i class="fa-solid fa-calendar-days"></i>
-                        <span data-i18n="aboutViewEvents">View Events</span>
-                    </a>
-                    <a href="index.html#contact"
-                        class="inline-flex items-center gap-2 border-2 border-gray-300 text-gray-700 px-6 py-3 rounded-lg font-semibold hover:bg-gray-50">
-                        <i class="fa-solid fa-envelope"></i>
-                        <span data-i18n="aboutContactUs">Contact Us</span>
-                    </a>
                 </div>
             </div>
         </section>
@@ -437,8 +322,94 @@
         </div>
     </div>
 
+    <div id="feedback-modal" class="fixed inset-0 hidden items-center justify-center z-50">
+        <div class="absolute inset-0 bg-black opacity-40"></div>
+        <div class="bg-white rounded-lg shadow-xl p-6 max-w-md mx-4 z-10 w-full">
+            <div class="flex items-start justify-between mb-3">
+                <div>
+                    <h3 class="text-lg font-bold text-red-700" data-i18n="feedbackTitle">Share Your Feedback</h3>
+                    <p class="text-sm text-gray-600" data-i18n="feedbackDesc">Let us know how we can improve the Blood Donation Community.</p>
+                </div>
+                <button type="button" id="feedback-close" class="text-gray-400 hover:text-gray-600"
+                    aria-label="Close feedback form">
+                    <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+                </button>
+            </div>
+            <form id="feedback-form" class="grid gap-4">
+                <div class="field-icon-left">
+                    <i class="fi fa-solid fa-user"></i>
+                    <input name="name" id="feedback-name" type="text" placeholder=" "
+                        class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
+                    <label for="feedback-name"
+                        class="absolute left-4 top-3 text-gray-400 transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-focus:-top-3.5 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3.5 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Name</label>
+                </div>
+                <div class="field-icon-left">
+                    <i class="fi fa-solid fa-envelope"></i>
+                    <input name="email" id="feedback-email" type="email" placeholder=" " autocomplete="email"
+                        class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
+                    <label for="feedback-email"
+                        class="absolute left-4 top-3 text-gray-400 transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-focus:-top-3.5 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3.5 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Email
+                        (optional)</label>
+                </div>
+                <div class="field-icon-left">
+                    <i class="fi fa-solid fa-comment"></i>
+                    <textarea name="message" id="feedback-message" placeholder=" " required rows="4"
+                        class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none"></textarea>
+                    <label for="feedback-message"
+                        class="absolute left-4 top-3 text-gray-400 transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-focus:-top-3 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Your
+                        feedback</label>
+                </div>
+                <div class="flex justify-end gap-3">
+                    <button type="button" id="feedback-cancel"
+                        class="px-4 py-2 rounded-lg border border-gray-200" data-i18n="modalCancel">Cancel</button>
+                    <button type="submit"
+                        class="px-5 py-2 rounded-lg bg-red-600 text-white font-semibold hover:bg-red-700 flex items-center gap-2">
+                        <i class="fa-solid fa-paper-plane" aria-hidden="true"></i>
+                        <span data-i18n="feedbackSend">Send</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <script src="assets/js/viewport.js" defer></script>
     <script type="module" src="assets/js/page-common.js"></script>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+        import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+        import { firebaseConfig } from "./assets/js/modules/firebase-config.js";
+        import { normalizeBloodGroup, buildDonorIndex, isDonorEligible } from "./assets/js/modules/utils.js";
+        import { renderSearchResults, setSearchLoading, runSearch, initSearch } from "./assets/js/modules/search.js";
+        import state from "./assets/js/modules/state.js";
+
+        const app = initializeApp(firebaseConfig);
+        const database = getDatabase(app);
+
+        const donorsRef = ref(database, 'donors');
+        onValue(donorsRef, (snapshot) => {
+            const data = snapshot.val();
+            state.donorsList = [];
+            if (data && typeof data === 'object') {
+                for (const key in data) {
+                    if (Object.prototype.hasOwnProperty.call(data, key)) {
+                        state.donorsList.push({ id: key, ...data[key] });
+                    }
+                }
+            }
+
+            state.donorsByGroup.clear();
+            state.donorsList.forEach(d => {
+                const g = normalizeBloodGroup(d?.bloodGroup);
+                if (!g) return;
+                if (!state.donorsByGroup.has(g)) state.donorsByGroup.set(g, []);
+                state.donorsByGroup.get(g).push(d);
+            });
+
+            initSearch();
+        }, err => {
+            console.error('Failed to load donors:', err);
+        });
+    </script>
 </body>
 
 </html>

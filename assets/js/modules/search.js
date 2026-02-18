@@ -4,7 +4,7 @@ import { normalizeBloodGroup, isDonorEligible } from './utils.js';
 function renderDonorCardPublic(d) {
     const lastDate = d.lastDonateDate ? new Date(d.lastDonateDate).toLocaleDateString() : '-';
     const contactDesktop = d.isPhoneHidden
-        ? `<a href="#contact" class="flex items-center gap-1 text-red-700 hover:text-red-800 transition-colors">
+        ? `<a href="index.html#contact" class="flex items-center gap-1 text-red-700 hover:text-red-800 transition-colors">
             <i class="fa-solid fa-circle-info text-red-500"></i>
             <span class="text-xs font-semibold no-underline">${d.publicComment || 'Contact Admin'}</span>
            </a>`
@@ -17,7 +17,7 @@ function renderDonorCardPublic(d) {
         ? `<div class="info-row sm:hidden">
                 <i class="icon fa-solid fa-circle-info text-red-500"></i>
                 <div class="info-text">
-                    <a href="#contact" class="value text-red-700 font-semibold hover:text-red-800 transition-colors">${d.publicComment || 'Contact Admin'}</a>
+                    <a href="index.html#contact" class="value text-red-700 font-semibold hover:text-red-800 transition-colors">${d.publicComment || 'Contact Admin'}</a>
                 </div>
            </div>`
         : `<div class="info-row sm:hidden">
