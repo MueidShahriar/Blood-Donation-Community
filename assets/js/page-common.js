@@ -17,6 +17,7 @@ import { initBackToTop } from "./modules/back-to-top.js";
 import { openModal, closeModal, showModalMessage } from "./modules/modals.js";
 import { updateLoginButtonState, initAuth } from "./modules/auth.js";
 import { initLanguageSystem } from "./modules/language-ui.js";
+import { initVisitorTracker } from "./modules/visitor-tracker.js";
 import state from "./modules/state.js";
 
 const app = initializeApp(firebaseConfig);
@@ -35,6 +36,7 @@ window.onload = function () {
     initFloatObserver();
     initBackToTop();
     initLanguageSystem();
+    initVisitorTracker(database, false); // Non-home page — online users only
 
     window.addEventListener('languageChanged', () => callUpdateLogin());
 

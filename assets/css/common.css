@@ -1206,3 +1206,36 @@ body.admin-mode #mobile-menu a:hover {
         transition-duration: 0.01ms !important;
     }
 }
+
+/* ── Visitor Stats Bar (above footer) ────────────── */
+.visitor-stats-bar {
+    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+    border-top: 1px solid #e2e8f0;
+    border-bottom: 1px solid #e2e8f0;
+    padding: 12px 0;
+    margin-top: 2rem;
+    margin-bottom: 2.5rem;
+}
+
+.visitor-stats-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.visitor-stats-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.visitor-stats-dot--live {
+    background: #10b981;
+    animation: online-pulse 1.5s infinite;
+}
+
+@keyframes online-pulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(16,185,129,0.5); }
+    50% { box-shadow: 0 0 0 5px rgba(16,185,129,0); }
+}

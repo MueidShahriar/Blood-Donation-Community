@@ -46,6 +46,7 @@ import {
 import { updateLoginButtonState, initAuth } from "./modules/auth.js";
 import { initJoinForm } from "./modules/join-form.js";
 import { initFeedback } from "./modules/feedback.js";
+import { initVisitorTracker } from "./modules/visitor-tracker.js";
 
 const app = initializeApp(firebaseConfig);
 try { analyticsIsSupported().then(ok => { if (ok) getAnalytics(app); }); } catch (_) {}
@@ -255,6 +256,8 @@ window.onload = function () {
     initStatsCounter();
 
     initFeedback(feedbackRef, push);
+    const isHomePage = /\/(index\.html)?(\?.*)?(\#.*)?$/i.test(window.location.pathname);
+    initVisitorTracker(database, isHomePage); // track total views only on home page
     initJoinForm({ auth, database, ref, set, createUserWithEmailAndPassword });
     initAuth({
         auth, database, ref, onValue,

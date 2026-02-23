@@ -4,7 +4,10 @@ import {
     getAuth,
     onAuthStateChanged,
     signOut,
-    deleteUser
+    deleteUser,
+    updatePassword,
+    reauthenticateWithCredential,
+    EmailAuthProvider
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import {
     getDatabase,
@@ -19,6 +22,7 @@ import { initLanguageSystem, updatePageLanguage } from "./modules/language-ui.js
 import { initBackToTop } from "./modules/back-to-top.js";
 import { initFeedback } from "./modules/feedback.js";
 import { initHeader, initMobileMenu } from "./modules/header.js";
+import { initVisitorTracker } from "./modules/visitor-tracker.js";
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
@@ -70,6 +74,7 @@ const feedbackRef = ref(database, 'feedback');
 initHeader();
 initMobileMenu();
 initBackToTop();
+initVisitorTracker(database, false); // Profile page — online users only
 initFeedback(feedbackRef, push);
 
 function hideLoader() {
@@ -360,5 +365,90 @@ deleteConfirmBtn?.addEventListener('click', () => {
 document.addEventListener('keydown', (ev) => {
     if (ev.key === 'Escape') {
         closeModal(deleteModal);
+        closeModal(changePasswordModal);
+    }
+});
+
+/* ── Change Password ── */
+const changePasswordModal = document.getElementById('change-password-modal');
+const changePasswordForm = document.getElementById('change-password-form');
+const changePasswordBtn = document.getElementById('pf-change-password');
+const cpCancel = document.getElementById('cp-cancel');
+const cpError = document.getElementById('cp-error');
+
+changePasswordBtn?.addEventListener('click', () => {
+    if (!currentUser) {
+        showToast('You must be logged in.', 'error');
+        return;
+    }
+    // Reset form
+    changePasswordForm?.reset();
+    if (cpError) { cpError.textContent = ''; cpError.classList.add('hidden'); }
+    openModal(changePasswordModal);
+});
+
+cpCancel?.addEventListener('click', () => closeModal(changePasswordModal));
+changePasswordModal?.querySelector('.absolute.inset-0')?.addEventListener('click', () => closeModal(changePasswordModal));
+
+changePasswordForm?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if (!currentUser) return;
+
+    const currentPwd = document.getElementById('cp-current')?.value;
+    const newPwd = document.getElementById('cp-new')?.value;
+    const confirmPwd = document.getElementById('cp-confirm')?.value;
+
+    // Reset error
+    if (cpError) { cpError.textContent = ''; cpError.classList.add('hidden'); }
+
+    if (!currentPwd || !newPwd || !confirmPwd) {
+        if (cpError) { cpError.textContent = 'All fields are required.'; cpError.classList.remove('hidden'); }
+        return;
+    }
+
+    if (newPwd.length < 6) {
+        if (cpError) { cpError.textContent = 'New password must be at least 6 characters.'; cpError.classList.remove('hidden'); }
+        return;
+    }
+
+    if (newPwd !== confirmPwd) {
+        if (cpError) { cpError.textContent = 'New passwords do not match.'; cpError.classList.remove('hidden'); }
+        return;
+    }
+
+    if (currentPwd === newPwd) {
+        if (cpError) { cpError.textContent = 'New password must be different from current password.'; cpError.classList.remove('hidden'); }
+        return;
+    }
+
+    const submitBtn = document.getElementById('cp-submit');
+    if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = 'Updating...'; }
+
+    try {
+        // Re-authenticate first
+        const credential = EmailAuthProvider.credential(currentUser.email, currentPwd);
+        await reauthenticateWithCredential(currentUser, credential);
+
+        // Update password
+        await updatePassword(currentUser, newPwd);
+
+        closeModal(changePasswordModal);
+        showToast('Password updated successfully!', 'success');
+        changePasswordForm.reset();
+    } catch (err) {
+        console.error('Password change error:', err);
+        let msg = 'Failed to change password.';
+        if (err.code === 'auth/wrong-password' || err.code === 'auth/invalid-credential') {
+            msg = 'Current password is incorrect.';
+        } else if (err.code === 'auth/weak-password') {
+            msg = 'New password is too weak. Use at least 6 characters.';
+        } else if (err.code === 'auth/too-many-requests') {
+            msg = 'Too many attempts. Please try again later.';
+        } else if (err.code === 'auth/requires-recent-login') {
+            msg = 'Session expired. Please log out and log in again.';
+        }
+        if (cpError) { cpError.textContent = msg; cpError.classList.remove('hidden'); }
+    } finally {
+        if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = 'Update Password'; }
     }
 });

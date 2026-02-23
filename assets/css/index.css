@@ -2729,3 +2729,9 @@ canvas {
         width: 100%;
     }
 }
+
+/* Pulse animation for online indicator */
+@keyframes pulse-dot {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: .5; transform: scale(1.35); }
+}
