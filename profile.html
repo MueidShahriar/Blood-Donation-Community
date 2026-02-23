@@ -297,30 +297,40 @@
             </div>
 
             <!-- Change Password Section -->
-            <div class="profile-form-card" style="border-left: 3px solid #f59e0b;">
-                <div class="flex items-center gap-2.5 mb-3">
-                    <span class="profile-form-header-icon" style="background:rgba(245,158,11,0.1);color:#f59e0b"><i class="fa-solid fa-lock"></i></span>
-                    <div>
-                        <h2 class="text-base sm:text-lg font-bold text-gray-900">Change Password</h2>
-                        <p class="text-xs text-gray-500 mt-0.5">Update your account password for better security</p>
+            <div class="profile-form-card" style="margin-top:1.5rem;border:none;background:linear-gradient(135deg,#fffbeb 0%,#fef3c7 50%,#fff7ed 100%);box-shadow:0 2px 12px rgba(245,158,11,0.1),0 0 0 1px rgba(245,158,11,0.08);position:relative;overflow:hidden;padding:1.5rem">
+                <div style="position:absolute;top:-20px;right:-20px;width:100px;height:100px;border-radius:50%;background:radial-gradient(circle,rgba(245,158,11,0.12) 0%,transparent 70%)"></div>
+                <div style="position:absolute;bottom:-15px;left:-15px;width:70px;height:70px;border-radius:50%;background:radial-gradient(circle,rgba(217,119,6,0.08) 0%,transparent 70%)"></div>
+                <div class="flex items-start gap-3" style="position:relative;z-index:1">
+                    <div style="width:48px;height:48px;border-radius:14px;background:linear-gradient(135deg,#f59e0b,#d97706);display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 4px 14px rgba(245,158,11,0.3)">
+                        <i class="fa-solid fa-shield-halved" style="color:#fff;font-size:1.15rem"></i>
+                    </div>
+                    <div style="flex:1;min-width:0">
+                        <h2 style="font-size:1.05rem;font-weight:800;color:#92400e;margin:0">Change Password</h2>
+                        <p style="font-size:0.78rem;color:#b45309;margin-top:3px;opacity:0.8">Keep your account secure with a strong password</p>
+                        <button id="pf-change-password" type="button" style="margin-top:0.75rem;display:inline-flex;align-items:center;gap:0.5rem;padding:0.55rem 1.2rem;border-radius:0.7rem;background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff;font-size:0.82rem;font-weight:700;border:none;cursor:pointer;box-shadow:0 4px 14px rgba(245,158,11,0.25);transition:all 0.2s;font-family:'Inter',sans-serif" onmouseover="this.style.transform='translateY(-1px)';this.style.boxShadow='0 6px 20px rgba(245,158,11,0.35)'" onmouseout="this.style.transform='translateY(0)';this.style.boxShadow='0 4px 14px rgba(245,158,11,0.25)'">
+                            <i class="fa-solid fa-key" style="font-size:0.75rem"></i>
+                            <span>Change Password</span>
+                        </button>
                     </div>
                 </div>
-                <button id="pf-change-password" type="button" class="pf-btn" style="background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff;">
-                    <i class="fa-solid fa-key"></i>
-                    <span>Change Password</span>
-                </button>
             </div>
 
-            <div class="profile-danger-card">
-                <div class="flex items-center gap-2.5 mb-3">
-                    <span class="profile-danger-icon"><i class="fa-solid fa-triangle-exclamation"></i></span>
-                    <h3 class="text-sm font-bold text-red-700" data-i18n="profileDangerZone">Danger Zone</h3>
+            <!-- Danger Zone -->
+            <div style="margin-top:1.25rem;padding:1.5rem;background:linear-gradient(135deg,#fef2f2 0%,#fff1f2 50%,#fce7f3 100%);border-radius:1.25rem;border:1.5px solid rgba(220,38,38,0.1);box-shadow:0 2px 12px rgba(220,38,38,0.06);position:relative;overflow:hidden">
+                <div style="position:absolute;top:-20px;right:-20px;width:90px;height:90px;border-radius:50%;background:radial-gradient(circle,rgba(220,38,38,0.08) 0%,transparent 70%)"></div>
+                <div class="flex items-start gap-3" style="position:relative;z-index:1">
+                    <div style="width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,#fecaca,#fca5a5);display:flex;align-items:center;justify-content:center;flex-shrink:0;border:1px solid rgba(220,38,38,0.12)">
+                        <i class="fa-solid fa-triangle-exclamation" style="color:#dc2626;font-size:1rem"></i>
+                    </div>
+                    <div style="flex:1;min-width:0">
+                        <h3 style="font-size:0.95rem;font-weight:800;color:#991b1b;margin:0" data-i18n="profileDangerZone">Danger Zone</h3>
+                        <p style="font-size:0.75rem;color:#b91c1c;margin-top:3px;opacity:0.7" data-i18n="profileDangerDesc">Permanently delete your account and all associated data. This action cannot be undone.</p>
+                        <button id="pf-delete" type="button" style="margin-top:0.75rem;display:inline-flex;align-items:center;gap:0.45rem;padding:0.5rem 1.1rem;border-radius:0.65rem;background:#fff;color:#dc2626;font-size:0.8rem;font-weight:700;border:1.5px solid rgba(220,38,38,0.25);cursor:pointer;transition:all 0.2s;font-family:'Inter',sans-serif;box-shadow:0 1px 4px rgba(220,38,38,0.08)" onmouseover="this.style.background='#fef2f2';this.style.borderColor='rgba(220,38,38,0.4)';this.style.boxShadow='0 2px 8px rgba(220,38,38,0.12)'" onmouseout="this.style.background='#fff';this.style.borderColor='rgba(220,38,38,0.25)';this.style.boxShadow='0 1px 4px rgba(220,38,38,0.08)'">
+                            <i class="fa-solid fa-trash-alt" style="font-size:0.72rem"></i>
+                            <span data-i18n="profileDeleteAccount">Delete My Account</span>
+                        </button>
+                    </div>
                 </div>
-                <p class="text-xs text-gray-500 mb-4" data-i18n="profileDangerDesc">Permanently delete your account and all associated data. This action cannot be undone.</p>
-                <button id="pf-delete" type="button" class="pf-btn pf-btn--danger">
-                    <i class="fa-solid fa-trash-alt"></i>
-                    <span data-i18n="profileDeleteAccount">Delete My Account</span>
-                </button>
             </div>
         </div>
     </main>
