@@ -839,7 +839,7 @@ function _renderDonorCardCanvas(donorData, photoSrc) {
             ctx.fillStyle = '#b91c1c';
             ctx.font = '700 11px Arial, Helvetica, sans-serif';
             ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-            ctx.fillText('Donate Blood, Save Lives', W / 2 + 6, footY + footH / 2);
+            ctx.fillText('Donate Blood, Save Life', W / 2 + 6, footY + footH / 2);
             ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic';
 
             // ── Outer border ──
