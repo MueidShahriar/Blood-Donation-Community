@@ -485,7 +485,7 @@ export function showDonorCardModal(donorData, containerEl) {
                         </div>
                         <!-- Footer -->
                         <div style="display:flex;align-items:center;justify-content:center;padding:0.6rem 1rem;background:linear-gradient(135deg,rgba(185,28,28,0.05),rgba(249,115,22,0.03));border-top:1px solid rgba(220,38,38,0.04)">
-                            <span style="font-size:0.65rem;font-weight:700;color:#dc2626;letter-spacing:0.08em"><i class="fa-solid fa-heart" style="margin-right:5px;font-size:0.6rem"></i>Donate Blood, Save Lives</span>
+                            <span style="font-size:0.65rem;font-weight:700;color:#dc2626;letter-spacing:0.08em"><i class="fa-solid fa-heart" style="margin-right:5px;font-size:0.6rem"></i>Donate Blood, Save Life</span>
                         </div>
                     </div>
                 </div>

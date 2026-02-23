@@ -5,7 +5,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Donation Certificate - Blood Donation Community</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <nk rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="shortcut icon" href="image/blood-drop.png" type="image/x-icon">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -18,37 +18,125 @@
     <meta name="description" content="Generate and download your blood donation certificate.">
     <style>
         #page-loader {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: #fff; z-index: 9999; display: flex; justify-content: center; align-items: center;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #fff;
+            z-index: 9999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
-        #page-loader.fade-out { opacity: 0; visibility: hidden; transition: opacity .5s, visibility .5s; }
-        body.loading > *:not(#page-loader):not(script) { opacity: 0 !important; visibility: hidden !important; }
+
+        #page-loader.fade-out {
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity .5s, visibility .5s;
+        }
+
+        body.loading>*:not(#page-loader):not(script) {
+            opacity: 0 !important;
+            visibility: hidden !important;
+        }
+
         .cert-page-main {
-            min-height: calc(100vh - 80px); display: flex; flex-direction: column;
-            align-items: center; justify-content: flex-start; padding: 2rem 1rem;
+            min-height: calc(100vh - 80px);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            padding: 2rem 1rem;
         }
-        .cert-hero { text-align: center; margin-bottom: 2rem; max-width: 600px; }
-        .cert-hero h1 { font-size: 1.5rem; font-weight: 800; color: #1f2937; }
-        .cert-hero p { font-size: 0.85rem; color: #6b7280; margin-top: 0.25rem; }
+
+        .cert-hero {
+            text-align: center;
+            margin-bottom: 2rem;
+            max-width: 600px;
+        }
+
+        .cert-hero h1 {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: #1f2937;
+        }
+
+        .cert-hero p {
+            font-size: 0.85rem;
+            color: #6b7280;
+            margin-top: 0.25rem;
+        }
+
         .cert-preview-wrap {
-            width: 100%; max-width: 700px; background: #f9fafb; border-radius: 1rem;
-            padding: 1.5rem; box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+            width: 100%;
+            max-width: 700px;
+            background: #f9fafb;
+            border-radius: 1rem;
+            padding: 1.5rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
         }
-        .cert-preview-wrap img { width: 100%; border-radius: 0.5rem; box-shadow: 0 2px 12px rgba(0,0,0,0.1); }
-        .cert-actions { display: flex; gap: 0.75rem; justify-content: center; margin-top: 1.5rem; flex-wrap: wrap; }
+
+        .cert-preview-wrap img {
+            width: 100%;
+            border-radius: 0.5rem;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .cert-actions {
+            display: flex;
+            gap: 0.75rem;
+            justify-content: center;
+            margin-top: 1.5rem;
+            flex-wrap: wrap;
+        }
+
         .cert-actions button {
-            display: inline-flex; align-items: center; gap: 0.5rem;
-            padding: 0.6rem 1.5rem; border-radius: 0.7rem; font-size: 0.85rem; font-weight: 700;
-            border: none; cursor: pointer; transition: all 0.2s; box-shadow: 0 4px 14px rgba(0,0,0,0.1);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.6rem 1.5rem;
+            border-radius: 0.7rem;
+            font-size: 0.85rem;
+            font-weight: 700;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1);
         }
-        .cert-btn-download { background: linear-gradient(135deg,#b91c1c,#dc2626); color: #fff; }
-        .cert-btn-download:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(185,28,28,0.3); }
-        .cert-btn-share { background: linear-gradient(135deg,#2563eb,#3b82f6); color: #fff; }
-        .cert-btn-share:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(37,99,235,0.3); }
+
+        .cert-btn-download {
+            background: linear-gradient(135deg, #b91c1c, #dc2626);
+            color: #fff;
+        }
+
+        .cert-btn-download:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(185, 28, 28, 0.3);
+        }
+
+        .cert-btn-share {
+            background: linear-gradient(135deg, #2563eb, #3b82f6);
+            color: #fff;
+        }
+
+        .cert-btn-share:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(37, 99, 235, 0.3);
+        }
+
         @media (max-width: 480px) {
-            .cert-page-main { padding: 1rem 0.5rem; }
-            .cert-preview-wrap { padding: 0.75rem; }
-            .cert-hero h1 { font-size: 1.25rem; }
+            .cert-page-main {
+                padding: 1rem 0.5rem;
+            }
+
+            .cert-preview-wrap {
+                padding: 0.75rem;
+            }
+
+            .cert-hero h1 {
+                font-size: 1.25rem;
+            }
         }
     </style>
 </head>
@@ -64,7 +152,8 @@
     <header class="profile-header">
         <nav class="max-w-5xl mx-auto flex items-center justify-between px-4 sm:px-6 py-3">
             <a href="index.html" class="flex items-center gap-2.5 text-decoration-none group">
-                <img src="image/blood-drop.png" alt="logo" class="h-9 w-9 rounded-xl transition group-hover:scale-110" />
+                <img src="image/blood-drop.png" alt="logo"
+                    class="h-9 w-9 rounded-xl transition group-hover:scale-110" />
                 <span class="text-lg sm:text-xl font-extrabold text-red-700 tracking-tight">Certificate</span>
             </a>
             <div class="flex items-center gap-2">
@@ -93,7 +182,8 @@
                 <div class="profile-empty-icon"><i class="fa-solid fa-user-lock"></i></div>
                 <h2 class="text-xl font-bold text-gray-800 mt-4">You're not logged in</h2>
                 <p class="text-sm text-gray-500 mt-2 max-w-sm mx-auto">Please log in to generate your certificate.</p>
-                <a href="index.html" class="mt-6 inline-flex items-center gap-2 px-6 py-2.5 rounded-lg bg-red-600 text-white font-semibold shadow hover:bg-red-700 transition">
+                <a href="index.html"
+                    class="mt-6 inline-flex items-center gap-2 px-6 py-2.5 rounded-lg bg-red-600 text-white font-semibold shadow hover:bg-red-700 transition">
                     <i class="fa-solid fa-arrow-left"></i> Go to Home
                 </a>
             </div>

@@ -18,19 +18,67 @@
     <meta name="description" content="View and download your digital donor card from Blood Donation Community.">
     <style>
         #page-loader {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: #fff; z-index: 9999; display: flex; justify-content: center; align-items: center;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #fff;
+            z-index: 9999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
-        #page-loader.fade-out { opacity: 0; visibility: hidden; transition: opacity .5s, visibility .5s; }
-        body.loading > *:not(#page-loader):not(script) { opacity: 0 !important; visibility: hidden !important; }
-        .donor-page-main { min-height: calc(100vh - 80px); display: flex; align-items: flex-start; justify-content: center; padding: 2rem 1rem; }
-        .donor-page-card { width: 100%; max-width: 480px; }
-        .donor-page-hero { text-align: center; margin-bottom: 1.5rem; }
-        .donor-page-hero h1 { font-size: 1.5rem; font-weight: 800; color: #1f2937; }
-        .donor-page-hero p { font-size: 0.85rem; color: #6b7280; margin-top: 0.25rem; }
+
+        #page-loader.fade-out {
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity .5s, visibility .5s;
+        }
+
+        body.loading>*:not(#page-loader):not(script) {
+            opacity: 0 !important;
+            visibility: hidden !important;
+        }
+
+        .donor-page-main {
+            min-height: calc(100vh - 80px);
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+            padding: 2rem 1rem;
+        }
+
+        .donor-page-card {
+            width: 100%;
+            max-width: 480px;
+        }
+
+        .donor-page-hero {
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .donor-page-hero h1 {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: #1f2937;
+        }
+
+        .donor-page-hero p {
+            font-size: 0.85rem;
+            color: #6b7280;
+            margin-top: 0.25rem;
+        }
+
         @media (max-width: 480px) {
-            .donor-page-main { padding: 1rem 0.5rem; }
-            .donor-page-hero h1 { font-size: 1.25rem; }
+            .donor-page-main {
+                padding: 1rem 0.5rem;
+            }
+
+            .donor-page-hero h1 {
+                font-size: 1.25rem;
+            }
         }
     </style>
 </head>
@@ -46,7 +94,8 @@
     <header class="profile-header">
         <nav class="max-w-5xl mx-auto flex items-center justify-between px-4 sm:px-6 py-3">
             <a href="index.html" class="flex items-center gap-2.5 text-decoration-none group">
-                <img src="image/blood-drop.png" alt="logo" class="h-9 w-9 rounded-xl transition group-hover:scale-110" />
+                <img src="image/blood-drop.png" alt="logo"
+                    class="h-9 w-9 rounded-xl transition group-hover:scale-110" />
                 <span class="text-lg sm:text-xl font-extrabold text-red-700 tracking-tight">Donor Card</span>
             </a>
             <div class="flex items-center gap-2">
@@ -76,7 +125,8 @@
                     <div class="profile-empty-icon"><i class="fa-solid fa-user-lock"></i></div>
                     <h2 class="text-xl font-bold text-gray-800 mt-4">You're not logged in</h2>
                     <p class="text-sm text-gray-500 mt-2 max-w-sm mx-auto">Please log in to view your donor card.</p>
-                    <a href="index.html" class="mt-6 inline-flex items-center gap-2 px-6 py-2.5 rounded-lg bg-red-600 text-white font-semibold shadow hover:bg-red-700 transition">
+                    <a href="index.html"
+                        class="mt-6 inline-flex items-center gap-2 px-6 py-2.5 rounded-lg bg-red-600 text-white font-semibold shadow hover:bg-red-700 transition">
                         <i class="fa-solid fa-arrow-left"></i> Go to Home
                     </a>
                 </div>
