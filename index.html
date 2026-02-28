@@ -4,8 +4,6 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta http-equiv="X-Content-Type-Options" content="nosniff">
-    <meta name="referrer" content="strict-origin-when-cross-origin">
     <title>Home - Blood Donation Community</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="shortcut icon" href="image/blood-drop.png" type="image/x-icon">
@@ -20,24 +18,6 @@
 
     <meta name="description"
         content="Community-driven blood donation platform. Register as a donor, search donors by blood group and location.">
-
-    <!-- Open Graph -->
-    <meta property="og:type" content="website">
-    <meta property="og:title" content="Blood Donation Community - Save Lives, Donate Blood">
-    <meta property="og:description" content="Community-driven blood donation platform. Register as a donor, search donors by blood group and location.">
-    <meta property="og:image" content="image/blood-drop.png">
-    <meta property="og:url" content="https://bauet-bdc.github.io/Blood-Donation-Community/">
-    <meta property="og:site_name" content="Blood Donation Community">
-
-    <!-- Twitter Card -->
-    <meta name="twitter:card" content="summary">
-    <meta name="twitter:title" content="Blood Donation Community - Save Lives, Donate Blood">
-    <meta name="twitter:description" content="Community-driven blood donation platform. Register as a donor, search donors by blood group and location.">
-    <meta name="twitter:image" content="image/blood-drop.png">
-
-    <!-- Theme Color -->
-    <meta name="theme-color" content="#dc2626">
-
     <style>
         #page-loader {
             position: fixed;
@@ -66,7 +46,6 @@
 </head>
 
 <body class="bg-white text-gray-900 loading">
-    <a href="#main-content" class="skip-to-content">Skip to main content</a>
     <div id="page-loader">
         <div class="logo-wrapper">
             <div class="logo-base">
@@ -157,7 +136,7 @@
         </div>
     </header>
 
-    <main id="main-content" class="max-w-6xl mx-auto px-4 sm:px-4 lg:px-6">
+    <main class="max-w-6xl mx-auto px-4 sm:px-4 lg:px-6">
         <section id="hero" class="relative flex flex-col md:flex-row items-center justify-between pt-4 pb-12 gap-6">
             <div class="flex-1 flex flex-col items-center justify-center text-center md:items-start md:text-left">
                 <h1 class="text-4xl sm:text-5xl font-extrabold text-red-700 mb-4 tracking-tight break-words leading-tight hero-title"
@@ -198,7 +177,7 @@
                 <span class="loading-banner__spinner" aria-hidden="true"></span>
                 <span class="loading-banner__text" data-i18n="recentLoading">Fetching recent donations...</span>
             </div>
-             <div id="recentDonorCarousel" class="carousel slide" data-ride="carousel" data-interval="1000"
+            <div id="recentDonorCarousel" class="carousel slide" data-ride="carousel" data-interval="9000"
                 data-pause="hover">
                 <ol class="carousel-indicators">
                 </ol>
@@ -747,8 +726,81 @@
         </div>
     </div>
 
-    <footer id="app-footer"
+    <footer
         class="mt-0 relative text-gray-300 bg-slate-900/95 backdrop-blur rounded-t-2xl shadow-[0_-12px_40px_rgba(2,6,23,0.45)] overflow-hidden">
+        <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-red-500/60 to-transparent">
+        </div>
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <div class="footer-brand-title">
+                        <img src="image/blood-drop.png" alt="Blood Donation Community" />
+                        <span data-i18n="siteTitle">Blood Donation Community</span>
+                    </div>
+                    <p data-i18n="footerBrandDesc">A passionate, volunteer-driven organization dedicated to saving lives through the power of blood
+                        donation. We connect donors with patients in urgent need.</p>
+                    <div class="footer-socials mt-2">
+                        <a href="https://www.facebook.com/share/1CLTZN8DmU/?mibextid=wwXIfr" class="social-facebook" aria-label="Facebook"
+                            target="_blank" rel="noopener noreferrer">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+                        <a href="https://www.linkedin.com/company/bauet-blood-donation-club/" class="social-linkedin" aria-label="LinkedIn"
+                            target="_blank" rel="noopener noreferrer">
+                            <i class="fab fa-linkedin-in"></i>
+                        </a>
+                        <a href="https://wa.me/8801712460423" class="social-whatsapp" aria-label="WhatsApp"
+                            target="_blank" rel="noopener noreferrer">
+                            <i class="fab fa-whatsapp"></i>
+                        </a>
+                    </div>
+                </div>
+                <div>
+                    <h4 class="footer-col-title" data-i18n="footerQuickLinks">QUICK LINKS</h4>
+                    <ul class="footer-links">
+                        <li><a href="about.html"><i class="fa-solid fa-chevron-right"></i> <span
+                                    data-i18n="navAbout">About</span></a></li>
+                        <li><a href="donationGuide.html"><i class="fa-solid fa-chevron-right"></i> <span
+                                    data-i18n="navHow">Donation Guide</span></a></li>
+                        <li><a href="events.html"><i class="fa-solid fa-chevron-right"></i> <span
+                                    data-i18n="navEvents">Events</span></a></li>
+                        <li><a href="join.html"><i class="fa-solid fa-chevron-right"></i> <span
+                                    data-i18n="navJoin">Join</span></a></li>
+                        <li><a href="search.html"><i class="fa-solid fa-chevron-right"></i> <span
+                                    data-i18n="navSearch">Search</span></a></li>
+                        <li><a href="donor.html"><i class="fa-solid fa-chevron-right"></i> <span>Donor Card</span></a></li>
+                        <li><a href="certificate.html"><i class="fa-solid fa-chevron-right"></i> <span>Certificate</span></a></li>
+                        <li><a href="visitor-stats.html"><i class="fa-solid fa-chevron-right"></i> <span>Visitor Stats</span></a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="footer-col-title" data-i18n="footerContactInfo">Contact Info</h4>
+                    <ul class="footer-links">
+                        <li><a href="mailto:bauet.bdc@gmail.com"><i class="fa-solid fa-envelope"></i>
+                                <span>bauet.bdc@gmail.com</span></a></li>
+                        <li><a href="tel:+8801712460423"><i class="fa-solid fa-phone"></i>
+                                <span>+8801712460423</span></a></li>
+                        <li><a href="#contact"><i class="fa-solid fa-message"></i> <span
+                                    data-i18n="navContact">Contact</span></a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-feedback-wrap">
+                <button id="feedback-btn" type="button"
+                    class="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg bg-red-600/90 text-white text-sm font-semibold shadow hover:bg-red-700 transition">
+                    <i class="fa-solid fa-comment-dots" aria-hidden="true"></i>
+                    <span data-i18n="footerFeedback">Share Feedback</span>
+                </button>
+            </div>
+            <hr class="footer-divider" />
+            <div class="footer-bottom">
+                <p class="footer-copy">
+                    &copy; 2026 <a href="#">Blood Donation Community</a> All rights reserved.
+                </p>
+                <p class="footer-copy">
+                    <span data-i18n="footerDeveloper">Developed by Md. Mueid Shahriar, </span> CSE-16th, BAUET
+                </p>
+            </div>
+        </div>
     </footer>
 
     <div id="success-modal" class="fixed inset-0 hidden items-center justify-center z-[60]">
