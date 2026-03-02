@@ -4,7 +4,6 @@
     pointer-events: none;
     visibility: hidden;
     transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    will-change: opacity, visibility;
 }
 
 #recentDonorCarousel.show-controls .carousel-control-prev,
@@ -76,7 +75,7 @@ img, .animate-bounce-slow, .float-in, .btn-breathe {
     justify-content: center;
     background: linear-gradient(180deg, rgba(239, 68, 68, 0.10), rgba(239, 68, 68, 0.04));
     color: var(--red-600);
-    box-shadow: 0 8px 20px rgba(255, 255, 255, 0.5);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
     margin-bottom: 6px;
 }
 
@@ -103,7 +102,7 @@ img, .animate-bounce-slow, .float-in, .btn-breathe {
     padding: 1.25rem;
     border-radius: 12px;
     background: linear-gradient(90deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.8));
-    box-shadow: 0 8px 20px rgba(255, 255, 255, 0.5);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
 }
 
 .stats-grid {
@@ -144,7 +143,7 @@ img, .animate-bounce-slow, .float-in, .btn-breathe {
     padding: .75rem 1.1rem;
     border-radius: 10px;
     font-weight: 700;
-    box-shadow: 0 8px 20px rgba(255, 255, 255, 0.5);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
     display: inline-flex;
     align-items: center;
     gap: .6rem
@@ -159,7 +158,7 @@ img, .animate-bounce-slow, .float-in, .btn-breathe {
     overflow: hidden;
     border-radius: 1.5rem;
     padding: 1.4rem 1.4rem 1.6rem;
-    box-shadow: 0 8px 20px rgba(255, 255, 255, 0.5);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
 }
 
 .search-card::before {
@@ -192,7 +191,6 @@ img, .animate-bounce-slow, .float-in, .btn-breathe {
     font-weight: 600;
     box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.3);
     transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    will-change: opacity;
 }
 
 .search-loading.hidden,
@@ -222,7 +220,7 @@ img, .animate-bounce-slow, .float-in, .btn-breathe {
     border-radius: 20px;
     padding: clamp(1.45rem, 2.2vw, 2rem);
     background: linear-gradient(180deg, #ffffff 0%, #fff7f7 100%);
-    box-shadow: 0 8px 20px rgba(255, 255, 255, 0.5);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
     border: 1px solid rgba(225, 29, 72, 0.16);
     isolation: isolate;
 }
@@ -295,7 +293,7 @@ img, .animate-bounce-slow, .float-in, .btn-breathe {
     justify-content: center;
     font-weight: 800;
     font-size: 1.05rem;
-    box-shadow: 0 8px 20px rgba(255, 255, 255, 0.5);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
 }
 
 .recent-card__headline {
@@ -355,7 +353,7 @@ img, .animate-bounce-slow, .float-in, .btn-breathe {
     flex-direction: column;
     gap: 0.35rem;
     min-height: 78px;
-    box-shadow: 0 8px 20px rgba(255, 255, 255, 0.5);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
 }
 
 .recent-card__stat-label {
@@ -510,7 +508,6 @@ img, .animate-bounce-slow, .float-in, .btn-breathe {
 .donor-card:hover {
     transform: translateY(-3px) translateZ(0);
     transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    will-change: transform, box-shadow;
 }
 
 .donor-card .info-stack {
@@ -609,7 +606,7 @@ section#join .how-card.tint-emerald label.absolute {
     background: #fff;
     padding: .5rem;
     border-radius: 12px;
-    box-shadow: 0 8px 20px rgba(255, 255, 255, 0.5);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
 }
 
 .admin-tab {
@@ -623,7 +620,6 @@ section#join .how-card.tint-emerald label.absolute {
     font-weight: 600;
     cursor: pointer;
     transition: background 0.3s cubic-bezier(0.4, 0, 0.2, 1), transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-    will-change: transform, background;
 }
 
 .admin-tab:hover {
@@ -634,7 +630,7 @@ section#join .how-card.tint-emerald label.absolute {
 .admin-tab.active {
     background: linear-gradient(90deg, var(--admin), var(--admin-hover));
     color: #fff;
-    box-shadow: 0 8px 20px rgba(255, 255, 255, 0.5);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
 }
 
 .admin-tabpanel {
@@ -1441,7 +1437,7 @@ section#join .how-card.tint-emerald label.absolute {
 
 #login-modal .modal-panel {
     border-radius: 14px;
-    box-shadow: 0 8px 20px rgba(255, 255, 255, 0.5);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
 }
 
 #login-modal .modal-title {
@@ -1506,15 +1502,14 @@ body.admin-mode #menu-toggle {
     background-color: #ffe4e6 !important;
     color: #3b82f6 !important;
     border-radius: 12px;
-    box-shadow: 0 8px 20px rgba(255, 255, 255, 0.5), inset 0 0 0 2px rgba(79, 70, 229, .25);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06), inset 0 0 0 2px rgba(79, 70, 229, .25);
     transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1), color 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    will-change: transform, box-shadow;
 }
 
 body.admin-mode #menu-toggle:hover {
     background-color: #fecdd3 !important;
     transform: translateY(-1px) translateZ(0);
-    box-shadow: 0 8px 20px rgba(255, 255, 255, 0.5), inset 0 0 0 2px rgba(79, 70, 229, .25);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06), inset 0 0 0 2px rgba(79, 70, 229, .25);
 }
 
 body.admin-mode #mobile-menu a,
@@ -1638,7 +1633,6 @@ canvas {
     display: flex;
     flex-direction: column;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    will-change: transform, box-shadow;
 }
 
 #dashboard-insights .how-card::before {
@@ -1660,17 +1654,15 @@ canvas {
 
 .insight-chip {
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    will-change: transform, box-shadow;
 }
 
 #dashboard-insights .how-card:hover .insight-chip {
     transform: translateY(-3px) translateZ(0);
-    box-shadow: 0 8px 20px rgba(255, 255, 255, 0.5);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
 }
 
 #dashboard-insights .icon-circle-sm {
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    will-change: transform;
 }
 
 #dashboard-insights .how-card:hover .icon-circle-sm {
@@ -1858,7 +1850,7 @@ canvas {
     opacity: 1 !important;
     transform: none !important;
     transition: none !important;
-    box-shadow: 0 8px 20px rgba(255, 255, 255, 0.5);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
 }
     .card .btn-group,
     .donor-card .btn-group {
@@ -1936,7 +1928,6 @@ canvas {
     background-color: rgba(225, 29, 72, 0.28);
     border: 2px solid transparent;
     transition: background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1), transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    will-change: transform, background-color;
 }
 
 #recentDonorCarousel .carousel-indicators li.active {
@@ -1967,9 +1958,8 @@ canvas {
     background-position: center;
     background-repeat: no-repeat;
     background-size: 14px 14px;
-    box-shadow: 0 8px 20px rgba(255, 255, 255, 0.5);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    will-change: background-color, border-color;
 }
 
 #recentDonorCarousel .carousel-control-prev-icon {
@@ -2014,13 +2004,11 @@ canvas {
 
 .animate-bounce-slow {
     animation: bounce-slow 3s cubic-bezier(0.4, 0, 0.2, 1) infinite;
-    will-change: transform;
 }
 
 #hero .relative img[alt="blood drop"] {
     filter: drop-shadow(0 10px 40px rgba(225, 29, 72, 0.3));
     transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), filter 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    will-change: transform, filter;
 }
 
 #hero .relative:hover img[alt="blood drop"] {
@@ -2054,7 +2042,6 @@ canvas {
     position: relative;
     overflow: hidden;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    will-change: box-shadow, border-color;
 }
 
 #hero a.bg-white::before {
@@ -2074,17 +2061,15 @@ canvas {
 
 #hero a.bg-white:hover {
     border-color: #ef4444;
-    box-shadow: 0 8px 20px rgba(255, 255, 255, 0.5);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
 }
 
 #hero .absolute.bottom-0 {
     animation: shadow-pulse 3s cubic-bezier(0.4, 0, 0.2, 1) infinite;
-    will-change: opacity, transform;
 }
 
 #hero .flex-1:first-child > * {
     animation: fadeInRight 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-    will-change: opacity, transform;
 }
 
 #hero .flex-1:first-child h1 {
@@ -2104,7 +2089,6 @@ canvas {
 #hero .flex-1:last-child {
     animation: fadeInUp 1s cubic-bezier(0.4, 0, 0.2, 1) 0.3s forwards;
     opacity: 0;
-    will-change: opacity, transform;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -2124,7 +2108,6 @@ canvas {
     position: relative;
     overflow: hidden;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    will-change: transform, box-shadow;
 }
 
 #login-btn::before {
@@ -2147,7 +2130,7 @@ canvas {
 
 #login-btn:hover {
     transform: translateY(-2px) translateZ(0);
-    box-shadow: 0 8px 20px rgba(255, 255, 255, 0.5);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
 }
 
 #admin-badge {
@@ -2177,12 +2160,11 @@ canvas {
     background: linear-gradient(135deg, rgba(239, 68, 68, 0.15), rgba(225, 29, 72, 0.08));
     border: 3px solid rgba(239, 68, 68, 0.2);
     transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-    will-change: transform, box-shadow;
 }
 
 #about .how-card:hover .icon-circle {
     transform: rotate(360deg) scale(1.1) translateZ(0);
-    box-shadow: 0 8px 20px rgba(255, 255, 255, 0.5);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
 }
 
 #about h2 {
@@ -2209,7 +2191,6 @@ canvas {
     position: relative;
     padding-left: 0.5rem;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    will-change: transform, color;
 }
 
 #about ul li::marker {
@@ -2270,13 +2251,12 @@ canvas {
 #how .how-card .w-12.h-12 {
     background: linear-gradient(135deg, rgba(239, 68, 68, 0.15), rgba(225, 29, 72, 0.08));
     transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: 0 8px 20px rgba(255, 255, 255, 0.5);
-    will-change: transform, box-shadow;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
 }
 
 #how .how-card:hover .w-12.h-12 {
     transform: scale(1.15) rotate(10deg) translateZ(0);
-    box-shadow: 0 8px 20px rgba(255, 255, 255, 0.5);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
 }
 
 #how .how-card .w-12.h-12 i {
@@ -2352,7 +2332,6 @@ canvas {
     overflow: hidden;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     cursor: pointer;
-    will-change: transform;
 }
 
 .stat-card::before {
@@ -2378,7 +2357,6 @@ canvas {
 .stat-card .icon-circle-sm {
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     animation: icon-bounce 2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
-    will-change: transform;
 }
 
 .stat-card:hover .icon-circle-sm {
@@ -2389,7 +2367,6 @@ canvas {
 .stat-card .num {
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     text-shadow: 0 2px 8px rgba(239, 68, 68, 0.1);
-    will-change: transform, text-shadow;
 }
 
 .stat-card:hover .num {
@@ -2410,8 +2387,7 @@ canvas {
     position: relative;
     overflow: hidden;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: 0 8px 20px rgba(255, 255, 255, 0.5);
-    will-change: transform, box-shadow;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
 }
 
 #how a[href="#join"].bg-red-600::before {
@@ -2434,7 +2410,7 @@ canvas {
 
 #how a[href="#join"].bg-red-600:hover {
     transform: translateY(-3px) translateZ(0);
-    box-shadow: 0 8px 20px rgba(255, 255, 255, 0.5);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
 }
 
 #how a[href="#join"].bg-red-600 i {
@@ -2498,7 +2474,6 @@ canvas {
     position: relative;
     overflow: hidden;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    will-change: transform;
 }
 
 #public-events-list .how-card::before {
@@ -2522,7 +2497,6 @@ canvas {
 
 #public-events-list .how-card .flex-shrink-0 {
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    will-change: transform;
 }
 
 #public-events-list .how-card:hover .flex-shrink-0 {
@@ -2533,7 +2507,6 @@ canvas {
     position: relative;
     overflow: hidden;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    will-change: transform, box-shadow;
 }
 
 #public-events-list .how-card a::before {
@@ -2611,7 +2584,6 @@ canvas {
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     position: relative;
     z-index: 1;
-    will-change: transform, box-shadow;
 }
 
 #search .search-card::before {
@@ -2636,12 +2608,11 @@ canvas {
 
 #search .search-card:hover {
     transform: translateY(-3px) translateZ(0);
-    box-shadow: 0 8px 20px rgba(255, 255, 255, 0.5);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
 }
 
 #search .icon-circle-sm {
     transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-    will-change: transform;
 }
 
 #search .search-card:hover .icon-circle-sm {
@@ -2651,12 +2622,11 @@ canvas {
 #search select {
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     cursor: pointer;
-    will-change: border-color, box-shadow;
 }
 
 #search select:hover {
     border-color: rgba(14, 165, 233, 0.4);
-    box-shadow: 0 8px 20px rgba(255, 255, 255, 0.5);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
 }
 
 #search select:focus {
@@ -2667,7 +2637,6 @@ canvas {
 #search input[type="checkbox"] {
     transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     cursor: pointer;
-    will-change: transform;
 }
 
 #search input[type="checkbox"]:hover {
@@ -2697,7 +2666,6 @@ canvas {
 
 .donor-card {
     animation: slideInUp 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    will-change: opacity, transform;
 }
 
 @media (max-width: 768px) {

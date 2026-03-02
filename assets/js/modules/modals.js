@@ -1,13 +1,47 @@
+/** Focusable selectors inside a modal */
+const FOCUSABLE = 'a[href], button:not([disabled]), textarea, input, select, [tabindex]:not([tabindex="-1"])';
+
 export function openModal(modal) {
     if (!modal) return;
     modal.classList.remove('hidden');
     modal.classList.add('flex');
+
+    /* Accessibility */
+    modal.setAttribute('role', 'dialog');
+    modal.setAttribute('aria-modal', 'true');
+    document.body.style.overflow = 'hidden';
+
+    /* Focus first interactive element */
+    requestAnimationFrame(() => {
+        const first = modal.querySelector(FOCUSABLE);
+        if (first) first.focus();
+    });
+
+    /* Trap focus inside the modal */
+    modal._trapFocus = (e) => {
+        if (e.key !== 'Tab') return;
+        const focusables = [...modal.querySelectorAll(FOCUSABLE)];
+        if (!focusables.length) return;
+        const first = focusables[0];
+        const last = focusables[focusables.length - 1];
+        if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+        else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+    };
+    modal.addEventListener('keydown', modal._trapFocus);
 }
 
 export function closeModal(modal) {
     if (!modal) return;
     modal.classList.add('hidden');
     modal.classList.remove('flex');
+    modal.removeAttribute('aria-modal');
+    document.body.style.overflow = '';
+
+    /* Cleanup focus trap */
+    if (modal._trapFocus) {
+        modal.removeEventListener('keydown', modal._trapFocus);
+        delete modal._trapFocus;
+    }
 }
 
 export function showModalMessage(modal, message, title) {

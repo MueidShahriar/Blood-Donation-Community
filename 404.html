@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en" class="antialiased scroll-smooth">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>404 - Page Not Found | Blood Donation Community</title>
+    <link rel="shortcut icon" href="image/blood-drop.png" type="image/x-icon">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <meta name="theme-color" content="#dc2626">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #fef2f2 0%, #fff1f2 30%, #ffffff 100%);
+            margin: 0;
+            overflow: hidden;
+        }
+
+        .error-container {
+            text-align: center;
+            padding: 2rem;
+            max-width: 520px;
+            animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .error-code {
+            font-size: clamp(5rem, 15vw, 10rem);
+            font-weight: 900;
+            background: linear-gradient(135deg, #dc2626, #ef4444, #f87171);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1;
+            margin-bottom: 0.5rem;
+            position: relative;
+        }
+
+        .error-code::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background: linear-gradient(90deg, transparent, #ef4444, transparent);
+            border-radius: 4px;
+        }
+
+        .blood-drop {
+            animation: float 3s ease-in-out infinite;
+            filter: drop-shadow(0 8px 24px rgba(220, 38, 38, 0.25));
+        }
+
+        .pulse-ring {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            border: 2px solid rgba(220, 38, 38, 0.15);
+            animation: pulse-ring 2s ease-out infinite;
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-12px); }
+        }
+
+        @keyframes pulse-ring {
+            0% { transform: translate(-50%, -50%) scale(0.8); opacity: 1; }
+            100% { transform: translate(-50%, -50%) scale(1.8); opacity: 0; }
+        }
+
+        .home-btn {
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .home-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(220, 38, 38, 0.35);
+        }
+
+        .home-btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            transform: translate(-50%, -50%);
+            transition: width 0.5s, height 0.5s;
+        }
+
+        .home-btn:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .suggestion-links a {
+            transition: all 0.25s ease;
+        }
+
+        .suggestion-links a:hover {
+            color: #dc2626;
+            transform: translateX(3px);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="error-container">
+        <div class="relative inline-block mb-6">
+            <div class="pulse-ring"></div>
+            <img src="image/blood-drop.png" alt="Blood Donation Community" class="blood-drop w-24 h-24 mx-auto relative z-10" />
+        </div>
+
+        <div class="error-code">404</div>
+
+        <h1 class="text-2xl sm:text-3xl font-extrabold text-gray-900 mt-6 mb-3">
+            Page Not Found
+        </h1>
+
+        <p class="text-gray-500 text-base sm:text-lg mb-8 leading-relaxed">
+            The page you're looking for doesn't exist or has been moved. 
+            Let's get you back on track.
+        </p>
+
+        <a href="index.html"
+            class="home-btn inline-flex items-center gap-2.5 bg-gradient-to-r from-red-600 to-red-500 text-white px-7 py-3.5 rounded-xl font-bold text-base shadow-lg">
+            <i class="fa-solid fa-house"></i>
+            <span>Back to Home</span>
+        </a>
+
+        <div class="suggestion-links mt-10 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm font-medium text-gray-400">
+            <a href="about.html" class="inline-flex items-center gap-1.5">
+                <i class="fa-solid fa-circle-info text-xs"></i> About
+            </a>
+            <a href="search.html" class="inline-flex items-center gap-1.5">
+                <i class="fa-solid fa-magnifying-glass text-xs"></i> Search Donors
+            </a>
+            <a href="join.html" class="inline-flex items-center gap-1.5">
+                <i class="fa-solid fa-user-plus text-xs"></i> Join Us
+            </a>
+            <a href="events.html" class="inline-flex items-center gap-1.5">
+                <i class="fa-solid fa-calendar text-xs"></i> Events
+            </a>
+        </div>
+    </div>
+</body>
+
+</html>

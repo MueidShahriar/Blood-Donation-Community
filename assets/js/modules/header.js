@@ -1,26 +1,30 @@
 export function initHeader() {
+    const header = document.querySelector('header');
     function setHeaderOffset() {
-        const header = document.querySelector('header');
         const h = header ? header.offsetHeight : 0;
         document.documentElement.style.setProperty('--header-height', h + 'px');
     }
     setHeaderOffset();
-    window.addEventListener('resize', setHeaderOffset);
+
+    /* Debounced resize offset recalc */
+    let resizeTimer;
+    const debouncedOffset = () => { clearTimeout(resizeTimer); resizeTimer = setTimeout(setHeaderOffset, 100); };
+    window.addEventListener('resize', debouncedOffset);
     if ('ResizeObserver' in window) {
-        const ro = new ResizeObserver(() => setHeaderOffset());
-        ro.observe(document.body);
+        new ResizeObserver(debouncedOffset).observe(document.body);
     }
-    let lastScrollY = 0;
+
+    /* rAF-throttled scroll for header shadow */
+    let ticking = false;
     window.addEventListener('scroll', () => {
-        const header = document.querySelector('header');
-        if (!header) return;
-        const currentScrollY = window.scrollY;
-        if (currentScrollY > 50) {
-            header.classList.add('scrolled');
-        } else {
-            header.classList.remove('scrolled');
-        }
-        lastScrollY = currentScrollY;
+        if (ticking) return;
+        ticking = true;
+        requestAnimationFrame(() => {
+            if (header) {
+                header.classList.toggle('scrolled', window.scrollY > 50);
+            }
+            ticking = false;
+        });
     }, { passive: true });
 }
 

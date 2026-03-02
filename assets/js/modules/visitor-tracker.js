@@ -35,30 +35,29 @@ function getSessionId() {
 export function initVisitorTracker(database, isHomePage = false) {
     const sessionId = getSessionId();
 
+    /* ── Cache DOM elements once ── */
+    const onlineEls = document.querySelectorAll('.online-users-count');
+    const onlineSingle = document.getElementById('online-users-count');
+    const viewEls = isHomePage ? document.querySelectorAll('.total-views-count') : null;
+    const viewSingle = isHomePage ? document.getElementById('total-views-count') : null;
+
     /* ── Presence System ── */
     const myPresenceRef = ref(database, `visitorTracking/presence/${sessionId}`);
     const connectedRef = ref(database, '.info/connected');
 
     onValue(connectedRef, (snap) => {
         if (snap.val() === true) {
-            // Mark ourselves present
-            set(myPresenceRef, true);
-            // Remove presence when we disconnect
+            set(myPresenceRef, true).catch(() => {});
             onDisconnect(myPresenceRef).remove();
         }
     });
 
-    // Listen for online user count changes
     const allPresenceRef = ref(database, 'visitorTracking/presence');
     onValue(allPresenceRef, (snap) => {
         const data = snap.val();
         const count = data ? Object.keys(data).length : 0;
-        // Update every element with this class/id on the page
-        document.querySelectorAll('.online-users-count').forEach(el => {
-            el.textContent = count;
-        });
-        const singleEl = document.getElementById('online-users-count');
-        if (singleEl) singleEl.textContent = count;
+        onlineEls.forEach(el => { el.textContent = count; });
+        if (onlineSingle) onlineSingle.textContent = count;
     });
 
     /* ── Total Views (Home page only) ── */
@@ -66,7 +65,6 @@ export function initVisitorTracker(database, isHomePage = false) {
         const VIEW_FLAG = 'bdc_home_view_counted';
         const viewsRef = ref(database, 'visitorTracking/totalViews');
 
-        // Increment only once per session
         if (!sessionStorage.getItem(VIEW_FLAG)) {
             runTransaction(viewsRef, (current) => {
                 return (current || 0) + 1;
@@ -75,14 +73,11 @@ export function initVisitorTracker(database, isHomePage = false) {
             }).catch(err => console.error('View count transaction error:', err));
         }
 
-        // Real-time listener for total views
         onValue(viewsRef, (snap) => {
             const views = snap.val() || 0;
-            document.querySelectorAll('.total-views-count').forEach(el => {
-                el.textContent = views.toLocaleString();
-            });
-            const singleEl = document.getElementById('total-views-count');
-            if (singleEl) singleEl.textContent = views.toLocaleString();
+            const text = views.toLocaleString();
+            if (viewEls) viewEls.forEach(el => { el.textContent = text; });
+            if (viewSingle) viewSingle.textContent = text;
         });
     }
 }

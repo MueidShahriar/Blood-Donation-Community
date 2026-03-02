@@ -19,6 +19,11 @@
     visibility: hidden;
 }
 
+body.loading > *:not(#page-loader):not(script) {
+    opacity: 0 !important;
+    visibility: hidden !important;
+}
+
 #page-loader .logo-wrapper {
     position: relative;
     width: 120px;
@@ -66,8 +71,8 @@
     --red-500: #ef4444;
     --muted: #64748b;
     --glass: rgba(255, 255, 255, 0.6);
-    --card-shadow: 0 14px 40px rgba(255, 255, 255, 0.8);
-    --card-strong: 0 20px 60px rgba(255, 255, 255, 0.9);
+    --card-shadow: 0 4px 16px rgba(0, 0, 0, 0.06), 0 1px 3px rgba(0, 0, 0, 0.04);
+    --card-strong: 0 8px 30px rgba(0, 0, 0, 0.10), 0 2px 8px rgba(0, 0, 0, 0.06);
     --radius-xl: 16px;
     --header-height: 64px;
     font-synthesis: none;
@@ -140,7 +145,7 @@ html {
 
 body {
     font-family: 'Inter', sans-serif;
-    background: #ffffff;
+    background: #fafbfc;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
@@ -200,9 +205,8 @@ img {
 }
 
 .how-card.accent-emerald:hover {
-    box-shadow: var(--card-strong), 0 0 0 6px rgba(255, 255, 255, 0.2) !important;
+    box-shadow: 0 12px 32px rgba(16, 185, 129, 0.15), 0 4px 12px rgba(0, 0, 0, 0.06) !important;
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    will-change: transform, box-shadow;
 }
 
 .how-card.accent-emerald .icon-circle {
@@ -215,9 +219,8 @@ img {
 }
 
 .how-card.accent-amber:hover {
-    box-shadow: var(--card-strong), 0 0 0 6px rgba(255, 255, 255, 0.2) !important;
+    box-shadow: 0 12px 32px rgba(245, 158, 11, 0.15), 0 4px 12px rgba(0, 0, 0, 0.06) !important;
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    will-change: transform, box-shadow;
 }
 
 .how-card.accent-amber .icon-circle {
@@ -230,9 +233,8 @@ img {
 }
 
 .how-card.accent-indigo:hover {
-    box-shadow: var(--card-strong), 0 0 0 6px rgba(255, 255, 255, 0.2) !important;
+    box-shadow: 0 12px 32px rgba(99, 102, 241, 0.15), 0 4px 12px rgba(0, 0, 0, 0.06) !important;
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    will-change: transform, box-shadow;
 }
 
 .how-card.accent-indigo .icon-circle {
@@ -245,9 +247,8 @@ img {
 }
 
 .how-card.accent-sky:hover {
-    box-shadow: var(--card-strong), 0 0 0 6px rgba(255, 255, 255, 0.2) !important;
+    box-shadow: 0 12px 32px rgba(14, 165, 233, 0.15), 0 4px 12px rgba(0, 0, 0, 0.06) !important;
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    will-change: transform, box-shadow;
 }
 
 .how-card.accent-sky .icon-circle {
@@ -295,14 +296,20 @@ img {
     opacity: 0;
     transform: translateY(18px) translateZ(0);
     pointer-events: none;
-    transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1), transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1), transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s ease;
     will-change: transform, opacity;
+    box-shadow: 0 4px 14px rgba(225, 29, 72, 0.25);
 }
 
 #back-to-top.show {
     opacity: 1;
     transform: translateY(0) translateZ(0);
     pointer-events: auto;
+}
+
+#back-to-top:hover {
+    box-shadow: 0 6px 20px rgba(225, 29, 72, 0.35);
+    transform: translateY(-2px) translateZ(0);
 }
 
 @keyframes sweep {
@@ -324,13 +331,12 @@ img {
 
 .btn-breathe {
     transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: 0 8px 20px rgba(255, 255, 255, 0.5);
-    will-change: transform, box-shadow;
+    box-shadow: 0 4px 14px rgba(225, 29, 72, 0.2);
 }
 
 .btn-breathe:hover {
     transform: translateY(-2px) translateZ(0);
-    box-shadow: 0 8px 20px rgba(255, 255, 255, 0.5);
+    box-shadow: 0 8px 24px rgba(225, 29, 72, 0.3);
 }
 
 .field-icon-left {
@@ -501,8 +507,7 @@ footer .social-link i {
     position: relative;
     overflow: hidden;
     transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: 0 8px 20px rgba(255, 255, 255, 0.5);
-    will-change: transform, box-shadow;
+    box-shadow: 0 4px 14px rgba(225, 29, 72, 0.2);
 }
 
 .btn-breathe::before {
@@ -513,7 +518,7 @@ footer .social-link i {
     width: 0;
     height: 0;
     border-radius: 50%;
-    background: rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.25);
     transform: translate(-50%, -50%);
     transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1), height 0.6s cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -525,15 +530,15 @@ footer .social-link i {
 
 .btn-breathe:hover {
     transform: translateY(-3px) translateZ(0);
-    box-shadow: 0 8px 20px rgba(255, 255, 255, 0.5);
+    box-shadow: 0 8px 24px rgba(225, 29, 72, 0.30);
 }
 
 @keyframes pulse-subtle {
     0%, 100% {
-        box-shadow: 0 8px 20px rgba(255, 255, 255, 0.5);
+        box-shadow: 0 4px 14px rgba(225, 29, 72, 0.20);
     }
     50% {
-        box-shadow: 0 8px 20px rgba(255, 255, 255, 0.5);
+        box-shadow: 0 8px 24px rgba(225, 29, 72, 0.30);
     }
 }
 
@@ -606,13 +611,11 @@ footer .social-link i {
 header {
     border-bottom: 1px solid rgba(239, 68, 68, 0.08);
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    will-change: box-shadow, backdrop-filter;
 }
 
 .header-logo {
     transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), filter 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     border-radius: 12px;
-    will-change: transform, filter;
 }
 
 .header-logo:hover {
@@ -644,7 +647,6 @@ header nav a {
     position: relative;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     text-decoration: none !important;
-    will-change: transform;
 }
 
 header nav a::before {
@@ -669,12 +671,11 @@ header nav a:hover {
 
 #menu-toggle {
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    will-change: transform, box-shadow;
 }
 
 #menu-toggle:hover {
     transform: scale(1.05) translateZ(0);
-    box-shadow: 0 8px 20px rgba(255, 255, 255, 0.5);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
 }
 
 #menu-toggle:active {
@@ -701,7 +702,6 @@ header nav a:hover {
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     border-left: 3px solid transparent;
     text-decoration: none !important;
-    will-change: padding-left, background, border-color;
 }
 
 #mobile-menu a:hover,
@@ -736,7 +736,7 @@ header {
 }
 
 header.scrolled {
-    box-shadow: 0 8px 20px rgba(255, 255, 255, 0.5);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
     backdrop-filter: blur(12px);
 }
 
@@ -768,7 +768,7 @@ body.admin-mode #menu-toggle {
     background-color: #ffe4e6 !important;
     color: #3b82f6 !important;
     border-radius: 12px;
-    box-shadow: 0 8px 20px rgba(255, 255, 255, 0.5), inset 0 0 0 2px rgba(79, 70, 229, .25);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06), inset 0 0 0 2px rgba(79, 70, 229, .25);
 }
 body.admin-mode #menu-toggle:hover {
     background-color: #fecdd3 !important;
@@ -880,6 +880,31 @@ body.admin-mode #mobile-menu a:hover {
     resize: vertical;
 }
 
+/* ── Footer glow accent ────────────────────────── */
+.footer-glow {
+    position: absolute;
+    top: -80px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 400px;
+    height: 160px;
+    background: radial-gradient(ellipse, rgba(225, 29, 72, 0.08) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+}
+
+/* ── Footer reveal animation ──────────────────── */
+#app-footer {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+#app-footer.footer-visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
 .footer-grid {
     display: grid;
     grid-template-columns: 2fr 1fr 1fr;
@@ -896,16 +921,22 @@ body.admin-mode #mobile-menu a:hover {
 .footer-grid .footer-brand-title {
     display: flex;
     align-items: center;
-    gap: 0.6rem;
-    font-size: 1.15rem;
+    gap: 0.7rem;
+    font-size: 1.2rem;
     font-weight: 800;
     color: #ffffff;
-    letter-spacing: -0.01em;
+    letter-spacing: -0.02em;
 }
 
 .footer-grid .footer-brand-title img {
-    width: 38px;
-    height: 38px;
+    width: 40px;
+    height: 40px;
+    filter: drop-shadow(0 2px 8px rgba(225, 29, 72, 0.25));
+    transition: transform 0.3s ease;
+}
+
+.footer-grid .footer-brand-title:hover img {
+    transform: rotate(8deg) scale(1.1);
 }
 
 .footer-grid .footer-brand p {
@@ -916,12 +947,25 @@ body.admin-mode #mobile-menu a:hover {
 }
 
 .footer-col-title {
-    font-size: 0.78rem;
+    font-size: 0.75rem;
     font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 0.1em;
-    color: #cbd5e1;
+    letter-spacing: 0.12em;
+    color: #e2e8f0;
     margin-bottom: 0.85rem;
+    position: relative;
+    padding-bottom: 0.5rem;
+}
+
+.footer-col-title::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 24px;
+    height: 2px;
+    background: linear-gradient(90deg, #ef4444, transparent);
+    border-radius: 2px;
 }
 
 .footer-links {
@@ -944,8 +988,13 @@ body.admin-mode #mobile-menu a:hover {
 }
 
 .footer-links li a:hover {
-    color: #f1f5f9;
-    padding-left: 4px;
+    color: #ffffff;
+    padding-left: 6px;
+}
+
+.footer-links li a:hover i {
+    opacity: 1;
+    color: #f87171;
 }
 
 .footer-links li a i {
@@ -958,8 +1007,8 @@ body.admin-mode #mobile-menu a:hover {
 .footer-divider {
     border: none;
     height: 1px;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent);
-    margin: 0.75rem 0;
+    background: linear-gradient(90deg, transparent 5%, rgba(255,255,255,0.10) 30%, rgba(239, 68, 68, 0.15) 50%, rgba(255,255,255,0.10) 70%, transparent 95%);
+    margin: 1.25rem 0;
 }
 
 .footer-bottom {
@@ -972,7 +1021,7 @@ body.admin-mode #mobile-menu a:hover {
 
 .footer-bottom .footer-copy {
     font-size: 0.78rem;
-    color: #64748b;
+    color: #94a3b8;
 }
 
 .footer-bottom .footer-copy a {
@@ -992,17 +1041,17 @@ body.admin-mode #mobile-menu a:hover {
 }
 
 .footer-socials a {
-    width: 36px;
-    height: 36px;
+    width: 38px;
+    height: 38px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    border-radius: 10px;
-    background: rgba(255,255,255,0.05);
-    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 12px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.10);
     color: #94a3b8;
-    font-size: 0.95rem;
-    transition: all 0.25s ease;
+    font-size: 1rem;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .footer-socials a.social-facebook {
@@ -1024,22 +1073,25 @@ body.admin-mode #mobile-menu a:hover {
 }
 
 .footer-socials a:hover {
-    transform: translateY(-2px);
+    transform: translateY(-3px) scale(1.05);
 }
 
 .footer-socials a.social-facebook:hover {
     background: rgba(24,119,242,0.2);
     border-color: rgba(24,119,242,0.4);
+    box-shadow: 0 4px 16px rgba(24, 119, 242, 0.25);
 }
 
 .footer-socials a.social-linkedin:hover {
     background: rgba(10,102,194,0.2);
     border-color: rgba(10,102,194,0.4);
+    box-shadow: 0 4px 16px rgba(10, 102, 194, 0.25);
 }
 
 .footer-socials a.social-whatsapp:hover {
     background: rgba(37,211,102,0.2);
     border-color: rgba(37,211,102,0.4);
+    box-shadow: 0 4px 16px rgba(37, 211, 102, 0.25);
 }
 
 .footer-feedback-wrap {
@@ -1113,13 +1165,13 @@ body.admin-mode #mobile-menu a:hover {
     justify-content: center;
     background: linear-gradient(180deg, rgba(239, 68, 68, 0.10), rgba(239, 68, 68, 0.04));
     color: var(--red-600);
-    box-shadow: 0 8px 20px rgba(255, 255, 255, 0.5);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
     margin-bottom: 6px;
 }
 
 #login-modal .modal-panel {
-    border-radius: 14px;
-    box-shadow: 0 8px 20px rgba(255, 255, 255, 0.5);
+    border-radius: 18px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15), 0 4px 16px rgba(0, 0, 0, 0.08);
 }
 
 #login-modal .modal-title {
@@ -1140,6 +1192,7 @@ body.admin-mode #mobile-menu a:hover {
     top: 50% !important;
     transform: translateY(-50%);
     color: #9ca3af;
+    transition: color 0.2s ease;
 }
 
 #login-modal .field-icon-left:focus-within .fi {
@@ -1150,11 +1203,20 @@ body.admin-mode #mobile-menu a:hover {
     color: var(--red-600);
 }
 
-/* ── Smooth modal & overlay ───────────────────────── */
+/* ── Smooth modal & overlay (all modals) ──────────── */
+#login-modal.flex,
+#success-modal.flex,
+#delete-confirm-modal.flex,
+#feedback-modal.flex,
 #certificate-modal.flex {
     animation: modalOverlayIn 0.25s ease-out;
 }
 
+#login-modal.flex > .modal-panel,
+#login-modal.flex > div:last-child,
+#success-modal.flex > div:last-child,
+#delete-confirm-modal.flex > div:last-child,
+#feedback-modal.flex > div:last-child,
 #certificate-modal.flex > div:last-child {
     animation: modalPanelIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }

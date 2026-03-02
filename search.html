@@ -4,8 +4,8 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#e11d48" />
     <title>Search Donors - Blood Donation Community</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="shortcut icon" href="image/blood-drop.png" type="image/x-icon">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -17,29 +17,9 @@
     <link rel="stylesheet" href="assets/css/index.css">
     <meta name="description" content="Search and find blood donors by blood group from Blood Donation Community.">
     <style>
-        #page-loader {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: #fff;
-            z-index: 9999;
-            display: flex;
-            justify-content: center;
-            align-items: center
-        }
-
-        #page-loader.fade-out {
-            opacity: 0;
-            visibility: hidden;
-            transition: opacity .5s, visibility .5s
-        }
-
-        body.loading>*:not(#page-loader):not(script) {
-            opacity: 0 !important;
-            visibility: hidden !important
-        }
+        #page-loader{position:fixed;top:0;left:0;width:100%;height:100%;background:#fff;z-index:9999;display:flex;justify-content:center;align-items:center}
+        #page-loader.fade-out{opacity:0;visibility:hidden;transition:opacity .5s,visibility .5s}
+        body.loading>*:not(#page-loader):not(script){opacity:0!important;visibility:hidden!important}
     </style>
 </head>
 
@@ -227,9 +207,7 @@
                         <li><a href="join.html"><i class="fa-solid fa-chevron-right"></i> <span
                                     data-i18n="navJoin">Join</span></a></li>
                         <li><a href="search.html"><i class="fa-solid fa-chevron-right"></i> <span
-                                    data-i18n="navSearch">Search</span></a></li>
-                        <li><a href="donor.html"><i class="fa-solid fa-chevron-right"></i> <span>Donor Card</span></a></li>
-                        <li><a href="certificate.html"><i class="fa-solid fa-chevron-right"></i> <span>Certificate</span></a></li>
+                                    data-i18n="navSearch">Search</span></a></li>                        
                     </ul>
                 </div>
                 <div>
@@ -386,43 +364,7 @@
     </div>
 
     <script src="assets/js/viewport.js" defer></script>
-    <script type="module" src="assets/js/page-common.js"></script>
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-        import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
-        import { firebaseConfig } from "./assets/js/modules/firebase-config.js";
-        import { normalizeBloodGroup, buildDonorIndex, isDonorEligible } from "./assets/js/modules/utils.js";
-        import { renderSearchResults, setSearchLoading, runSearch, initSearch } from "./assets/js/modules/search.js";
-        import state from "./assets/js/modules/state.js";
-
-        const app = initializeApp(firebaseConfig);
-        const database = getDatabase(app);
-
-        const donorsRef = ref(database, 'donors');
-        onValue(donorsRef, (snapshot) => {
-            const data = snapshot.val();
-            state.donorsList = [];
-            if (data && typeof data === 'object') {
-                for (const key in data) {
-                    if (Object.prototype.hasOwnProperty.call(data, key)) {
-                        state.donorsList.push({ id: key, ...data[key] });
-                    }
-                }
-            }
-
-            state.donorsByGroup.clear();
-            state.donorsList.forEach(d => {
-                const g = normalizeBloodGroup(d?.bloodGroup);
-                if (!g) return;
-                if (!state.donorsByGroup.has(g)) state.donorsByGroup.set(g, []);
-                state.donorsByGroup.get(g).push(d);
-            });
-
-            initSearch();
-        }, err => {
-            console.error('Failed to load donors:', err);
-        });
-    </script>
+    <script type="module" src="assets/js/pages/search.js"></script>
 </body>
 
 </html>

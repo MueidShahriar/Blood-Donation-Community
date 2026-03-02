@@ -4,8 +4,8 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#e11d48" />
     <title>Visitor Statistics - Blood Donation Community</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="shortcut icon" href="image/blood-drop.png" type="image/x-icon">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -17,41 +17,22 @@
     <link rel="stylesheet" href="assets/css/common.css">
     <meta name="description" content="Real-time visitor statistics for Blood Donation Community website.">
     <style>
-        #page-loader {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: #fff;
-            z-index: 9999;
-            display: flex;
-            justify-content: center;
-            align-items: center
-        }
-
-        #page-loader.fade-out {
-            opacity: 0;
-            visibility: hidden;
-            transition: opacity .5s, visibility .5s
-        }
-
-        body.loading>*:not(#page-loader):not(script) {
-            opacity: 0 !important;
-            visibility: hidden !important
-        }
+        #page-loader{position:fixed;top:0;left:0;width:100%;height:100%;background:#fff;z-index:9999;display:flex;justify-content:center;align-items:center}
+        #page-loader.fade-out{opacity:0;visibility:hidden;transition:opacity .5s,visibility .5s}
+        body.loading>*:not(#page-loader):not(script){opacity:0!important;visibility:hidden!important}
 
         .vs-card {
             background: white;
-            border-radius: 1rem;
-            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
+            border: 1px solid rgba(0, 0, 0, 0.04);
+            border-radius: 1.25rem;
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.05), 0 1px 3px rgba(0, 0, 0, 0.03);
             padding: 2rem;
-            transition: transform 0.25s, box-shadow 0.25s;
+            transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.35s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .vs-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            transform: translateY(-6px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.08), 0 4px 12px rgba(0, 0, 0, 0.04);
         }
 
         .vs-number {
@@ -62,22 +43,28 @@
         }
 
         .vs-label {
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             color: #6b7280;
             margin-top: 0.5rem;
-            font-weight: 600;
+            font-weight: 700;
             text-transform: uppercase;
-            letter-spacing: 0.05em;
+            letter-spacing: 0.06em;
         }
 
         .vs-icon {
-            width: 56px;
-            height: 56px;
-            border-radius: 14px;
+            width: 60px;
+            height: 60px;
+            border-radius: 16px;
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 1.5rem;
+            flex-shrink: 0;
+            transition: transform 0.3s ease;
+        }
+
+        .vs-card:hover .vs-icon {
+            transform: scale(1.1) rotate(3deg);
         }
 
         @keyframes live-pulse {
@@ -96,13 +83,43 @@
 
         .vs-info-card {
             background: linear-gradient(135deg, #fef2f2 0%, #fff 60%);
-            border: 1px solid #fecaca;
-            border-radius: 1rem;
-            padding: 1.5rem 2rem;
+            border: 1px solid rgba(254, 202, 202, 0.6);
+            border-radius: 1.25rem;
+            padding: 1.75rem 2rem;
+            box-shadow: 0 2px 12px rgba(225, 29, 72, 0.04);
         }
 
         .vs-info-card h3 {
             color: #b91c1c;
+        }
+
+        .vs-step-badge {
+            flex-shrink: 0;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #e11d48, #ef4444);
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            font-weight: 800;
+            box-shadow: 0 2px 8px rgba(225, 29, 72, 0.2);
+        }
+
+        .vs-code-block {
+            background: linear-gradient(160deg, #0f172a, #1e293b);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 0.85rem;
+            padding: 1.25rem 1.5rem;
+            font-size: 0.82rem;
+            overflow-x: auto;
+            color: #e2e8f0;
+        }
+
+        .vs-code-block code {
+            font-family: 'Fira Code', 'JetBrains Mono', Consolas, monospace;
         }
     </style>
 </head>
@@ -195,23 +212,23 @@
 
     <main class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-28 pb-16">
         <!-- Page Title -->
-        <div class="text-center mb-10">
-            <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-red-50 text-red-600 text-xs font-bold uppercase tracking-wide mb-3">
+        <div class="text-center mb-12 float-in">
+            <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-red-50 text-red-600 text-xs font-bold uppercase tracking-wide mb-4 shadow-sm border border-red-100/50">
                 <i class="fa-solid fa-chart-line"></i> Live Statistics
             </div>
-            <h1 class="text-3xl sm:text-4xl font-extrabold text-gray-900">
-                Visitor <span class="text-red-600">Statistics</span>
+            <h1 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-gray-900 tracking-tight">
+                Visitor <span class="bg-gradient-to-r from-red-600 to-red-500 bg-clip-text text-transparent">Statistics</span>
             </h1>
-            <p class="mt-3 text-gray-500 max-w-lg mx-auto text-sm">
+            <p class="mt-4 text-gray-500 max-w-lg mx-auto text-sm leading-relaxed">
                 Real-time visitor tracking powered by Firebase. See how many people are visiting and browsing the Blood Donation Community website.
             </p>
         </div>
 
         <!-- Stats Cards -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
             <!-- Total Views Card -->
-            <div class="vs-card flex items-start gap-5">
-                <div class="vs-icon" style="background: rgba(99,102,241,0.1); color: #6366f1;">
+            <div class="vs-card flex items-start gap-5 float-in" style="--delay: 100ms">
+                <div class="vs-icon" style="background: linear-gradient(135deg, rgba(99,102,241,0.12), rgba(99,102,241,0.05)); color: #6366f1;">
                     <i class="fa-solid fa-eye"></i>
                 </div>
                 <div class="flex-1">
@@ -219,15 +236,15 @@
                         0
                     </div>
                     <div class="vs-label">Total Page Views</div>
-                    <p class="text-xs text-gray-400 mt-2">
+                    <p class="text-xs text-gray-400 mt-2 leading-relaxed">
                         Counted once per session when visiting the Home page. Page refreshes don't increase the count.
                     </p>
                 </div>
             </div>
 
             <!-- Online Users Card -->
-            <div class="vs-card flex items-start gap-5" style="border: 1px solid rgba(16,185,129,0.15);">
-                <div class="vs-icon" style="background: rgba(16,185,129,0.1); color: #10b981;">
+            <div class="vs-card flex items-start gap-5 float-in" style="--delay: 200ms; border: 1px solid rgba(16,185,129,0.12);">
+                <div class="vs-icon" style="background: linear-gradient(135deg, rgba(16,185,129,0.12), rgba(16,185,129,0.05)); color: #10b981;">
                     <i class="fa-solid fa-users"></i>
                 </div>
                 <div class="flex-1">
@@ -238,7 +255,7 @@
                         <span class="live-dot" title="Live"></span>
                     </div>
                     <div class="vs-label">Online Right Now</div>
-                    <p class="text-xs text-gray-400 mt-2">
+                    <p class="text-xs text-gray-400 mt-2 leading-relaxed">
                         Shows the number of users currently on any page of the website. Updates in real-time.
                     </p>
                 </div>
@@ -246,36 +263,36 @@
         </div>
 
         <!-- How It Works -->
-        <div class="vs-info-card mb-10">
-            <h3 class="text-lg font-bold mb-3 flex items-center gap-2">
+        <div class="vs-info-card mb-12 float-in" style="--delay: 300ms">
+            <h3 class="text-lg font-bold mb-4 flex items-center gap-2">
                 <i class="fa-solid fa-circle-info"></i> How Visitor Tracking Works
             </h3>
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm text-gray-600">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-5 text-sm text-gray-600">
                 <div class="flex items-start gap-3">
-                    <span class="flex-shrink-0 w-7 h-7 rounded-full bg-red-100 text-red-600 flex items-center justify-center text-xs font-bold">1</span>
+                    <span class="vs-step-badge">1</span>
                     <p><strong>Total Views</strong> — Incremented only when someone visits the Home page. Each browser session counts once (no duplicate counting on refresh).</p>
                 </div>
                 <div class="flex items-start gap-3">
-                    <span class="flex-shrink-0 w-7 h-7 rounded-full bg-red-100 text-red-600 flex items-center justify-center text-xs font-bold">2</span>
+                    <span class="vs-step-badge">2</span>
                     <p><strong>Online Users</strong> — Uses Firebase presence system. When you open the site, you're marked as "online". When you close the tab, you're automatically removed.</p>
                 </div>
                 <div class="flex items-start gap-3">
-                    <span class="flex-shrink-0 w-7 h-7 rounded-full bg-red-100 text-red-600 flex items-center justify-center text-xs font-bold">3</span>
+                    <span class="vs-step-badge">3</span>
                     <p><strong>Real-time</strong> — All numbers update instantly across all connected browsers without any page refresh needed.</p>
                 </div>
                 <div class="flex items-start gap-3">
-                    <span class="flex-shrink-0 w-7 h-7 rounded-full bg-red-100 text-red-600 flex items-center justify-center text-xs font-bold">4</span>
+                    <span class="vs-step-badge">4</span>
                     <p><strong>Privacy</strong> — No personal data is collected. Only anonymous session IDs are used for counting purposes.</p>
                 </div>
             </div>
         </div>
 
         <!-- Database Structure -->
-        <div class="vs-card mb-10">
+        <div class="vs-card mb-10 float-in" style="--delay: 350ms">
             <h3 class="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
                 <i class="fa-solid fa-database text-red-600"></i> Firebase Database Structure
             </h3>
-            <pre class="bg-gray-900 text-gray-100 rounded-lg p-4 text-sm overflow-x-auto"><code>{
+            <pre class="vs-code-block"><code>{
   "visitorTracking": {
     "totalViews": 1234,
     "presence": {
@@ -287,11 +304,11 @@
         </div>
 
         <!-- Security Rules -->
-        <div class="vs-card">
+        <div class="vs-card float-in" style="--delay: 400ms">
             <h3 class="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
                 <i class="fa-solid fa-shield-halved text-red-600"></i> Recommended Database Rules
             </h3>
-            <pre class="bg-gray-900 text-gray-100 rounded-lg p-4 text-sm overflow-x-auto"><code>{
+            <pre class="vs-code-block"><code>{
   "rules": {
     "visitorTracking": {
       "totalViews": {
@@ -309,7 +326,7 @@
     }
   }
 }</code></pre>
-            <p class="mt-3 text-xs text-gray-400">
+            <p class="mt-3 text-xs text-gray-400 leading-relaxed">
                 These rules allow anyone to read/write visitor tracking data (required for anonymous tracking on a static site). The validation ensures only valid data types are stored.
             </p>
         </div>
@@ -327,71 +344,8 @@
         </div>
     </div>
 
-    <footer
+    <footer id="app-footer"
         class="mt-0 relative text-gray-300 bg-slate-900/95 backdrop-blur rounded-t-2xl shadow-[0_-12px_40px_rgba(2,6,23,0.45)] overflow-hidden">
-        <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-red-500/60 to-transparent">
-        </div>
-        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-            <div class="footer-grid">
-                <div class="footer-brand">
-                    <div class="footer-brand-title">
-                        <img src="image/blood-drop.png" alt="Blood Donation Community" />
-                        <span data-i18n="siteTitle">Blood Donation Community</span>
-                    </div>
-                    <p data-i18n="footerBrandDesc">A passionate, volunteer-driven organization dedicated to saving lives
-                        through the power of blood donation. We connect donors with patients in urgent need.</p>
-                    <div class="footer-socials mt-2">
-                        <a href="https://www.facebook.com/share/1CLTZN8DmU/?mibextid=wwXIfr" class="social-facebook"
-                            aria-label="Facebook" target="_blank" rel="noopener noreferrer">
-                            <i class="fab fa-facebook-f"></i>
-                        </a>
-                        <a href="https://www.linkedin.com/company/bauet-blood-donation-club/" class="social-linkedin"
-                            aria-label="LinkedIn" target="_blank" rel="noopener noreferrer">
-                            <i class="fab fa-linkedin-in"></i>
-                        </a>
-                        <a href="https://wa.me/8801712460423" class="social-whatsapp" aria-label="WhatsApp"
-                            target="_blank" rel="noopener noreferrer">
-                            <i class="fab fa-whatsapp"></i>
-                        </a>
-                    </div>
-                </div>
-                <div>
-                    <h4 class="footer-col-title" data-i18n="footerQuickLinks">QUICK LINKS</h4>
-                    <ul class="footer-links">
-                        <li><a href="about.html"><i class="fa-solid fa-chevron-right"></i> <span
-                                    data-i18n="navAbout">About</span></a></li>
-                        <li><a href="donationGuide.html"><i class="fa-solid fa-chevron-right"></i> <span
-                                    data-i18n="navHow">Donation Guide</span></a></li>
-                        <li><a href="events.html"><i class="fa-solid fa-chevron-right"></i> <span
-                                    data-i18n="navEvents">Events</span></a></li>
-                        <li><a href="join.html"><i class="fa-solid fa-chevron-right"></i> <span
-                                    data-i18n="navJoin">Join</span></a></li>
-                        <li><a href="search.html"><i class="fa-solid fa-chevron-right"></i> <span
-                                    data-i18n="navSearch">Search</span></a></li>
-                    </ul>
-                </div>
-                <div>
-                    <h4 class="footer-col-title" data-i18n="footerContactInfo">Contact Info</h4>
-                    <ul class="footer-links">
-                        <li><a href="mailto:bauet.bdc@gmail.com"><i class="fa-solid fa-envelope"></i>
-                                <span>bauet.bdc@gmail.com</span></a></li>
-                        <li><a href="tel:+8801712460423"><i class="fa-solid fa-phone"></i>
-                                <span>+8801712460423</span></a></li>
-                        <li><a href="index.html#contact"><i class="fa-solid fa-message"></i> <span
-                                    data-i18n="navContact">Contact</span></a></li>
-                    </ul>
-                </div>
-            </div>
-            <hr class="footer-divider" />
-            <div class="footer-bottom">
-                <p class="footer-copy">
-                    &copy; 2026 <a href="index.html">Blood Donation Community</a> All rights reserved.
-                </p>
-                <p class="footer-copy">
-                    <span data-i18n="footerDeveloper">Developed by Md. Mueid Shahriar, </span> CSE-16th, BAUET
-                </p>
-            </div>
-        </div>
     </footer>
 
     <div id="fab-wrap" class="fixed bottom-6 right-6 z-40 flex flex-col items-end gap-2">
@@ -466,90 +420,8 @@
         </div>
     </div>
 
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" defer></script>
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" defer></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" defer></script>
     <script src="assets/js/viewport.js" defer></script>
-
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-        import {
-            getAuth, signInWithEmailAndPassword, signOut,
-            onAuthStateChanged, sendPasswordResetEmail
-        } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-        import {
-            getDatabase, ref, onValue
-        } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
-
-        import { firebaseConfig } from "./assets/js/modules/firebase-config.js";
-        import { initPreloader } from "./assets/js/modules/preloader.js";
-        import { initHeader, initMobileMenu } from "./assets/js/modules/header.js";
-        import { initBackToTop } from "./assets/js/modules/back-to-top.js";
-        import { initFloatObserver } from "./assets/js/modules/float-observer.js";
-        import { openModal, closeModal, showModalMessage } from "./assets/js/modules/modals.js";
-        import { updateLoginButtonState, initAuth } from "./assets/js/modules/auth.js";
-        import { initLanguageSystem } from "./assets/js/modules/language-ui.js";
-        import { initVisitorTracker } from "./assets/js/modules/visitor-tracker.js";
-        import state from "./assets/js/modules/state.js";
-
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const database = getDatabase(app);
-
-        function callUpdateLogin() {
-            updateLoginButtonState(database, ref, onValue,
-                () => { }, () => { }, () => { }, () => { });
-        }
-
-        window.onload = function () {
-            initPreloader();
-            initHeader();
-            initMobileMenu();
-            initFloatObserver();
-            initBackToTop();
-            initLanguageSystem();
-            initVisitorTracker(database, false); // Not home page
-
-            window.addEventListener('languageChanged', () => callUpdateLogin());
-
-            const successModal = document.getElementById('success-modal');
-            const loginModal = document.getElementById('login-modal');
-            document.getElementById('success-close')?.addEventListener('click', () => closeModal(successModal));
-            successModal?.querySelector('.absolute.inset-0')?.addEventListener('click', () => closeModal(successModal));
-            document.getElementById('login-cancel')?.addEventListener('click', () => closeModal(loginModal));
-            loginModal?.querySelector('.absolute.inset-0')?.addEventListener('click', () => closeModal(loginModal));
-            document.addEventListener('keydown', ev => {
-                if (ev.key === 'Escape') [successModal, loginModal].forEach(m => closeModal(m));
-            });
-
-            initAuth({
-                auth, database, ref, onValue,
-                signInWithEmailAndPassword, signOut, sendPasswordResetEmail, onAuthStateChanged,
-                renderAdminMembersFn: () => { },
-                renderAdminEventsFn: () => { },
-                deleteMemberFn: () => { },
-                deleteEventFn: () => { },
-                updateLoginFn: callUpdateLogin
-            });
-
-            /* ── Listen for visitor stats ── */
-            const viewsRef = ref(database, 'visitorTracking/totalViews');
-            const presenceRef = ref(database, 'visitorTracking/presence');
-
-            onValue(viewsRef, (snap) => {
-                const views = snap.val() || 0;
-                const el = document.getElementById('vs-total-views');
-                if (el) el.textContent = views.toLocaleString();
-            });
-
-            onValue(presenceRef, (snap) => {
-                const data = snap.val();
-                const count = data ? Object.keys(data).length : 0;
-                const el = document.getElementById('vs-online-count');
-                if (el) el.textContent = count;
-            });
-        };
-    </script>
+    <script type="module" src="assets/js/pages/visitor-stats.js"></script>
 </body>
 
 </html>

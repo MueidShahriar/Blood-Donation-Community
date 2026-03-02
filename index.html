@@ -4,6 +4,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#e11d48" />
     <title>Home - Blood Donation Community</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="shortcut icon" href="image/blood-drop.png" type="image/x-icon">
@@ -19,29 +20,9 @@
     <meta name="description"
         content="Community-driven blood donation platform. Register as a donor, search donors by blood group and location.">
     <style>
-        #page-loader {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: #fff;
-            z-index: 9999;
-            display: flex;
-            justify-content: center;
-            align-items: center
-        }
-
-        #page-loader.fade-out {
-            opacity: 0;
-            visibility: hidden;
-            transition: opacity .5s, visibility .5s
-        }
-
-        body.loading>*:not(#page-loader):not(script) {
-            opacity: 0 !important;
-            visibility: hidden !important
-        }
+        #page-loader{position:fixed;top:0;left:0;width:100%;height:100%;background:#fff;z-index:9999;display:flex;justify-content:center;align-items:center}
+        #page-loader.fade-out{opacity:0;visibility:hidden;transition:opacity .5s,visibility .5s}
+        body.loading>*:not(#page-loader):not(script){opacity:0!important;visibility:hidden!important}
     </style>
 </head>
 
@@ -85,7 +66,7 @@
                     data-i18n="navEvents">Events</a>
                 <a id="nav-join-link" href="join.html" class="px-3 py-2 rounded hover:bg-red-50 text-red-700"
                     data-i18n="navJoin">Join</a>
-                <a id="nav-search-link" href="#search" class="px-3 py-2 rounded hover:bg-red-50 text-red-700"
+                <a id="nav-search-link" href="search.html" class="px-3 py-2 rounded hover:bg-red-50 text-red-700"
                     data-i18n="navSearch">Search</a>
                 <a id="nav-contact-link" href="#contact" class="px-3 py-2 rounded hover:bg-red-50 text-red-700"
                     data-i18n="navContact">Contact</a>
@@ -766,7 +747,8 @@
                         <li><a href="join.html"><i class="fa-solid fa-chevron-right"></i> <span
                                     data-i18n="navJoin">Join</span></a></li>
                         <li><a href="search.html"><i class="fa-solid fa-chevron-right"></i> <span
-                                    data-i18n="navSearch">Search</span></a></li>                
+                                    data-i18n="navSearch">Search</span></a></li>
+                        
                     </ul>
                 </div>
                 <div>

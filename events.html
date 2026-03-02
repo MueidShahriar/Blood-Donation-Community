@@ -4,8 +4,8 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#e11d48" />
     <title>Events - Blood Donation Community</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="shortcut icon" href="image/blood-drop.png" type="image/x-icon">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -42,20 +42,20 @@
             <div class="flex items-center gap-3">
                 <a href="index.html" class="flex items-center gap-3 text-decoration-none">
                     <img src="image/blood-drop.png" alt="logo" class="h-10 w-10 header-logo border-red-600" />
-                    <span class="text-2xl font-extrabold text-red-700 tracking-tight site-title">Blood Donation Community</span>
+                    <span class="text-2xl font-extrabold text-red-700 tracking-tight site-title" data-i18n="siteTitle">Blood Donation Community</span>
                 </a>
                 <span id="admin-badge"
                     class="hidden items-center gap-1 text-xs font-bold px-2 py-1 rounded bg-red-600 text-white shadow"
                     data-i18n="adminBadge">Admin</span>
             </div>
             <div class="hidden md:flex items-center gap-1 text-base font-medium">
-                <a id="nav-home-link" href="index.html" class="px-3 py-2 rounded hover:bg-red-50 text-red-700">Home</a>
-                <a id="nav-about-link" href="about.html" class="px-3 py-2 rounded hover:bg-red-50 text-red-700">About</a>
-                <a id="nav-how-link" href="donationGuide.html" class="px-3 py-2 rounded hover:bg-red-50 text-red-700">Donation Guide</a>
-                <a id="nav-events-link" href="events.html" class="px-3 py-2 rounded bg-red-50 text-red-700 font-bold">Events</a>
-                <a id="nav-join-link" href="join.html" class="px-3 py-2 rounded hover:bg-red-50 text-red-700">Join</a>
-                <a id="nav-search-link" href="search.html" class="px-3 py-2 rounded hover:bg-red-50 text-red-700">Search</a>
-                <a id="nav-contact-link" href="index.html#contact" class="px-3 py-2 rounded hover:bg-red-50 text-red-700">Contact</a>
+                <a id="nav-home-link" href="index.html" class="px-3 py-2 rounded hover:bg-red-50 text-red-700" data-i18n="navHome">Home</a>
+                <a id="nav-about-link" href="about.html" class="px-3 py-2 rounded hover:bg-red-50 text-red-700" data-i18n="navAbout">About</a>
+                <a id="nav-how-link" href="donationGuide.html" class="px-3 py-2 rounded hover:bg-red-50 text-red-700" data-i18n="navHow">Donation Guide</a>
+                <a id="nav-events-link" href="events.html" class="px-3 py-2 rounded bg-red-50 text-red-700 font-bold" data-i18n="navEvents">Events</a>
+                <a id="nav-join-link" href="join.html" class="px-3 py-2 rounded hover:bg-red-50 text-red-700" data-i18n="navJoin">Join</a>
+                <a id="nav-search-link" href="search.html" class="px-3 py-2 rounded hover:bg-red-50 text-red-700" data-i18n="navSearch">Search</a>
+                <a id="nav-contact-link" href="index.html#contact" class="px-3 py-2 rounded hover:bg-red-50 text-red-700" data-i18n="navContact">Contact</a>
                 <a id="nav-dashboard-link" href="index.html#admin-panel" class="hidden px-3 py-2 rounded hover:bg-red-50 text-red-700 font-bold" data-i18n="navDashboard">Dashboard</a>
             </div>
             <div class="flex items-center gap-4">
@@ -75,13 +75,13 @@
         </nav>
         <div id="mobile-menu" class="md:hidden hidden bg-white/95 shadow-lg rounded-b-xl">
             <div class="px-4 py-4 flex flex-col gap-2 text-red-700">
-                <a id="mobile-home-link" href="index.html" class="block px-3 py-2 rounded hover:bg-red-50">Home</a>
-                <a id="mobile-about-link" href="about.html" class="block px-3 py-2 rounded hover:bg-red-50">About</a>
-                <a id="mobile-how-link" href="donationGuide.html" class="block px-3 py-2 rounded hover:bg-red-50">Donation Guide</a>
-                <a id="mobile-events-link" href="events.html" class="block px-3 py-2 rounded bg-red-50 font-bold">Events</a>
-                <a id="mobile-join-link" href="join.html" class="block px-3 py-2 rounded hover:bg-red-50">Join</a>
-                <a id="mobile-search-link" href="search.html" class="block px-3 py-2 rounded hover:bg-red-50">Search</a>
-                <a id="mobile-contact-link" href="index.html#contact" class="block px-3 py-2 rounded hover:bg-red-50">Contact</a>
+                <a id="mobile-home-link" href="index.html" class="block px-3 py-2 rounded hover:bg-red-50" data-i18n="navHome">Home</a>
+                <a id="mobile-about-link" href="about.html" class="block px-3 py-2 rounded hover:bg-red-50" data-i18n="navAbout">About</a>
+                <a id="mobile-how-link" href="donationGuide.html" class="block px-3 py-2 rounded hover:bg-red-50" data-i18n="navHow">Donation Guide</a>
+                <a id="mobile-events-link" href="events.html" class="block px-3 py-2 rounded bg-red-50 font-bold" data-i18n="navEvents">Events</a>
+                <a id="mobile-join-link" href="join.html" class="block px-3 py-2 rounded hover:bg-red-50" data-i18n="navJoin">Join</a>
+                <a id="mobile-search-link" href="search.html" class="block px-3 py-2 rounded hover:bg-red-50" data-i18n="navSearch">Search</a>
+                <a id="mobile-contact-link" href="index.html#contact" class="block px-3 py-2 rounded hover:bg-red-50" data-i18n="navContact">Contact</a>
                 <a id="admin-mobile-link" href="index.html#admin-panel" class="hidden px-3 py-2 rounded hover:bg-red-50"
                     data-i18n="navDashboard">Dashboard</a>
                 <hr class="border-t border-red-200 my-1">
@@ -96,12 +96,8 @@
         </div>
     </header>
 
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" defer></script>
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" defer></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" defer></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.6/dist/chart.umd.min.js" defer></script>
     <script src="assets/js/viewport.js" defer></script>
-    <script type="module" src="assets/js/app.js"></script>
+    <script type="module" src="assets/js/pages/events.js"></script>
 
     <main class="max-w-6xl mx-auto px-4 sm:px-4 lg:px-6 pt-24 pb-12">
 
@@ -180,6 +176,7 @@
                         <li><a href="events.html"><i class="fa-solid fa-chevron-right"></i> <span data-i18n="navEvents">Events</span></a></li>
                         <li><a href="join.html"><i class="fa-solid fa-chevron-right"></i> <span data-i18n="navJoin">Join</span></a></li>
                         <li><a href="search.html"><i class="fa-solid fa-chevron-right"></i> <span data-i18n="navSearch">Search</span></a></li>
+                        
                     </ul>
                 </div>
                 <div>
