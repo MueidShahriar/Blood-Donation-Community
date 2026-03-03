@@ -350,7 +350,7 @@ window.onload = function () {
         const fd = new FormData(adminMemberForm);
         const memberId = fd.get('id');
         const updatedData = {
-            fullName: fd.get('fullName'), phone: fd.get('phone'), bloodGroup: fd.get('bloodGroup'),
+            fullName: fd.get('fullName'), email: fd.get('email') || '', phone: fd.get('phone'), bloodGroup: fd.get('bloodGroup'),
             location: fd.get('location'), lastDonateDate: fd.get('lastDonateDate'),
             isPhoneHidden: fd.get('isPhoneHidden') === 'on', publicComment: fd.get('publicComment')
         };

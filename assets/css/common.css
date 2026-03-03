@@ -321,19 +321,19 @@ img {
     transform: translateY(-2px) translateZ(0);
 }
 
-/* Mobile: align back-to-top with chatbot FAB, smaller buttons */
+/* Mobile: align back-to-top with chatbot FAB, bigger buttons for better touch */
 @media (max-width: 640px) {
     #fab-wrap {
         right: 16px !important;
         bottom: 20px !important;
     }
     #fab-wrap #back-to-top {
-        width: 44px !important;
-        height: 44px !important;
+        width: 52px !important;
+        height: 52px !important;
     }
     #fab-wrap #back-to-top svg {
-        width: 20px !important;
-        height: 20px !important;
+        width: 24px !important;
+        height: 24px !important;
     }
 }
 @media (max-width: 400px) {
@@ -342,12 +342,12 @@ img {
         bottom: 16px !important;
     }
     #fab-wrap #back-to-top {
-        width: 40px !important;
-        height: 40px !important;
+        width: 48px !important;
+        height: 48px !important;
     }
     #fab-wrap #back-to-top svg {
-        width: 18px !important;
-        height: 18px !important;
+        width: 22px !important;
+        height: 22px !important;
     }
 }
 

@@ -159,6 +159,7 @@ export function renderAdminMembersList(deleteMemberFn) {
             if (memberData) {
                 document.getElementById('admin-member-id').value = memberData.id;
                 document.getElementById('admin-member-fullname').value = memberData.fullName || '';
+                document.getElementById('admin-member-email').value = memberData.email || '';
                 document.getElementById('admin-member-phone').value = memberData.phone || '';
                 document.getElementById('admin-member-bloodGroup').value = memberData.bloodGroup || '';
                 document.getElementById('admin-member-location').value = memberData.location || '';
@@ -269,6 +270,8 @@ export function clearAdminRecentDonorForm() {
 export function clearAdminMemberForm() {
     const form = document.getElementById('admin-member-form');
     if (form) { form.reset(); document.getElementById('admin-member-id').value = ''; }
+    const emailField = document.getElementById('admin-member-email');
+    if (emailField) emailField.value = '';
 }
 
 export function initAdminTabs() {

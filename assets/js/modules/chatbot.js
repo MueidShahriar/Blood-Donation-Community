@@ -1,14 +1,28 @@
 /**
  * Blood Donation AI Chatbot Module
- * Bilingual (Bangla + English) chatbot with built-in knowledge base + Gemini API
- * Acts as a personal health assistant focused on blood donation
+ * Trilingual (Bangla + English + Banglish) chatbot with built-in knowledge base + Gemini 1.5 Pro
+ * Acts as a personal health & blood donation assistant with deep reasoning
  */
 
 /* ── Language detection ── */
 function isBangla(text) {
-    // Bengali Unicode range: \u0980-\u09FF
     const banglaChars = (text.match(/[\u0980-\u09FF]/g) || []).length;
     return banglaChars > text.length * 0.15;
+}
+
+/* ── Banglish detection (Bengali written in English/Roman letters) ── */
+function isBanglish(text) {
+    const banglishWords = ['ami', 'amr', 'amar', 'tumi', 'tomar', 'apni', 'apnar', 'kemon', 'kothay', 'keno', 'ki', 'holo', 'hobe', 'hoy', 'kore', 'korbo', 'korte', 'korlam', 'korsi', 'chai', 'ache', 'achen', 'thik', 'bhai', 'vai', 'bol', 'bolo', 'bolun', 'rokte', 'rokto', 'rokter', 'blood', 'daan', 'dan', 'parbo', 'parbe', 'parben', 'jodi', 'tahole', 'amader', 'oder', 'tader', 'shob', 'sob', 'keu', 'karo', 'jano', 'janen', 'bujhi', 'bujhen', 'dite', 'nite', 'lagbe', 'dorkar', 'sahajjo', 'help', 'poribar', 'poribarer', 'shastho', 'shasthyo', 'rog', 'rogi', 'hospital', 'daktar', 'doctor', 'oshudh', 'kivabe', 'kemne', 'onek', 'ektu', 'aktu', 'please', 'plz', 'doya', 'janaben', 'janao', 'group', 'grp', 'donate', 'dibo', 'dibi', 'debe', 'nibo', 'nebo', 'hae', 'haa', 'na', 'nah', 'aro', 'ar', 'ba', 'ebong', 'kintu', 'tobe', 'je', 'jar', 'eta', 'ota', 'sheta', 'kota', 'kothai', 'weak', 'durbol', 'problem', 'somossa', 'shomossa', 'jabe', 'dewa', 'deya', 'deowa', 'rakte', 'din', 'dilen', 'dilam', 'pari', 'paro', 'paren', 'possible', 'age', 'boyosh', 'ojon', 'weight', 'kg', 'hemoglobin', 'iron', 'tablet', 'medicine', 'oshudh', 'khete', 'khabo', 'khaben', 'khawar', 'pore', 'agey', 'age', 'shomoy', 'somoy', 'time', 'koto', 'kokhon', 'kobe', 'theke', 'jonno', 'jonne', 'dhoroner', 'type', 'negative', 'positive', 'thalassemia', 'cancer', 'diabetes', 'sugar', 'pressure', 'bp', 'anemia', 'infection', 'fever', 'jor', 'gaye', 'matha', 'ghora', 'byatha', 'betha', 'lage', 'lagche', 'shurjo', 'safe', 'nirapod', 'khatarnak', 'risk', 'bhoy', 'bhoi', 'test', 'poriksha', 'report', 'normal', 'abnormal'];
+    const words = text.toLowerCase().split(/\s+/);
+    const matched = words.filter(w => banglishWords.includes(w)).length;
+    return matched >= 2 || (matched >= 1 && words.length <= 5);
+}
+
+/* ── Detect language mode ── */
+function detectLang(text) {
+    if (isBangla(text)) return 'bangla';
+    if (isBanglish(text)) return 'banglish';
+    return 'english';
 }
 
 /* ── Knowledge Base (bilingual) ── */
@@ -182,7 +196,7 @@ const KNOWLEDGE_BASE = [
 
 function findLocalAnswer(question) {
     const q = question.toLowerCase().trim();
-    const bangla = isBangla(question);
+    const lang = detectLang(question);
     let bestMatch = null;
     let bestScore = 0;
     for (const entry of KNOWLEDGE_BASE) {
@@ -197,68 +211,176 @@ function findLocalAnswer(question) {
             bestMatch = entry;
         }
     }
-    if (bestScore >= 2 && bestMatch) {
-        return bangla ? (bestMatch.answerBn || bestMatch.answer) : bestMatch.answer;
+    // Only use local KB for simple greetings, thanks, bye — everything else goes to Gemini
+    if (bestScore >= 3 && bestMatch) {
+        const isSimple = ['hello', 'hi', 'hey', 'good morning', 'good evening', 'good night', 'howdy', 'sup', 'yo', 'assalamu', 'salam', 'হ্যালো', 'হাই', 'হেই', 'শুভ সকাল', 'শুভ সন্ধ্যা', 'কেমন আছ', 'কেমন আছেন', 'আসসালামু', 'সালাম', 'ওয়ালাইকুম', 'how are you', 'how r u', 'ভালো আছি', 'ভাল আছি', 'আলহামদুলিল্লাহ', 'thank', 'thanks', 'thx', 'ty', 'appreciate', 'ধন্যবাদ', 'শুক্রিয়া', 'জাযাকাল্লাহ', 'bye', 'goodbye', 'see you', 'বিদায়', 'আবার দেখা হবে', 'যাই']
+            .some(kw => q.includes(kw));
+        if (isSimple) {
+            return lang === 'bangla' ? (bestMatch.answerBn || bestMatch.answer) : bestMatch.answer;
+        }
     }
     return null;
 }
 
 const GEMINI_API_KEY = 'AIzaSyDa1OeSnJKLmVlPi9MNsAqfKDWEgxW-Vuk';
-const GEMINI_API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_API_KEY}`;
+const GEMINI_MODELS = [
+    'gemini-2.0-flash',
+    'gemini-1.5-flash',
+    'gemini-1.5-pro'
+];
+function getGeminiUrl(model) {
+    return `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${GEMINI_API_KEY}`;
+}
 
-async function askGemini(question) {
-    const bangla = isBangla(question);
-    const langInstruction = bangla
-        ? 'The user is asking in Bengali/Bangla. You MUST reply in Bengali/Bangla language using Bengali script.'
-        : 'The user is asking in English. Reply in English.';
+/* ── Conversation history for context ── */
+let conversationHistory = [];
+const MAX_HISTORY = 10;
 
-    try {
-        const response = await fetch(GEMINI_API_URL, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                contents: [{
-                    parts: [{
-                        text: `You are a friendly, knowledgeable blood donation and health assistant for the "Blood Donation Community" website. You act as a personal health assistant focused on blood donation.
-
-Your capabilities:
-- Answer all blood donation questions (eligibility, types, preparation, safety, benefits, health tips)
-- Respond to greetings warmly (hi, hello, salam, etc.)
-- Provide health motivation and encouragement related to blood donation
-- Answer general health questions that relate to blood donation (iron levels, diet, fitness for donation, etc.)
-- If the question is completely unrelated to health or blood donation, politely redirect
-
-${langInstruction}
-
-Keep answers concise (2-4 sentences max), warm, and helpful. Use emojis occasionally for a friendly tone.
-
-User's question: ${question}`
-                    }]
-                }],
-                generationConfig: {
-                    temperature: 0.7,
-                    maxOutputTokens: 400
-                }
-            })
-        });
-        if (!response.ok) throw new Error('API request failed');
-        const data = await response.json();
-        return data?.candidates?.[0]?.content?.parts?.[0]?.text || null;
-    } catch (err) {
-        console.error('Gemini API error:', err);
-        return null;
+function addToHistory(role, text) {
+    conversationHistory.push({ role, parts: [{ text }] });
+    if (conversationHistory.length > MAX_HISTORY) {
+        conversationHistory = conversationHistory.slice(-MAX_HISTORY);
     }
 }
 
+async function askGemini(question) {
+    const lang = detectLang(question);
+    let langInstruction;
+    if (lang === 'bangla') {
+        langInstruction = `LANGUAGE: The user is communicating in Bengali/Bangla (বাংলা). You MUST reply ENTIRELY in Bengali script (বাংলা). Never use English sentences in your reply — only Bengali.`;
+    } else if (lang === 'banglish') {
+        langInstruction = `LANGUAGE: The user is communicating in Banglish (Bengali language written in English/Roman letters like "ami blood dite chai", "rokto deya jabe ki", "ami weak aktu").
+You MUST reply in Banglish — meaning Bengali thoughts/words but written in English letters.
+Example replies: "Haan, apni rokt dite parben jodi apnar boyosh 18+ hoy ar weight 50kg er beshi hoy", "Apnar hemoglobin level check kora dorkar, doctor er kache jan".
+Do NOT use Bengali script. Do NOT reply in pure English. Reply in casual, natural Banglish.`;
+    } else {
+        langInstruction = `LANGUAGE: The user is communicating in English. Reply in clear, well-structured English.`;
+    }
+
+    // Build conversation contents with system context
+    const systemPrompt = {
+        role: 'user',
+        parts: [{
+            text: `You are "Blood Donation Assistant" — a highly intelligent, deeply knowledgeable medical AI assistant for the "Blood Donation Community" website. You have extensive expertise in:
+
+🩸 BLOOD DONATION (your primary domain):
+- All aspects of blood donation: eligibility, types (whole blood, platelets, plasma, double red cells), preparation, aftercare, frequency, safety
+- Blood types & compatibility (ABO system, Rh factor, universal donor/recipient, cross-matching)
+- Donation process step-by-step, what to expect, pain management
+- Special conditions: can diabetics donate? smokers? people with tattoos? pregnant women? people on medications?
+
+🏥 MEDICAL & HEALTH KNOWLEDGE:
+- Blood disorders: thalassemia, sickle cell disease, hemophilia, anemia (iron deficiency, B12, folate), polycythemia, leukemia
+- Hemoglobin levels, iron levels, ferritin, CBC interpretation basics
+- Transfusion medicine: reactions, compatibility testing, component therapy
+- General health questions related to blood: weakness, fatigue, dizziness, iron deficiency symptoms
+- Diet and nutrition for blood health: iron-rich foods, vitamin C, folic acid
+- Medication interactions with blood donation
+- Chronic conditions and eligibility: diabetes, hypertension, thyroid, heart disease, HIV/Hepatitis screening
+- Post-surgery blood needs, accident/emergency blood requirements
+- Pregnancy and blood: Rh incompatibility, gestational anemia
+- Cancer patients and blood product needs
+
+🧠 REASONING APPROACH:
+- For complex medical questions, THINK STEP-BY-STEP before answering
+- Consider multiple angles: medical facts, safety, individual conditions
+- Provide well-reasoned, evidence-based answers
+- Always mention "consult a doctor" for personalized medical decisions
+- Use numbered points or bullet structure for detailed answers
+- For simple questions, be concise (2-4 sentences)
+- For complex questions, be thorough and detailed
+
+${langInstruction}
+
+PERSONALITY:
+- Warm, friendly, encouraging — like a knowledgeable doctor friend
+- Use emojis occasionally (🩸💪❤️🏥) for warmth
+- Never refuse to answer health/blood-related questions
+- If a question is about general health that could relate to blood donation eligibility, ANSWER IT
+- Only redirect if the question is completely unrelated to health (e.g., cooking recipes, politics, sports scores)
+- If someone says they feel weak/sick and asks about blood donation, give medical advice about their condition AND donation eligibility
+
+CRITICAL: You must NEVER say "I can only help with blood donation questions" for ANY health-related query. Health queries about weakness, fatigue, anemia, medications, diseases, diet — ALL relate to blood donation eligibility and health. ANSWER THEM.`
+        }]
+    };
+
+    const systemResponse = {
+        role: 'model',
+        parts: [{
+            text: 'Understood! I am the Blood Donation Assistant with deep medical expertise. I will answer all blood donation and health-related questions thoroughly, think step-by-step for complex questions, and respond in the user\'s language (English/Bengali/Banglish). I will never refuse health-related questions. Ready to help! 🩸'
+        }]
+    };
+
+    // Build full conversation
+    const contents = [systemPrompt, systemResponse, ...conversationHistory, { role: 'user', parts: [{ text: question }] }];
+
+    const requestBody = {
+        contents,
+        generationConfig: {
+            temperature: 0.75,
+            topP: 0.95,
+            topK: 40,
+            maxOutputTokens: 2000
+        },
+        safetySettings: [
+            { category: 'HARM_CATEGORY_HARASSMENT', threshold: 'BLOCK_MEDIUM_AND_ABOVE' },
+            { category: 'HARM_CATEGORY_HATE_SPEECH', threshold: 'BLOCK_MEDIUM_AND_ABOVE' },
+            { category: 'HARM_CATEGORY_SEXUALLY_EXPLICIT', threshold: 'BLOCK_MEDIUM_AND_ABOVE' },
+            { category: 'HARM_CATEGORY_DANGEROUS_CONTENT', threshold: 'BLOCK_MEDIUM_AND_ABOVE' }
+        ]
+    };
+
+    // Try each model in order until one works
+    for (const model of GEMINI_MODELS) {
+        try {
+            const response = await fetch(getGeminiUrl(model), {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(requestBody)
+            });
+
+            if (!response.ok) {
+                const errData = await response.json().catch(() => ({}));
+                console.warn(`Gemini model ${model} failed (${response.status}):`, errData?.error?.message || 'Unknown error');
+                continue; // Try next model
+            }
+
+            const data = await response.json();
+            const answer = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+            if (answer) {
+                addToHistory('user', question);
+                addToHistory('model', answer);
+                return answer;
+            }
+            // If no answer text but no error, try next model
+            console.warn(`Gemini model ${model} returned empty answer`);
+            continue;
+        } catch (err) {
+            console.warn(`Gemini model ${model} network error:`, err.message);
+            continue; // Try next model
+        }
+    }
+    console.error('All Gemini models failed');
+    return null;
+}
+
 async function getAnswer(question) {
+    // Only use local KB for simple greetings/thanks/bye
     const localAnswer = findLocalAnswer(question);
     if (localAnswer) return localAnswer;
+
+    // Everything else → Gemini AI with deep reasoning
     const aiAnswer = await askGemini(question);
     if (aiAnswer) return aiAnswer;
-    const bangla = isBangla(question);
-    return bangla
-        ? 'দুঃখিত, আমি শুধুমাত্র রক্তদান সম্পর্কিত প্রশ্নে সাহায্য করতে পারি। রক্তের গ্রুপ, দানের যোগ্যতা, প্রস্তুতির টিপস ইত্যাদি বিষয়ে জিজ্ঞাসা করুন!'
-        : "I'm sorry, I can only help with blood donation related questions. Please try asking about blood types, donation eligibility, preparation tips, or other blood donation topics!";
+
+    // Smart fallback — don't reject the question, offer helpful guidance
+    const lang = detectLang(question);
+    if (lang === 'bangla') {
+        return 'দুঃখিত, এই মুহূর্তে আমার সার্ভারে সমস্যা হচ্ছে। 😔 অনুগ্রহ করে কিছুক্ষণ পর আবার চেষ্টা করুন। জরুরি হলে নিকটস্থ হাসপাতালে যোগাযোগ করুন।';
+    } else if (lang === 'banglish') {
+        return 'Sorry, ekhon amar server e ektu problem hocche. 😔 Please aktu por abar try korun. Emergency hole nearest hospital e jog korun.';
+    }
+    return "Sorry, I'm having trouble connecting right now. 😔 Please try again in a moment. If it's urgent, please contact your nearest hospital or blood bank.";
 }
 
 function escapeHtml(str) {
@@ -310,7 +432,7 @@ export function initChatbot() {
                 </button>
             </form>
             <div style="text-align:center;margin-top:0.4rem">
-                <span style="font-size:0.62rem;color:#9ca3af">Powered by AI • Blood donation topics only</span>
+                <span style="font-size:0.62rem;color:#9ca3af">Powered by Gemini 1.5 Pro AI 🧠 • Health & Blood Donation</span>
             </div>
         </div>
     `;
@@ -367,12 +489,40 @@ export function initChatbot() {
             <div style="width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#dc2626,#ef4444);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px">
                 <i class="fa-solid fa-robot" style="color:#fff;font-size:0.65rem"></i>
             </div>
-            <div style="background:#fff;border-radius:0 0.85rem 0.85rem 0.85rem;padding:0.7rem 0.9rem;font-size:0.82rem;color:#9ca3af;box-shadow:0 1px 3px rgba(0,0,0,0.06)">
-                <span class="chatbot-dots"><span>.</span><span>.</span><span>.</span></span>
+            <div class="chatbot-thinking-bubble" style="background:#fff;border-radius:0 0.85rem 0.85rem 0.85rem;padding:0.7rem 0.9rem;font-size:0.78rem;color:#6b7280;box-shadow:0 1px 3px rgba(0,0,0,0.06);display:flex;flex-direction:column;gap:0.35rem;min-width:160px">
+                <div class="chatbot-think-phase" id="think-phase-1" style="display:flex;align-items:center;gap:6px;">
+                    <span class="thinking-brain-icon" style="font-size:0.95rem;">🧠</span>
+                    <span style="font-weight:600;color:#dc2626;">Thinking</span>
+                    <span class="chatbot-think-dots"><span>.</span><span>.</span><span>.</span></span>
+                </div>
             </div>
         `;
         messagesDiv.appendChild(wrapper);
         messagesDiv.scrollTop = messagesDiv.scrollHeight;
+
+        // Phase 2: After 1.5s, switch to "Analyzing" 
+        setTimeout(() => {
+            const phase1 = document.getElementById('think-phase-1');
+            if (phase1) {
+                phase1.innerHTML = `
+                    <span style="font-size:0.95rem;">🔬</span>
+                    <span style="font-weight:600;color:#7c3aed;">Analyzing</span>
+                    <span class="chatbot-think-dots"><span>.</span><span>.</span><span>.</span></span>
+                `;
+            }
+        }, 1800);
+
+        // Phase 3: After 3.5s, switch to "Writing response"
+        setTimeout(() => {
+            const phase1 = document.getElementById('think-phase-1');
+            if (phase1) {
+                phase1.innerHTML = `
+                    <span style="font-size:0.95rem;">✍️</span>
+                    <span style="font-weight:600;color:#059669;">Writing response</span>
+                    <span class="chatbot-think-dots"><span>.</span><span>.</span><span>.</span></span>
+                `;
+            }
+        }, 4000);
     }
 
     function removeTypingIndicator() {
@@ -387,37 +537,57 @@ export function initChatbot() {
         addMessage(question, true);
         addTypingIndicator();
         chatInput.disabled = true;
+
+        const startTime = Date.now();
         try {
             const answer = await getAnswer(question);
+            // Ensure minimum "thinking" time of 1.5s for local answers to feel natural
+            const elapsed = Date.now() - startTime;
+            const minDelay = findLocalAnswer(question) ? 800 : 0;
+            if (elapsed < minDelay) {
+                await new Promise(r => setTimeout(r, minDelay - elapsed));
+            }
             removeTypingIndicator();
             addMessage(answer, false);
         } catch (err) {
             removeTypingIndicator();
-            addMessage("Sorry, something went wrong. Please try again.", false);
+            const lang = detectLang(question);
+            const errMsg = lang === 'bangla' 
+                ? 'দুঃখিত, কিছু সমস্যা হয়েছে। অনুগ্রহ করে আবার চেষ্টা করুন। 😔'
+                : lang === 'banglish'
+                ? 'Sorry, ektu problem hoyeche. Please abar try korun. 😔'
+                : 'Sorry, something went wrong. Please try again. 😔';
+            addMessage(errMsg, false);
         }
         chatInput.disabled = false;
         chatInput.focus();
     });
 
-    // Add typing animation styles
+    // Add typing/thinking animation styles
     const style = document.createElement('style');
     style.textContent = `
-        .chatbot-dots span { animation: chatbot-blink 1.4s infinite both; font-size: 1.5rem; line-height: 0.5; }
-        .chatbot-dots span:nth-child(2) { animation-delay: 0.2s; }
-        .chatbot-dots span:nth-child(3) { animation-delay: 0.4s; }
+        .chatbot-dots span, .chatbot-think-dots span { animation: chatbot-blink 1.4s infinite both; font-size: 1.5rem; line-height: 0.5; }
+        .chatbot-dots span:nth-child(2), .chatbot-think-dots span:nth-child(2) { animation-delay: 0.2s; }
+        .chatbot-dots span:nth-child(3), .chatbot-think-dots span:nth-child(3) { animation-delay: 0.4s; }
+        .chatbot-think-dots span { font-size: 1.2rem; line-height: 0.6; font-weight: bold; }
         @keyframes chatbot-blink { 0%, 80%, 100% { opacity: 0.2; } 40% { opacity: 1; } }
+        .thinking-brain-icon { animation: brain-pulse 1s ease-in-out infinite; display: inline-block; }
+        @keyframes brain-pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.15); } }
+        .chatbot-thinking-bubble { animation: think-fade-in 0.3s ease-out; }
+        @keyframes think-fade-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+        .chatbot-think-phase { transition: all 0.3s ease; }
         #chatbot-messages::-webkit-scrollbar { width: 4px; }
         #chatbot-messages::-webkit-scrollbar-track { background: transparent; }
         #chatbot-messages::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 4px; }
         @media (max-width: 640px) {
-            #chatbot-window { width: calc(100vw - 16px) !important; right: 8px !important; bottom: 80px !important; height: calc(100vh - 140px) !important; max-height: calc(100vh - 140px) !important; border-radius: 1rem !important; }
-            #chatbot-fab { right: 16px !important; bottom: 72px !important; }
-            #chatbot-fab button { width: 44px !important; height: 44px !important; font-size: 1.05rem !important; }
+            #chatbot-window { width: calc(100vw - 16px) !important; right: 8px !important; bottom: 90px !important; height: calc(100vh - 140px) !important; max-height: calc(100vh - 140px) !important; border-radius: 1rem !important; }
+            #chatbot-fab { right: 16px !important; bottom: 76px !important; }
+            #chatbot-fab button { width: 52px !important; height: 52px !important; font-size: 1.2rem !important; }
         }
         @media (max-width: 400px) {
             #chatbot-window { height: calc(100vh - 130px) !important; max-height: calc(100vh - 130px) !important; }
-            #chatbot-fab { right: 12px !important; bottom: 68px !important; }
-            #chatbot-fab button { width: 40px !important; height: 40px !important; font-size: 1rem !important; }
+            #chatbot-fab { right: 12px !important; bottom: 72px !important; }
+            #chatbot-fab button { width: 48px !important; height: 48px !important; font-size: 1.1rem !important; }
         }
     `;
     document.head.appendChild(style);
