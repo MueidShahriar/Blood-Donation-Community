@@ -71,12 +71,12 @@
                 <a id="nav-contact-link" href="#contact" class="px-3 py-2 rounded hover:bg-red-50 text-red-700"
                     data-i18n="navContact">Contact</a>
                 <a id="nav-dashboard-link" href="#admin-panel" class="hidden px-3 py-2 rounded hover:bg-red-50 text-red-700 font-bold"
-                    data-i18n="navDashboard">Dashboard</a>
+                    data-i18n="navDashboard"><i class="fa-solid fa-gauge-high" style="margin-right:4px"></i>Dashboard</a>
             </div>
             <div class="flex items-center gap-4">
                 <button id="login-btn"
                     class="desktop-only inline-flex bg-red-600 text-white px-4 py-2 rounded-lg font-semibold shadow hover:bg-red-700 transition items-center justify-center"
-                    data-i18n="btnLogin">Login</button>
+                    data-i18n="btnLogin"><img src="image/login.png" alt="Login" class="inline-icon"> Login</button>
             </div>
 
             <div class="flex items-center gap-2">
@@ -108,10 +108,10 @@
                 <hr class="border-t border-red-200 my-1">
                 <button id="mobile-login-btn"
                     class="block text-left px-3 py-2 rounded hover:bg-red-50 text-red-700 font-medium"
-                    data-i18n="btnLogin">🔑 Login</button>
+                    data-i18n="btnLogin"><img src="image/login.png" alt="Login" class="inline-icon"> Login</button>
                 <button id="mobile-logout-btn"
                     class="hidden text-left px-3 py-2 rounded hover:bg-red-50 text-red-600 font-medium">
-                    ➜] Logout
+                    <img src="image/logout.png" alt="Logout" class="inline-icon"> Logout
                 </button>
             </div>
         </div>
@@ -489,6 +489,7 @@
                                     class="absolute left-4 top-3 text-gray-400 transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-focus:-top-3 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Donation
                                     Date</label>
                             </div>
+                            <input type="hidden" id="admin-recent-donor-id" name="recent-donor-id" />
                             <div class="admin-form-actions">
                                 <button type="submit" class="admin-btn admin-btn--primary">
                                     <i class="fa-solid fa-hand-holding-droplet" aria-hidden="true"></i>
@@ -498,6 +499,10 @@
                                     class="admin-btn admin-btn--ghost">Clear</button>
                             </div>
                         </form>
+                        <div class="admin-list-section">
+                            <h4 class="admin-list-section__title"><i class="fa-solid fa-clock-rotate-left"></i> Recent Donations</h4>
+                            <div id="admin-recent-donations-list" class="admin-card-list"></div>
+                        </div>
                     </div>
                 </div>
 

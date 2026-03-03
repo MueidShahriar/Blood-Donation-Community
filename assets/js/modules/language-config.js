@@ -170,6 +170,7 @@ export const translations = {
 
         profileTitle: "My Profile",
         profileFullName: "Full name",
+        profileEmail: "Email",
         profileEmailReadonly: "Email (cannot be changed)",
         profilePhone: "Phone number",
         profileBloodGroup: "Blood group",
@@ -542,6 +543,7 @@ export const translations = {
 
         profileTitle: "আমার প্রোফাইল",
         profileFullName: "পুরো নাম",
+        profileEmail: "ইমেইল",
         profileEmailReadonly: "ইমেইল (পরিবর্তন করা যাবে না)",
         profilePhone: "ফোন নম্বর",
         profileBloodGroup: "রক্তের গ্রুপ",

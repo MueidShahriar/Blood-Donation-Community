@@ -17,14 +17,14 @@ export function updateLoginButtonState(database, ref, onValue, renderAdminMember
     if (!loginBtn && !mobileLoginBtn) return;
     if (state.currentUser) {
         if (loginBtn) {
-            loginBtn.innerHTML = '<i class="fa-solid fa-user" aria-hidden="true"></i><span class="sr-only">' + t('btnProfile') + '</span>';
+            loginBtn.innerHTML = '<img src="image/login.png" alt="Profile" class="inline-icon"><span class="sr-only">' + t('btnProfile') + '</span>';
             loginBtn.setAttribute('aria-label', t('btnProfile'));
             loginBtn.setAttribute('title', t('btnProfile'));
             loginBtn.dataset.state = 'loggedin';
             loginBtn.removeAttribute('data-i18n');
         }
         if (mobileLoginBtn) {
-            mobileLoginBtn.innerHTML = '\u{1F464} ' + t('btnProfile');
+            mobileLoginBtn.innerHTML = '<img src="image/login.png" alt="Profile" class="inline-icon"> ' + t('btnProfile');
             mobileLoginBtn.setAttribute('aria-label', t('btnProfile'));
             mobileLoginBtn.setAttribute('title', t('btnProfile'));
             mobileLoginBtn.removeAttribute('data-i18n');
@@ -37,11 +37,13 @@ export function updateLoginButtonState(database, ref, onValue, renderAdminMember
             if (state.currentUserRole === 'admin') {
                 adminPanel?.classList.remove('hidden');
                 document.body.classList.add('admin-mode');
-                if (adminBadge) { adminBadge.classList.remove('hidden'); adminBadge.classList.add('inline-flex'); }
-                // Hide ALL regular nav links for admin (show Dashboard instead)
+                // Admin badge hidden in navbar (only shown in profile page)
+                if (adminBadge) { adminBadge.classList.add('hidden'); adminBadge.classList.remove('inline-flex'); }
+                // Admin sees only Profile (login-btn) + Dashboard — hide all other nav links
                 navLinkIds.forEach(id => document.getElementById(id)?.classList.add('hidden'));
                 mobileNavIds.forEach(id => document.getElementById(id)?.classList.add('hidden'));
-                adminMobileLink?.classList.add('hidden');
+                // Show Dashboard in mobile menu for admin
+                adminMobileLink?.classList.remove('hidden');
                 if (adminDesktopLink) { adminDesktopLink.classList.remove('hidden'); }
                 renderAdminMembersList(deleteMemberFn);
                 renderAdminEventsList(deleteEventFn);
@@ -57,12 +59,12 @@ export function updateLoginButtonState(database, ref, onValue, renderAdminMember
         }, { onlyOnce: true });
     } else {
         if (loginBtn) {
-            loginBtn.textContent = t('btnLogin');
+            loginBtn.innerHTML = '<img src="image/login.png" alt="Login" class="inline-icon"> ' + t('btnLogin');
             loginBtn.dataset.state = 'loggedout';
             loginBtn.setAttribute('data-i18n', 'btnLogin');
         }
         if (mobileLoginBtn) {
-            mobileLoginBtn.innerHTML = '\u{1F511} ' + t('btnLogin');
+            mobileLoginBtn.innerHTML = '<img src="image/login.png" alt="Login" class="inline-icon"> ' + t('btnLogin');
             mobileLoginBtn.setAttribute('data-i18n', 'btnLogin');
         }
         if (mobileLogoutBtn) { mobileLogoutBtn.classList.add('hidden'); mobileLogoutBtn.classList.remove('block'); }

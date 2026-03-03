@@ -1,3 +1,12 @@
+/* ===== Inline Icon (for login/logout PNG icons) ===== */
+.inline-icon {
+    width: 20px;
+    height: 20px;
+    vertical-align: middle;
+    display: inline-block;
+    object-fit: contain;
+}
+
 /* ===== Logo Fill Preloader ===== */
 #page-loader {
     position: fixed;
@@ -310,6 +319,36 @@ img {
 #back-to-top:hover {
     box-shadow: 0 6px 20px rgba(225, 29, 72, 0.35);
     transform: translateY(-2px) translateZ(0);
+}
+
+/* Mobile: align back-to-top with chatbot FAB, smaller buttons */
+@media (max-width: 640px) {
+    #fab-wrap {
+        right: 16px !important;
+        bottom: 20px !important;
+    }
+    #fab-wrap #back-to-top {
+        width: 44px !important;
+        height: 44px !important;
+    }
+    #fab-wrap #back-to-top svg {
+        width: 20px !important;
+        height: 20px !important;
+    }
+}
+@media (max-width: 400px) {
+    #fab-wrap {
+        right: 12px !important;
+        bottom: 16px !important;
+    }
+    #fab-wrap #back-to-top {
+        width: 40px !important;
+        height: 40px !important;
+    }
+    #fab-wrap #back-to-top svg {
+        width: 18px !important;
+        height: 18px !important;
+    }
 }
 
 @keyframes sweep {

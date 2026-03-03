@@ -2,6 +2,70 @@ import state from './state.js';
 import { sortEventsByDate } from './utils.js';
 import { openModal, closeModal, showModalMessage, attachConfirmHandler } from './modals.js';
 
+function renderRecentDonationCardAdmin(d) {
+    const donationDate = d.date ? (() => { const _d = new Date(d.date + 'T00:00:00'); const _p = n => String(n).padStart(2,'0'); return `${_p(_d.getDate())}/${_p(_d.getMonth()+1)}/${_d.getFullYear()}`; })() : '—';
+    const initials = (d.name || 'D').split(/\s+/).filter(Boolean).map(p => p[0]).join('').slice(0, 2).toUpperCase() || '?';
+    return `
+        <div class="admin-event-card">
+            <div class="admin-event-card__date-badge" style="background:linear-gradient(135deg,#f59e0b,#d97706)">
+                <span class="admin-event-card__month" style="font-size:0.6rem">${d.bloodGroup || '—'}</span>
+                <span class="admin-event-card__day" style="font-size:0.85rem">${initials}</span>
+            </div>
+            <div class="admin-event-card__body">
+                <div class="admin-event-card__title">${d.name || 'Unknown'}</div>
+                <div class="admin-event-card__meta">
+                    <span><i class="fa-regular fa-calendar"></i> ${donationDate}</span>
+                    <span><i class="fa-solid fa-location-dot"></i> ${d.location || '—'}</span>
+                </div>
+                <div class="admin-event-card__meta">
+                    <span><i class="fa-solid fa-building-columns"></i> Dept: ${d.department || '—'}</span>
+                    <span><i class="fa-solid fa-layer-group"></i> Batch: ${d.batch || '—'}</span>
+                    <span><i class="fa-solid fa-user"></i> Age: ${d.age || '—'}</span>
+                    <span><i class="fa-solid fa-weight-scale"></i> ${d.weight ? d.weight + ' kg' : '—'}</span>
+                </div>
+            </div>
+            <div class="admin-event-card__actions">
+                <button data-recent-id="${d.id}" class="edit-recent-btn admin-action-btn admin-action-btn--edit" title="Edit"><i class="fa-solid fa-pen-to-square" data-recent-id="${d.id}"></i></button>
+                <button data-recent-id="${d.id}" class="delete-recent-btn admin-action-btn admin-action-btn--delete" title="Delete"><i class="fa-solid fa-trash-can" data-recent-id="${d.id}"></i></button>
+            </div>
+        </div>`;
+}
+
+export function renderAdminRecentDonationsList(deleteRecentFn) {
+    const listDiv = document.getElementById('admin-recent-donations-list');
+    if (!listDiv) return;
+    if (!state.recentDonationsList || !state.recentDonationsList.length) {
+        listDiv.innerHTML = `<div class="rounded-lg border border-dashed border-red-200 bg-red-50/40 p-6 text-center text-sm text-red-600">No recent donations recorded yet.</div>`;
+        return;
+    }
+    listDiv.innerHTML = state.recentDonationsList.map(renderRecentDonationCardAdmin).join('');
+    listDiv.querySelectorAll('.edit-recent-btn').forEach(button => {
+        button.addEventListener('click', (ev) => {
+            const recentId = ev.target.closest('[data-recent-id]')?.dataset.recentId || ev.target.dataset.recentId;
+            const data = state.recentDonationsList.find(d => d.id === recentId);
+            if (data) {
+                const idField = document.getElementById('admin-recent-donor-id');
+                if (idField) idField.value = data.id;
+                const nameF = document.getElementById('donor-name'); if (nameF) nameF.value = data.name || '';
+                const bgF = document.getElementById('donor-blood-group'); if (bgF) bgF.value = data.bloodGroup || '';
+                const locF = document.getElementById('donor-location'); if (locF) locF.value = data.location || '';
+                const deptF = document.getElementById('donor-department'); if (deptF) deptF.value = data.department || '';
+                const batchF = document.getElementById('donor-batch'); if (batchF) batchF.value = data.batch || '';
+                const ageF = document.getElementById('donor-age'); if (ageF) ageF.value = data.age || '';
+                const weightF = document.getElementById('donor-weight'); if (weightF) weightF.value = data.weight || '';
+                const dateF = document.getElementById('donation-date'); if (dateF) dateF.value = data.date || '';
+                document.getElementById('admin-recent-donor-form')?.scrollIntoView({ behavior: 'smooth' });
+            }
+        });
+    });
+    listDiv.querySelectorAll('.delete-recent-btn').forEach(button => {
+        button.addEventListener('click', (ev) => {
+            const recentId = ev.target.closest('[data-recent-id]')?.dataset.recentId || ev.target.dataset.recentId;
+            if (recentId && deleteRecentFn) deleteRecentFn(recentId);
+        });
+    });
+}
+
 function renderDonorCardAdmin(d) {
     const lastDate = d.lastDonateDate ? (() => { const _d = new Date(d.lastDonateDate + 'T00:00:00'); const _p = n => String(n).padStart(2,'0'); return `${_p(_d.getDate())}/${_p(_d.getMonth()+1)}/${_d.getFullYear()}`; })() : 'Not recorded';
     const phone = d.phone || '—';
@@ -12,9 +76,12 @@ function renderDonorCardAdmin(d) {
     const eligibleBadge = isEligible === null ? ''
         : isEligible ? '<span class="admin-member-badge admin-member-badge--eligible"><i class="fa-solid fa-circle-check"></i> Eligible</span>'
         : '<span class="admin-member-badge admin-member-badge--waiting"><i class="fa-solid fa-hourglass-half"></i> Waiting</span>';
+    const avatarContent = d.profilePhoto
+        ? `<img src="${d.profilePhoto}" alt="${initials}" style="width:100%;height:100%;object-fit:cover;border-radius:14px">`
+        : initials;
     return `
         <div class="admin-member-card">
-            <div class="admin-member-card__avatar">${initials}</div>
+            <div class="admin-member-card__avatar">${avatarContent}</div>
             <div class="admin-member-card__body">
                 <div class="admin-member-card__top">
                     <h4 class="admin-member-card__name">${d.fullName || 'Unknown'}</h4>
@@ -195,6 +262,8 @@ export function clearAdminEventForm() {
 export function clearAdminRecentDonorForm() {
     const form = document.getElementById('admin-recent-donor-form');
     if (form) form.reset();
+    const idField = document.getElementById('admin-recent-donor-id');
+    if (idField) idField.value = '';
 }
 
 export function clearAdminMemberForm() {

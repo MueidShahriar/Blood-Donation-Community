@@ -43,6 +43,8 @@ export function initJoinForm({ auth, database, ref, set, createUserWithEmailAndP
         };
         if (!donorData.fullName || donorData.fullName.length < 3) { setJoinFeedback('Please enter your full name (minimum 3 characters).', 'error'); return; }
         if (!email) { setJoinFeedback('Please provide a valid email address.', 'error'); return; }
+        const gmailRegex = /^[a-zA-Z0-9._%+-]+@gmail\.com$/i;
+        if (!gmailRegex.test(email)) { setJoinFeedback('Only @gmail.com email addresses are accepted. Please use a Gmail account.', 'error'); return; }
         if (!donorData.bloodGroup) { setJoinFeedback('Please select your blood group to help matches find you.', 'error'); return; }
         if (!donorData.phone) { setJoinFeedback('Phone number is required.', 'error'); return; }
         const numericPhone = donorData.phone.replace(/[^\d+]/g, '');

@@ -23,6 +23,7 @@ import { initBackToTop } from "./modules/back-to-top.js";
 import { initFeedback } from "./modules/feedback.js";
 import { initHeader, initMobileMenu } from "./modules/header.js";
 import { initVisitorTracker } from "./modules/visitor-tracker.js";
+import { initChatbot } from "./modules/chatbot.js";
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
@@ -54,6 +55,8 @@ const fGender = document.getElementById('profile-gender');
 
 const fNotes = document.getElementById('profile-notes');
 const fRole = document.getElementById('profile-role');
+const profilePhotoInput = document.getElementById('profile-photo-input');
+const profileAvatarImg = document.getElementById('profile-avatar-img');
 
 const logoutHeaderBtn = document.getElementById('pf-logout-header');
 const deleteBtn = document.getElementById('pf-delete');
@@ -76,6 +79,7 @@ initMobileMenu();
 initBackToTop();
 initVisitorTracker(database, false); // Profile page — online users only
 initFeedback(feedbackRef, push);
+initChatbot();
 
 function hideLoader() {
     if (loader) {
@@ -138,6 +142,15 @@ function populateProfile(data, email) {
     const role = data.role || 'member';
 
     if (avatarText) avatarText.textContent = getInitials(name);
+    // Show profile photo if available
+    if (profileAvatarImg && data.profilePhoto) {
+        profileAvatarImg.src = data.profilePhoto;
+        profileAvatarImg.style.display = 'block';
+        if (avatarText) avatarText.style.display = 'none';
+    } else if (profileAvatarImg) {
+        profileAvatarImg.style.display = 'none';
+        if (avatarText) avatarText.style.display = '';
+    }
     if (displayName) displayName.textContent = name;
     if (displayBlood) displayBlood.querySelector('span:last-child').textContent = blood;
     if (displayLocation) displayLocation.querySelector('span:last-child').textContent = loc;
@@ -153,6 +166,10 @@ function populateProfile(data, email) {
     if (statMemberSince) {
         if (data.createdAt) {
             const _d = new Date(data.createdAt);
+            const _pad = n => String(n).padStart(2, '0');
+            statMemberSince.textContent = `${_pad(_d.getDate())}/${_pad(_d.getMonth() + 1)}/${_d.getFullYear()}`;
+        } else if (auth.currentUser && auth.currentUser.metadata && auth.currentUser.metadata.creationTime) {
+            const _d = new Date(auth.currentUser.metadata.creationTime);
             const _pad = n => String(n).padStart(2, '0');
             statMemberSince.textContent = `${_pad(_d.getDate())}/${_pad(_d.getMonth() + 1)}/${_d.getFullYear()}`;
         } else {
@@ -221,10 +238,12 @@ onAuthStateChanged(auth, (user) => {
 
         if (role === 'admin') {
             document.body.classList.add('admin-mode');
-            if (adminBadge) { adminBadge.classList.remove('hidden'); adminBadge.classList.add('inline-flex'); }
+            // Admin badge hidden from navbar (admin text removed)
+            if (adminBadge) { adminBadge.classList.add('hidden'); adminBadge.classList.remove('inline-flex'); }
+            // Show Dashboard in mobile menu for admin
             adminMobileLink?.classList.remove('hidden');
             if (adminDesktopLink) { adminDesktopLink.classList.remove('hidden'); }
-            // Hide ALL regular nav links for admin
+            // Admin sees only Profile + Dashboard — hide all other nav links
             navLinkIds.forEach(id => document.getElementById(id)?.classList.add('hidden'));
             mobileNavIds.forEach(id => document.getElementById(id)?.classList.add('hidden'));
         } else {
@@ -238,10 +257,40 @@ onAuthStateChanged(auth, (user) => {
     }, { onlyOnce: true });
 });
 
+// Gmail-only regex (same as join form)
+const gmailRegex = /^[a-zA-Z0-9._%+-]+@gmail\.com$/i;
+
+// ── Email Change Modal elements ──
+const emailChangeModal = document.getElementById('email-change-modal');
+const emailChangeForm = document.getElementById('email-change-form');
+const ecNewEmailDisplay = document.getElementById('ec-new-email');
+const ecPassword = document.getElementById('ec-password');
+const ecError = document.getElementById('ec-error');
+const ecCancel = document.getElementById('ec-cancel');
+
+// Pending profile data when email change is in progress
+let pendingProfileUpdate = null;
+
+ecCancel?.addEventListener('click', () => closeModal(emailChangeModal));
+emailChangeModal?.querySelector('.absolute.inset-0')?.addEventListener('click', () => closeModal(emailChangeModal));
+
+// Email update is handled directly in the profile form submit handler below.
+// No re-authentication modal needed — email is saved to the database only.
+
 profileForm?.addEventListener('submit', (e) => {
     e.preventDefault();
     if (!currentUser) return;
     const fd = new FormData(profileForm);
+
+    const newEmail = fd.get('email')?.toString().trim() || '';
+    const emailChanged = newEmail && newEmail !== currentUser.email;
+
+    // Validate Gmail if email changed
+    if (emailChanged && !gmailRegex.test(newEmail)) {
+        showToast('Only @gmail.com email addresses are accepted.', 'error');
+        return;
+    }
+
     const updatedData = {
         ...currentDonorData,
         fullName: fd.get('fullName')?.toString().trim() || '',
@@ -251,23 +300,90 @@ profileForm?.addEventListener('submit', (e) => {
         lastDonateDate: fd.get('lastDonateDate')?.toString() || '',
         notes: fd.get('notes')?.toString() || '',
         dateOfBirth: fd.get('dateOfBirth')?.toString() || currentDonorData.dateOfBirth || '',
-
         gender: fd.get('gender')?.toString() || currentDonorData.gender || '',
-        email: currentUser.email,
+        email: emailChanged ? newEmail : currentUser.email,
         role: fd.get('role')?.toString().trim() || 'member'
     };
+    // Preserve profile photo if it exists
+    if (currentDonorData.profilePhoto) {
+        updatedData.profilePhoto = currentDonorData.profilePhoto;
+    }
     delete updatedData.uid;
+
+    // Save directly (email stored in DB only, Firebase Auth login email unchanged)
     const userRef = ref(database, 'donors/' + currentUser.uid);
     set(userRef, updatedData)
         .then(() => {
             showToast('Profile updated successfully!', 'success');
-            populateProfile(updatedData, currentUser.email);
+            populateProfile(updatedData, updatedData.email || currentUser.email);
         })
         .catch((err) => {
             console.error('Update failed:', err);
             showToast('Failed to update profile.', 'error');
         });
 });
+
+// ── Photo upload handler ──
+profilePhotoInput?.addEventListener('change', async (e) => {
+    const file = e.target.files?.[0];
+    if (!file || !currentUser) return;
+
+    // Validate file type
+    if (!['image/png', 'image/jpeg'].includes(file.type)) {
+        showToast('Only PNG or JPEG images are allowed.', 'error');
+        profilePhotoInput.value = '';
+        return;
+    }
+    // Validate file size (max 500KB)
+    if (file.size > 500 * 1024) {
+        showToast('Image must be under 500KB.', 'error');
+        profilePhotoInput.value = '';
+        return;
+    }
+
+    try {
+        const base64 = await resizeAndCompressPhoto(file, 300, 300);
+        const userRef = ref(database, 'donors/' + currentUser.uid + '/profilePhoto');
+        await set(userRef, base64);
+        if (profileAvatarImg) {
+            profileAvatarImg.src = base64;
+            profileAvatarImg.style.display = 'block';
+        }
+        if (avatarText) avatarText.style.display = 'none';
+        currentDonorData.profilePhoto = base64;
+        showToast('Profile photo updated!', 'success');
+    } catch (err) {
+        console.error('Photo upload failed:', err);
+        showToast('Failed to upload photo.', 'error');
+    }
+    profilePhotoInput.value = '';
+});
+
+function resizeAndCompressPhoto(file, maxW, maxH) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = (ev) => {
+            const img = new Image();
+            img.onload = () => {
+                const canvas = document.createElement('canvas');
+                canvas.width = maxW;
+                canvas.height = maxH;
+                const ctx = canvas.getContext('2d');
+                // Center-crop to square
+                const side = Math.min(img.width, img.height);
+                const sx = (img.width - side) / 2;
+                const sy = (img.height - side) / 2;
+                ctx.drawImage(img, sx, sy, side, side, 0, 0, maxW, maxH);
+                const dataUrl = canvas.toDataURL('image/jpeg', 0.8);
+                resolve(dataUrl);
+            };
+            img.onerror = reject;
+            img.src = ev.target.result;
+        };
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+    });
+}
 
 function handleLogout() {
     signOut(auth).then(() => {
@@ -321,6 +437,10 @@ donorCardBtn?.addEventListener('click', async () => {
             phone: fPhone?.value || '',
             uid: currentUser?.uid || ''
         };
+        // Ensure memberSince fallback from Firebase Auth metadata
+        if (!donorData.createdAt && currentUser.metadata?.creationTime) {
+            donorData.memberSince = currentUser.metadata.creationTime;
+        }
         showDonorCardModal(donorData);
     } catch (err) {
         console.error('Donor card error:', err);
@@ -366,6 +486,7 @@ document.addEventListener('keydown', (ev) => {
     if (ev.key === 'Escape') {
         closeModal(deleteModal);
         closeModal(changePasswordModal);
+        closeModal(emailChangeModal);
     }
 });
 

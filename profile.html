@@ -62,7 +62,7 @@
             <div class="flex items-center gap-2">
                 <button id="pf-logout-header" type="button"
                     class="desktop-only inline-flex items-center gap-1.5 bg-red-600 text-white px-4 py-2 rounded-lg font-semibold shadow hover:bg-red-700 transition">
-                    ➜] <span data-i18n="profileLogout">Logout</span>
+                    <img src="image/logout.png" alt="Logout" class="inline-icon"> <span data-i18n="profileLogout">Logout</span>
                 </button>
                 <button id="menu-toggle" class="md:hidden p-2 rounded-lg bg-red-100 text-red-700 hover:bg-red-200"
                     aria-label="Open menu" type="button">
@@ -87,7 +87,7 @@
                 <hr class="border-t border-red-200 my-1">
                 <button id="mobile-logout-btn"
                     class="hidden text-left px-3 py-2 rounded hover:bg-red-50 text-red-600 font-medium">
-                    ➜] Logout
+                    <img src="image/logout.png" alt="Logout" class="inline-icon"> Logout
                 </button>
             </div>
         </div>
@@ -115,6 +115,11 @@
                 <div class="profile-hero-inner">
                     <div class="profile-avatar" id="profile-avatar">
                         <span id="profile-avatar-text">?</span>
+                        <img id="profile-avatar-img" src="" alt="" style="display:none;width:100%;height:100%;object-fit:cover;border-radius:1.25rem;position:absolute;inset:0" />
+                        <label id="profile-avatar-upload-label" for="profile-photo-input" style="position:absolute;bottom:-4px;right:-4px;width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#dc2626,#ef4444);color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 2px 8px rgba(220,38,38,0.3);border:2px solid #fff;transition:transform 0.2s;z-index:2" title="Upload Photo">
+                            <i class="fa-solid fa-camera" style="font-size:0.7rem"></i>
+                        </label>
+                        <input type="file" id="profile-photo-input" accept="image/png,image/jpeg" style="display:none" />
                     </div>
                     <div class="profile-hero-info">
                         <h1 id="profile-display-name" class="text-xl sm:text-2xl font-extrabold text-gray-900">Donor Name</h1>
@@ -187,11 +192,11 @@
                         </div>
                         <div class="pf-field">
                             <label for="profile-email" class="pf-label">
-                                <i class="fa-solid fa-envelope pf-label-icon"></i> <span data-i18n="profileEmailReadonly">Email</span>
+                                <i class="fa-solid fa-envelope pf-label-icon"></i> <span data-i18n="profileEmail">Email</span>
                             </label>
-                            <input name="email" id="profile-email" type="email" required readonly
-                                class="pf-input pf-input--readonly" placeholder="Email" />
-                            <span class="pf-hint" data-i18n="profileEmailReadonly">Email cannot be changed</span>
+                            <input name="email" id="profile-email" type="email" required
+                                class="pf-input" placeholder="Enter your email" />
+                            <span class="pf-hint">Only @gmail.com addresses are accepted</span>
                         </div>
                         <div class="pf-field">
                             <label for="profile-phone" class="pf-label">
@@ -221,7 +226,7 @@
                                 <i class="fa-solid fa-location-dot pf-label-icon"></i> <span data-i18n="profileLocation">Current Location</span>
                             </label>
                             <input name="location" id="profile-location" type="text" required
-                                class="pf-input" placeholder="Enter your location" />
+                                class="pf-input" placeholder="Enter your location" maxlength="31" />
                         </div>
                         <div class="pf-field">
                             <label for="profile-lastDonateDate" class="pf-label">
@@ -381,6 +386,42 @@
                     <button type="submit" id="cp-submit"
                         class="px-5 py-2.5 text-white rounded-xl text-sm font-semibold transition shadow"
                         style="background:linear-gradient(135deg,#f59e0b,#d97706);">Update Password</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Email Change Re-auth Modal -->
+    <div id="email-change-modal" class="fixed inset-0 hidden items-center justify-center z-50">
+        <div class="absolute inset-0 bg-black/40 backdrop-blur-sm"></div>
+        <div class="bg-white rounded-2xl shadow-2xl p-6 max-w-sm mx-4 z-10">
+            <div class="flex items-center gap-3 mb-5">
+                <div class="w-11 h-11 rounded-full bg-blue-100 flex items-center justify-center">
+                    <i class="fa-solid fa-envelope text-blue-600"></i>
+                </div>
+                <div>
+                    <h3 class="text-lg font-bold text-gray-900">Confirm Email Change</h3>
+                    <p class="text-xs text-gray-500">Enter your password to update email</p>
+                </div>
+            </div>
+            <form id="email-change-form" class="grid gap-4">
+                <div>
+                    <p class="text-sm text-gray-600 mb-2">New email: <strong id="ec-new-email" class="text-gray-900"></strong></p>
+                </div>
+                <div>
+                    <label for="ec-password" class="block text-sm font-medium text-gray-700 mb-1">
+                        <i class="fa-solid fa-key text-xs text-gray-400"></i> Current Password
+                    </label>
+                    <input id="ec-password" type="password" required autocomplete="current-password"
+                        class="w-full rounded-lg border-2 border-gray-100 bg-white p-2.5 text-sm shadow-sm focus:border-blue-300 focus:outline-none" />
+                </div>
+                <p id="ec-error" class="text-xs text-red-600 hidden"></p>
+                <div class="flex justify-end gap-3 mt-1">
+                    <button type="button" id="ec-cancel"
+                        class="px-5 py-2.5 border border-gray-200 rounded-xl text-sm font-semibold text-gray-700 hover:bg-gray-50 transition">Cancel</button>
+                    <button type="submit" id="ec-submit"
+                        class="px-5 py-2.5 text-white rounded-xl text-sm font-semibold transition shadow"
+                        style="background:linear-gradient(135deg,#3b82f6,#2563eb);">Update Email</button>
                 </div>
             </form>
         </div>

@@ -420,6 +420,17 @@ export function showDonorCardModal(donorData, containerEl) {
         ageDisplay = `${age} years`;
     }
 
+    // Member Since (with Firebase Auth metadata fallback)
+    let memberSince = '—';
+    const memberSinceSource = donorData.createdAt || donorData.memberSince;
+    if (memberSinceSource) {
+        const _d = new Date(memberSinceSource);
+        if (!isNaN(_d.getTime())) {
+            const _p = n => String(n).padStart(2,'0');
+            memberSince = `${_p(_d.getDate())}/${_p(_d.getMonth()+1)}/${_d.getFullYear()}`;
+        }
+    }
+
     // Badge/Rank based on donation count
     let badgeLabel = 'New Donor';
     let badgeColor = '#6b7280';
@@ -453,38 +464,42 @@ export function showDonorCardModal(donorData, containerEl) {
                             </div>
                         </div>
                         <!-- Name & info centered below photo -->
-                        <div style="text-align:center;padding:1.4rem 1rem 0.25rem">
+                        <div style="text-align:center;padding:1.2rem 1rem 0.15rem">
                             <div style="font-size:1.3rem;font-weight:800;color:#1f2937;line-height:1.2;letter-spacing:-0.01em">${name}</div>
                             <div style="font-size:0.72rem;color:#6b7280;margin-top:4px;letter-spacing:0.01em">${email}</div>
                             ${gender !== '—' ? '<div style="font-size:0.7rem;color:#9ca3af;font-weight:600;margin-top:4px;letter-spacing:0.02em">' + gender + (ageDisplay !== '—' ? ' &bull; ' + ageDisplay : '') + '</div>' : (ageDisplay !== '—' ? '<div style="font-size:0.7rem;color:#9ca3af;font-weight:600;margin-top:4px">' + ageDisplay + '</div>' : '')}
                         </div>
                         <!-- Blood group badge centered -->
-                        <div style="display:flex;justify-content:center;padding:0.35rem 0 0.3rem">
+                        <div style="display:flex;justify-content:center;padding:0.25rem 0 0.2rem">
                             <div style="background:linear-gradient(135deg,#b91c1c,#dc2626,#ef4444);color:#fff;font-size:1.5rem;font-weight:900;padding:0.4rem 1.4rem;border-radius:0.8rem;letter-spacing:0.04em;line-height:1;box-shadow:0 6px 20px rgba(185,28,28,0.22),inset 0 1px 0 rgba(255,255,255,0.15)">${blood}</div>
                         </div>
                         <!-- Divider -->
-                        <div style="margin:0.5rem 1.5rem;height:1px;background:linear-gradient(90deg,transparent,rgba(220,38,38,0.1),transparent)"></div>
+                        <div style="margin:0.25rem 1.5rem;height:1px;background:linear-gradient(90deg,transparent,rgba(220,38,38,0.1),transparent)"></div>
                         <!-- Info rows (vertical, stacked) -->
-                        <div style="padding:0.15rem 1rem 0.6rem;display:flex;flex-direction:column;gap:0.35rem">
-                            <div style="display:flex;align-items:center;gap:0.6rem;padding:0.55rem 0.75rem;border-radius:0.8rem;background:rgba(254,242,242,0.45);transition:background 0.2s">
+                        <div style="padding:0.1rem 1rem 0.1rem;display:flex;flex-direction:column;gap:0.2rem">
+                            <div style="display:flex;align-items:center;gap:0.6rem;padding:0.4rem 0.75rem;border-radius:0.7rem;background:rgba(254,242,242,0.45);transition:background 0.2s">
                                 <div style="width:32px;height:32px;border-radius:10px;background:linear-gradient(135deg,rgba(239,68,68,0.12),rgba(239,68,68,0.06));display:flex;align-items:center;justify-content:center;flex-shrink:0"><i class="fa-solid fa-location-dot" style="color:#dc2626;font-size:0.75rem"></i></div>
                                 <div style="min-width:0;flex:1"><div style="font-size:0.56rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#b0b0b0">Location</div><div style="font-size:0.9rem;font-weight:700;color:#1f2937;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${location}</div></div>
                             </div>
-                            <div style="display:flex;align-items:center;gap:0.6rem;padding:0.55rem 0.75rem;border-radius:0.8rem;background:rgba(252,231,243,0.3);transition:background 0.2s">
+                            <div style="display:flex;align-items:center;gap:0.6rem;padding:0.4rem 0.75rem;border-radius:0.7rem;background:rgba(252,231,243,0.3);transition:background 0.2s">
                                 <div style="width:32px;height:32px;border-radius:10px;background:linear-gradient(135deg,rgba(239,68,68,0.12),rgba(239,68,68,0.06));display:flex;align-items:center;justify-content:center;flex-shrink:0"><i class="fa-solid fa-phone" style="color:#dc2626;font-size:0.75rem"></i></div>
                                 <div style="min-width:0;flex:1"><div style="font-size:0.56rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#b0b0b0">Phone</div><div style="font-size:0.9rem;font-weight:700;color:#1f2937">${phone}</div></div>
                             </div>
-                            <div style="display:flex;align-items:center;gap:0.6rem;padding:0.55rem 0.75rem;border-radius:0.8rem;background:rgba(254,242,242,0.45);transition:background 0.2s">
+                            <div style="display:flex;align-items:center;gap:0.6rem;padding:0.4rem 0.75rem;border-radius:0.7rem;background:rgba(254,242,242,0.45);transition:background 0.2s">
                                 <div style="width:32px;height:32px;border-radius:10px;background:linear-gradient(135deg,rgba(239,68,68,0.12),rgba(239,68,68,0.06));display:flex;align-items:center;justify-content:center;flex-shrink:0"><i class="fa-solid fa-calendar-days" style="color:#dc2626;font-size:0.75rem"></i></div>
                                 <div style="min-width:0;flex:1"><div style="font-size:0.56rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#b0b0b0">Last Donation</div><div style="font-size:0.9rem;font-weight:700;color:#1f2937">${lastDonate}</div></div>
                             </div>
-                            <div style="display:flex;align-items:center;gap:0.6rem;padding:0.55rem 0.75rem;border-radius:0.8rem;background:rgba(252,231,243,0.3);transition:background 0.2s">
+                            <div style="display:flex;align-items:center;gap:0.6rem;padding:0.4rem 0.75rem;border-radius:0.7rem;background:rgba(252,231,243,0.3);transition:background 0.2s">
                                 <div style="width:32px;height:32px;border-radius:10px;background:linear-gradient(135deg,rgba(16,185,129,0.12),rgba(16,185,129,0.06));display:flex;align-items:center;justify-content:center;flex-shrink:0"><i class="fa-solid fa-calendar-check" style="color:#059669;font-size:0.75rem"></i></div>
                                 <div style="min-width:0;flex:1"><div style="font-size:0.56rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#b0b0b0">Next Eligible</div><div style="font-size:0.9rem;font-weight:700;color:#1f2937">${nextEligible}</div></div>
                             </div>
+                            <div style="display:flex;align-items:center;gap:0.6rem;padding:0.4rem 0.75rem;border-radius:0.7rem;background:rgba(254,242,242,0.45);transition:background 0.2s">
+                                <div style="width:32px;height:32px;border-radius:10px;background:linear-gradient(135deg,rgba(99,102,241,0.12),rgba(99,102,241,0.06));display:flex;align-items:center;justify-content:center;flex-shrink:0"><i class="fa-solid fa-user-clock" style="color:#6366f1;font-size:0.75rem"></i></div>
+                                <div style="min-width:0;flex:1"><div style="font-size:0.56rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#b0b0b0">Member Since</div><div style="font-size:0.9rem;font-weight:700;color:#1f2937">${memberSince}</div></div>
+                            </div>
                         </div>
                         <!-- Footer -->
-                        <div style="display:flex;align-items:center;justify-content:center;padding:0.6rem 1rem;background:linear-gradient(135deg,rgba(185,28,28,0.05),rgba(249,115,22,0.03));border-top:1px solid rgba(220,38,38,0.04)">
+                        <div style="display:flex;align-items:center;justify-content:center;padding:0.3rem 1rem;background:linear-gradient(135deg,rgba(185,28,28,0.05),rgba(249,115,22,0.03));border-top:1px solid rgba(220,38,38,0.04)">
                             <span style="font-size:0.65rem;font-weight:700;color:#dc2626;letter-spacing:0.08em"><i class="fa-solid fa-heart" style="margin-right:5px;font-size:0.6rem"></i>Donate Blood, Save Life</span>
                         </div>
                     </div>
@@ -523,6 +538,28 @@ export function showDonorCardModal(donorData, containerEl) {
         const photoImg = document.getElementById('donor-card-photo-img');
         const initialsEl = document.getElementById('donor-card-initials');
         const uploadText = document.getElementById('donor-card-upload-text');
+
+        // Auto-load saved profile photo from DB
+        if (donorData.profilePhoto) {
+            if (photoImg) {
+                photoImg.src = donorData.profilePhoto;
+                photoImg.style.display = 'block';
+            }
+            if (initialsEl) initialsEl.style.display = 'none';
+            if (uploadText) uploadText.textContent = 'Change Photo';
+            const dlBtn = document.getElementById('donor-card-download-btn');
+            if (dlBtn) {
+                dlBtn.disabled = false;
+                dlBtn.style.background = 'linear-gradient(135deg,#0f766e,#14b8a6)';
+                dlBtn.style.cursor = 'pointer';
+                dlBtn.style.opacity = '1';
+                dlBtn.style.boxShadow = '0 4px 14px rgba(20,184,166,0.2)';
+                dlBtn.onmouseover = function(){ this.style.transform='translateY(-1px)'; this.style.boxShadow='0 6px 20px rgba(20,184,166,0.3)'; };
+                dlBtn.onmouseout = function(){ this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 14px rgba(20,184,166,0.2)'; };
+            }
+            const hint = document.getElementById('donor-card-photo-hint');
+            if (hint) { hint.style.color = '#10b981'; hint.innerHTML = '<i class="fa-solid fa-circle-check" style="margin-right:3px"></i>Profile photo loaded! You can download your card.'; }
+        }
 
         photoArea?.addEventListener('click', () => fileInput?.click());
 
@@ -577,7 +614,7 @@ export function showDonorCardModal(donorData, containerEl) {
 function _renderDonorCardCanvas(donorData, photoSrc) {
     return new Promise((resolve) => {
         const SCALE = 3;
-        const W = 420, H = 720;
+        const W = 420, H = 770;
         const canvas = document.createElement('canvas');
         canvas.width = W * SCALE; canvas.height = H * SCALE;
         canvas.style.width = W + 'px'; canvas.style.height = H + 'px';
@@ -813,6 +850,28 @@ function _renderDonorCardCanvas(donorData, photoSrc) {
             drawInfoRow('LAST DONATION', lastD, rY, 'rgba(254,242,242,0.5)', '#dc2626', drawCalendarIcon);
             rY += rowH + rowGap;
             drawInfoRow('NEXT ELIGIBLE', nextEligible, rY, 'rgba(252,231,243,0.3)', '#059669', drawCalendarCheckIcon);
+            rY += rowH + rowGap;
+
+            // Member Since (with Firebase Auth metadata fallback)
+            let memberSinceCanvas = '--';
+            const memberSinceSrcCanvas = donorData.createdAt || donorData.memberSince;
+            if (memberSinceSrcCanvas) {
+                const _d = new Date(memberSinceSrcCanvas);
+                if (!isNaN(_d.getTime())) {
+                    const _p = n => String(n).padStart(2, '0');
+                    memberSinceCanvas = `${_p(_d.getDate())}/${_p(_d.getMonth() + 1)}/${_d.getFullYear()}`;
+                }
+            }
+            const drawClockIcon = (cx, cy, color) => {
+                ctx.strokeStyle = color; ctx.lineWidth = 1.8; ctx.lineCap = 'round';
+                ctx.beginPath(); ctx.arc(cx, cy, 5.5, 0, Math.PI * 2); ctx.stroke();
+                ctx.beginPath(); ctx.moveTo(cx, cy - 3); ctx.lineTo(cx, cy); ctx.lineTo(cx + 2.5, cy + 1.5); ctx.stroke();
+                // Small user silhouette
+                ctx.fillStyle = color;
+                ctx.beginPath(); ctx.arc(cx - 4, cy - 4, 1.5, 0, Math.PI * 2); ctx.fill();
+                ctx.beginPath(); ctx.arc(cx - 4, cy - 1.5, 2, Math.PI, 0); ctx.fill();
+            };
+            drawInfoRow('MEMBER SINCE', memberSinceCanvas, rY, 'rgba(238,242,255,0.5)', '#6366f1', drawClockIcon);
 
             // ── Footer ──
             const footH = 36;

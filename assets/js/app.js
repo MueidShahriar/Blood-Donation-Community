@@ -41,12 +41,14 @@ import {
 import {
     renderAdminMembersList, renderAdminEventsList,
     clearAdminEventForm, clearAdminRecentDonorForm, clearAdminMemberForm,
-    applyAdminMemberSearchFilters, resetAdminMemberSearchFilters, initAdminTabs
+    applyAdminMemberSearchFilters, resetAdminMemberSearchFilters, initAdminTabs,
+    renderAdminRecentDonationsList
 } from "./modules/admin.js";
 import { updateLoginButtonState, initAuth } from "./modules/auth.js";
 import { initJoinForm } from "./modules/join-form.js";
 import { initFeedback } from "./modules/feedback.js";
 import { initVisitorTracker } from "./modules/visitor-tracker.js";
+import { initChatbot } from "./modules/chatbot.js";
 
 const app = initializeApp(firebaseConfig);
 try { analyticsIsSupported().then(ok => { if (ok) getAnalytics(app); }); } catch (_) {}
@@ -113,6 +115,30 @@ function deleteMember(memberId) {
             .then(() => { closeModal(modal); showModalMessage('success-modal', 'Member profile deleted successfully!', 'Success'); })
             .catch(error => { closeModal(modal); showModalMessage('success-modal', `Failed to delete member data: ${error.message}`, 'Error'); });
     }, { title: 'Delete Member', message: 'Deleting this member profile is permanent and cannot be undone.' });
+}
+
+function deleteRecentDonation(donationId) {
+    if (!state.currentUser || state.currentUserRole !== 'admin') {
+        showModalMessage('success-modal', 'You do not have permission to perform this action.', 'Permission Denied');
+        return;
+    }
+    attachConfirmHandler(() => {
+        const modal = document.getElementById('delete-confirm-modal');
+        remove(ref(database, 'recentDonations/' + donationId))
+            .then(() => {
+                // Decrement lives helped
+                onValue(statsRef, snapshot => {
+                    const sd = snapshot.val();
+                    const cur = (sd && sd.livesHelped) ? Number(sd.livesHelped) : 0;
+                    if (cur > 0) {
+                        update(ref(database), { '/stats/livesHelped': cur - 1 });
+                    }
+                }, { onlyOnce: true });
+                closeModal(modal);
+                showModalMessage('success-modal', 'Recent donation deleted successfully!', 'Success');
+            })
+            .catch(error => { closeModal(modal); showModalMessage('success-modal', `Failed to delete donation: ${error.message}`, 'Error'); });
+    }, { title: 'Delete Recent Donation', message: 'Deleting this donation record is permanent and cannot be undone.' });
 }
 
 function callUpdateLogin() {
@@ -186,6 +212,7 @@ onValue(recentDonationsRef, (snapshot) => {
     state.recentDonationsList = list;
     renderRecentDonorsCarousel(list);
     refreshDashboardCharts();
+    renderAdminRecentDonationsList(deleteRecentDonation);
     setRecentLoading(false);
 }, err => { console.error("Failed to load recent donations:", err); setRecentLoading(false); });
 
@@ -254,6 +281,7 @@ window.onload = function () {
     initContactScroll();
     initFloatObserver();
     initStatsCounter();
+    initChatbot();
 
     initFeedback(feedbackRef, push);
     const isHomePage = /\/(index\.html)?(\?.*)?(\#.*)?$/i.test(window.location.pathname);
@@ -284,6 +312,7 @@ window.onload = function () {
     adminRecentDonorForm?.addEventListener('submit', ev => {
         ev.preventDefault();
         const fd = new FormData(adminRecentDonorForm);
+        const editId = fd.get('recent-donor-id')?.toString().trim();
         const donorData = {
             name: fd.get('donor-name'), bloodGroup: fd.get('donor-blood-group'),
             location: fd.get('donor-location'), department: fd.get('donor-department'),
@@ -294,16 +323,24 @@ window.onload = function () {
             showModalMessage('success-modal', 'Please fill all required fields: Donor Name, Blood Group, Location, and Donation Date.', 'Error');
             return;
         }
-        onValue(statsRef, snapshot => {
-            const sd = snapshot.val();
-            const cur = (sd && sd.livesHelped) ? Number(sd.livesHelped) : 0;
-            const updates = {};
-            updates[`/recentDonations/${push(recentDonationsRef).key}`] = donorData;
-            updates['/stats/livesHelped'] = cur + 1;
-            update(ref(database), updates)
-                .then(() => { showModalMessage('success-modal', 'Recent donor added and lives helped count incremented!', 'Success'); clearAdminRecentDonorForm(); })
-                .catch(error => showModalMessage('success-modal', `Failed to update data: ${error.message}`, 'Error'));
-        }, { onlyOnce: true });
+        if (editId) {
+            // Update existing recent donation
+            update(ref(database, 'recentDonations/' + editId), donorData)
+                .then(() => { showModalMessage('success-modal', 'Recent donation updated successfully!', 'Success'); clearAdminRecentDonorForm(); })
+                .catch(error => showModalMessage('success-modal', `Failed to update donation: ${error.message}`, 'Error'));
+        } else {
+            // Add new recent donation
+            onValue(statsRef, snapshot => {
+                const sd = snapshot.val();
+                const cur = (sd && sd.livesHelped) ? Number(sd.livesHelped) : 0;
+                const updates = {};
+                updates[`/recentDonations/${push(recentDonationsRef).key}`] = donorData;
+                updates['/stats/livesHelped'] = cur + 1;
+                update(ref(database), updates)
+                    .then(() => { showModalMessage('success-modal', 'Recent donor added and lives helped count incremented!', 'Success'); clearAdminRecentDonorForm(); })
+                    .catch(error => showModalMessage('success-modal', `Failed to update data: ${error.message}`, 'Error'));
+            }, { onlyOnce: true });
+        }
     });
     document.getElementById('clear-recent-donor-btn')?.addEventListener('click', clearAdminRecentDonorForm);
 
