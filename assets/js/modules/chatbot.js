@@ -1,28 +1,183 @@
 /**
  * Blood Donation AI Chatbot Module
- * Trilingual (Bangla + English + Banglish) chatbot with built-in knowledge base + Gemini 1.5 Pro
- * Acts as a personal health & blood donation assistant with deep reasoning
+ * Trilingual (Bangla + English + Banglish) RAG-style chatbot
+ * Two-path architecture:
+ *   PATH 1 — Donor Finder: blood group + donor intent → query state.donorsList → eligible donors
+ *   PATH 2 — Knowledge + AI: keyword-scored knowledge base → Gemini LLM fallback
  */
 
-/* ── Language detection ── */
+import state from './state.js';
+import { isDonorEligible, normalizeBloodGroup } from './utils.js';
+
+/* ══════════════════════════════════════════════
+   SECTION 1 — Language Detection
+   ══════════════════════════════════════════════ */
 function isBangla(text) {
     const banglaChars = (text.match(/[\u0980-\u09FF]/g) || []).length;
     return banglaChars > text.length * 0.15;
 }
 
-/* ── Banglish detection (Bengali written in English/Roman letters) ── */
 function isBanglish(text) {
-    const banglishWords = ['ami', 'amr', 'amar', 'tumi', 'tomar', 'apni', 'apnar', 'kemon', 'kothay', 'keno', 'ki', 'holo', 'hobe', 'hoy', 'kore', 'korbo', 'korte', 'korlam', 'korsi', 'chai', 'ache', 'achen', 'thik', 'bhai', 'vai', 'bol', 'bolo', 'bolun', 'rokte', 'rokto', 'rokter', 'blood', 'daan', 'dan', 'parbo', 'parbe', 'parben', 'jodi', 'tahole', 'amader', 'oder', 'tader', 'shob', 'sob', 'keu', 'karo', 'jano', 'janen', 'bujhi', 'bujhen', 'dite', 'nite', 'lagbe', 'dorkar', 'sahajjo', 'help', 'poribar', 'poribarer', 'shastho', 'shasthyo', 'rog', 'rogi', 'hospital', 'daktar', 'doctor', 'oshudh', 'kivabe', 'kemne', 'onek', 'ektu', 'aktu', 'please', 'plz', 'doya', 'janaben', 'janao', 'group', 'grp', 'donate', 'dibo', 'dibi', 'debe', 'nibo', 'nebo', 'hae', 'haa', 'na', 'nah', 'aro', 'ar', 'ba', 'ebong', 'kintu', 'tobe', 'je', 'jar', 'eta', 'ota', 'sheta', 'kota', 'kothai', 'weak', 'durbol', 'problem', 'somossa', 'shomossa', 'jabe', 'dewa', 'deya', 'deowa', 'rakte', 'din', 'dilen', 'dilam', 'pari', 'paro', 'paren', 'possible', 'age', 'boyosh', 'ojon', 'weight', 'kg', 'hemoglobin', 'iron', 'tablet', 'medicine', 'oshudh', 'khete', 'khabo', 'khaben', 'khawar', 'pore', 'agey', 'age', 'shomoy', 'somoy', 'time', 'koto', 'kokhon', 'kobe', 'theke', 'jonno', 'jonne', 'dhoroner', 'type', 'negative', 'positive', 'thalassemia', 'cancer', 'diabetes', 'sugar', 'pressure', 'bp', 'anemia', 'infection', 'fever', 'jor', 'gaye', 'matha', 'ghora', 'byatha', 'betha', 'lage', 'lagche', 'shurjo', 'safe', 'nirapod', 'khatarnak', 'risk', 'bhoy', 'bhoi', 'test', 'poriksha', 'report', 'normal', 'abnormal'];
+    const banglishWords = ['ami', 'amr', 'amar', 'tumi', 'tomar', 'apni', 'apnar', 'kemon', 'kothay', 'keno', 'ki', 'holo', 'hobe', 'hoy', 'kore', 'korbo', 'korte', 'korlam', 'korsi', 'chai', 'ache', 'achen', 'thik', 'bhai', 'vai', 'bol', 'bolo', 'bolun', 'rokte', 'rokto', 'rokter', 'blood', 'daan', 'dan', 'parbo', 'parbe', 'parben', 'jodi', 'tahole', 'amader', 'oder', 'tader', 'shob', 'sob', 'keu', 'karo', 'jano', 'janen', 'bujhi', 'bujhen', 'dite', 'nite', 'lagbe', 'dorkar', 'sahajjo', 'help', 'poribar', 'poribarer', 'shastho', 'shasthyo', 'rog', 'rogi', 'hospital', 'daktar', 'doctor', 'oshudh', 'kivabe', 'kemne', 'onek', 'ektu', 'aktu', 'please', 'plz', 'doya', 'janaben', 'janao', 'group', 'grp', 'donate', 'dibo', 'dibi', 'debe', 'nibo', 'nebo', 'hae', 'haa', 'na', 'nah', 'aro', 'ar', 'ba', 'ebong', 'kintu', 'tobe', 'je', 'jar', 'eta', 'ota', 'sheta', 'kota', 'kothai', 'weak', 'durbol', 'problem', 'somossa', 'shomossa', 'jabe', 'dewa', 'deya', 'deowa', 'rakte', 'din', 'dilen', 'dilam', 'pari', 'paro', 'paren', 'possible', 'age', 'boyosh', 'ojon', 'weight', 'kg', 'hemoglobin', 'iron', 'tablet', 'medicine', 'oshudh', 'khete', 'khabo', 'khaben', 'khawar', 'pore', 'agey', 'age', 'shomoy', 'somoy', 'time', 'koto', 'kokhon', 'kobe', 'theke', 'jonno', 'jonne', 'dhoroner', 'type', 'negative', 'positive', 'thalassemia', 'cancer', 'diabetes', 'sugar', 'pressure', 'bp', 'anemia', 'infection', 'fever', 'jor', 'gaye', 'matha', 'ghora', 'byatha', 'betha', 'lage', 'lagche', 'shurjo', 'safe', 'nirapod', 'khatarnak', 'risk', 'bhoy', 'bhoi', 'test', 'poriksha', 'report', 'normal', 'abnormal', 'donor', 'donner', 'donar', 'khuje', 'khujte', 'khuji', 'paoa', 'pawa', 'contact', 'number', 'phone', 'call'];
     const words = text.toLowerCase().split(/\s+/);
     const matched = words.filter(w => banglishWords.includes(w)).length;
     return matched >= 2 || (matched >= 1 && words.length <= 5);
 }
 
-/* ── Detect language mode ── */
 function detectLang(text) {
     if (isBangla(text)) return 'bangla';
     if (isBanglish(text)) return 'banglish';
     return 'english';
+}
+
+/* ══════════════════════════════════════════════
+   SECTION 2 — Blood Group Extraction & Donor Intent
+   ══════════════════════════════════════════════ */
+
+/** Extract blood group from user text (A+, B-, AB+, O- etc.) in English/Bangla/Banglish */
+function extractBloodGroup(text) {
+    const t = text.toLowerCase().replace(/\s+/g, ' ').trim();
+
+    // Direct patterns: "A+", "b+", "AB-", "o positive", "ab negative" etc.
+    const directMap = {
+        'a+': 'A+', 'a plus': 'A+', 'a positive': 'A+', 'a pos': 'A+',
+        'a-': 'A-', 'a minus': 'A-', 'a negative': 'A-', 'a neg': 'A-',
+        'b+': 'B+', 'b plus': 'B+', 'b positive': 'B+', 'b pos': 'B+',
+        'b-': 'B-', 'b minus': 'B-', 'b negative': 'B-', 'b neg': 'B-',
+        'ab+': 'AB+', 'ab plus': 'AB+', 'ab positive': 'AB+', 'ab pos': 'AB+',
+        'ab-': 'AB-', 'ab minus': 'AB-', 'ab negative': 'AB-', 'ab neg': 'AB-',
+        'o+': 'O+', 'o plus': 'O+', 'o positive': 'O+', 'o pos': 'O+',
+        'o-': 'O-', 'o minus': 'O-', 'o negative': 'O-', 'o neg': 'O-',
+    };
+    for (const [pattern, group] of Object.entries(directMap)) {
+        if (t.includes(pattern)) return group;
+    }
+
+    // Regex for formats like "B +", "AB -"
+    const rgx = /\b(ab|a|b|o)\s*(\+|-|pos(?:itive)?|neg(?:ative)?|plus|minus)\b/i;
+    const m = t.match(rgx);
+    if (m) {
+        const letter = m[1].toUpperCase();
+        const sign = /pos|plus|\+/.test(m[2].toLowerCase()) ? '+' : '-';
+        return letter + sign;
+    }
+
+    // Bangla patterns: এ পজিটিভ, বি নেগেটিভ, ও পজিটিভ, এবি পজিটিভ
+    const banglaMap = [
+        { patterns: ['এবি পজিটিভ', 'এবি পজেটিভ', 'এবি প্লাস'], group: 'AB+' },
+        { patterns: ['এবি নেগেটিভ', 'এবি নেগেটিভ', 'এবি মাইনাস'], group: 'AB-' },
+        { patterns: ['এ পজিটিভ', 'এ পজেটিভ', 'এ প্লাস'], group: 'A+' },
+        { patterns: ['এ নেগেটিভ', 'এ নেগেটিভ', 'এ মাইনাস'], group: 'A-' },
+        { patterns: ['বি পজিটিভ', 'বি পজেটিভ', 'বি প্লাস'], group: 'B+' },
+        { patterns: ['বি নেগেটিভ', 'বি নেগেটিভ', 'বি মাইনাস'], group: 'B-' },
+        { patterns: ['ও পজিটিভ', 'ও পজেটিভ', 'ও প্লাস'], group: 'O+' },
+        { patterns: ['ও নেগেটিভ', 'ও নেগেটিভ', 'ও মাইনাস'], group: 'O-' },
+    ];
+    for (const { patterns, group } of banglaMap) {
+        for (const p of patterns) {
+            if (text.includes(p)) return group;
+        }
+    }
+
+    // Banglish: "bi positive", "o negative", "ab plus"
+    const banglishMap = {
+        'bi positive': 'B+', 'bi pos': 'B+', 'bi plus': 'B+', 'bi +': 'B+',
+        'bi negative': 'B-', 'bi neg': 'B-', 'bi minus': 'B-', 'bi -': 'B-',
+        'ey positive': 'A+', 'ey pos': 'A+', 'ey plus': 'A+',
+        'ey negative': 'A-', 'ey neg': 'A-', 'ey minus': 'A-',
+    };
+    for (const [pattern, group] of Object.entries(banglishMap)) {
+        if (t.includes(pattern)) return group;
+    }
+
+    return null;
+}
+
+/** Detect if user wants to FIND a donor / needs blood */
+function isDonorIntent(text) {
+    const t = text.toLowerCase();
+    const intentPhrases = [
+        // English
+        'need blood', 'need donor', 'find donor', 'search donor', 'looking for donor',
+        'looking for blood', 'blood needed', 'donor needed', 'urgent blood',
+        'emergency blood', 'want blood', 'require blood', 'get blood',
+        'any donor', 'available donor', 'donor available', 'donor list',
+        'show donor', 'donor contact', 'donor number', 'donor phone',
+        'who can give', 'give blood', 'donor khuje', 'donor khuji',
+        // Banglish
+        'rokto dorkar', 'rokto lagbe', 'blood dorkar', 'blood lagbe',
+        'donor lagbe', 'donor dorkar', 'donor khujte', 'donor chai',
+        'rokto chai', 'blood chai', 'rokto paoa', 'rokto pawa',
+        'rokto dite parbe', 'ke dite parbe', 'donor khoj',
+        'donor dekhao', 'donor dao', 'rokto dao', 'rokte dorkar',
+        'rokter dorkar', 'donor paben', 'donor paoa jabe',
+        'emergency rokto', 'jruri rokto', 'urgent rokto',
+        // Bangla
+        'রক্ত দরকার', 'রক্ত লাগবে', 'রক্ত চাই', 'ডোনার দরকার',
+        'ডোনার লাগবে', 'ডোনার চাই', 'ডোনার খুঁজ', 'রক্তদাতা খুঁজ',
+        'রক্তদাতা দরকার', 'রক্তদাতা চাই', 'রক্তদাতা লাগবে',
+        'রক্ত প্রয়োজন', 'জরুরি রক্ত', 'রক্ত পাওয়া', 'কে দিতে পারবে',
+    ];
+    return intentPhrases.some(phrase => t.includes(phrase));
+}
+
+/** Find eligible donors from state.donorsList by blood group */
+function findEligibleDonors(bloodGroup) {
+    if (!state.donorsList || state.donorsList.length === 0) return [];
+    const normalized = normalizeBloodGroup(bloodGroup);
+    return state.donorsList.filter(d => {
+        const dGroup = normalizeBloodGroup(d.bloodGroup || d.blood || d.blood_group);
+        return dGroup === normalized && isDonorEligible(d.lastDonateDate);
+    });
+}
+
+/** Format donor results into a pretty chat message */
+function formatDonorResults(donors, bloodGroup, lang) {
+    if (!donors || donors.length === 0) {
+        if (lang === 'bangla') return `দুঃখিত, এই মুহূর্তে <strong>${bloodGroup}</strong> রক্তের গ্রুপে কোনো যোগ্য দাতা পাওয়া যায়নি। 😔<br><br>📋 আমাদের <a href="search.html" style="color:#dc2626;font-weight:600">ডোনার সার্চ পেজে</a> চেক করুন অথবা পরে আবার চেষ্টা করুন।`;
+        if (lang === 'banglish') return `Sorry, ekhon <strong>${bloodGroup}</strong> blood group er kono eligible donor paoa jaynai. 😔<br><br>📋 Amader <a href="search.html" style="color:#dc2626;font-weight:600">Donor Search page</a> e check korun ba pore abar try korun.`;
+        return `Sorry, no eligible <strong>${bloodGroup}</strong> donors are available right now. 😔<br><br>📋 Check our <a href="search.html" style="color:#dc2626;font-weight:600">Donor Search page</a> or try again later.`;
+    }
+
+    const count = donors.length;
+    let header;
+    if (lang === 'bangla') {
+        header = `🩸 <strong>${bloodGroup}</strong> রক্তের গ্রুপে <strong>${count}</strong> জন যোগ্য দাতা পাওয়া গেছে:`;
+    } else if (lang === 'banglish') {
+        header = `🩸 <strong>${bloodGroup}</strong> blood group e <strong>${count}</strong> jon eligible donor paoa gese:`;
+    } else {
+        header = `🩸 Found <strong>${count}</strong> eligible <strong>${bloodGroup}</strong> donor${count > 1 ? 's' : ''}:`;
+    }
+
+    const maxShow = 5;
+    const list = donors.slice(0, maxShow).map((d, i) => {
+        const name = d.fullName || d.name || 'Unknown';
+        const phone = d.phone || d.contact || 'N/A';
+        const loc = d.location || d.area || '';
+        const lastDate = d.lastDonateDate ? new Date(d.lastDonateDate).toLocaleDateString('en-GB') : '';
+        let row = `<div style="background:#f9fafb;border-radius:0.5rem;padding:0.5rem 0.65rem;margin-top:0.35rem;border-left:3px solid #dc2626">`;
+        row += `<div style="font-weight:600;color:#111827">${i + 1}. ${name}</div>`;
+        row += `<div style="font-size:0.75rem;color:#6b7280;margin-top:2px">📞 ${phone}`;
+        if (loc) row += ` &nbsp;•&nbsp; 📍 ${loc}`;
+        if (lastDate) row += ` &nbsp;•&nbsp; 🗓️ Last: ${lastDate}`;
+        row += `</div></div>`;
+        return row;
+    }).join('');
+
+    let footer = '';
+    if (count > maxShow) {
+        const remaining = count - maxShow;
+        if (lang === 'bangla') footer = `<div style="margin-top:0.5rem;font-size:0.78rem;color:#6b7280">...এবং আরও ${remaining} জন দাতা আছেন। সম্পূর্ণ তালিকার জন্য <a href="search.html" style="color:#dc2626;font-weight:600">সার্চ পেজ</a> দেখুন।</div>`;
+        else if (lang === 'banglish') footer = `<div style="margin-top:0.5rem;font-size:0.78rem;color:#6b7280">...ar o ${remaining} jon donor achen. Full list er jonno <a href="search.html" style="color:#dc2626;font-weight:600">Search page</a> dekhun.</div>`;
+        else footer = `<div style="margin-top:0.5rem;font-size:0.78rem;color:#6b7280">...and ${remaining} more. See the full list on our <a href="search.html" style="color:#dc2626;font-weight:600">Search page</a>.</div>`;
+    }
+
+    let tip;
+    if (lang === 'bangla') tip = `<div style="margin-top:0.5rem;font-size:0.75rem;color:#059669">✅ সকল দাতা যোগ্য (শেষ রক্তদানের পর ৯০+ দিন পার হয়েছে)</div>`;
+    else if (lang === 'banglish') tip = `<div style="margin-top:0.5rem;font-size:0.75rem;color:#059669">✅ Sob donor eligible (last donation theke 90+ din hoyeche)</div>`;
+    else tip = `<div style="margin-top:0.5rem;font-size:0.75rem;color:#059669">✅ All donors are eligible (90+ days since last donation)</div>`;
+
+    return header + list + footer + tip;
 }
 
 /* ── Knowledge Base (bilingual) ── */
@@ -194,32 +349,91 @@ const KNOWLEDGE_BASE = [
       answerBn: 'বিদায়! ভালো থাকবেন এবং মনে রাখবেন — রক্তদান জীবন বাঁচায়! আবার দেখা হবে! 👋❤️' },
 ];
 
-function findLocalAnswer(question) {
+/* ══════════════════════════════════════════════
+   SECTION 4 — Knowledge Base Scorer (pseudo-RAG)
+   ══════════════════════════════════════════════ */
+
+/** Score a KB entry against the user query (higher = better match) */
+function scoreKBEntry(entry, queryWords) {
+    let score = 0;
+    let matchCount = 0;
+    for (const kw of entry.keywords) {
+        const kwLower = kw.toLowerCase();
+        // Exact word match in query words
+        if (queryWords.includes(kwLower)) {
+            score += kw.length * 2;
+            matchCount++;
+        }
+        // Substring match in full query
+        else if (queryWords.join(' ').includes(kwLower)) {
+            score += kw.length;
+            matchCount++;
+        }
+    }
+    // Bonus for multiple keyword matches (relevance boost)
+    if (matchCount >= 2) score *= 1.3;
+    if (matchCount >= 3) score *= 1.5;
+    return { score, matchCount };
+}
+
+/**
+ * Search knowledge base with scoring. Returns:
+ * - { answer, score, isGreeting } for direct greetings/bye/thanks (instant reply)
+ * - { answer, score, isGreeting: false } for strong KB match
+ * - null if no match above threshold
+ */
+function searchKnowledgeBase(question) {
     const q = question.toLowerCase().trim();
     const lang = detectLang(question);
+    const qWords = q.split(/\s+/).filter(w => w.length > 0);
+
+    const greetingKeywords = ['hello', 'hi', 'hey', 'good morning', 'good evening', 'good night', 'howdy', 'sup', 'yo', 'assalamu', 'salam', 'হ্যালো', 'হাই', 'হেই', 'শুভ সকাল', 'শুভ সন্ধ্যা', 'কেমন আছ', 'কেমন আছেন', 'আসসালামু', 'সালাম', 'ওয়ালাইকুম', 'how are you', 'how r u', 'ভালো আছি', 'ভাল আছি', 'আলহামদুলিল্লাহ', 'thank', 'thanks', 'thx', 'ty', 'appreciate', 'ধন্যবাদ', 'শুক্রিয়া', 'জাযাকাল্লাহ', 'bye', 'goodbye', 'see you', 'বিদায়', 'আবার দেখা হবে', 'যাই'];
+    const isGreeting = greetingKeywords.some(kw => q.includes(kw));
+
     let bestMatch = null;
     let bestScore = 0;
     for (const entry of KNOWLEDGE_BASE) {
-        let score = 0;
-        for (const kw of entry.keywords) {
-            if (q.includes(kw.toLowerCase())) {
-                score += kw.length;
-            }
-        }
+        const { score } = scoreKBEntry(entry, qWords);
         if (score > bestScore) {
             bestScore = score;
             bestMatch = entry;
         }
     }
-    // Only use local KB for simple greetings, thanks, bye — everything else goes to Gemini
-    if (bestScore >= 3 && bestMatch) {
-        const isSimple = ['hello', 'hi', 'hey', 'good morning', 'good evening', 'good night', 'howdy', 'sup', 'yo', 'assalamu', 'salam', 'হ্যালো', 'হাই', 'হেই', 'শুভ সকাল', 'শুভ সন্ধ্যা', 'কেমন আছ', 'কেমন আছেন', 'আসসালামু', 'সালাম', 'ওয়ালাইকুম', 'how are you', 'how r u', 'ভালো আছি', 'ভাল আছি', 'আলহামদুলিল্লাহ', 'thank', 'thanks', 'thx', 'ty', 'appreciate', 'ধন্যবাদ', 'শুক্রিয়া', 'জাযাকাল্লাহ', 'bye', 'goodbye', 'see you', 'বিদায়', 'আবার দেখা হবে', 'যাই']
-            .some(kw => q.includes(kw));
-        if (isSimple) {
-            return lang === 'bangla' ? (bestMatch.answerBn || bestMatch.answer) : bestMatch.answer;
-        }
+
+    if (!bestMatch || bestScore < 3) return null;
+
+    // For greetings/thanks/bye → instant reply (no AI needed)
+    if (isGreeting && bestScore >= 3) {
+        const answer = lang === 'bangla' ? (bestMatch.answerBn || bestMatch.answer) : bestMatch.answer;
+        return { answer, score: bestScore, isGreeting: true };
     }
+
+    // For strong knowledge matches → return as RAG context + answer
+    if (bestScore >= 8) {
+        const answer = lang === 'bangla' ? (bestMatch.answerBn || bestMatch.answer) : bestMatch.answer;
+        return { answer, score: bestScore, isGreeting: false };
+    }
+
     return null;
+}
+
+/**
+ * Build RAG context from knowledge base for Gemini.
+ * Collects top-scoring KB entries as context for the LLM.
+ */
+function buildKBContext(question) {
+    const qWords = question.toLowerCase().trim().split(/\s+/).filter(w => w.length > 0);
+    const scored = KNOWLEDGE_BASE.map(entry => ({
+        entry,
+        ...scoreKBEntry(entry, qWords)
+    })).filter(s => s.score > 2).sort((a, b) => b.score - a.score);
+
+    if (scored.length === 0) return '';
+
+    const topEntries = scored.slice(0, 3);
+    return '\n\n--- RELEVANT KNOWLEDGE BASE CONTEXT ---\n' +
+        topEntries.map(s => `Q: ${s.entry.keywords.slice(0, 4).join(', ')}\nA: ${s.entry.answer}`).join('\n\n') +
+        '\n--- END CONTEXT ---\n\nUse the above context to inform your answer if relevant. You may expand on it with your own knowledge.';
 }
 
 const GEMINI_API_KEY = 'AIzaSyDa1OeSnJKLmVlPi9MNsAqfKDWEgxW-Vuk';
@@ -243,7 +457,7 @@ function addToHistory(role, text) {
     }
 }
 
-async function askGemini(question) {
+async function askGemini(question, ragContext = '') {
     const lang = detectLang(question);
     let langInstruction;
     if (lang === 'bangla') {
@@ -257,7 +471,7 @@ Do NOT use Bengali script. Do NOT reply in pure English. Reply in casual, natura
         langInstruction = `LANGUAGE: The user is communicating in English. Reply in clear, well-structured English.`;
     }
 
-    // Build conversation contents with system context
+    // Build conversation contents with system context + RAG
     const systemPrompt = {
         role: 'user',
         parts: [{
@@ -300,7 +514,7 @@ PERSONALITY:
 - Only redirect if the question is completely unrelated to health (e.g., cooking recipes, politics, sports scores)
 - If someone says they feel weak/sick and asks about blood donation, give medical advice about their condition AND donation eligibility
 
-CRITICAL: You must NEVER say "I can only help with blood donation questions" for ANY health-related query. Health queries about weakness, fatigue, anemia, medications, diseases, diet — ALL relate to blood donation eligibility and health. ANSWER THEM.`
+CRITICAL: You must NEVER say "I can only help with blood donation questions" for ANY health-related query. Health queries about weakness, fatigue, anemia, medications, diseases, diet — ALL relate to blood donation eligibility and health. ANSWER THEM.${ragContext}`
         }]
     };
 
@@ -364,17 +578,50 @@ CRITICAL: You must NEVER say "I can only help with blood donation questions" for
     return null;
 }
 
-async function getAnswer(question) {
-    // Only use local KB for simple greetings/thanks/bye
-    const localAnswer = findLocalAnswer(question);
-    if (localAnswer) return localAnswer;
+/* ══════════════════════════════════════════════
+   SECTION 6 — Main Answer Router (2-path RAG architecture)
+   ══════════════════════════════════════════════ */
 
-    // Everything else → Gemini AI with deep reasoning
-    const aiAnswer = await askGemini(question);
+async function getAnswer(question) {
+    const lang = detectLang(question);
+
+    // ── PATH 1: Donor Finder ──
+    // If user mentions a blood group AND wants to find a donor → search donorsList
+    const bloodGroup = extractBloodGroup(question);
+    const wantsDonor = isDonorIntent(question);
+
+    if (bloodGroup && wantsDonor) {
+        const eligible = findEligibleDonors(bloodGroup);
+        return formatDonorResults(eligible, bloodGroup, lang);
+    }
+
+    // If they mention a blood group but no clear donor intent,
+    // still check — maybe they asked "B+ donor ache?" or "B+ rokto dorkar"
+    if (bloodGroup && !wantsDonor) {
+        // Soft check: if it contains "donor", "rokto", "blood", "lagbe", "dorkar", "chai"
+        const t = question.toLowerCase();
+        const softDonor = ['donor', 'rokto', 'blood', 'lagbe', 'dorkar', 'chai', 'রক্ত', 'দাতা', 'ডোনার'].some(w => t.includes(w));
+        if (softDonor) {
+            const eligible = findEligibleDonors(bloodGroup);
+            return formatDonorResults(eligible, bloodGroup, lang);
+        }
+    }
+
+    // ── PATH 2A: Knowledge Base (instant for greetings, strong matches) ──
+    const kbResult = searchKnowledgeBase(question);
+    if (kbResult && kbResult.isGreeting) {
+        return kbResult.answer;
+    }
+    if (kbResult && kbResult.score >= 8) {
+        return kbResult.answer;
+    }
+
+    // ── PATH 2B: Gemini AI with RAG context ──
+    const ragContext = buildKBContext(question);
+    const aiAnswer = await askGemini(question, ragContext);
     if (aiAnswer) return aiAnswer;
 
-    // Smart fallback — don't reject the question, offer helpful guidance
-    const lang = detectLang(question);
+    // ── Fallback ──
     if (lang === 'bangla') {
         return 'দুঃখিত, এই মুহূর্তে আমার সার্ভারে সমস্যা হচ্ছে। 😔 অনুগ্রহ করে কিছুক্ষণ পর আবার চেষ্টা করুন। জরুরি হলে নিকটস্থ হাসপাতালে যোগাযোগ করুন।';
     } else if (lang === 'banglish') {
@@ -420,7 +667,9 @@ export function initChatbot() {
                     <i class="fa-solid fa-robot" style="color:#fff;font-size:0.65rem"></i>
                 </div>
                 <div style="background:#fff;border-radius:0 0.85rem 0.85rem 0.85rem;padding:0.7rem 0.9rem;font-size:0.82rem;color:#374151;line-height:1.5;box-shadow:0 1px 3px rgba(0,0,0,0.06);max-width:85%">
-                    Hello! 👋 I'm your <strong>Blood Donation Assistant</strong>. Ask me anything about blood donation — eligibility, blood types, preparation, and more!
+                    Hello! 👋 I'm your <strong>Blood Donation Assistant</strong>. I can:<br>
+                    🔍 <strong>Find donors</strong> — just tell me the blood group!<br>
+                    💬 Answer questions about blood donation, eligibility & health.
                 </div>
             </div>
         </div>
@@ -432,7 +681,7 @@ export function initChatbot() {
                 </button>
             </form>
             <div style="text-align:center;margin-top:0.4rem">
-                <span style="font-size:0.62rem;color:#9ca3af">Powered by Gemini 1.5 Pro AI 🧠 • Health & Blood Donation</span>
+                <span style="font-size:0.62rem;color:#9ca3af">Powered by Gemini AI 🧠 • Donor Finder + Health Assistant</span>
             </div>
         </div>
     `;
@@ -481,18 +730,20 @@ export function initChatbot() {
         return wrapper;
     }
 
-    function addTypingIndicator() {
+    function addTypingIndicator(isDonorSearch = false) {
         const wrapper = document.createElement('div');
         wrapper.id = 'chatbot-typing';
         wrapper.style.cssText = 'display:flex;gap:0.5rem;align-items:flex-start';
+        const initialPhase = isDonorSearch
+            ? `<span style="font-size:0.95rem;">🔍</span><span style="font-weight:600;color:#2563eb;">Searching donors</span>`
+            : `<span class="thinking-brain-icon" style="font-size:0.95rem;">🧠</span><span style="font-weight:600;color:#dc2626;">Thinking</span>`;
         wrapper.innerHTML = `
             <div style="width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#dc2626,#ef4444);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px">
                 <i class="fa-solid fa-robot" style="color:#fff;font-size:0.65rem"></i>
             </div>
             <div class="chatbot-thinking-bubble" style="background:#fff;border-radius:0 0.85rem 0.85rem 0.85rem;padding:0.7rem 0.9rem;font-size:0.78rem;color:#6b7280;box-shadow:0 1px 3px rgba(0,0,0,0.06);display:flex;flex-direction:column;gap:0.35rem;min-width:160px">
                 <div class="chatbot-think-phase" id="think-phase-1" style="display:flex;align-items:center;gap:6px;">
-                    <span class="thinking-brain-icon" style="font-size:0.95rem;">🧠</span>
-                    <span style="font-weight:600;color:#dc2626;">Thinking</span>
+                    ${initialPhase}
                     <span class="chatbot-think-dots"><span>.</span><span>.</span><span>.</span></span>
                 </div>
             </div>
@@ -535,15 +786,21 @@ export function initChatbot() {
         if (!question) return;
         chatInput.value = '';
         addMessage(question, true);
-        addTypingIndicator();
+        // Detect if this is a donor search to show appropriate indicator
+        const bg = extractBloodGroup(question);
+        const di = isDonorIntent(question);
+        const softDonor = bg && ['donor', 'rokto', 'blood', 'lagbe', 'dorkar', 'chai', 'রক্ত', 'দাতা', 'ডোনার'].some(w => question.toLowerCase().includes(w));
+        addTypingIndicator((bg && di) || softDonor);
         chatInput.disabled = true;
 
         const startTime = Date.now();
         try {
             const answer = await getAnswer(question);
-            // Ensure minimum "thinking" time of 1.5s for local answers to feel natural
+            // Ensure minimum "thinking" time of 0.8s for instant answers to feel natural
             const elapsed = Date.now() - startTime;
-            const minDelay = findLocalAnswer(question) ? 800 : 0;
+            const kbResult = searchKnowledgeBase(question);
+            const isInstant = kbResult && kbResult.isGreeting;
+            const minDelay = isInstant ? 800 : 0;
             if (elapsed < minDelay) {
                 await new Promise(r => setTimeout(r, minDelay - elapsed));
             }
