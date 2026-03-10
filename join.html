@@ -123,12 +123,14 @@
                     </div>
 
                     <div class="field-icon-left">
-                        <i class="fi fa-solid fa-envelope"></i>
-                        <input name="email" id="email" type="email" placeholder=" " required autocomplete="email"
-                            pattern="[a-zA-Z0-9._%+\\-]+@gmail\\.com$" title="Only @gmail.com email addresses are accepted"
-                            class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:bg-white focus:outline-none" />
-                        <label for="email"
-                            class="absolute left-4 top-3 text-gray-400 transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-focus:-top-3.5 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3.5 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1" data-i18n="joinEmail">Email</label>
+                    <i class="fi fa-solid fa-envelope"></i>
+                     <input name="email" id="email" type="email" placeholder=" " required autocomplete="email"
+                    pattern="[a-zA-Z0-9._%+\-]+@(gmail\.com|std\.bauet\.ac\.bd)$"
+                 title="Only @gmail.com or @std.bauet.ac.bd email addresses are accepted"
+                  class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:bg-white focus:outline-none" />
+                   <label for="email"
+                   class="absolute left-4 top-3 text-gray-400 transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-focus:-top-3.5 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3.5 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1"
+                   data-i18n="joinEmail">Email</label>
                     </div>
 
                     <div class="field-icon-left flex flex-col">
