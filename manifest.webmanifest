@@ -1,0 +1,24 @@
+{
+  "name": "Blood Donation Community",
+  "short_name": "BDC",
+  "description": "Community-driven blood donation platform. Register as a donor, search donors by blood group and location.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#ffffff",
+  "theme_color": "#e11d48",
+  "lang": "en",
+  "icons": [
+    {
+      "src": "image/pwa-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "image/blood-drop.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
