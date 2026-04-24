@@ -73,6 +73,76 @@ const downloadMonthlyReportPdf = createMonthlyReportDownloader({
     showModalMessage
 });
 
+function updateAdminOverviewCounts({ donors, donations, events, admins } = {}) {
+    const donorsEl = document.getElementById('admin-overview-donors');
+    const adminsEl = document.getElementById('admin-overview-admins');
+    const donationsEl = document.getElementById('admin-overview-donations');
+    const eventsEl = document.getElementById('admin-overview-events');
+    if (!donorsEl && !donationsEl && !eventsEl && !adminsEl) return;
+    if (donorsEl && donors != null) donorsEl.textContent = String(donors);
+    if (adminsEl && admins != null) adminsEl.textContent = String(admins);
+    if (donationsEl && donations != null) donationsEl.textContent = String(donations);
+    if (eventsEl && events != null) eventsEl.textContent = String(events);
+}
+
+function switchAdminTab(tabName) {
+    const adminPanel = document.getElementById('admin-panel');
+    if (!adminPanel) return;
+    const tabBtn = adminPanel.querySelector(`.admin-tab[data-tab="${tabName}"]`);
+    tabBtn?.click();
+}
+
+function resetAdminMemberSearchInputs() {
+    const nameInput = document.getElementById('admin-member-search-name');
+    const bloodSelect = document.getElementById('admin-member-search-blood');
+    if (nameInput) nameInput.value = '';
+    if (bloodSelect) bloodSelect.value = '';
+}
+
+function applyAdminMemberRoleFilter(role) {
+    state.memberSearchRole = role || '';
+    state.memberSearchName = '';
+    state.memberSearchBlood = '';
+    resetAdminMemberSearchInputs();
+    renderAdminMembersList(deleteMember, promoteMemberToAdmin, demoteAdminToMember);
+}
+
+function initAdminOverviewActions() {
+    const adminPanel = document.getElementById('admin-panel');
+    if (!adminPanel) return;
+    const cards = adminPanel.querySelectorAll('.admin-overview-card[data-admin-action]');
+    if (!cards.length) return;
+    const handleAction = (card) => {
+        const action = card.dataset.adminAction;
+        const role = card.dataset.adminRole || '';
+        if (action === 'members') {
+            switchAdminTab('members');
+            applyAdminMemberRoleFilter(role === 'admin' ? 'admin' : '');
+            document.getElementById('admin-members-list')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            return;
+        }
+        if (action === 'recent') {
+            switchAdminTab('recent');
+            document.getElementById('admin-recent-donations-list')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            return;
+        }
+        if (action === 'events') {
+            switchAdminTab('events');
+            document.getElementById('admin-events-list')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+    };
+    cards.forEach(card => {
+        const handler = () => handleAction(card);
+        card.addEventListener('click', handler);
+        card.addEventListener('keydown', (ev) => {
+            if (ev.key === 'Enter' || ev.key === ' ') {
+                ev.preventDefault();
+                handler();
+            }
+        });
+    });
+}
+
 function saveEvent(eventData) {
     if (!state.currentUser || state.currentUserRole !== 'admin') {
         showModalMessage('success-modal', 'You do not have permission to perform this action.', 'Permission Denied');
@@ -118,6 +188,64 @@ function deleteMember(memberId) {
     }, { title: 'Delete Member', message: 'Deleting this member profile is permanent and cannot be undone.' });
 }
 
+function promoteMemberToAdmin(memberId, memberData) {
+    if (!state.currentUser || state.currentUserRole !== 'admin') {
+        showModalMessage('success-modal', 'You do not have permission to perform this action.', 'Permission Denied');
+        return;
+    }
+    if (!memberId) return;
+    if ((memberData?.role || 'member') === 'admin') {
+        showModalMessage('success-modal', 'This member is already an admin.', 'No Changes Needed');
+        return;
+    }
+    const memberName = memberData?.fullName || memberData?.name || 'this member';
+    attachConfirmHandler(() => {
+        const modal = document.getElementById('delete-confirm-modal');
+        update(ref(database, 'donors/' + memberId), { role: 'admin' })
+            .then(() => {
+                closeModal(modal);
+                showModalMessage('success-modal', `${memberName} is now an admin.`, 'Success');
+                clearAdminMemberForm();
+            })
+            .catch(error => {
+                closeModal(modal);
+                showModalMessage('success-modal', `Failed to update role: ${error.message}`, 'Error');
+            });
+    }, {
+        title: 'Promote Member to Admin',
+        message: `Are you sure you want to make ${memberName} an admin?`
+    });
+}
+
+function demoteAdminToMember(memberId, memberData) {
+    if (!state.currentUser || state.currentUserRole !== 'admin') {
+        showModalMessage('success-modal', 'You do not have permission to perform this action.', 'Permission Denied');
+        return;
+    }
+    if (!memberId) return;
+    if ((memberData?.role || 'member') !== 'admin') {
+        showModalMessage('success-modal', 'This member is already a member.', 'No Changes Needed');
+        return;
+    }
+    const memberName = memberData?.fullName || memberData?.name || 'this member';
+    attachConfirmHandler(() => {
+        const modal = document.getElementById('delete-confirm-modal');
+        update(ref(database, 'donors/' + memberId), { role: 'member' })
+            .then(() => {
+                closeModal(modal);
+                showModalMessage('success-modal', `${memberName} is now a member.`, 'Success');
+                clearAdminMemberForm();
+            })
+            .catch(error => {
+                closeModal(modal);
+                showModalMessage('success-modal', `Failed to update role: ${error.message}`, 'Error');
+            });
+    }, {
+        title: 'Make Admin a Member',
+        message: `Are you sure you want to make ${memberName} a member?`
+    });
+}
+
 function deleteRecentDonation(donationId) {
     if (!state.currentUser || state.currentUserRole !== 'admin') {
         showModalMessage('success-modal', 'You do not have permission to perform this action.', 'Permission Denied');
@@ -144,7 +272,7 @@ function deleteRecentDonation(donationId) {
 
 function callUpdateLogin() {
     updateLoginButtonState(database, ref, onValue,
-        renderAdminMembersList, renderAdminEventsList, deleteMember, deleteEvent, () => ensureUniqueDonorIds());
+    renderAdminMembersList, renderAdminEventsList, deleteMember, deleteEvent, () => ensureUniqueDonorIds(), promoteMemberToAdmin, demoteAdminToMember);
 }
 
 function setSearchErrorState(message) {
@@ -257,6 +385,8 @@ onValue(donorsRef, (snapshot) => {
             donor.donorId = normalizeDonorId(donor.rawDonorId);
         });
         buildDonorIndex(state.donorsList, state);
+        const adminCount = state.donorsList.filter(d => (d.role || 'member') === 'admin').length;
+        const memberCount = Math.max(0, state.donorsList.length - adminCount);
 
         const blood = document.getElementById('search-blood')?.value;
         const eligibleOnly = document.getElementById('eligible-only')?.checked;
@@ -271,9 +401,10 @@ onValue(donorsRef, (snapshot) => {
             if (eligibleOnly) filtered = filtered.filter(d => isDonorEligible(d.lastDonateDate));
             renderSearchResults(filtered);
         }
-        renderAdminMembersList(deleteMember);
+        renderAdminMembersList(deleteMember, promoteMemberToAdmin, demoteAdminToMember);
         refreshDashboardCharts();
         setCountTarget('donor-count', state.donorsList.length);
+        updateAdminOverviewCounts({ donors: memberCount, admins: adminCount });
         ensureUniqueDonorIds();
     } catch (error) {
         console.error('Failed to process donors:', error);
@@ -297,11 +428,16 @@ onValue(eventsRef, (snapshot) => {
     renderPublicEvents();
     if (state.currentUserRole === 'admin') renderAdminEventsList(deleteEvent);
     setCountTarget('event-count', state.eventsList.length);
+    updateAdminOverviewCounts({ events: state.eventsList.length });
 }, err => console.error("Failed to load events:", err));
 
 onValue(statsRef, (snapshot) => {
     const d = snapshot.val();
-    if (d && d.livesHelped != null) setCountTarget('lives-helped-count', d.livesHelped);
+    if (d && d.livesHelped != null) {
+        state.livesHelped = Number(d.livesHelped) || 0;
+        setCountTarget('lives-helped-count', state.livesHelped);
+        updateAdminOverviewCounts({ donations: state.livesHelped });
+    }
 }, err => console.error("Failed to load stats:", err));
 
 onValue(recentDonationsRef, (snapshot) => {
@@ -329,6 +465,9 @@ onValue(recentDonationsRef, (snapshot) => {
         renderRecentDonorsCarousel(list);
         refreshDashboardCharts();
         renderAdminRecentDonationsList(deleteRecentDonation);
+        if (state.livesHelped == null) {
+            updateAdminOverviewCounts({ donations: list.length });
+        }
         setRecentLoading(false);
     } catch (error) {
         console.error('Failed to process recent donations:', error);
@@ -405,6 +544,7 @@ window.onload = function () {
     runInitStep('home search', () => initSearch());
     runInitStep('back to top', () => initBackToTop());
     runInitStep('admin tabs', () => initAdminTabs());
+    runInitStep('admin overview actions', () => initAdminOverviewActions());
     runInitStep('contact scroll', () => initContactScroll());
     runInitStep('float observer', () => initFloatObserver());
     runInitStep('stats counter', () => initStatsCounter());
@@ -574,11 +714,11 @@ window.onload = function () {
     });
     document.getElementById('clear-member-btn')?.addEventListener('click', clearAdminMemberForm);
 
-    document.getElementById('admin-member-search-btn')?.addEventListener('click', () => applyAdminMemberSearchFilters(deleteMember));
-    document.getElementById('admin-member-search-reset')?.addEventListener('click', () => resetAdminMemberSearchFilters(deleteMember));
-    document.getElementById('admin-member-search-blood')?.addEventListener('change', () => applyAdminMemberSearchFilters(deleteMember));
+    document.getElementById('admin-member-search-btn')?.addEventListener('click', () => applyAdminMemberSearchFilters(deleteMember, promoteMemberToAdmin, demoteAdminToMember));
+    document.getElementById('admin-member-search-reset')?.addEventListener('click', () => resetAdminMemberSearchFilters(deleteMember, promoteMemberToAdmin, demoteAdminToMember));
+    document.getElementById('admin-member-search-blood')?.addEventListener('change', () => applyAdminMemberSearchFilters(deleteMember, promoteMemberToAdmin, demoteAdminToMember));
     document.getElementById('admin-member-search-name')?.addEventListener('keydown', ev => {
-        if (ev.key === 'Enter') { ev.preventDefault(); applyAdminMemberSearchFilters(deleteMember); }
+        if (ev.key === 'Enter') { ev.preventDefault(); applyAdminMemberSearchFilters(deleteMember, promoteMemberToAdmin, demoteAdminToMember); }
     });
 
     document.getElementById('admin-monthly-report-btn')?.addEventListener('click', () =>

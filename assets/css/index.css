@@ -600,6 +600,62 @@ section#join .how-card.tint-emerald label.absolute {
     background: rgba(236, 253, 245, 0.92);
 }
 
+.admin-overview-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+    gap: 0.75rem;
+    margin-top: 1rem;
+}
+
+.admin-overview-card {
+    background: #ffffff;
+    border: 1px solid rgba(225, 29, 72, 0.12);
+    border-radius: 14px;
+    padding: 0.9rem 1rem;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+}
+
+.admin-overview-card--clickable {
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.admin-overview-card--clickable:hover {
+    border-color: rgba(225, 29, 72, 0.25);
+    box-shadow: 0 6px 18px rgba(225, 29, 72, 0.12);
+    transform: translateY(-2px);
+}
+
+.admin-overview-card--clickable:focus-visible {
+    outline: 2px solid rgba(225, 29, 72, 0.4);
+    outline-offset: 2px;
+}
+
+.admin-overview-label {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #6b7280;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.admin-overview-label i {
+    color: var(--admin);
+    font-size: 0.85rem;
+}
+
+.admin-overview-value {
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: #111827;
+}
+
 .admin-tabs {
     display: flex;
     gap: .5rem;
@@ -1116,6 +1172,18 @@ section#join .how-card.tint-emerald label.absolute {
     border: 1px solid rgba(245,158,11,0.15);
 }
 
+.admin-member-badge--admin {
+    background: rgba(59,130,246,0.12);
+    color: #1d4ed8;
+    border: 1px solid rgba(59,130,246,0.2);
+}
+
+.admin-member-badge--member {
+    background: rgba(107,114,128,0.12);
+    color: #374151;
+    border: 1px solid rgba(107,114,128,0.2);
+}
+
 .admin-member-card__info {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -1184,6 +1252,28 @@ section#join .how-card.tint-emerald label.absolute {
 .admin-action-btn--delete:hover {
     background: #fee2e2;
     color: #b91c1c;
+    transform: translateY(-1px);
+}
+
+.admin-action-btn--promote {
+    background: #eff6ff;
+    color: #1d4ed8;
+}
+
+.admin-action-btn--promote:hover {
+    background: #dbeafe;
+    color: #1e40af;
+    transform: translateY(-1px);
+}
+
+.admin-action-btn--demote {
+    background: #fff7ed;
+    color: #c2410c;
+}
+
+.admin-action-btn--demote:hover {
+    background: #ffedd5;
+    color: #9a3412;
     transform: translateY(-1px);
 }
 
@@ -1559,6 +1649,10 @@ body.admin-mode section#community-stats {
 
 body.admin-mode section#search {
     display: none !important;
+}
+
+body.admin-mode #admin-panel section#search {
+    display: block !important;
 }
 
 body.admin-mode section#events {

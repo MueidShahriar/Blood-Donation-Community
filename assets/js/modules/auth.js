@@ -2,7 +2,36 @@ import state from './state.js';
 import { openModal, closeModal, showModalMessage } from './modals.js';
 import { t } from './language-ui.js';
 
-export function updateLoginButtonState(database, ref, onValue, renderAdminMembersList, renderAdminEventsList, deleteMemberFn, deleteEventFn, afterRoleResolvedFn) {
+function getAuthRedirectOverlay() {
+    let overlay = document.getElementById('auth-redirect-overlay');
+    if (!overlay) {
+        overlay = document.createElement('div');
+        overlay.id = 'auth-redirect-overlay';
+        overlay.className = 'auth-redirect-overlay';
+        overlay.innerHTML = '<div class="auth-redirect-card"><span class="auth-redirect-spinner" aria-hidden="true"></span><span class="auth-redirect-text">Loading...</span></div>';
+        document.body.appendChild(overlay);
+    }
+    return overlay;
+}
+
+function showAuthRedirectOverlay() {
+    if (state.isAuthRedirecting) return;
+    state.isAuthRedirecting = true;
+    const overlay = getAuthRedirectOverlay();
+    overlay.classList.add('is-visible');
+    document.body.classList.add('auth-redirecting');
+}
+
+function hideAuthRedirectOverlay() {
+    if (!state.isAuthRedirecting) return;
+    state.isAuthRedirecting = false;
+    const overlay = document.getElementById('auth-redirect-overlay');
+    if (overlay) overlay.classList.remove('is-visible');
+    document.body.classList.remove('auth-redirecting');
+}
+
+export function updateLoginButtonState(database, ref, onValue, renderAdminMembersList, renderAdminEventsList, deleteMemberFn, deleteEventFn, afterRoleResolvedFn, promoteMemberFn, demoteMemberFn) {
+    if (state.isAuthRedirecting) return;
     const assetPrefix = window.location.pathname.includes('/pages/') ? '../' : '';
     const loginBtn = document.getElementById('login-btn');
     const mobileLoginBtn = document.getElementById('mobile-login-btn');
@@ -46,7 +75,7 @@ export function updateLoginButtonState(database, ref, onValue, renderAdminMember
                 // Show Dashboard in mobile menu for admin
                 adminMobileLink?.classList.remove('hidden');
                 if (adminDesktopLink) { adminDesktopLink.classList.remove('hidden'); }
-                renderAdminMembersList(deleteMemberFn);
+                renderAdminMembersList(deleteMemberFn, promoteMemberFn, demoteMemberFn);
                 renderAdminEventsList(deleteEventFn);
             } else {
                 adminPanel?.classList.add('hidden');
@@ -57,6 +86,7 @@ export function updateLoginButtonState(database, ref, onValue, renderAdminMember
                 navLinkIds.forEach(id => document.getElementById(id)?.classList.remove('hidden'));
                 mobileNavIds.forEach(id => document.getElementById(id)?.classList.remove('hidden'));
             }
+            hideAuthRedirectOverlay();
             if (typeof afterRoleResolvedFn === 'function') afterRoleResolvedFn(state.currentUserRole);
         }, { onlyOnce: true });
     } else {
@@ -79,6 +109,7 @@ export function updateLoginButtonState(database, ref, onValue, renderAdminMember
         // Restore ALL regular nav links for public/logged-out view
         navLinkIds.forEach(id => document.getElementById(id)?.classList.remove('hidden'));
         mobileNavIds.forEach(id => document.getElementById(id)?.classList.remove('hidden'));
+        hideAuthRedirectOverlay();
     }
 }
 
@@ -133,9 +164,9 @@ export function initAuth({
         signInWithEmailAndPassword(auth, email, password)
             .then((userCredential) => {
                 state.currentUser = userCredential.user;
-                updateLoginFn();
+                showAuthRedirectOverlay();
+                if (typeof updateLoginFn === 'function') updateLoginFn();
                 closeModal(loginModal);
-                window.location.href = getProfileHref();
             })
             .catch((error) => {
                 showModalMessage('success-modal', `Login failed: ${error.message}`, 'Login Failed');

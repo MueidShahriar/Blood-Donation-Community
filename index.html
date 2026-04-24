@@ -255,61 +255,6 @@
             </div>
         </section>
 
-        <section id="search" class="py-12">
-            <div class="bg-gradient-to-r from-red-50 to-white p-6 rounded-xl shadow-lg">
-                <div class="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
-                    <div>
-                        <h2 class="text-2xl font-extrabold text-red-700" data-i18n="searchTitle">Find Donors</h2>
-                        <p class="mt-2 text-sm text-gray-600 max-w-xl" data-i18n="searchDescription">Search by blood
-                            group to find nearby donors
-                            quickly. Connect directly once you locate a match.</p>
-                    </div>
-                    <div
-                        class="w-full md:w-auto how-card compact search-card accent-sky flex flex-col items-center md:items-start md:self-start gap-2">
-                        <div class="flex items-center gap-2 -mb-1">
-                            <div class="icon-circle-sm"><i class="fa-solid fa-magnifying-glass text-sm"
-                                    aria-hidden="true"></i></div>
-                            <h3 class="text-base font-bold text-red-700" data-i18n="searchTitle">Find Donors</h3>
-                        </div>
-                        <form id="search-form" class="flex flex-col sm:flex-row items-center gap-2 w-full">
-                            <div class="field-icon-left w-full sm:flex-1">
-                                <i class="fi fa-solid fa-droplet" style="top: 1.15rem"></i>
-                                <select id="search-blood" aria-label="Blood group"
-                                    class="w-full h-9 pl-10 pr-3 rounded-lg border border-gray-100 bg-white text-gray-700 text-sm">
-                                    <option value="select" selected data-i18n="searchSelectDonor">Select donor</option>
-                                    <option value="all" data-i18n="searchAllDonors">All Donor(s)</option>
-                                    <option value="A+">A+</option>
-                                    <option value="A-">A-</option>
-                                    <option value="B+">B+</option>
-                                    <option value="B-">B-</option>
-                                    <option value="O+">O+</option>
-                                    <option value="O-">O-</option>
-                                    <option value="AB+">AB+</option>
-                                    <option value="AB-">AB-</option>
-                                </select>
-                            </div>
-                        </form>
-                        <div class="w-full flex justify-center items-center">
-                            <input type="checkbox" id="eligible-only"
-                                class="h-4 w-4 text-red-600 border-gray-300 rounded focus:ring-red-500">
-                            <label for="eligible-only" class="ml-2 text-sm text-gray-700 font-medium whitespace-nowrap"
-                                data-i18n="searchEligibleOnly">Show only
-                                eligible donors</label>
-                        </div>
-                    </div>
-                </div>
-                <div id="search-loading" class="search-loading hidden mt-6" aria-live="polite" aria-hidden="true">
-                    <span class="search-loading__spinner" aria-hidden="true"></span>
-                    <span class="search-loading__text" data-i18n="searchLoading">Loading donors...</span>
-                </div>
-                <div id="search-results" class="mt-6 flex flex-col gap-4">
-                    <div class="text-gray-500 italic" data-i18n="searchNoResults">No results yet. Perform a search to
-                        display donor entries here.
-                    </div>
-                </div>
-            </div>
-        </section>
-
         <section id="admin-panel" class="py-12 hidden">
             <div class="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
                 <div class="min-w-0">
@@ -325,6 +270,25 @@
                 </button>
             </div>
 
+            <div class="admin-overview-grid" aria-label="Admin overview">
+                <div class="admin-overview-card admin-overview-card--clickable" role="button" tabindex="0" data-admin-action="members" data-admin-role="member">
+                    <span class="admin-overview-label"><i class="fa-solid fa-users"></i> Total Members</span>
+                    <span id="admin-overview-donors" class="admin-overview-value">0</span>
+                </div>
+                <div class="admin-overview-card admin-overview-card--clickable" role="button" tabindex="0" data-admin-action="members" data-admin-role="admin">
+                    <span class="admin-overview-label"><i class="fa-solid fa-user-shield"></i> Total Admins</span>
+                    <span id="admin-overview-admins" class="admin-overview-value">0</span>
+                </div>
+                <div class="admin-overview-card admin-overview-card--clickable" role="button" tabindex="0" data-admin-action="recent">
+                    <span class="admin-overview-label"><i class="fa-solid fa-hand-holding-droplet"></i> Total Donations</span>
+                    <span id="admin-overview-donations" class="admin-overview-value">0</span>
+                </div>
+                <div class="admin-overview-card admin-overview-card--clickable" role="button" tabindex="0" data-admin-action="events">
+                    <span class="admin-overview-label"><i class="fa-solid fa-calendar-check"></i> Total Events</span>
+                    <span id="admin-overview-events" class="admin-overview-value">0</span>
+                </div>
+            </div>
+
             <div class="mt-6 admin-tabs">
                 <button type="button" class="admin-tab active" data-tab="events"><i
                         class="fa-solid fa-calendar-days"></i><span>Events</span></button>
@@ -332,6 +296,8 @@
                         class="fa-solid fa-hand-holding-droplet"></i><span>Recent Donor</span></button>
                 <button type="button" class="admin-tab" data-tab="members"><i
                         class="fa-solid fa-users"></i><span>Members</span></button>
+                <button type="button" class="admin-tab" data-tab="search"><i
+                    class="fa-solid fa-magnifying-glass"></i><span>Find Donors</span></button>
             </div>
 
             <div class="admin-tabpanel">
@@ -417,7 +383,7 @@
                                 <input name="donor-id" id="donor-id" type="text" placeholder=" "
                                     class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
                                 <label for="donor-id"
-                                    class="absolute left-4 top-3 text-gray-400 transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-focus:-top-3 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Donor ID (Optional)</label>
+                                    class="absolute left-4 top-3 text-gray-400 transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-focus:-top-3 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Donor ID <span class="field-optional">Optional</span></label>
                                 <p class="mt-2 text-xs text-gray-500">Use a registered donor ID like <strong>BDC-301</strong> for auto-fill, or leave it blank and enter the donor details manually.</p>
                             </div>
                             <div class="field-icon-left">
@@ -456,7 +422,7 @@
                             </div>
                             <div class="field-icon-left">
                                 <label for="donor-department"
-                                    class="text-sm font-medium text-red-700 mb-1 block">Department</label>
+                                    class="text-sm font-medium text-red-700 mb-1 block">Department <span class="field-optional">Optional</span></label>
                                 <div class="input-wrap">
                                     <i class="fi fa-solid fa-building-columns"></i>
                                     <input name="donor-department" id="donor-department" type="text"
@@ -465,7 +431,7 @@
                             </div>
                             <div class="field-icon-left">
                                 <label for="donor-batch"
-                                    class="text-sm font-medium text-red-700 mb-1 block">Batch</label>
+                                    class="text-sm font-medium text-red-700 mb-1 block">Batch <span class="field-optional">Optional</span></label>
                                 <div class="input-wrap">
                                     <i class="fi fa-solid fa-layer-group"></i>
                                     <input name="donor-batch" id="donor-batch" type="text"
@@ -473,7 +439,7 @@
                                 </div>
                             </div>
                             <div class="field-icon-left">
-                                <label for="donor-number" class="text-sm font-medium text-red-700 mb-1 block">Phone Number</label>
+                                <label for="donor-number" class="text-sm font-medium text-red-700 mb-1 block">Phone Number <span class="field-optional">Optional</span></label>
                                 <div class="input-wrap">
                                     <i class="fi fa-solid fa-phone"></i>
                                     <input name="donor-number" id="donor-number" type="tel"
@@ -481,7 +447,7 @@
                                 </div>
                             </div>
                             <div class="field-icon-left">
-                                <label for="donor-age" class="text-sm font-medium text-red-700 mb-1 block">Age</label>
+                                <label for="donor-age" class="text-sm font-medium text-red-700 mb-1 block">Age <span class="field-optional">Optional</span></label>
                                 <div class="input-wrap">
                                     <i class="fi fa-solid fa-person"></i>
                                     <input name="donor-age" id="donor-age" type="number"
@@ -489,7 +455,7 @@
                                 </div>
                             </div>
                             <div class="field-icon-left">
-                                <label for="donor-height" class="text-sm font-medium text-red-700 mb-1 block">Height (cm)</label>
+                                <label for="donor-height" class="text-sm font-medium text-red-700 mb-1 block">Height (cm) <span class="field-optional">Optional</span></label>
                                 <div class="input-wrap">
                                     <i class="fi fa-solid fa-ruler-vertical"></i>
                                     <input name="donor-height" id="donor-height" type="number" min="0" step="0.1"
@@ -497,8 +463,7 @@
                                 </div>
                             </div>
                             <div class="field-icon-left">
-                                <label for="donor-weight" class="text-sm font-medium text-red-700 mb-1 block">Weight
-                                    (kg)</label>
+                                <label for="donor-weight" class="text-sm font-medium text-red-700 mb-1 block">Weight (kg) <span class="field-optional">Optional</span></label>
                                 <div class="input-wrap">
                                     <i class="fi fa-solid fa-weight-scale"></i>
                                     <input name="donor-weight" id="donor-weight" type="number"
@@ -664,8 +629,8 @@
                                 <input name="location" id="admin-member-location" type="text" placeholder=" " required
                                     class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
                                 <label for="admin-member-location"
-                                    class="absolute left-4 top-3 text-gray-400 transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-focus:-top-3 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Donation
-                                    Center</label>
+                                    class="absolute left-4 top-3 text-gray-400 transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-focus:-top-3 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Current
+                                    Location</label>
                             </div>
                             <div class="field-icon-left">
                                 <i class="fi fa-solid fa-calendar-day"></i>
@@ -691,6 +656,63 @@
                             <div id="admin-members-list" class="admin-card-list"></div>
                         </div>
                     </div>
+                </div>
+
+                <div data-panel="search" class="hidden">
+                    <section id="search" class="py-4">
+                        <div class="bg-gradient-to-r from-red-50 to-white p-6 rounded-xl shadow-lg">
+                            <div class="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
+                                <div>
+                                    <h2 class="text-2xl font-extrabold text-red-700" data-i18n="searchTitle">Find Donors</h2>
+                                    <p class="mt-2 text-sm text-gray-600 max-w-xl" data-i18n="searchDescription">Search by blood
+                                        group to find nearby donors
+                                        quickly. Connect directly once you locate a match.</p>
+                                </div>
+                                <div
+                                    class="w-full md:w-auto how-card compact search-card accent-sky flex flex-col items-center md:items-start md:self-start gap-2">
+                                    <div class="flex items-center gap-2 -mb-1">
+                                        <div class="icon-circle-sm"><i class="fa-solid fa-magnifying-glass text-sm"
+                                                aria-hidden="true"></i></div>
+                                        <h3 class="text-base font-bold text-red-700" data-i18n="searchTitle">Find Donors</h3>
+                                    </div>
+                                    <form id="search-form" class="flex flex-col sm:flex-row items-center gap-2 w-full">
+                                        <div class="field-icon-left w-full sm:flex-1">
+                                            <i class="fi fa-solid fa-droplet" style="top: 1.15rem"></i>
+                                            <select id="search-blood" aria-label="Blood group"
+                                                class="w-full h-9 pl-10 pr-3 rounded-lg border border-gray-100 bg-white text-gray-700 text-sm">
+                                                <option value="select" selected data-i18n="searchSelectDonor">Select donor</option>
+                                                <option value="all" data-i18n="searchAllDonors">All Donor(s)</option>
+                                                <option value="A+">A+</option>
+                                                <option value="A-">A-</option>
+                                                <option value="B+">B+</option>
+                                                <option value="B-">B-</option>
+                                                <option value="O+">O+</option>
+                                                <option value="O-">O-</option>
+                                                <option value="AB+">AB+</option>
+                                                <option value="AB-">AB-</option>
+                                            </select>
+                                        </div>
+                                    </form>
+                                    <div class="w-full flex justify-center items-center">
+                                        <input type="checkbox" id="eligible-only"
+                                            class="h-4 w-4 text-red-600 border-gray-300 rounded focus:ring-red-500">
+                                        <label for="eligible-only" class="ml-2 text-sm text-gray-700 font-medium whitespace-nowrap"
+                                            data-i18n="searchEligibleOnly">Show only
+                                            eligible donors</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="search-loading" class="search-loading hidden mt-6" aria-live="polite" aria-hidden="true">
+                                <span class="search-loading__spinner" aria-hidden="true"></span>
+                                <span class="search-loading__text" data-i18n="searchLoading">Loading donors...</span>
+                            </div>
+                            <div id="search-results" class="mt-6 flex flex-col gap-4">
+                                <div class="text-gray-500 italic" data-i18n="searchNoResults">No results yet. Perform a search to
+                                    display donor entries here.
+                                </div>
+                            </div>
+                        </div>
+                    </section>
                 </div>
             </div>
         </section>

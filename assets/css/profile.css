@@ -188,6 +188,45 @@
     border: 1px solid rgba(0, 0, 0, 0.05);
 }
 
+.profile-recent-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.9rem 1.1rem;
+}
+
+.profile-recent-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    padding: 0.65rem 0.8rem;
+    border-radius: 0.85rem;
+    border: 1px solid rgba(225, 29, 72, 0.12);
+    background: linear-gradient(135deg, rgba(255, 241, 242, 0.6), #ffffff);
+}
+
+.profile-recent-label {
+    font-size: 0.68rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #9ca3af;
+    font-weight: 700;
+}
+
+.profile-recent-value {
+    font-size: 0.86rem;
+    font-weight: 700;
+    color: #1f2937;
+}
+
+.profile-recent-empty {
+    font-size: 0.85rem;
+    color: #6b7280;
+    background: rgba(239, 68, 68, 0.05);
+    border: 1px dashed rgba(239, 68, 68, 0.2);
+    padding: 0.85rem 1rem;
+    border-radius: 0.9rem;
+}
+
 .profile-form-header {
     padding: 1.15rem 1.5rem;
     border-bottom: 1px solid rgba(0, 0, 0, 0.06);
@@ -484,6 +523,10 @@ textarea.pf-input {
     .profile-form-grid {
         grid-template-columns: 1fr;
         gap: 1rem;
+    }
+
+    .profile-recent-grid {
+        grid-template-columns: 1fr;
     }
 
     .profile-actions {

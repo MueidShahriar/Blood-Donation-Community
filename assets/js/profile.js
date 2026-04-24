@@ -60,6 +60,17 @@ const fRole = document.getElementById('profile-role');
 const profilePhotoInput = document.getElementById('profile-photo-input');
 const profileAvatarImg = document.getElementById('profile-avatar-img');
 
+const recentGrid = document.getElementById('profile-recent-grid');
+const recentEmpty = document.getElementById('profile-recent-empty');
+const recentDate = document.getElementById('profile-recent-date');
+const recentBlood = document.getElementById('profile-recent-blood');
+const recentLocation = document.getElementById('profile-recent-location');
+const recentDepartment = document.getElementById('profile-recent-department');
+const recentBatch = document.getElementById('profile-recent-batch');
+const recentAge = document.getElementById('profile-recent-age');
+const recentHeight = document.getElementById('profile-recent-height');
+const recentWeight = document.getElementById('profile-recent-weight');
+
 const logoutHeaderBtn = document.getElementById('pf-logout-header');
 const deleteBtn = document.getElementById('pf-delete');
 const certBtn = document.getElementById('pf-certificate');
@@ -195,6 +206,27 @@ function populateProfile(data, email) {
 
     if (fNotes) fNotes.value = data.notes || '';
     if (fRole) fRole.value = role;
+
+    const recentInfo = (data.lastDonationInfo && typeof data.lastDonationInfo === 'object')
+        ? data.lastDonationInfo
+        : null;
+    const hasRecent = Boolean(
+        recentInfo && Object.keys(recentInfo).some(key => recentInfo[key])
+    );
+    if (recentGrid && recentEmpty) {
+        recentGrid.classList.toggle('hidden', !hasRecent);
+        recentEmpty.classList.toggle('hidden', hasRecent);
+    }
+    if (hasRecent) {
+        if (recentDate) recentDate.textContent = formatDate(recentInfo.date || data.lastDonateDate);
+        if (recentBlood) recentBlood.textContent = recentInfo.bloodGroup || data.bloodGroup || '—';
+        if (recentLocation) recentLocation.textContent = recentInfo.location || data.location || '—';
+        if (recentDepartment) recentDepartment.textContent = recentInfo.department || '—';
+        if (recentBatch) recentBatch.textContent = recentInfo.batch || '—';
+        if (recentAge) recentAge.textContent = recentInfo.age || '—';
+        if (recentHeight) recentHeight.textContent = recentInfo.height ? `${recentInfo.height} cm` : '—';
+        if (recentWeight) recentWeight.textContent = recentInfo.weight ? `${recentInfo.weight} kg` : '—';
+    }
 }
 
 function openModal(m) {

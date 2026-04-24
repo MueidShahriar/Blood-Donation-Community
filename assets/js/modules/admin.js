@@ -88,6 +88,21 @@ function renderDonorCardAdmin(d) {
         ? `<img src="${d.profilePhoto}" alt="${initials}" style="width:100%;height:100%;object-fit:cover;border-radius:14px">`
         : initials;
     const donorId = normalizeDonorId(d.donorId) || d.donorId || '—';
+    const isAdminMember = (d.role || 'member') === 'admin';
+    const roleBadge = isAdminMember
+        ? '<span class="admin-member-badge admin-member-badge--admin"><i class="fa-solid fa-shield-halved"></i> Admin</span>'
+        : '<span class="admin-member-badge admin-member-badge--member"><i class="fa-solid fa-user"></i> Member</span>';
+    const roleActionButton = isAdminMember
+        ? `
+                <button data-member-id="${d.id}" class="demote-member-btn admin-action-btn admin-action-btn--demote" title="Make Member">
+                    <i class="fa-solid fa-user-minus" data-member-id="${d.id}"></i>
+                </button>
+        `
+        : `
+                <button data-member-id="${d.id}" class="promote-member-btn admin-action-btn admin-action-btn--promote" title="Make Admin">
+                    <i class="fa-solid fa-user-shield" data-member-id="${d.id}"></i>
+                </button>
+        `;
     return `
         <div class="admin-member-card">
             <div class="admin-member-card__avatar">${avatarContent}</div>
@@ -96,16 +111,18 @@ function renderDonorCardAdmin(d) {
                     <h4 class="admin-member-card__name">${donorName}</h4>
                     <span class="admin-member-card__blood"><i class="fa-solid fa-droplet"></i> ${getTextValue(d.bloodGroup, '—')}</span>
                     ${eligibleBadge}
+                    ${roleBadge}
                 </div>
                 <div class="admin-member-card__info">
                     <span><i class="fa-solid fa-envelope"></i> ${getTextValue(d.email, '—')}</span>
                     <span><i class="fa-solid fa-phone"></i> ${phone}</span>
-                    <span><i class="fa-solid fa-location-dot"></i> Donation Center: ${getTextValue(d.location, '—')}</span>
+                    <span><i class="fa-solid fa-location-dot"></i> Current Location: ${getTextValue(d.location, '—')}</span>
                     <span><i class="fa-solid fa-calendar-check"></i> Last: ${lastDate}</span>
                 </div>
                 <div class="admin-member-card__id">ID: ${donorId}</div>
             </div>
             <div class="admin-member-card__actions">
+                ${roleActionButton}
                 <button data-member-id="${d.id}" class="edit-member-btn admin-action-btn admin-action-btn--edit" title="Edit">
                     <i class="fa-solid fa-pen-to-square" data-member-id="${d.id}"></i>
                 </button>
@@ -120,17 +137,20 @@ function renderDonorCardAdmin(d) {
 function getFilteredAdminMembers() {
     const nameFilter = state.memberSearchName.trim().toLowerCase();
     const bloodFilter = state.memberSearchBlood.trim().toUpperCase();
+    const roleFilter = state.memberSearchRole || '';
     return state.donorsList.filter(member => {
         const memberName = getTextValue(member.fullName || member.name, '').toLowerCase();
         const memberBloodGroup = getTextValue(member.bloodGroup, '').toUpperCase();
+        const memberRole = member.role || 'member';
         const matchesName = !nameFilter || memberName.includes(nameFilter);
         const matchesBlood = !bloodFilter || memberBloodGroup === bloodFilter;
-        return matchesName && matchesBlood;
+        const matchesRole = !roleFilter || memberRole === roleFilter;
+        return matchesName && matchesBlood && matchesRole;
     });
 }
 
 function hasActiveMemberSearchFilters() {
-    return Boolean(state.memberSearchName.trim() || state.memberSearchBlood.trim());
+    return Boolean(state.memberSearchName.trim() || state.memberSearchBlood.trim() || state.memberSearchRole);
 }
 
 function updateAdminMemberSearchStatus() {
@@ -138,15 +158,17 @@ function updateAdminMemberSearchStatus() {
     if (!statusEl) return;
     const nameFilter = state.memberSearchName.trim();
     const bloodFilter = state.memberSearchBlood.trim();
-    let label = 'Showing all members';
-    if (nameFilter && bloodFilter) label = `Filtered by "${nameFilter}" • ${bloodFilter}`;
-    else if (nameFilter) label = `Name contains "${nameFilter}"`;
-    else if (bloodFilter) label = `Blood group: ${bloodFilter}`;
+    const roleFilter = state.memberSearchRole;
+    const parts = [];
+    if (roleFilter) parts.push(`Role: ${roleFilter.charAt(0).toUpperCase() + roleFilter.slice(1)}`);
+    if (nameFilter) parts.push(`Name contains "${nameFilter}"`);
+    if (bloodFilter) parts.push(`Blood group: ${bloodFilter}`);
+    const label = parts.length ? parts.join(' • ') : 'Showing all members';
     statusEl.textContent = label;
-    statusEl.classList.toggle('is-filtered', Boolean(nameFilter || bloodFilter));
+    statusEl.classList.toggle('is-filtered', parts.length > 0);
 }
 
-export function renderAdminMembersList(deleteMemberFn) {
+export function renderAdminMembersList(deleteMemberFn, promoteMemberFn, demoteMemberFn) {
     const membersListDiv = document.getElementById('admin-members-list');
     if (!membersListDiv) return;
     updateAdminMemberSearchStatus();
@@ -188,24 +210,39 @@ export function renderAdminMembersList(deleteMemberFn) {
             if (memberId && memberData && deleteMemberFn) deleteMemberFn(memberId);
         });
     });
+    membersListDiv.querySelectorAll('.promote-member-btn').forEach(button => {
+        button.addEventListener('click', (ev) => {
+            const memberId = ev.target.closest('[data-member-id]')?.dataset.memberId || ev.target.dataset.memberId;
+            const memberData = state.donorsList.find(d => d.id === memberId);
+            if (memberId && memberData && promoteMemberFn) promoteMemberFn(memberId, memberData);
+        });
+    });
+    membersListDiv.querySelectorAll('.demote-member-btn').forEach(button => {
+        button.addEventListener('click', (ev) => {
+            const memberId = ev.target.closest('[data-member-id]')?.dataset.memberId || ev.target.dataset.memberId;
+            const memberData = state.donorsList.find(d => d.id === memberId);
+            if (memberId && memberData && demoteMemberFn) demoteMemberFn(memberId, memberData);
+        });
+    });
 }
 
-export function applyAdminMemberSearchFilters(deleteMemberFn) {
+export function applyAdminMemberSearchFilters(deleteMemberFn, promoteMemberFn, demoteMemberFn) {
     const nameInput = document.getElementById('admin-member-search-name');
     const bloodSelect = document.getElementById('admin-member-search-blood');
     state.memberSearchName = (nameInput?.value || '').trim();
     state.memberSearchBlood = (bloodSelect?.value || '').trim();
-    renderAdminMembersList(deleteMemberFn);
+    renderAdminMembersList(deleteMemberFn, promoteMemberFn, demoteMemberFn);
 }
 
-export function resetAdminMemberSearchFilters(deleteMemberFn) {
+export function resetAdminMemberSearchFilters(deleteMemberFn, promoteMemberFn, demoteMemberFn) {
     state.memberSearchName = '';
     state.memberSearchBlood = '';
+    state.memberSearchRole = '';
     const nameInput = document.getElementById('admin-member-search-name');
     const bloodSelect = document.getElementById('admin-member-search-blood');
     if (nameInput) nameInput.value = '';
     if (bloodSelect) bloodSelect.value = '';
-    renderAdminMembersList(deleteMemberFn);
+    renderAdminMembersList(deleteMemberFn, promoteMemberFn, demoteMemberFn);
 }
 
 export function renderAdminEventsList(deleteEventFn) {
