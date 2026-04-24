@@ -21,6 +21,10 @@ const state = {
     eventsEmptyStateEl: null,
     joinFeedbackEl: null,
     dashboardRefreshTimer: null,
+    dashboardChartRetryTimer: null,
+    donorIdRepairInFlight: false,
+    donorIdRepairSignature: '',
+    recentDonationSearchId: '',
     isStatsObserverInitialized: false
 };
 export default state;

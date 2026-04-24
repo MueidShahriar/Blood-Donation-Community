@@ -9,7 +9,7 @@ import {
     onAuthStateChanged, sendPasswordResetEmail
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import {
-    getDatabase, ref, set, onValue, push
+    getDatabase, ref, set, onValue, push, runTransaction
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
 import { firebaseConfig } from "../modules/firebase-config.js";
@@ -62,7 +62,7 @@ window.onload = function () {
     initFeedback(feedbackRef, push);
 
     // Join form
-    initJoinForm({ auth, database, ref, set, createUserWithEmailAndPassword });
+    initJoinForm({ auth, database, ref, set, runTransaction, createUserWithEmailAndPassword });
 
     // Auth
     initAuth({

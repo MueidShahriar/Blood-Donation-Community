@@ -2,7 +2,8 @@ import state from './state.js';
 import { openModal, closeModal, showModalMessage } from './modals.js';
 import { t } from './language-ui.js';
 
-export function updateLoginButtonState(database, ref, onValue, renderAdminMembersList, renderAdminEventsList, deleteMemberFn, deleteEventFn) {
+export function updateLoginButtonState(database, ref, onValue, renderAdminMembersList, renderAdminEventsList, deleteMemberFn, deleteEventFn, afterRoleResolvedFn) {
+    const assetPrefix = window.location.pathname.includes('/pages/') ? '../' : '';
     const loginBtn = document.getElementById('login-btn');
     const mobileLoginBtn = document.getElementById('mobile-login-btn');
     const profileUserId = document.getElementById('profile-userId');
@@ -17,14 +18,14 @@ export function updateLoginButtonState(database, ref, onValue, renderAdminMember
     if (!loginBtn && !mobileLoginBtn) return;
     if (state.currentUser) {
         if (loginBtn) {
-            loginBtn.innerHTML = '<img src="image/login.png" alt="Profile" class="inline-icon"><span class="sr-only">' + t('btnProfile') + '</span>';
+            loginBtn.innerHTML = '<img src="' + assetPrefix + 'image/login.png" alt="Profile" class="inline-icon"><span class="sr-only">' + t('btnProfile') + '</span>';
             loginBtn.setAttribute('aria-label', t('btnProfile'));
             loginBtn.setAttribute('title', t('btnProfile'));
             loginBtn.dataset.state = 'loggedin';
             loginBtn.removeAttribute('data-i18n');
         }
         if (mobileLoginBtn) {
-            mobileLoginBtn.innerHTML = '<img src="image/login.png" alt="Profile" class="inline-icon"> ' + t('btnProfile');
+            mobileLoginBtn.innerHTML = '<img src="' + assetPrefix + 'image/login.png" alt="Profile" class="inline-icon"> ' + t('btnProfile');
             mobileLoginBtn.setAttribute('aria-label', t('btnProfile'));
             mobileLoginBtn.setAttribute('title', t('btnProfile'));
             mobileLoginBtn.removeAttribute('data-i18n');
@@ -56,15 +57,16 @@ export function updateLoginButtonState(database, ref, onValue, renderAdminMember
                 navLinkIds.forEach(id => document.getElementById(id)?.classList.remove('hidden'));
                 mobileNavIds.forEach(id => document.getElementById(id)?.classList.remove('hidden'));
             }
+            if (typeof afterRoleResolvedFn === 'function') afterRoleResolvedFn(state.currentUserRole);
         }, { onlyOnce: true });
     } else {
         if (loginBtn) {
-            loginBtn.innerHTML = '<img src="image/login.png" alt="Login" class="inline-icon"> ' + t('btnLogin');
+            loginBtn.innerHTML = '<img src="' + assetPrefix + 'image/login.png" alt="Login" class="inline-icon"> ' + t('btnLogin');
             loginBtn.dataset.state = 'loggedout';
             loginBtn.setAttribute('data-i18n', 'btnLogin');
         }
         if (mobileLoginBtn) {
-            mobileLoginBtn.innerHTML = '<img src="image/login.png" alt="Login" class="inline-icon"> ' + t('btnLogin');
+            mobileLoginBtn.innerHTML = '<img src="' + assetPrefix + 'image/login.png" alt="Login" class="inline-icon"> ' + t('btnLogin');
             mobileLoginBtn.setAttribute('data-i18n', 'btnLogin');
         }
         if (mobileLogoutBtn) { mobileLogoutBtn.classList.add('hidden'); mobileLogoutBtn.classList.remove('block'); }
@@ -90,9 +92,14 @@ export function initAuth({
     const loginForm = document.getElementById('login-form');
     const mobileMenu = document.getElementById('mobile-menu');
 
+    function getProfileHref() {
+        const path = window.location.pathname || '';
+        return path.includes('/pages/') ? 'profile.html' : 'pages/profile.html';
+    }
+
     function handleLoginClick() {
         if (state.currentUser) {
-            window.location.href = 'profile.html';
+            window.location.href = getProfileHref();
         } else {
             openModal(loginModal);
         }
@@ -128,7 +135,7 @@ export function initAuth({
                 state.currentUser = userCredential.user;
                 updateLoginFn();
                 closeModal(loginModal);
-                window.location.href = 'profile.html';
+                window.location.href = getProfileHref();
             })
             .catch((error) => {
                 showModalMessage('success-modal', `Login failed: ${error.message}`, 'Login Failed');

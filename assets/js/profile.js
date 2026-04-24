@@ -24,6 +24,7 @@ import { initFeedback } from "./modules/feedback.js";
 import { initHeader, initMobileMenu } from "./modules/header.js";
 import { initVisitorTracker } from "./modules/visitor-tracker.js";
 import { initChatbot } from "./modules/chatbot.js";
+import { normalizeDonorId } from "./modules/utils.js";
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
@@ -39,6 +40,7 @@ const displayName = document.getElementById('profile-display-name');
 const displayBlood = document.getElementById('profile-display-blood');
 const displayLocation = document.getElementById('profile-display-location');
 const displayEmail = document.getElementById('profile-display-email');
+const displayDonorId = document.getElementById('profile-display-id');
 const statLast = document.getElementById('profile-stat-last');
 const statEligible = document.getElementById('profile-stat-eligible');
 const statRole = document.getElementById('profile-stat-role');
@@ -87,6 +89,10 @@ function hideLoader() {
         document.body.classList.remove('loading');
         setTimeout(() => { loader.style.display = 'none'; }, 500);
     }
+}
+
+function getHomeHref() {
+    return window.location.pathname.includes('/pages/') ? '../index.html' : 'index.html';
 }
 
 function showToast(message, type = 'success') {
@@ -155,6 +161,7 @@ function populateProfile(data, email) {
     if (displayBlood) displayBlood.querySelector('span:last-child').textContent = blood;
     if (displayLocation) displayLocation.querySelector('span:last-child').textContent = loc;
     if (displayEmail) displayEmail.textContent = email || '';
+    if (displayDonorId) displayDonorId.textContent = normalizeDonorId(data.donorId) || data.donorId || '—';
     if (statLast) statLast.textContent = formatDate(data.lastDonateDate);
     if (statEligible) {
         const elig = isDonorEligible(data.lastDonateDate);
@@ -388,7 +395,7 @@ function resizeAndCompressPhoto(file, maxW, maxH) {
 function handleLogout() {
     signOut(auth).then(() => {
         showToast('Logged out', 'success');
-        setTimeout(() => { window.location.href = 'index.html'; }, 600);
+        setTimeout(() => { window.location.href = getHomeHref(); }, 600);
     }).catch((err) => {
         console.error('Logout failed:', err);
         showToast('Logout failed', 'error');
@@ -467,13 +474,13 @@ deleteConfirmBtn?.addEventListener('click', () => {
         .then(() => {
             closeModal(deleteModal);
             showToast('Account deleted.', 'success');
-            setTimeout(() => { window.location.href = 'index.html'; }, 800);
+            setTimeout(() => { window.location.href = getHomeHref(); }, 800);
         })
         .catch((err) => {
             if (err && err.code === 'auth/requires-recent-login') {
                 showToast('Please log in again to delete your account.', 'error');
                 signOut(auth).then(() => {
-                    setTimeout(() => { window.location.href = 'index.html'; }, 1200);
+                    setTimeout(() => { window.location.href = getHomeHref(); }, 1200);
                 });
             } else {
                 console.error('Delete failed:', err);

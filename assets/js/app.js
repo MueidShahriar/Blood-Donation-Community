@@ -6,7 +6,7 @@ import {
     signOut, onAuthStateChanged, sendPasswordResetEmail, deleteUser
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import {
-    getDatabase, ref, push, set, onValue, remove, update, query, limitToLast
+    getDatabase, ref, push, set, onValue, remove, update, query, limitToLast, runTransaction
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
 import { firebaseConfig, ADMIN_EMAIL } from "./modules/firebase-config.js";
@@ -24,7 +24,8 @@ import {
 } from "./modules/modals.js";
 import {
     normalizeBloodGroup, buildDonorIndex, formatDateDisplay,
-    getDonationDetailData, groupRecentDonationsByMonth, isDonorEligible
+    getDonationDetailData, groupRecentDonationsByMonth, isDonorEligible,
+    normalizeDonorId, getDonorIdNumber, getMaxDonorIdNumber, DONOR_ID_COUNTER_SEED
 } from "./modules/utils.js";
 import { setCountTarget, initStatsCounter } from "./modules/stats-counter.js";
 import {
@@ -143,38 +144,145 @@ function deleteRecentDonation(donationId) {
 
 function callUpdateLogin() {
     updateLoginButtonState(database, ref, onValue,
-        renderAdminMembersList, renderAdminEventsList, deleteMember, deleteEvent);
+        renderAdminMembersList, renderAdminEventsList, deleteMember, deleteEvent, () => ensureUniqueDonorIds());
+}
+
+function setSearchErrorState(message) {
+    const searchResults = document.getElementById('search-results');
+    if (searchResults) {
+        searchResults.innerHTML = `<div class="text-gray-500 italic">${message}</div>`;
+    }
+    setSearchLoading(false);
+}
+
+function runInitStep(label, callback) {
+    try {
+        callback();
+    } catch (error) {
+        console.error(`Failed to initialize ${label}:`, error);
+    }
+}
+
+function getDonorIdRepairPlan() {
+    const donors = [...state.donorsList]
+        .filter(donor => donor?.id)
+        .sort((a, b) => {
+            const aDate = a.createdAt ? new Date(a.createdAt).getTime() : 0;
+            const bDate = b.createdAt ? new Date(b.createdAt).getTime() : 0;
+            if (aDate !== bDate) return aDate - bDate;
+            return String(a.id).localeCompare(String(b.id));
+        });
+    const used = new Set();
+    const formatUpdates = [];
+    const needsNewId = [];
+    let maxUsed = getMaxDonorIdNumber(donors);
+
+    donors.forEach((donor) => {
+        const rawDonorId = donor.rawDonorId ?? donor.donorId;
+        const normalized = normalizeDonorId(rawDonorId);
+        const numericId = getDonorIdNumber(normalized);
+        if (normalized && numericId && !used.has(numericId)) {
+            used.add(numericId);
+            maxUsed = Math.max(maxUsed, numericId);
+            if (String(rawDonorId || '').trim() !== normalized) {
+                formatUpdates.push({ donor, donorId: normalized });
+            }
+            return;
+        }
+        needsNewId.push(donor);
+    });
+
+    const signature = [
+        ...formatUpdates.map(item => `format:${item.donor.id}:${item.donorId}`),
+        ...needsNewId.map(donor => `new:${donor.id}`)
+    ].join('|');
+    return { formatUpdates, needsNewId, maxUsed, signature };
+}
+
+async function ensureUniqueDonorIds() {
+    if (state.currentUserRole !== 'admin' || state.donorIdRepairInFlight || !state.donorsList.length) return;
+    const plan = getDonorIdRepairPlan();
+    if (!plan.signature || plan.signature === state.donorIdRepairSignature) return;
+
+    state.donorIdRepairInFlight = true;
+    try {
+        const updates = {};
+        plan.formatUpdates.forEach(({ donor, donorId }) => {
+            updates[`/donors/${donor.id}/donorId`] = donorId;
+        });
+
+        if (plan.needsNewId.length) {
+            const result = await runTransaction(ref(database, 'stats/donorIdCounter'), (current) => {
+                const currentNum = getDonorIdNumber(current);
+                const safeCurrent = Math.max(
+                    Number.isFinite(currentNum) ? currentNum : DONOR_ID_COUNTER_SEED,
+                    plan.maxUsed,
+                    DONOR_ID_COUNTER_SEED
+                );
+                return safeCurrent + plan.needsNewId.length;
+            });
+            if (!result.committed) throw new Error('Donor ID repair transaction was not committed.');
+            const finalCounter = getDonorIdNumber(result.snapshot.val());
+            if (!finalCounter) throw new Error('Donor ID repair did not return a valid counter.');
+            const firstNewId = finalCounter - plan.needsNewId.length + 1;
+            plan.needsNewId.forEach((donor, index) => {
+                updates[`/donors/${donor.id}/donorId`] = normalizeDonorId(firstNewId + index);
+            });
+        }
+
+        if (Object.keys(updates).length) {
+            await update(ref(database), updates);
+        }
+        state.donorIdRepairSignature = plan.signature;
+    } catch (error) {
+        console.error('Failed to repair donor IDs:', error);
+    } finally {
+        state.donorIdRepairInFlight = false;
+    }
 }
 
 onValue(donorsRef, (snapshot) => {
-    const data = snapshot.val();
-    state.donorsList = [];
-    if (data && typeof data === 'object') {
-        for (const key in data) {
-            if (Object.prototype.hasOwnProperty.call(data, key)) {
-                state.donorsList.push({ id: key, ...data[key] });
+    try {
+        const data = snapshot.val();
+        state.donorsList = [];
+        if (data && typeof data === 'object') {
+            for (const key in data) {
+                if (Object.prototype.hasOwnProperty.call(data, key)) {
+                    state.donorsList.push({ id: key, ...data[key] });
+                }
             }
         }
-    }
-    buildDonorIndex(state.donorsList, state);
+        state.donorsList.forEach((donor) => {
+            donor.rawDonorId = donor.donorId;
+            donor.donorId = normalizeDonorId(donor.rawDonorId);
+        });
+        buildDonorIndex(state.donorsList, state);
 
-    const blood = document.getElementById('search-blood')?.value;
-    const eligibleOnly = document.getElementById('eligible-only')?.checked;
-    const resultsEl = document.getElementById('search-results');
-    if (blood === 'select') {
-        if (resultsEl) resultsEl.innerHTML = '';
-        setSearchLoading(false);
-    } else if (resultsEl) {
-        const normalized = normalizeBloodGroup(blood);
-        let filtered = (blood && blood !== 'all' && blood !== 'select')
-            ? (state.donorsByGroup.get(normalized) || []) : state.donorsList;
-        if (eligibleOnly) filtered = filtered.filter(d => isDonorEligible(d.lastDonateDate));
-        renderSearchResults(filtered);
+        const blood = document.getElementById('search-blood')?.value;
+        const eligibleOnly = document.getElementById('eligible-only')?.checked;
+        const resultsEl = document.getElementById('search-results');
+        if (blood === 'select') {
+            if (resultsEl) resultsEl.innerHTML = '';
+            setSearchLoading(false);
+        } else if (resultsEl) {
+            const normalized = normalizeBloodGroup(blood);
+            let filtered = (blood && blood !== 'all' && blood !== 'select')
+                ? (state.donorsByGroup.get(normalized) || []) : state.donorsList;
+            if (eligibleOnly) filtered = filtered.filter(d => isDonorEligible(d.lastDonateDate));
+            renderSearchResults(filtered);
+        }
+        renderAdminMembersList(deleteMember);
+        refreshDashboardCharts();
+        setCountTarget('donor-count', state.donorsList.length);
+        ensureUniqueDonorIds();
+    } catch (error) {
+        console.error('Failed to process donors:', error);
+        setSearchErrorState('Donor data could not be shown right now. Please refresh and try again.');
     }
-    renderAdminMembersList(deleteMember);
-    refreshDashboardCharts();
-    setCountTarget('donor-count', state.donorsList.length);
-}, err => console.error("Failed to load donors:", err));
+}, err => {
+    console.error("Failed to load donors:", err);
+    setSearchErrorState('Donor data could not be loaded right now.');
+});
 
 onValue(eventsRef, (snapshot) => {
     const data = snapshot.val();
@@ -197,24 +305,43 @@ onValue(statsRef, (snapshot) => {
 }, err => console.error("Failed to load stats:", err));
 
 onValue(recentDonationsRef, (snapshot) => {
-    const data = snapshot.val();
-    const list = [];
-    if (data) {
-        for (const key in data) {
-            if (data.hasOwnProperty(key)) list.push({ id: key, ...data[key] });
+    try {
+        const data = snapshot.val();
+        const list = [];
+        if (data) {
+            for (const key in data) {
+                if (Object.prototype.hasOwnProperty.call(data, key)) {
+                    const donation = { id: key, ...data[key] };
+                    const normalizedDonationId = normalizeDonorId(donation.donorId);
+                    if (normalizedDonationId) {
+                        donation.donorId = normalizedDonationId;
+                    }
+                    list.push(donation);
+                }
+            }
         }
+        list.sort((a, b) => {
+            const ad = a.date ? new Date(a.date).getTime() : 0;
+            const bd = b.date ? new Date(b.date).getTime() : 0;
+            return bd - ad;
+        });
+        state.recentDonationsList = list;
+        renderRecentDonorsCarousel(list);
+        refreshDashboardCharts();
+        renderAdminRecentDonationsList(deleteRecentDonation);
+        setRecentLoading(false);
+    } catch (error) {
+        console.error('Failed to process recent donations:', error);
+        state.recentDonationsList = [];
+        renderRecentDonorsCarousel([]);
+        setRecentLoading(false);
     }
-    list.sort((a, b) => {
-        const ad = a.date ? new Date(a.date).getTime() : 0;
-        const bd = b.date ? new Date(b.date).getTime() : 0;
-        return bd - ad;
-    });
-    state.recentDonationsList = list;
-    renderRecentDonorsCarousel(list);
-    refreshDashboardCharts();
-    renderAdminRecentDonationsList(deleteRecentDonation);
+}, err => {
+    console.error("Failed to load recent donations:", err);
+    state.recentDonationsList = [];
+    renderRecentDonorsCarousel([]);
     setRecentLoading(false);
-}, err => { console.error("Failed to load recent donations:", err); setRecentLoading(false); });
+});
 
 function initContactScroll() {
     const fastScrollTo = (el, duration = 250) => {
@@ -252,9 +379,9 @@ function initContactScroll() {
 }
 
 window.onload = function () {
-    initPreloader();
-    initHeader();
-    initLanguageSystem();
+    runInitStep('preloader', () => initPreloader());
+    runInitStep('header', () => initHeader());
+    runInitStep('language system', () => initLanguageSystem());
     window.addEventListener('languageChanged', () => callUpdateLogin());
 
     const successModal      = document.getElementById('success-modal');
@@ -270,24 +397,24 @@ window.onload = function () {
         if (ev.key === 'Escape') [successModal, loginModal, deleteConfirmModal].forEach(m => closeModal(m));
     });
 
-    initMobileMenu();
-    setupStatsVisibilityObserver();
-    initDashboardRefreshTimer();
-    initCarousel();
-    initEventControls();
-    initSearch();
-    initBackToTop();
-    initAdminTabs();
-    initContactScroll();
-    initFloatObserver();
-    initStatsCounter();
-    initChatbot();
+    runInitStep('mobile menu', () => initMobileMenu());
+    runInitStep('dashboard observer', () => setupStatsVisibilityObserver());
+    runInitStep('dashboard refresh timer', () => initDashboardRefreshTimer());
+    runInitStep('recent donations carousel', () => initCarousel());
+    runInitStep('public events controls', () => initEventControls());
+    runInitStep('home search', () => initSearch());
+    runInitStep('back to top', () => initBackToTop());
+    runInitStep('admin tabs', () => initAdminTabs());
+    runInitStep('contact scroll', () => initContactScroll());
+    runInitStep('float observer', () => initFloatObserver());
+    runInitStep('stats counter', () => initStatsCounter());
+    runInitStep('chatbot', () => initChatbot());
 
-    initFeedback(feedbackRef, push);
+    runInitStep('feedback', () => initFeedback(feedbackRef, push));
     const isHomePage = /\/(index\.html)?(\?.*)?(\#.*)?$/i.test(window.location.pathname);
-    initVisitorTracker(database, isHomePage); // track total views only on home page
-    initJoinForm({ auth, database, ref, set, createUserWithEmailAndPassword });
-    initAuth({
+    runInitStep('visitor tracker', () => initVisitorTracker(database, isHomePage)); // track total views only on home page
+    runInitStep('join form', () => initJoinForm({ auth, database, ref, set, runTransaction, createUserWithEmailAndPassword }));
+    runInitStep('auth', () => initAuth({
         auth, database, ref, onValue,
         signInWithEmailAndPassword, signOut, sendPasswordResetEmail, onAuthStateChanged,
         renderAdminMembersFn: renderAdminMembersList,
@@ -295,7 +422,7 @@ window.onload = function () {
         deleteMemberFn: deleteMember,
         deleteEventFn: deleteEvent,
         updateLoginFn: callUpdateLogin
-    });
+    }));
 
     const adminEventForm = document.getElementById('admin-event-form');
     adminEventForm?.addEventListener('submit', ev => {
@@ -313,20 +440,63 @@ window.onload = function () {
         ev.preventDefault();
         const fd = new FormData(adminRecentDonorForm);
         const editId = fd.get('recent-donor-id')?.toString().trim();
+        const donorIdRaw = fd.get('donor-id')?.toString().trim() || '';
+        const donorIdInput = normalizeDonorId(donorIdRaw);
+        const matchedDonor = donorIdInput
+            ? state.donorsList.find(d => normalizeDonorId(d.donorId) === donorIdInput)
+            : (donorIdRaw ? state.donorsList.find(d => d.id === donorIdRaw) : null);
         const donorData = {
             name: fd.get('donor-name'), bloodGroup: fd.get('donor-blood-group'),
             location: fd.get('donor-location'), department: fd.get('donor-department'),
             batch: fd.get('donor-batch'), age: fd.get('donor-age'),
-            weight: fd.get('donor-weight'), date: fd.get('donation-date')
+            weight: fd.get('donor-weight'), height: fd.get('donor-height'),
+            phone: fd.get('donor-number'), date: fd.get('donation-date'),
+            donorId: donorIdInput || normalizeDonorId(matchedDonor?.donorId)
         };
+        if (matchedDonor) {
+            const lastInfo = matchedDonor.lastDonationInfo || {};
+            if (!donorData.name) donorData.name = matchedDonor.fullName || matchedDonor.name || '';
+            if (!donorData.bloodGroup) donorData.bloodGroup = matchedDonor.bloodGroup || '';
+            if (!donorData.location) donorData.location = matchedDonor.location || '';
+            if (!donorData.department) donorData.department = matchedDonor.department || lastInfo.department || '';
+            if (!donorData.batch) donorData.batch = matchedDonor.batch || lastInfo.batch || '';
+            if (!donorData.phone) donorData.phone = matchedDonor.phone || '';
+            if (!donorData.height) donorData.height = matchedDonor.height || lastInfo.height || '';
+            if (!donorData.weight) donorData.weight = matchedDonor.weight || lastInfo.weight || '';
+        }
         if (!donorData.name || !donorData.bloodGroup || !donorData.location || !donorData.date) {
             showModalMessage('success-modal', 'Please fill all required fields: Donor Name, Blood Group, Location, and Donation Date.', 'Error');
             return;
         }
+        const donorProfileUpdates = matchedDonor ? {
+            lastDonateDate: donorData.date || matchedDonor.lastDonateDate || '',
+            department: donorData.department || matchedDonor.department || '',
+            batch: donorData.batch || matchedDonor.batch || '',
+            height: donorData.height || matchedDonor.height || '',
+            weight: donorData.weight || matchedDonor.weight || '',
+            lastDonationInfo: {
+                date: donorData.date || '',
+                location: donorData.location || '',
+                bloodGroup: donorData.bloodGroup || '',
+                department: donorData.department || '',
+                batch: donorData.batch || '',
+                age: donorData.age || '',
+                height: donorData.height || '',
+                weight: donorData.weight || '',
+                donorId: donorData.donorId || normalizeDonorId(matchedDonor.donorId)
+            }
+        } : null;
         if (editId) {
             // Update existing recent donation
             update(ref(database, 'recentDonations/' + editId), donorData)
-                .then(() => { showModalMessage('success-modal', 'Recent donation updated successfully!', 'Success'); clearAdminRecentDonorForm(); })
+                .then(() => {
+                    if (matchedDonor && donorProfileUpdates) {
+                        update(ref(database, 'donors/' + matchedDonor.id), donorProfileUpdates)
+                            .catch(err => console.error('Failed to sync donor profile:', err));
+                    }
+                    showModalMessage('success-modal', 'Recent donation updated successfully!', 'Success');
+                    clearAdminRecentDonorForm();
+                })
                 .catch(error => showModalMessage('success-modal', `Failed to update donation: ${error.message}`, 'Error'));
         } else {
             // Add new recent donation
@@ -337,11 +507,53 @@ window.onload = function () {
                 updates[`/recentDonations/${push(recentDonationsRef).key}`] = donorData;
                 updates['/stats/livesHelped'] = cur + 1;
                 update(ref(database), updates)
-                    .then(() => { showModalMessage('success-modal', 'Recent donor added and lives helped count incremented!', 'Success'); clearAdminRecentDonorForm(); })
+                    .then(() => {
+                        if (matchedDonor && donorProfileUpdates) {
+                            const totalDonations = Number(matchedDonor.totalDonations) || 0;
+                            update(ref(database, 'donors/' + matchedDonor.id), {
+                                ...donorProfileUpdates,
+                                totalDonations: totalDonations + 1
+                            }).catch(err => console.error('Failed to sync donor profile:', err));
+                        }
+                        showModalMessage('success-modal', 'Recent donor added and lives helped count incremented!', 'Success');
+                        clearAdminRecentDonorForm();
+                    })
                     .catch(error => showModalMessage('success-modal', `Failed to update data: ${error.message}`, 'Error'));
             }, { onlyOnce: true });
         }
     });
+    const recentDonorIdField = document.getElementById('donor-id');
+    const fillRecentDonorFromId = () => {
+        const rawId = recentDonorIdField?.value.trim() || '';
+        if (!rawId) return;
+        const normalizedId = normalizeDonorId(rawId);
+        if (recentDonorIdField && normalizedId && recentDonorIdField.value.trim() !== normalizedId) {
+            recentDonorIdField.value = normalizedId;
+        }
+        const match = normalizedId
+            ? state.donorsList.find(d => normalizeDonorId(d.donorId) === normalizedId)
+            : state.donorsList.find(d => d.id === rawId);
+        if (!match) return;
+        const lastInfo = match.lastDonationInfo || {};
+        const nameF = document.getElementById('donor-name');
+        const bgF = document.getElementById('donor-blood-group');
+        const locF = document.getElementById('donor-location');
+        const deptF = document.getElementById('donor-department');
+        const batchF = document.getElementById('donor-batch');
+        const numberF = document.getElementById('donor-number');
+        const heightF = document.getElementById('donor-height');
+        const weightF = document.getElementById('donor-weight');
+        if (nameF && !nameF.value) nameF.value = match.fullName || '';
+        if (bgF && !bgF.value) bgF.value = match.bloodGroup || '';
+        if (locF && !locF.value) locF.value = match.location || '';
+        if (deptF && !deptF.value) deptF.value = match.department || lastInfo.department || '';
+        if (batchF && !batchF.value) batchF.value = match.batch || lastInfo.batch || '';
+        if (numberF && !numberF.value) numberF.value = match.phone || '';
+        if (heightF && !heightF.value) heightF.value = match.height || lastInfo.height || '';
+        if (weightF && !weightF.value) weightF.value = match.weight || lastInfo.weight || '';
+    };
+    recentDonorIdField?.addEventListener('input', fillRecentDonorFromId);
+    recentDonorIdField?.addEventListener('change', fillRecentDonorFromId);
     document.getElementById('clear-recent-donor-btn')?.addEventListener('click', clearAdminRecentDonorForm);
 
     const adminMemberForm = document.getElementById('admin-member-form');

@@ -1,4 +1,5 @@
 import state from './state.js';
+import { getInitials, getTextValue } from './utils.js';
 
 export function setRecentLoading(isLoading) {
     state.recentLoaderState = !!isLoading;
@@ -28,20 +29,37 @@ export function renderRecentDonorsCarousel(donors) {
     carouselInner.innerHTML = '';
     carouselIndicators.innerHTML = '';
     if (donors.length === 0) {
-        carouselInner.innerHTML = '<div class="text-center p-5">No recent donations to show.</div>';
+        carouselInner.innerHTML = `
+            <div class="carousel-item active">
+                <article class="recent-card mx-auto max-w-2xl w-full">
+                    <div class="recent-card__chip">
+                        <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
+                        Recent Donation Feed
+                    </div>
+                    <div class="recent-card__summary">
+                        <div class="recent-card__avatar" aria-hidden="true">BD</div>
+                        <div class="recent-card__summary-copy">
+                            <p class="recent-card__headline">No recent donations have been published yet.</p>
+                            <p class="recent-card__date">Once admins add a donation entry, it will appear here automatically.</p>
+                        </div>
+                    </div>
+                </article>
+            </div>
+        `;
         if (carousel) carousel.classList.remove('show-controls');
         return;
     }
     donors.forEach((d, index) => {
         const donationDate = d.date ? (() => { const _d = new Date(d.date); const _p = n => String(n).padStart(2,'0'); return `${_p(_d.getDate())}/${_p(_d.getMonth()+1)}/${_d.getFullYear()}`; })() : '—';
-        const donorName = d.name || 'Anonymous Donor';
-        const locationLabel = d.location || '—';
-        const department = d.department || '—';
-        const batch = d.batch || '—';
-        const age = d.age ? d.age : '—';
-        const weight = d.weight ? `${d.weight} kg` : '—';
-        const bloodGroup = d.bloodGroup || '—';
-        const initials = donorName.split(/\s+/).filter(Boolean).map(part => part[0]).join('').slice(0, 2).toUpperCase() || 'BD';
+        const donorName = getTextValue(d.name || d.donorName || d.fullName, 'Anonymous Donor');
+        const locationLabel = getTextValue(d.location, '—');
+        const department = getTextValue(d.department, '—');
+        const batch = getTextValue(d.batch, '—');
+        const age = getTextValue(d.age, '—');
+        const weightValue = getTextValue(d.weight, '');
+        const weight = weightValue ? `${weightValue} kg` : '—';
+        const bloodGroup = getTextValue(d.bloodGroup, '—');
+        const initials = getInitials(donorName, 'BD');
         const itemClass = index === 0 ? 'carousel-item active' : 'carousel-item';
         const carouselItemHTML = `
             <div class="${itemClass}">
@@ -102,4 +120,9 @@ export function initCarousel() {
     }
     const initialCarousel = document.getElementById('recentDonorCarousel');
     if (initialCarousel) initialCarousel.classList.remove('show-controls');
+    window.setTimeout(() => {
+        if (!state.recentLoaderState) return;
+        renderRecentDonorsCarousel([]);
+        setRecentLoading(false);
+    }, 6500);
 }

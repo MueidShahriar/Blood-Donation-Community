@@ -1,8 +1,9 @@
 import state from './state.js';
 import { showModalMessage } from './modals.js';
 import { ADMIN_EMAIL } from './firebase-config.js';
+import { normalizeDonorId, getDonorIdNumber, getMaxDonorIdNumber, DONOR_ID_COUNTER_SEED } from './utils.js';
 
-export function initJoinForm({ auth, database, ref, set, createUserWithEmailAndPassword }) {
+export function initJoinForm({ auth, database, ref, set, runTransaction, createUserWithEmailAndPassword }) {
     state.joinFeedbackEl = document.getElementById('join-feedback');
 
     function clearJoinFeedback() {
@@ -22,7 +23,7 @@ export function initJoinForm({ auth, database, ref, set, createUserWithEmailAndP
     const joinForm = document.getElementById('join-form');
     const joinClear = document.getElementById('join-clear');
 
-    joinForm?.addEventListener('submit', (e) => {
+    joinForm?.addEventListener('submit', async (e) => {
         e.preventDefault();
         clearJoinFeedback();
         const fd = new FormData(joinForm);
@@ -62,27 +63,42 @@ export function initJoinForm({ auth, database, ref, set, createUserWithEmailAndP
         if (password !== confirm) { setJoinFeedback('Passwords do not match. Please re-enter them.', 'error'); return; }
         if (password.length < 6) { setJoinFeedback('Password must be at least 6 characters.', 'error'); return; }
 
-        createUserWithEmailAndPassword(auth, email, password)
-            .then((userCredential) => {
-                const user = userCredential.user;
-                const donorRef = ref(database, 'donors/' + user.uid);
-                set(donorRef, { ...donorData, email, createdAt: new Date().toISOString() })
-                    .then(() => {
-                        setJoinFeedback(`Welcome, ${donorData.fullName}! Your donor profile was created successfully.`, 'success');
-                        showModalMessage('success-modal', `Welcome, ${donorData.fullName}! Your donor profile was created successfully.`, 'Success');
-                        joinForm.reset();
-                        setTimeout(() => clearJoinFeedback(), 7000);
-                    })
-                    .catch((error) => {
-                        console.error("Error saving donor data:", error);
-                        setJoinFeedback('An error occurred while saving your profile data. Please try again.', 'error');
-                        showModalMessage('success-modal', 'An error occurred while saving your profile data.', 'Error');
-                    });
-            })
-            .catch((error) => {
+        let accountCreated = false;
+        try {
+            const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+            accountCreated = true;
+            const user = userCredential.user;
+            const donorRef = ref(database, 'donors/' + user.uid);
+            const counterRef = ref(database, 'stats/donorIdCounter');
+            const result = await runTransaction(counterRef, (current) => {
+                const currentNum = getDonorIdNumber(current);
+                const counterCurrent = Number.isFinite(currentNum) ? currentNum : DONOR_ID_COUNTER_SEED;
+                const existingMax = getMaxDonorIdNumber(state.donorsList);
+                return Math.max(counterCurrent, existingMax, DONOR_ID_COUNTER_SEED) + 1;
+            });
+            if (!result.committed) throw new Error('Failed to allocate donor ID');
+            const donorId = normalizeDonorId(result.snapshot.val());
+            await set(donorRef, {
+                ...donorData,
+                donorId,
+                totalDonations: 0,
+                email,
+                createdAt: new Date().toISOString()
+            });
+            setJoinFeedback(`Welcome, ${donorData.fullName}! Your donor profile was created successfully.`, 'success');
+            showModalMessage('success-modal', `Welcome, ${donorData.fullName}! Your donor profile was created successfully.`, 'Success');
+            joinForm.reset();
+            setTimeout(() => clearJoinFeedback(), 7000);
+        } catch (error) {
+            console.error('Join form submission failed:', error);
+            if (accountCreated) {
+                setJoinFeedback('An error occurred while saving your profile data. Please try again.', 'error');
+                showModalMessage('success-modal', 'An error occurred while saving your profile data.', 'Error');
+            } else {
                 setJoinFeedback(`Signup failed: ${error.message}`, 'error');
                 showModalMessage('success-modal', `Signup failed: ${error.message}`, 'Error');
-            });
+            }
+        }
     });
 
     joinClear?.addEventListener('click', () => {

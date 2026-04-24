@@ -1,27 +1,30 @@
 import state from './state.js';
-import { sortEventsByDate } from './utils.js';
+import { sortEventsByDate, normalizeDonorId, getInitials, getTextValue } from './utils.js';
 import { openModal, closeModal, showModalMessage, attachConfirmHandler } from './modals.js';
 
 function renderRecentDonationCardAdmin(d) {
     const donationDate = d.date ? (() => { const _d = new Date(d.date + 'T00:00:00'); const _p = n => String(n).padStart(2,'0'); return `${_p(_d.getDate())}/${_p(_d.getMonth()+1)}/${_d.getFullYear()}`; })() : '—';
-    const initials = (d.name || 'D').split(/\s+/).filter(Boolean).map(p => p[0]).join('').slice(0, 2).toUpperCase() || '?';
+    const donorName = getTextValue(d.name || d.donorName || d.fullName, 'Unknown');
+    const initials = getInitials(donorName, '?');
+    const donorId = normalizeDonorId(d.donorId) || d.donorId || '';
     return `
         <div class="admin-event-card">
             <div class="admin-event-card__date-badge" style="background:linear-gradient(135deg,#f59e0b,#d97706)">
-                <span class="admin-event-card__month" style="font-size:0.6rem">${d.bloodGroup || '—'}</span>
+                <span class="admin-event-card__month" style="font-size:0.6rem">${getTextValue(d.bloodGroup, '—')}</span>
                 <span class="admin-event-card__day" style="font-size:0.85rem">${initials}</span>
             </div>
             <div class="admin-event-card__body">
-                <div class="admin-event-card__title">${d.name || 'Unknown'}</div>
+                <div class="admin-event-card__title">${donorName}</div>
                 <div class="admin-event-card__meta">
                     <span><i class="fa-regular fa-calendar"></i> ${donationDate}</span>
-                    <span><i class="fa-solid fa-location-dot"></i> ${d.location || '—'}</span>
+                    <span><i class="fa-solid fa-location-dot"></i> ${getTextValue(d.location, '—')}</span>
                 </div>
+                ${donorId ? `<div class="admin-event-card__meta"><span><i class="fa-solid fa-id-badge"></i> ID: ${donorId}</span></div>` : ''}
                 <div class="admin-event-card__meta">
-                    <span><i class="fa-solid fa-building-columns"></i> Dept: ${d.department || '—'}</span>
-                    <span><i class="fa-solid fa-layer-group"></i> Batch: ${d.batch || '—'}</span>
-                    <span><i class="fa-solid fa-user"></i> Age: ${d.age || '—'}</span>
-                    <span><i class="fa-solid fa-weight-scale"></i> ${d.weight ? d.weight + ' kg' : '—'}</span>
+                    <span><i class="fa-solid fa-building-columns"></i> Dept: ${getTextValue(d.department, '—')}</span>
+                    <span><i class="fa-solid fa-layer-group"></i> Batch: ${getTextValue(d.batch, '—')}</span>
+                    <span><i class="fa-solid fa-user"></i> Age: ${getTextValue(d.age, '—')}</span>
+                    <span><i class="fa-solid fa-weight-scale"></i> ${getTextValue(d.weight, '') ? `${getTextValue(d.weight)} kg` : '—'}</span>
                 </div>
             </div>
             <div class="admin-event-card__actions">
@@ -46,12 +49,16 @@ export function renderAdminRecentDonationsList(deleteRecentFn) {
             if (data) {
                 const idField = document.getElementById('admin-recent-donor-id');
                 if (idField) idField.value = data.id;
+                const donorIdField = document.getElementById('donor-id');
+                if (donorIdField) donorIdField.value = normalizeDonorId(data.donorId) || data.donorId || '';
                 const nameF = document.getElementById('donor-name'); if (nameF) nameF.value = data.name || '';
                 const bgF = document.getElementById('donor-blood-group'); if (bgF) bgF.value = data.bloodGroup || '';
                 const locF = document.getElementById('donor-location'); if (locF) locF.value = data.location || '';
                 const deptF = document.getElementById('donor-department'); if (deptF) deptF.value = data.department || '';
                 const batchF = document.getElementById('donor-batch'); if (batchF) batchF.value = data.batch || '';
                 const ageF = document.getElementById('donor-age'); if (ageF) ageF.value = data.age || '';
+                const numberF = document.getElementById('donor-number'); if (numberF) numberF.value = data.phone || '';
+                const heightF = document.getElementById('donor-height'); if (heightF) heightF.value = data.height || '';
                 const weightF = document.getElementById('donor-weight'); if (weightF) weightF.value = data.weight || '';
                 const dateF = document.getElementById('donation-date'); if (dateF) dateF.value = data.date || '';
                 document.getElementById('admin-recent-donor-form')?.scrollIntoView({ behavior: 'smooth' });
@@ -68,8 +75,9 @@ export function renderAdminRecentDonationsList(deleteRecentFn) {
 
 function renderDonorCardAdmin(d) {
     const lastDate = d.lastDonateDate ? (() => { const _d = new Date(d.lastDonateDate + 'T00:00:00'); const _p = n => String(n).padStart(2,'0'); return `${_p(_d.getDate())}/${_p(_d.getMonth()+1)}/${_d.getFullYear()}`; })() : 'Not recorded';
-    const phone = d.phone || '—';
-    const initials = (d.fullName || 'U').split(/\s+/).filter(Boolean).map(p => p[0]).join('').slice(0, 2).toUpperCase() || '?';
+    const donorName = getTextValue(d.fullName || d.name, 'Unknown');
+    const phone = getTextValue(d.phone, '—');
+    const initials = getInitials(donorName, '?');
     const isEligible = d.lastDonateDate
         ? (Math.floor((new Date() - new Date(d.lastDonateDate + 'T00:00:00')) / (1000*60*60*24)) >= 90)
         : null;
@@ -79,22 +87,23 @@ function renderDonorCardAdmin(d) {
     const avatarContent = d.profilePhoto
         ? `<img src="${d.profilePhoto}" alt="${initials}" style="width:100%;height:100%;object-fit:cover;border-radius:14px">`
         : initials;
+    const donorId = normalizeDonorId(d.donorId) || d.donorId || '—';
     return `
         <div class="admin-member-card">
             <div class="admin-member-card__avatar">${avatarContent}</div>
             <div class="admin-member-card__body">
                 <div class="admin-member-card__top">
-                    <h4 class="admin-member-card__name">${d.fullName || 'Unknown'}</h4>
-                    <span class="admin-member-card__blood"><i class="fa-solid fa-droplet"></i> ${d.bloodGroup || '—'}</span>
+                    <h4 class="admin-member-card__name">${donorName}</h4>
+                    <span class="admin-member-card__blood"><i class="fa-solid fa-droplet"></i> ${getTextValue(d.bloodGroup, '—')}</span>
                     ${eligibleBadge}
                 </div>
                 <div class="admin-member-card__info">
-                    <span><i class="fa-solid fa-envelope"></i> ${d.email || '—'}</span>
+                    <span><i class="fa-solid fa-envelope"></i> ${getTextValue(d.email, '—')}</span>
                     <span><i class="fa-solid fa-phone"></i> ${phone}</span>
-                    <span><i class="fa-solid fa-location-dot"></i> Donation Center: ${d.location || '—'}</span>
+                    <span><i class="fa-solid fa-location-dot"></i> Donation Center: ${getTextValue(d.location, '—')}</span>
                     <span><i class="fa-solid fa-calendar-check"></i> Last: ${lastDate}</span>
                 </div>
-                <div class="admin-member-card__id">ID: ${d.id}</div>
+                <div class="admin-member-card__id">ID: ${donorId}</div>
             </div>
             <div class="admin-member-card__actions">
                 <button data-member-id="${d.id}" class="edit-member-btn admin-action-btn admin-action-btn--edit" title="Edit">
@@ -112,8 +121,10 @@ function getFilteredAdminMembers() {
     const nameFilter = state.memberSearchName.trim().toLowerCase();
     const bloodFilter = state.memberSearchBlood.trim().toUpperCase();
     return state.donorsList.filter(member => {
-        const matchesName = !nameFilter || (member.fullName || '').toLowerCase().includes(nameFilter);
-        const matchesBlood = !bloodFilter || (member.bloodGroup || '').toUpperCase() === bloodFilter;
+        const memberName = getTextValue(member.fullName || member.name, '').toLowerCase();
+        const memberBloodGroup = getTextValue(member.bloodGroup, '').toUpperCase();
+        const matchesName = !nameFilter || memberName.includes(nameFilter);
+        const matchesBlood = !bloodFilter || memberBloodGroup === bloodFilter;
         return matchesName && matchesBlood;
     });
 }

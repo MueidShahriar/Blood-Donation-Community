@@ -9,6 +9,11 @@
 import state from './state.js';
 import { isDonorEligible, normalizeBloodGroup } from './utils.js';
 
+function getSearchHref() {
+    const path = window.location.pathname || '';
+    return path.includes('/pages/') ? 'search.html' : 'pages/search.html';
+}
+
 /* ══════════════════════════════════════════════
    SECTION 1 — Language Detection
    ══════════════════════════════════════════════ */
@@ -133,10 +138,11 @@ function findEligibleDonors(bloodGroup) {
 
 /** Format donor results into a pretty chat message */
 function formatDonorResults(donors, bloodGroup, lang) {
+    const searchHref = getSearchHref();
     if (!donors || donors.length === 0) {
-        if (lang === 'bangla') return `দুঃখিত, এই মুহূর্তে <strong>${bloodGroup}</strong> রক্তের গ্রুপে কোনো যোগ্য দাতা পাওয়া যায়নি। 😔<br><br>📋 আমাদের <a href="search.html" style="color:#dc2626;font-weight:600">ডোনার সার্চ পেজে</a> চেক করুন অথবা পরে আবার চেষ্টা করুন।`;
-        if (lang === 'banglish') return `Sorry, ekhon <strong>${bloodGroup}</strong> blood group er kono eligible donor paoa jaynai. 😔<br><br>📋 Amader <a href="search.html" style="color:#dc2626;font-weight:600">Donor Search page</a> e check korun ba pore abar try korun.`;
-        return `Sorry, no eligible <strong>${bloodGroup}</strong> donors are available right now. 😔<br><br>📋 Check our <a href="search.html" style="color:#dc2626;font-weight:600">Donor Search page</a> or try again later.`;
+        if (lang === 'bangla') return `দুঃখিত, এই মুহূর্তে <strong>${bloodGroup}</strong> রক্তের গ্রুপে কোনো যোগ্য দাতা পাওয়া যায়নি। 😔<br><br>📋 আমাদের <a href="${searchHref}" style="color:#dc2626;font-weight:600">ডোনার সার্চ পেজে</a> চেক করুন অথবা পরে আবার চেষ্টা করুন।`;
+        if (lang === 'banglish') return `Sorry, ekhon <strong>${bloodGroup}</strong> blood group er kono eligible donor paoa jaynai. 😔<br><br>📋 Amader <a href="${searchHref}" style="color:#dc2626;font-weight:600">Donor Search page</a> e check korun ba pore abar try korun.`;
+        return `Sorry, no eligible <strong>${bloodGroup}</strong> donors are available right now. 😔<br><br>📋 Check our <a href="${searchHref}" style="color:#dc2626;font-weight:600">Donor Search page</a> or try again later.`;
     }
 
     const count = donors.length;
@@ -167,9 +173,9 @@ function formatDonorResults(donors, bloodGroup, lang) {
     let footer = '';
     if (count > maxShow) {
         const remaining = count - maxShow;
-        if (lang === 'bangla') footer = `<div style="margin-top:0.5rem;font-size:0.78rem;color:#6b7280">...এবং আরও ${remaining} জন দাতা আছেন। সম্পূর্ণ তালিকার জন্য <a href="search.html" style="color:#dc2626;font-weight:600">সার্চ পেজ</a> দেখুন।</div>`;
-        else if (lang === 'banglish') footer = `<div style="margin-top:0.5rem;font-size:0.78rem;color:#6b7280">...ar o ${remaining} jon donor achen. Full list er jonno <a href="search.html" style="color:#dc2626;font-weight:600">Search page</a> dekhun.</div>`;
-        else footer = `<div style="margin-top:0.5rem;font-size:0.78rem;color:#6b7280">...and ${remaining} more. See the full list on our <a href="search.html" style="color:#dc2626;font-weight:600">Search page</a>.</div>`;
+        if (lang === 'bangla') footer = `<div style="margin-top:0.5rem;font-size:0.78rem;color:#6b7280">...এবং আরও ${remaining} জন দাতা আছেন। সম্পূর্ণ তালিকার জন্য <a href="${searchHref}" style="color:#dc2626;font-weight:600">সার্চ পেজ</a> দেখুন।</div>`;
+        else if (lang === 'banglish') footer = `<div style="margin-top:0.5rem;font-size:0.78rem;color:#6b7280">...ar o ${remaining} jon donor achen. Full list er jonno <a href="${searchHref}" style="color:#dc2626;font-weight:600">Search page</a> dekhun.</div>`;
+        else footer = `<div style="margin-top:0.5rem;font-size:0.78rem;color:#6b7280">...and ${remaining} more. See the full list on our <a href="${searchHref}" style="color:#dc2626;font-weight:600">Search page</a>.</div>`;
     }
 
     let tip;

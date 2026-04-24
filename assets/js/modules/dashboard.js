@@ -3,8 +3,27 @@ import { chartLabels, chartColors, getPieChartOptions } from './chart-config.js'
 import { inferAgeValue, toggleEmptyState } from './utils.js';
 import { flushPendingCounts } from './stats-counter.js';
 
+const CHART_RETRY_DELAY_MS = 350;
+
+function scheduleDashboardChartRetry() {
+    if (state.dashboardChartRetryTimer) return;
+    const hasChartCanvas = document.getElementById('ageGroupChart') || document.getElementById('bloodGroupChart');
+    if (!hasChartCanvas) return;
+    state.dashboardChartRetryTimer = window.setTimeout(() => {
+        state.dashboardChartRetryTimer = null;
+        refreshDashboardCharts();
+    }, CHART_RETRY_DELAY_MS);
+}
+
 export function ensureDashboardCharts() {
-    if (typeof Chart === 'undefined') return;
+    if (typeof Chart === 'undefined') {
+        scheduleDashboardChartRetry();
+        return false;
+    }
+    if (state.dashboardChartRetryTimer) {
+        window.clearTimeout(state.dashboardChartRetryTimer);
+        state.dashboardChartRetryTimer = null;
+    }
     if (!state.ageGroupChart) {
         const ctx = document.getElementById('ageGroupChart');
         if (ctx) {
@@ -69,6 +88,7 @@ export function ensureDashboardCharts() {
             });
         }
     }
+    return Boolean(state.ageGroupChart || state.bloodGroupChart);
 }
 
 export function computeAgeGroupCounts() {
@@ -112,9 +132,12 @@ export function computeBloodGroupCounts() {
 }
 
 export function updateAgeGroupChart() {
-    ensureDashboardCharts();
-    if (!state.ageGroupChart) return;
     const counts = computeAgeGroupCounts();
+    ensureDashboardCharts();
+    if (!state.ageGroupChart) {
+        toggleEmptyState('ageGroupChartEmpty', counts.reduce((sum, value) => sum + value, 0) > 0);
+        return;
+    }
     state.ageGroupChart.data.labels = chartLabels.age;
     state.ageGroupChart.data.datasets[0].data = counts;
     state.ageGroupChart.data.datasets[0].backgroundColor = chartColors.age;
@@ -124,9 +147,12 @@ export function updateAgeGroupChart() {
 }
 
 export function updateBloodGroupChart() {
-    ensureDashboardCharts();
-    if (!state.bloodGroupChart) return;
     const counts = computeBloodGroupCounts();
+    ensureDashboardCharts();
+    if (!state.bloodGroupChart) {
+        toggleEmptyState('bloodGroupChartEmpty', counts.reduce((sum, value) => sum + value, 0) > 0);
+        return;
+    }
     state.bloodGroupChart.data.labels = chartLabels.blood;
     state.bloodGroupChart.data.datasets[0].data = counts;
     state.bloodGroupChart.data.datasets[0].backgroundColor = chartColors.blood;

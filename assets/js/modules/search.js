@@ -1,33 +1,45 @@
 import state from './state.js';
-import { normalizeBloodGroup, isDonorEligible } from './utils.js';
+import { normalizeBloodGroup, isDonorEligible, getInitials, getTextValue } from './utils.js';
+
+function getContactHref() {
+    const path = window.location.pathname || '';
+    const indexHref = path.includes('/pages/') ? '../index.html' : 'index.html';
+    return `${indexHref}#contact`;
+}
 
 function renderDonorCardPublic(d) {
     const lastDate = d.lastDonateDate ? (() => { const _d = new Date(d.lastDonateDate); const _p = n => String(n).padStart(2,'0'); return `${_p(_d.getDate())}/${_p(_d.getMonth()+1)}/${_d.getFullYear()}`; })() : '-';
-    const initials = (d.fullName || 'D').split(/\s+/).filter(Boolean).map(p => p[0]).join('').slice(0,2).toUpperCase();
+    const donorName = getTextValue(d.fullName || d.name, 'Unknown Donor');
+    const initials = getInitials(donorName, 'D');
+    const bloodGroup = getTextValue(d.bloodGroup, '—');
+    const location = getTextValue(d.location, '—');
+    const phone = getTextValue(d.phone, '—');
+    const contactNote = getTextValue(d.publicComment, 'Contact Admin');
     const avatarHtml = d.profilePhoto
         ? `<img src="${d.profilePhoto}" alt="" class="w-10 h-10 rounded-full object-cover border-2 border-red-200 flex-shrink-0" />`
         : `<div class="w-10 h-10 rounded-full bg-gradient-to-br from-red-600 to-red-400 text-white flex items-center justify-center font-bold text-sm flex-shrink-0">${initials}</div>`;
+    const contactHref = getContactHref();
     const contactDesktop = d.isPhoneHidden
-        ? `<a href="index.html#contact" class="flex items-center gap-1 text-red-700 hover:text-red-800 transition-colors">
+        ? `<a href="${contactHref}" class="flex items-center gap-1 text-red-700 hover:text-red-800 transition-colors">
             <i class="fa-solid fa-circle-info text-red-500"></i>
-            <span class="text-xs font-semibold no-underline">${d.publicComment || 'Contact Admin'}</span>
+            <span class="text-xs font-semibold no-underline">${contactNote}</span>
            </a>`
         : `<div class="flex items-center gap-1">
                 <i class="fa-solid fa-phone text-red-500"></i>
                 <span class="font-bold">Contact:</span>
-                <a class="text-xs text-gray-600 underline" href="tel:${d.phone}">${d.phone}</a>
+                <a class="text-xs text-gray-600 underline" href="${phone === '—' ? contactHref : `tel:${phone}`}">${phone}</a>
            </div>`;
     const contactMobileRow = d.isPhoneHidden
         ? `<div class="info-row sm:hidden">
                 <i class="icon fa-solid fa-circle-info text-red-500"></i>
                 <div class="info-text">
-                    <a href="index.html#contact" class="value text-red-700 font-semibold hover:text-red-800 transition-colors">${d.publicComment || 'Contact Admin'}</a>
+                    <a href="${contactHref}" class="value text-red-700 font-semibold hover:text-red-800 transition-colors">${contactNote}</a>
                 </div>
            </div>`
         : `<div class="info-row sm:hidden">
                 <i class="icon fa-solid fa-phone text-red-500"></i>
                 <div class="info-text">
-                    <a class="value font-semibold tracking-wide text-gray-700" href="tel:${d.phone}">${d.phone}</a>
+                    <a class="value font-semibold tracking-wide text-gray-700" href="${phone === '—' ? contactHref : `tel:${phone}`}">${phone}</a>
                 </div>
            </div>`;
     return `
@@ -35,14 +47,14 @@ function renderDonorCardPublic(d) {
             <div class="flex-1 min-w-0 mb-2 sm:mb-0">
                 <div class="flex items-center gap-2 mb-1">
                     ${avatarHtml}
-                    <div class="font-bold text-red-700 truncate">${d.fullName}</div>
+                    <div class="font-bold text-red-700 truncate">${donorName}</div>
                 </div>
                 <div class="info-stack sm:hidden">
                     <div class="info-row">
                         <i class="icon fa-solid fa-droplet text-red-500"></i>
                         <div class="info-text">
                             <span class="label">Blood Group:</span>
-                            <span class="value">${d.bloodGroup}</span>
+                            <span class="value">${bloodGroup}</span>
                         </div>
                     </div>
                     <div class="info-row sm:hidden">
@@ -56,7 +68,7 @@ function renderDonorCardPublic(d) {
                         <i class="icon fa-solid fa-location-dot text-red-500"></i>
                         <div class="info-text">
                             <span class="label">Current Location:</span>
-                            <span class="value">${d.location || '—'}</span>
+                            <span class="value">${location}</span>
                         </div>
                     </div>
                     ${contactMobileRow}
@@ -65,12 +77,12 @@ function renderDonorCardPublic(d) {
                     <div class="flex items-center gap-1">
                         <i class="fa-solid fa-droplet text-red-500"></i>
                         <span class="font-bold">Blood Group:</span>
-                        <span>${d.bloodGroup}</span>
+                        <span>${bloodGroup}</span>
                     </div>
                     <div class="flex items-center gap-1">
                         <i class="fa-solid fa-location-dot text-red-500"></i>
                         <span class="font-bold">Current Location:</span>
-                        <span>${d.location || '—'}</span>
+                        <span>${location}</span>
                     </div>
                 </div>
             </div>

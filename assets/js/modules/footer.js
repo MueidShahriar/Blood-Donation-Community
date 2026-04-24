@@ -5,10 +5,12 @@
  * that has a <footer id="app-footer"></footer> placeholder.
  */
 
-const FOOTER_HTML = (isHomePage) => {
-    const contactHref = isHomePage ? '#contact' : 'index.html#contact';
-    const homeHref    = isHomePage ? '#' : 'index.html';
-    const year        = new Date().getFullYear();
+const FOOTER_HTML = (isHomePage, inPagesDir) => {
+    const assetPrefix = inPagesDir ? '../' : '';
+    const pagesPrefix = inPagesDir ? '' : 'pages/';
+    const homeHref = isHomePage ? '#' : (inPagesDir ? '../index.html' : 'index.html');
+    const contactHref = isHomePage ? '#contact' : `${inPagesDir ? '../index.html' : 'index.html'}#contact`;
+    const year = new Date().getFullYear();
 
     return `
     <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-red-500/60 to-transparent"></div>
@@ -17,7 +19,7 @@ const FOOTER_HTML = (isHomePage) => {
         <div class="footer-grid">
             <div class="footer-brand">
                 <div class="footer-brand-title">
-                    <img src="image/blood-drop.png" alt="Blood Donation Community" loading="lazy" />
+                    <img src="${assetPrefix}image/blood-drop.png" alt="Blood Donation Community" loading="lazy" />
                     <span data-i18n="siteTitle">Blood Donation Community</span>
                 </div>
                 <p data-i18n="footerBrandDesc">A passionate, volunteer-driven organization dedicated to saving lives through the power of blood
@@ -40,15 +42,15 @@ const FOOTER_HTML = (isHomePage) => {
             <div>
                 <h4 class="footer-col-title" data-i18n="footerQuickLinks">QUICK LINKS</h4>
                 <ul class="footer-links">
-                    <li><a href="about.html"><i class="fa-solid fa-chevron-right"></i> <span
+                    <li><a href="${pagesPrefix}about.html"><i class="fa-solid fa-chevron-right"></i> <span
                                 data-i18n="navAbout">About</span></a></li>
-                    <li><a href="donationGuide.html"><i class="fa-solid fa-chevron-right"></i> <span
+                    <li><a href="${pagesPrefix}donationGuide.html"><i class="fa-solid fa-chevron-right"></i> <span
                                 data-i18n="navHow">Donation Guide</span></a></li>
-                    <li><a href="events.html"><i class="fa-solid fa-chevron-right"></i> <span
+                    <li><a href="${pagesPrefix}events.html"><i class="fa-solid fa-chevron-right"></i> <span
                                 data-i18n="navEvents">Events</span></a></li>
-                    <li><a href="join.html"><i class="fa-solid fa-chevron-right"></i> <span
+                    <li><a href="${pagesPrefix}join.html"><i class="fa-solid fa-chevron-right"></i> <span
                                 data-i18n="navJoin">Join</span></a></li>
-                    <li><a href="search.html"><i class="fa-solid fa-chevron-right"></i> <span
+                    <li><a href="${pagesPrefix}search.html"><i class="fa-solid fa-chevron-right"></i> <span
                                 data-i18n="navSearch">Search</span></a></li>
                 </ul>
             </div>
@@ -93,8 +95,9 @@ export function initFooter() {
 
     const path = window.location.pathname;
     const isHomePage = /\/(index\.html)?(\?.*)?(\#.*)?$/i.test(path) || path === '/' || path.endsWith('/');
+    const inPagesDir = path.includes('/pages/');
 
-    footerEl.innerHTML = FOOTER_HTML(isHomePage);
+    footerEl.innerHTML = FOOTER_HTML(isHomePage, inPagesDir);
 
     // Smooth reveal animation when footer enters viewport
     const observer = new IntersectionObserver((entries) => {

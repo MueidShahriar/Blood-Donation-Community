@@ -44,6 +44,51 @@ export function normalizeBloodGroup(value) {
     return (value || '').toString().trim().toUpperCase();
 }
 
+export const DONOR_ID_START = 301;
+export const DONOR_ID_COUNTER_SEED = DONOR_ID_START - 1;
+
+export function getTextValue(value, fallback = '') {
+    if (value == null) return fallback;
+    if (!['string', 'number', 'boolean'].includes(typeof value)) return fallback;
+    const text = String(value).trim();
+    return text || fallback;
+}
+
+export function getInitials(value, fallback = '?') {
+    const text = getTextValue(value, '');
+    if (!text) return fallback;
+    const initials = text.split(/\s+/).filter(Boolean).map(part => part[0]).join('').slice(0, 2).toUpperCase();
+    return initials || fallback;
+}
+
+export function getDonorIdNumber(value) {
+    if (value == null) return null;
+    if (typeof value === 'number' && Number.isFinite(value)) {
+        return Math.trunc(value);
+    }
+    const raw = String(value).trim().toUpperCase();
+    if (!raw) return null;
+    const prefixedMatch = raw.match(/^BDC[\s-]*(\d+)$/);
+    const plainMatch = raw.match(/^(\d+)$/);
+    const matchedNumber = prefixedMatch?.[1] || plainMatch?.[1];
+    if (!matchedNumber) return null;
+    const num = Number(matchedNumber);
+    if (!Number.isFinite(num)) return null;
+    return Math.trunc(num);
+}
+
+export function normalizeDonorId(value) {
+    const num = getDonorIdNumber(value);
+    return num == null || num < DONOR_ID_START ? '' : `BDC-${num}`;
+}
+
+export function getMaxDonorIdNumber(entries = []) {
+    return entries.reduce((max, entry) => {
+        const num = getDonorIdNumber(entry?.donorId ?? entry?.rawDonorId);
+        return num != null && num >= DONOR_ID_START ? Math.max(max, num) : max;
+    }, DONOR_ID_COUNTER_SEED);
+}
+
 export function inferAgeValue(entry) {
     if (!entry || typeof entry !== 'object') return null;
     const ageFields = ['age', 'Age', 'donorAge'];
