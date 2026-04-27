@@ -390,15 +390,8 @@ profilePhotoInput?.addEventListener('change', async (e) => {
         profilePhotoInput.value = '';
         return;
     }
-    // Validate file size (max 500KB)
-    if (file.size > 500 * 1024) {
-        showToast('Image must be under 500KB.', 'error');
-        profilePhotoInput.value = '';
-        return;
-    }
-
     try {
-        const base64 = await resizeAndCompressPhoto(file, 300, 300);
+        const base64 = await resizeAndCompressPhoto(file, 300, 300, 100 * 1024);
         const userRef = ref(database, 'donors/' + currentUser.uid + '/profilePhoto');
         await set(userRef, base64);
         if (profileAvatarImg) {
@@ -415,23 +408,49 @@ profilePhotoInput?.addEventListener('change', async (e) => {
     profilePhotoInput.value = '';
 });
 
-function resizeAndCompressPhoto(file, maxW, maxH) {
+function getDataUrlSize(dataUrl) {
+    const base64 = dataUrl.split(',')[1] || '';
+    return Math.floor(base64.length * 3 / 4);
+}
+
+function resizeAndCompressPhoto(file, maxW, maxH, targetBytes) {
     return new Promise((resolve, reject) => {
         const reader = new FileReader();
         reader.onload = (ev) => {
             const img = new Image();
             img.onload = () => {
                 const canvas = document.createElement('canvas');
-                canvas.width = maxW;
-                canvas.height = maxH;
                 const ctx = canvas.getContext('2d');
                 // Center-crop to square
                 const side = Math.min(img.width, img.height);
                 const sx = (img.width - side) / 2;
                 const sy = (img.height - side) / 2;
-                ctx.drawImage(img, sx, sy, side, side, 0, 0, maxW, maxH);
-                const dataUrl = canvas.toDataURL('image/jpeg', 0.8);
-                resolve(dataUrl);
+                let curW = maxW;
+                let curH = maxH;
+                let quality = 0.85;
+                let lastDataUrl = '';
+
+                for (let i = 0; i < 10; i += 1) {
+                    canvas.width = curW;
+                    canvas.height = curH;
+                    ctx.clearRect(0, 0, curW, curH);
+                    ctx.drawImage(img, sx, sy, side, side, 0, 0, curW, curH);
+                    const dataUrl = canvas.toDataURL('image/jpeg', quality);
+                    lastDataUrl = dataUrl;
+                    const size = getDataUrlSize(dataUrl);
+                    if (size <= targetBytes) {
+                        resolve(dataUrl);
+                        return;
+                    }
+                    if (quality > 0.45) {
+                        quality = Math.max(0.45, quality - 0.1);
+                    } else {
+                        curW = Math.max(200, Math.floor(curW * 0.9));
+                        curH = curW;
+                        quality = 0.75;
+                    }
+                }
+                resolve(lastDataUrl);
             };
             img.onerror = reject;
             img.src = ev.target.result;

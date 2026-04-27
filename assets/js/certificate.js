@@ -1,6 +1,10 @@
 
 import { t } from './language-ui.js';
 
+function getSignatureImagePath() {
+    return window.location.pathname.includes('/pages/') ? '../image/sign.png' : 'image/sign.png';
+}
+
 export function generateCertificate(donorData) {
     return new Promise((resolve, reject) => {
         const canvas = document.createElement('canvas');
@@ -9,7 +13,7 @@ export function generateCertificate(donorData) {
         const ctx = canvas.getContext('2d');
 
         const signImg = new Image();
-        signImg.src = 'image/sign.png';
+        signImg.src = getSignatureImagePath();
         
         signImg.onload = function() {
             drawCertificate(canvas, ctx, donorData, signImg);

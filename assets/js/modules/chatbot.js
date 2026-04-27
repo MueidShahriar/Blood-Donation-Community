@@ -3,15 +3,23 @@
  * Trilingual (Bangla + English + Banglish) RAG-style chatbot
  * Two-path architecture:
  *   PATH 1 — Donor Finder: blood group + donor intent → query state.donorsList → eligible donors
- *   PATH 2 — Knowledge + AI: keyword-scored knowledge base → Gemini LLM fallback
+ *   PATH 2 — Knowledge Base: keyword-scored website knowledge → live-agent fallback
  */
 
 import state from './state.js';
 import { isDonorEligible, normalizeBloodGroup } from './utils.js';
 
-function getSearchHref() {
+function getPageHref(page) {
     const path = window.location.pathname || '';
-    return path.includes('/pages/') ? 'search.html' : 'pages/search.html';
+    return path.includes('/pages/') ? page : `pages/${page}`;
+}
+
+function getContactHref() {
+    return window.location.pathname.includes('/pages/') ? '../index.html#contact' : '#contact';
+}
+
+function getSearchHref() {
+    return getPageHref('search.html');
 }
 
 /* ══════════════════════════════════════════════
@@ -187,6 +195,15 @@ function formatDonorResults(donors, bloodGroup, lang) {
 }
 
 /* ── Knowledge Base (bilingual) ── */
+const SITE_LINKS = {
+    about: getPageHref('about.html'),
+    guide: getPageHref('donationGuide.html'),
+    events: getPageHref('events.html'),
+    join: getPageHref('join.html'),
+    search: getPageHref('search.html'),
+    profile: getPageHref('profile.html'),
+    contact: getContactHref()
+};
 const KNOWLEDGE_BASE = [
     // Greetings
     { keywords: ['hello', 'hi', 'hey', 'good morning', 'good evening', 'good night', 'howdy', 'sup', 'yo'],
@@ -349,6 +366,42 @@ const KNOWLEDGE_BASE = [
       answer: 'Blood Donation Community is a volunteer-driven platform that connects blood donors with patients in need. You can join as a donor, search for donors by blood group, view events, and get your donor card! Visit our Search page to find donors near you.',
       answerBn: 'ব্লাড ডোনেশন কমিউনিটি একটি স্বেচ্ছাসেবী প্ল্যাটফর্ম যা রক্তদাতা ও রোগীদের সংযুক্ত করে। আপনি দাতা হিসেবে যোগ দিতে পারেন, রক্তের গ্রুপ অনুযায়ী দাতা খুঁজতে পারেন, ইভেন্ট দেখতে পারেন এবং ডোনার কার্ড পেতে পারেন! আমাদের সার্চ পেজে দাতা খুঁজুন।' },
 
+        { keywords: ['contact', 'email', 'phone', 'whatsapp', 'contact info', 'যোগাযোগ', 'ইমেইল', 'ফোন', 'হোয়াটসঅ্যাপ'],
+            answer: `You can contact us via email: <a href="mailto:bauet.bdc@gmail.com">bauet.bdc@gmail.com</a> or phone: <a href="tel:+8801712460423">+8801712460423</a>. WhatsApp: <a href="https://wa.me/8801712460423" target="_blank" rel="noopener">Chat now</a>. You can also use the Contact section: <a href="${SITE_LINKS.contact}" style="color:#dc2626;font-weight:600">Contact</a>.`,
+            answerBn: `আপনি ইমেইল করতে পারেন: <a href="mailto:bauet.bdc@gmail.com">bauet.bdc@gmail.com</a> অথবা ফোন করুন: <a href="tel:+8801712460423">+8801712460423</a>। WhatsApp: <a href="https://wa.me/8801712460423" target="_blank" rel="noopener">Chat now</a>। চাইলে Contact সেকশনও দেখতে পারেন: <a href="${SITE_LINKS.contact}" style="color:#dc2626;font-weight:600">Contact</a>।` },
+
+        { keywords: ['join', 'register', 'sign up', 'become donor', 'join donor', 'register donor', 'নিবন্ধন', 'রেজিস্টার', 'ডোনার হব', 'যোগ দিতে', 'দাতা হব'],
+            answer: `To join as a donor, fill out the registration form here: <a href="${SITE_LINKS.join}" style="color:#dc2626;font-weight:600">Join as Donor</a>. After signup, you can manage your profile anytime.`,
+            answerBn: `ডোনার হিসেবে যোগ দিতে এই ফর্মটি পূরণ করুন: <a href="${SITE_LINKS.join}" style="color:#dc2626;font-weight:600">Join as Donor</a>। রেজিস্ট্রেশনের পর প্রোফাইল সহজেই ম্যানেজ করতে পারবেন।` },
+
+        { keywords: ['search donor', 'find donor', 'donor search', 'donor list', 'ডোনার খুঁজ', 'রক্ত খুঁজ', 'সার্চ ডোনার'],
+            answer: `You can search donors by blood group here: <a href="${SITE_LINKS.search}" style="color:#dc2626;font-weight:600">Search Donors</a>.`,
+            answerBn: `রক্তের গ্রুপ অনুযায়ী ডোনার খুঁজতে এখানে যান: <a href="${SITE_LINKS.search}" style="color:#dc2626;font-weight:600">Search Donors</a>।` },
+
+        { keywords: ['events', 'blood camp', 'campaign', 'program', 'ইভেন্ট', 'ক্যাম্প', 'অনুষ্ঠান'],
+            answer: `Upcoming donation events are listed here: <a href="${SITE_LINKS.events}" style="color:#dc2626;font-weight:600">Events</a>.`,
+            answerBn: `আসন্ন রক্তদান ইভেন্টগুলো এখানে পাওয়া যাবে: <a href="${SITE_LINKS.events}" style="color:#dc2626;font-weight:600">Events</a>।` },
+
+        { keywords: ['donation guide', 'how to donate', 'guideline', 'guide', 'নির্দেশনা', 'গাইড', 'কিভাবে রক্ত দিব'],
+            answer: `See the full donation guide here: <a href="${SITE_LINKS.guide}" style="color:#dc2626;font-weight:600">Donation Guide</a>.`,
+            answerBn: `রক্তদান সম্পর্কিত নির্দেশনা এখানে: <a href="${SITE_LINKS.guide}" style="color:#dc2626;font-weight:600">Donation Guide</a>।` },
+
+        { keywords: ['profile', 'update profile', 'edit profile', 'change info', 'প্রোফাইল', 'প্রোফাইল আপডেট', 'তথ্য পরিবর্তন'],
+            answer: `You can update your donor profile after login here: <a href="${SITE_LINKS.profile}" style="color:#dc2626;font-weight:600">My Profile</a>.`,
+            answerBn: `লগইন করার পরে আপনার প্রোফাইল আপডেট করুন এখানে: <a href="${SITE_LINKS.profile}" style="color:#dc2626;font-weight:600">My Profile</a>।` },
+
+        { keywords: ['certificate', 'donor card', 'id card', 'সার্টিফিকেট', 'ডোনার কার্ড', 'আইডি কার্ড'],
+            answer: `After login, you can generate your certificate or donor card from your profile: <a href="${SITE_LINKS.profile}" style="color:#dc2626;font-weight:600">My Profile</a>.`,
+            answerBn: `লগইন করার পরে আপনার সার্টিফিকেট বা ডোনার কার্ড প্রোফাইল থেকে জেনারেট করতে পারবেন: <a href="${SITE_LINKS.profile}" style="color:#dc2626;font-weight:600">My Profile</a>।` },
+
+        { keywords: ['feedback', 'suggestion', 'complain', 'message', 'মতামত', 'ফিডব্যাক', 'পরামর্শ', 'অভিযোগ'],
+            answer: 'You can share feedback from the footer button “Share Feedback” on any page, or email us at <a href="mailto:bauet.bdc@gmail.com">bauet.bdc@gmail.com</a>.',
+            answerBn: 'যেকোনো পেজের ফুটারে থাকা “Share Feedback” বাটন থেকে মতামত দিতে পারেন, অথবা ইমেইল করুন <a href="mailto:bauet.bdc@gmail.com">bauet.bdc@gmail.com</a>।' },
+
+        { keywords: ['login', 'sign in', 'forgot password', 'reset password', 'পাসওয়ার্ড ভুলে', 'লগইন', 'সাইন ইন', 'পাসওয়ার্ড রিসেট'],
+            answer: 'Click the Login button in the header and use “Forgot Password?” if needed. A reset link will be sent to your email.',
+            answerBn: 'হেডারের Login বাটনে ক্লিক করুন এবং দরকার হলে “Forgot Password?” ব্যবহার করুন। আপনার ইমেইলে রিসেট লিংক পাঠানো হবে।' },
+
     // Bye
     { keywords: ['bye', 'goodbye', 'see you', 'বিদায়', 'আবার দেখা হবে', 'যাই'],
       answer: 'Goodbye! Take care and remember — donating blood saves lives! See you soon! 👋❤️',
@@ -408,19 +461,8 @@ function searchKnowledgeBase(question) {
 
     if (!bestMatch || bestScore < 3) return null;
 
-    // For greetings/thanks/bye → instant reply (no AI needed)
-    if (isGreeting && bestScore >= 3) {
-        const answer = lang === 'bangla' ? (bestMatch.answerBn || bestMatch.answer) : bestMatch.answer;
-        return { answer, score: bestScore, isGreeting: true };
-    }
-
-    // For strong knowledge matches → return as RAG context + answer
-    if (bestScore >= 8) {
-        const answer = lang === 'bangla' ? (bestMatch.answerBn || bestMatch.answer) : bestMatch.answer;
-        return { answer, score: bestScore, isGreeting: false };
-    }
-
-    return null;
+    const answer = lang === 'bangla' ? (bestMatch.answerBn || bestMatch.answer) : bestMatch.answer;
+    return { answer, score: bestScore, isGreeting };
 }
 
 /**
@@ -588,6 +630,16 @@ CRITICAL: You must NEVER say "I can only help with blood donation questions" for
    SECTION 6 — Main Answer Router (2-path RAG architecture)
    ══════════════════════════════════════════════ */
 
+function getLiveAgentFallback(lang) {
+    if (lang === 'bangla') {
+        return 'আপনার প্রশ্নের সাথে নির্দিষ্ট মিল পাইনি। 👨‍💬 <strong>Live agent</strong> এর সাহায্য নিতে পারেন: <a href="mailto:bauet.bdc@gmail.com">bauet.bdc@gmail.com</a> অথবা ফোন করুন <a href="tel:+8801712460423">+8801712460423</a>। জরুরি হলে নিকটস্থ হাসপাতালের সাথে যোগাযোগ করুন।';
+    }
+    if (lang === 'banglish') {
+        return 'Apnar question er sathe specific match paini. 👨‍💬 <strong>Live agent</strong> er sathe jogajog korun: <a href="mailto:bauet.bdc@gmail.com">bauet.bdc@gmail.com</a> ba phone <a href="tel:+8801712460423">+8801712460423</a>। Emergency hole nearest hospital e jogajog korun.';
+    }
+    return 'I could not find a specific match. 👨‍💬 Please contact a <strong>Live agent</strong> at <a href="mailto:bauet.bdc@gmail.com">bauet.bdc@gmail.com</a> or call <a href="tel:+8801712460423">+8801712460423</a>. If it is urgent, contact your nearest hospital.';
+}
+
 async function getAnswer(question) {
     const lang = detectLang(question);
 
@@ -615,25 +667,12 @@ async function getAnswer(question) {
 
     // ── PATH 2A: Knowledge Base (instant for greetings, strong matches) ──
     const kbResult = searchKnowledgeBase(question);
-    if (kbResult && kbResult.isGreeting) {
-        return kbResult.answer;
-    }
-    if (kbResult && kbResult.score >= 8) {
+    if (kbResult) {
         return kbResult.answer;
     }
 
-    // ── PATH 2B: Gemini AI with RAG context ──
-    const ragContext = buildKBContext(question);
-    const aiAnswer = await askGemini(question, ragContext);
-    if (aiAnswer) return aiAnswer;
-
-    // ── Fallback ──
-    if (lang === 'bangla') {
-        return 'দুঃখিত, এই মুহূর্তে আমার সার্ভারে সমস্যা হচ্ছে। 😔 অনুগ্রহ করে কিছুক্ষণ পর আবার চেষ্টা করুন। জরুরি হলে নিকটস্থ হাসপাতালে যোগাযোগ করুন।';
-    } else if (lang === 'banglish') {
-        return 'Sorry, ekhon amar server e ektu problem hocche. 😔 Please aktu por abar try korun. Emergency hole nearest hospital e jog korun.';
-    }
-    return "Sorry, I'm having trouble connecting right now. 😔 Please try again in a moment. If it's urgent, please contact your nearest hospital or blood bank.";
+    // ── Live agent fallback ──
+    return getLiveAgentFallback(lang);
 }
 
 function escapeHtml(str) {
@@ -687,7 +726,7 @@ export function initChatbot() {
                 </button>
             </form>
             <div style="text-align:center;margin-top:0.4rem">
-                <span style="font-size:0.62rem;color:#9ca3af">Powered by Gemini AI 🧠 • Donor Finder + Health Assistant</span>
+                <span style="font-size:0.62rem;color:#9ca3af">Powered by Knowledge Base • Donor Finder + Website Guide</span>
             </div>
         </div>
     `;
