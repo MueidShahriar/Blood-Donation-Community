@@ -242,8 +242,19 @@ function closeModal(m) {
 
 let currentUser = null;
 let currentDonorData = {};
+let authStateResolved = false;
+
+// Fallback for slow mobile networks: never keep the page loader forever.
+setTimeout(() => {
+    if (!authStateResolved) {
+        hideLoader();
+        notLoggedIn?.classList.remove('hidden');
+        profileContent?.classList.add('hidden');
+    }
+}, 4500);
 
 onAuthStateChanged(auth, (user) => {
+    authStateResolved = true;
     currentUser = user;
     const mobileLogoutBtn = document.getElementById('mobile-logout-btn');
     if (!user) {
@@ -293,6 +304,12 @@ onAuthStateChanged(auth, (user) => {
             navLinkIds.forEach(id => document.getElementById(id)?.classList.remove('hidden'));
             mobileNavIds.forEach(id => document.getElementById(id)?.classList.remove('hidden'));
         }
+    }, () => {
+        // If donor record read fails, still unlock UI and show a safe empty state.
+        hideLoader();
+        notLoggedIn?.classList.remove('hidden');
+        profileContent?.classList.add('hidden');
+        showToast('Failed to load profile data. Please try again.', 'error');
     }, { onlyOnce: true });
 });
 

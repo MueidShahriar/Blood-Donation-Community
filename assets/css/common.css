@@ -13,7 +13,8 @@
     top: 0;
     left: 0;
     width: 100%;
-    height: 100%;
+    height: 100dvh;
+    min-height: 100vh;
     background-color: #ffffff;
     z-index: 9999;
     display: flex;
@@ -33,6 +34,10 @@ body.loading > *:not(#page-loader):not(script) {
     visibility: hidden !important;
 }
 
+body.loading {
+    overflow: hidden;
+}
+
 /* ── Auth redirect overlay ────────────────────────── */
 .auth-redirect-overlay {
     position: fixed;
@@ -48,50 +53,35 @@ body.loading > *:not(#page-loader):not(script) {
     display: flex;
 }
 
-.auth-redirect-card {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.75rem;
-    padding: 0.9rem 1.25rem;
-    border-radius: 999px;
-    background: rgba(239, 68, 68, 0.08);
-    color: #b91c1c;
-    font-weight: 700;
-    font-size: 0.9rem;
-    box-shadow: 0 10px 28px rgba(0, 0, 0, 0.08);
-}
-
-.auth-redirect-spinner {
-    width: 1rem;
-    height: 1rem;
-    border-radius: 999px;
-    border: 2px solid rgba(239, 68, 68, 0.2);
-    border-top-color: #ef4444;
-    animation: auth-spin 0.8s linear infinite;
-}
-
-.auth-redirect-text {
-    letter-spacing: 0.01em;
-}
-
 body.auth-redirecting {
     overflow: hidden;
 }
 
-#page-loader .logo-wrapper {
+#page-loader .logo-wrapper,
+.auth-redirect-overlay .logo-wrapper {
     position: relative;
     width: 120px;
     height: 120px;
 }
 
-#page-loader .logo-wrapper img {
+@media (max-width: 640px) {
+    #page-loader .logo-wrapper,
+    .auth-redirect-overlay .logo-wrapper {
+        width: 92px;
+        height: 92px;
+    }
+}
+
+#page-loader .logo-wrapper img,
+.auth-redirect-overlay .logo-wrapper img {
     width: 100%;
     height: 100%;
     object-fit: contain;
     display: block;
 }
 
-#page-loader .logo-base {
+#page-loader .logo-base,
+.auth-redirect-overlay .logo-base {
     position: absolute;
     top: 0;
     left: 0;
@@ -101,7 +91,8 @@ body.auth-redirecting {
     filter: grayscale(1);
 }
 
-#page-loader .logo-fill {
+#page-loader .logo-fill,
+.auth-redirect-overlay .logo-fill {
     position: absolute;
     top: 0;
     left: 0;
@@ -117,12 +108,6 @@ body.auth-redirecting {
     }
     100% {
         clip-path: inset(0 0 0 0);
-    }
-}
-
-@keyframes auth-spin {
-    to {
-        transform: rotate(360deg);
     }
 }
 

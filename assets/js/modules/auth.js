@@ -5,10 +5,19 @@ import { t } from './language-ui.js';
 function getAuthRedirectOverlay() {
     let overlay = document.getElementById('auth-redirect-overlay');
     if (!overlay) {
+        const assetPrefix = window.location.pathname.includes('/pages/') ? '../' : '';
         overlay = document.createElement('div');
         overlay.id = 'auth-redirect-overlay';
         overlay.className = 'auth-redirect-overlay';
-        overlay.innerHTML = '<div class="auth-redirect-card"><span class="auth-redirect-spinner" aria-hidden="true"></span><span class="auth-redirect-text">Loading...</span></div>';
+        overlay.innerHTML =
+            '<div class="logo-wrapper">' +
+                '<div class="logo-base">' +
+                    '<img src="' + assetPrefix + 'image/blood-drop.png" alt="" />' +
+                '</div>' +
+                '<div class="logo-fill">' +
+                    '<img src="' + assetPrefix + 'image/blood-drop.png" alt="Loading" />' +
+                '</div>' +
+            '</div>';
         document.body.appendChild(overlay);
     }
     return overlay;
@@ -167,6 +176,8 @@ export function initAuth({
                 showAuthRedirectOverlay();
                 if (typeof updateLoginFn === 'function') updateLoginFn();
                 closeModal(loginModal);
+                // Ensure users land directly on profile after a successful login.
+                window.location.assign(getProfileHref());
             })
             .catch((error) => {
                 showModalMessage('success-modal', `Login failed: ${error.message}`, 'Login Failed');
