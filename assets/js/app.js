@@ -43,7 +43,7 @@ import {
     renderAdminMembersList, renderAdminEventsList,
     clearAdminEventForm, clearAdminRecentDonorForm, clearAdminMemberForm,
     applyAdminMemberSearchFilters, resetAdminMemberSearchFilters, initAdminTabs,
-    renderAdminRecentDonationsList
+    renderAdminRecentDonationsList, renderAdminFeedbackList
 } from "./modules/admin.js";
 import { updateLoginButtonState, initAuth } from "./modules/auth.js";
 import { initJoinForm } from "./modules/join-form.js";
@@ -270,6 +270,19 @@ function deleteRecentDonation(donationId) {
     }, { title: 'Delete Recent Donation', message: 'Deleting this donation record is permanent and cannot be undone.' });
 }
 
+function deleteFeedback(feedbackId) {
+    if (!state.currentUser || state.currentUserRole !== 'admin') {
+        showModalMessage('success-modal', 'You do not have permission to perform this action.', 'Permission Denied');
+        return;
+    }
+    attachConfirmHandler(() => {
+        const modal = document.getElementById('delete-confirm-modal');
+        remove(ref(database, 'feedback/' + feedbackId))
+            .then(() => { closeModal(modal); showModalMessage('success-modal', 'Feedback deleted successfully!', 'Success'); })
+            .catch(error => { closeModal(modal); showModalMessage('success-modal', `Failed to delete feedback: ${error.message}`, 'Error'); });
+    }, { title: 'Delete Feedback', message: 'Deleting this feedback entry is permanent and cannot be undone.' });
+}
+
 function callUpdateLogin() {
     updateLoginButtonState(database, ref, onValue,
     renderAdminMembersList, renderAdminEventsList, deleteMember, deleteEvent, () => ensureUniqueDonorIds(), promoteMemberToAdmin, demoteAdminToMember);
@@ -480,6 +493,35 @@ onValue(recentDonationsRef, (snapshot) => {
     state.recentDonationsList = [];
     renderRecentDonorsCarousel([]);
     setRecentLoading(false);
+});
+
+onValue(feedbackRef, (snapshot) => {
+    try {
+        const data = snapshot.val();
+        const list = [];
+        if (data && typeof data === 'object') {
+            for (const key in data) {
+                if (Object.prototype.hasOwnProperty.call(data, key)) {
+                    list.push({ id: key, ...data[key] });
+                }
+            }
+        }
+        list.sort((a, b) => {
+            const ad = a.submittedAt ? new Date(a.submittedAt).getTime() : 0;
+            const bd = b.submittedAt ? new Date(b.submittedAt).getTime() : 0;
+            return bd - ad;
+        });
+        state.feedbackList = list;
+        renderAdminFeedbackList(deleteFeedback);
+    } catch (error) {
+        console.error('Failed to process feedback entries:', error);
+        state.feedbackList = [];
+        renderAdminFeedbackList(deleteFeedback);
+    }
+}, err => {
+    console.error('Failed to load feedback entries:', err);
+    state.feedbackList = [];
+    renderAdminFeedbackList(deleteFeedback);
 });
 
 function initContactScroll() {

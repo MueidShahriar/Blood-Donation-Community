@@ -29,11 +29,12 @@ Live Site: [blood-donation-community.vercel.app](https://blood-donation-communit
 - Edit and manage all donor profiles
 - Promote or demote admins
 - Log verified recent donations (auto-syncs to donor profile)
-- Download Monthly PDF report with charts and donation data
+- Download Monthly PDF report with charts and donation data (includes donor contact when available)
 
 ### Recent Donation Tracking
 - Admin records recent donations by donor ID or manual entry
 - Recent donation details are shown on the donor profile
+- Admin recent donation list shows contact number when provided
 
 ### Live Analytics
 - Real-time visual charts powered by Chart.js:
@@ -55,6 +56,11 @@ Live Site: [blood-donation-community.vercel.app](https://blood-donation-communit
 ### Bilingual Interface
 - Full English & Bangla language support
 - One-click language toggle across all pages
+
+### AI Chatbot Assistant
+- Smart donor finder by blood group
+- Answers blood donation, eligibility, and health questions
+- Supports Bangla, Banglish, and English
 
 ### Feedback System
 - Collect visitor feedback from any page
@@ -185,7 +191,21 @@ Blood Donation Community/
       }
    },
    "events": { "<eventId>": { "title": "", "date": "", "location": "", "time": "", "description": "" } },
-   "recentDonations": { "<id>": { "name": "", "bloodGroup": "", "location": "", "date": "", "donorId": "" } },
+   "recentDonations": {
+      "<id>": {
+         "name": "",
+         "bloodGroup": "",
+         "location": "",
+         "department": "",
+         "batch": "",
+         "age": "",
+         "height": "",
+         "weight": "",
+         "phone": "",
+         "date": "",
+         "donorId": ""
+      }
+   },
    "stats": { "livesHelped": 0, "donorIdCounter": 0 },
    "feedback": { "<id>": { "name": "", "email": "", "message": "", "timestamp": "" } },
    "visitorTracking": {

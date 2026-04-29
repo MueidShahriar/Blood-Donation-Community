@@ -298,6 +298,8 @@
                         class="fa-solid fa-users"></i><span>Members</span></button>
                 <button type="button" class="admin-tab" data-tab="search"><i
                     class="fa-solid fa-magnifying-glass"></i><span>Find Donors</span></button>
+                <button type="button" class="admin-tab" data-tab="feedback"><i
+                    class="fa-solid fa-comment-dots"></i><span>Feedback</span></button>
             </div>
 
             <div class="admin-tabpanel">
@@ -713,6 +715,22 @@
                             </div>
                         </div>
                     </section>
+                </div>
+
+                <div data-panel="feedback" class="hidden">
+                    <div class="admin-panel-card">
+                        <div class="admin-panel-card__header">
+                            <span class="admin-panel-card__icon"><i class="fa-solid fa-comment-dots"></i></span>
+                            <div>
+                                <h3 class="admin-panel-card__title">Feedback Inbox</h3>
+                                <p class="admin-panel-card__subtitle">Review messages submitted by visitors and members</p>
+                            </div>
+                        </div>
+                        <div class="admin-list-section">
+                            <h4 class="admin-list-section__title"><i class="fa-solid fa-inbox"></i> Feedback</h4>
+                            <div id="admin-feedback-list" class="admin-card-list"></div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>

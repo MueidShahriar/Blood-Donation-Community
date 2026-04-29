@@ -7,6 +7,10 @@ function renderRecentDonationCardAdmin(d) {
     const donorName = getTextValue(d.name || d.donorName || d.fullName, 'Unknown');
     const initials = getInitials(donorName, '?');
     const donorId = normalizeDonorId(d.donorId) || d.donorId || '';
+    const phone = getTextValue(d.phone, '');
+    const contactRow = phone
+        ? `<div class="admin-event-card__meta"><span><i class="fa-solid fa-phone"></i> Contact: ${phone}</span></div>`
+        : '';
     return `
         <div class="admin-event-card">
             <div class="admin-event-card__date-badge" style="background:linear-gradient(135deg,#f59e0b,#d97706)">
@@ -20,6 +24,7 @@ function renderRecentDonationCardAdmin(d) {
                     <span><i class="fa-solid fa-location-dot"></i> ${getTextValue(d.location, '—')}</span>
                 </div>
                 ${donorId ? `<div class="admin-event-card__meta"><span><i class="fa-solid fa-id-badge"></i> ID: ${donorId}</span></div>` : ''}
+                ${contactRow}
                 <div class="admin-event-card__meta">
                     <span><i class="fa-solid fa-building-columns"></i> Dept: ${getTextValue(d.department, '—')}</span>
                     <span><i class="fa-solid fa-layer-group"></i> Batch: ${getTextValue(d.batch, '—')}</span>
@@ -77,6 +82,8 @@ function renderDonorCardAdmin(d) {
     const lastDate = d.lastDonateDate ? (() => { const _d = new Date(d.lastDonateDate + 'T00:00:00'); const _p = n => String(n).padStart(2,'0'); return `${_p(_d.getDate())}/${_p(_d.getMonth()+1)}/${_d.getFullYear()}`; })() : 'Not recorded';
     const donorName = getTextValue(d.fullName || d.name, 'Unknown');
     const phone = getTextValue(d.phone, '—');
+    const note = getTextValue(d.notes, '');
+    const noteRow = note ? `<span style="color:#dc2626"><i class="fa-solid fa-note-sticky"></i> Additional Notes: ${note}</span>` : '';
     const initials = getInitials(donorName, '?');
     const isEligible = d.lastDonateDate
         ? (Math.floor((new Date() - new Date(d.lastDonateDate + 'T00:00:00')) / (1000*60*60*24)) >= 90)
@@ -118,6 +125,7 @@ function renderDonorCardAdmin(d) {
                     <span><i class="fa-solid fa-phone"></i> ${phone}</span>
                     <span><i class="fa-solid fa-location-dot"></i> Current Location: ${getTextValue(d.location, '—')}</span>
                     <span><i class="fa-solid fa-calendar-check"></i> Last: ${lastDate}</span>
+                    ${noteRow}
                 </div>
                 <div class="admin-member-card__id">ID: ${donorId}</div>
             </div>
@@ -134,15 +142,133 @@ function renderDonorCardAdmin(d) {
     `;
 }
 
+function formatFeedbackDate(value) {
+    if (!value) return '—';
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) return '—';
+    const pad = n => String(n).padStart(2, '0');
+    return `${pad(date.getDate())}/${pad(date.getMonth() + 1)}/${date.getFullYear()} ${pad(date.getHours())}:${pad(date.getMinutes())}`;
+}
+
+function renderFeedbackCardAdmin(entry) {
+    const name = getTextValue(entry.name, 'Anonymous');
+    const initials = getInitials(name, '?');
+    const email = getTextValue(entry.email, '');
+    const message = getTextValue(entry.message, '—');
+    const submittedAt = formatFeedbackDate(entry.submittedAt);
+    const emailRow = email ? `<span><i class="fa-solid fa-envelope"></i> ${email}</span>` : '';
+    const userRow = entry.userId ? `<span><i class="fa-solid fa-user"></i> ${entry.userId}</span>` : '';
+    const deleteAction = entry.id
+        ? `<div class="admin-event-card__actions"><button data-feedback-id="${entry.id}" class="delete-feedback-btn admin-action-btn admin-action-btn--delete" title="Delete"><i class="fa-solid fa-trash-can" data-feedback-id="${entry.id}"></i></button></div>`
+        : '';
+    return `
+        <div class="admin-event-card">
+            <div class="admin-event-card__date-badge" style="background:linear-gradient(135deg,#0ea5e9,#38bdf8)">
+                <span class="admin-event-card__month" style="font-size:0.6rem">FB</span>
+                <span class="admin-event-card__day" style="font-size:0.85rem">${initials}</span>
+            </div>
+            <div class="admin-event-card__body">
+                <div class="admin-event-card__title">${name}</div>
+                <div class="admin-event-card__meta">
+                    <span><i class="fa-regular fa-calendar"></i> ${submittedAt}</span>
+                    ${emailRow}
+                    ${userRow}
+                </div>
+                <p class="admin-event-card__desc">${message}</p>
+            </div>
+            ${deleteAction}
+        </div>`;
+}
+
+export function renderAdminFeedbackList(deleteFeedbackFn) {
+    const listDiv = document.getElementById('admin-feedback-list');
+    if (!listDiv) return;
+    if (!state.feedbackList || !state.feedbackList.length) {
+        listDiv.innerHTML = `<div class="rounded-lg border border-dashed border-red-200 bg-red-50/40 p-6 text-center text-sm text-red-600">No feedback submitted yet.</div>`;
+        return;
+    }
+    listDiv.innerHTML = state.feedbackList.map(renderFeedbackCardAdmin).join('');
+    if (!deleteFeedbackFn) return;
+    listDiv.querySelectorAll('.delete-feedback-btn').forEach(button => {
+        button.addEventListener('click', (ev) => {
+            const feedbackId = ev.target.closest('[data-feedback-id]')?.dataset.feedbackId || ev.target.dataset.feedbackId;
+            if (feedbackId) deleteFeedbackFn(feedbackId);
+        });
+    });
+}
+
+function normalizeSearchText(value) {
+    return (value || '')
+        .toString()
+        .toLowerCase()
+        .replace(/[^\p{L}\p{N}\s]/gu, ' ')
+        .replace(/\s+/g, ' ')
+        .trim();
+}
+
+function getSearchTokens(value) {
+    const normalized = normalizeSearchText(value);
+    return normalized ? normalized.split(' ') : [];
+}
+
+function getMaxEditDistance(token) {
+    if (token.length <= 4) return 1;
+    if (token.length <= 7) return 2;
+    return 3;
+}
+
+function getEditDistance(a, b, maxDistance) {
+    if (a === b) return 0;
+    const aLen = a.length;
+    const bLen = b.length;
+    if (Math.abs(aLen - bLen) > maxDistance) return maxDistance + 1;
+    let prev = new Array(bLen + 1);
+    let curr = new Array(bLen + 1);
+    for (let j = 0; j <= bLen; j += 1) prev[j] = j;
+    for (let i = 1; i <= aLen; i += 1) {
+        curr[0] = i;
+        let rowMin = curr[0];
+        const aChar = a[i - 1];
+        for (let j = 1; j <= bLen; j += 1) {
+            const cost = aChar === b[j - 1] ? 0 : 1;
+            const val = Math.min(prev[j] + 1, curr[j - 1] + 1, prev[j - 1] + cost);
+            curr[j] = val;
+            if (val < rowMin) rowMin = val;
+        }
+        if (rowMin > maxDistance) return maxDistance + 1;
+        [prev, curr] = [curr, prev];
+    }
+    return prev[bLen];
+}
+
+function isFuzzyTokenMatch(token, word) {
+    if (!token || !word) return false;
+    if (word.includes(token)) return true;
+    if (token.length <= 2) return false;
+    const maxDistance = getMaxEditDistance(token);
+    return getEditDistance(token, word, maxDistance) <= maxDistance;
+}
+
+function isFuzzyNameMatch(query, target) {
+    const normalizedQuery = normalizeSearchText(query);
+    if (!normalizedQuery) return true;
+    const normalizedTarget = normalizeSearchText(target);
+    if (!normalizedTarget) return false;
+    if (normalizedTarget.includes(normalizedQuery)) return true;
+    const queryTokens = normalizedQuery.split(' ');
+    const targetTokens = normalizedTarget.split(' ');
+    return queryTokens.some(token => targetTokens.some(word => isFuzzyTokenMatch(token, word)));
+}
+
 function getFilteredAdminMembers() {
-    const nameFilter = state.memberSearchName.trim().toLowerCase();
+    const nameFilter = state.memberSearchName.trim();
     const bloodFilter = state.memberSearchBlood.trim().toUpperCase();
     const roleFilter = state.memberSearchRole || '';
     return state.donorsList.filter(member => {
-        const memberName = getTextValue(member.fullName || member.name, '').toLowerCase();
+        const memberName = getTextValue(member.fullName || member.name, '');
         const memberBloodGroup = getTextValue(member.bloodGroup, '').toUpperCase();
         const memberRole = member.role || 'member';
-        const matchesName = !nameFilter || memberName.includes(nameFilter);
+        const matchesName = !nameFilter || isFuzzyNameMatch(nameFilter, memberName);
         const matchesBlood = !bloodFilter || memberBloodGroup === bloodFilter;
         const matchesRole = !roleFilter || memberRole === roleFilter;
         return matchesName && matchesBlood && matchesRole;
@@ -161,7 +287,7 @@ function updateAdminMemberSearchStatus() {
     const roleFilter = state.memberSearchRole;
     const parts = [];
     if (roleFilter) parts.push(`Role: ${roleFilter.charAt(0).toUpperCase() + roleFilter.slice(1)}`);
-    if (nameFilter) parts.push(`Name contains "${nameFilter}"`);
+    if (nameFilter) parts.push(`Name matches "${nameFilter}"`);
     if (bloodFilter) parts.push(`Blood group: ${bloodFilter}`);
     const label = parts.length ? parts.join(' • ') : 'Showing all members';
     statusEl.textContent = label;

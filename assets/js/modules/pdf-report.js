@@ -173,6 +173,14 @@ export function createMonthlyReportDownloader({
                     { text: detail.department || '—', bold: false }
                 ];
                 writeInlineSegments(locationSegments, 8, 5);
+                const phoneText = (detail.phone || '').toString().trim();
+                if (phoneText) {
+                    const contactSegments = [
+                        { text: 'Contact: ', bold: true },
+                        { text: phoneText, bold: false }
+                    ];
+                    writeInlineSegments(contactSegments, 8, 5);
+                }
                 const batchAgeWeightSegments = [
                     { text: 'Batch: ', bold: true },
                     { text: detail.batch || '—', bold: false },
@@ -229,7 +237,7 @@ export function createMonthlyReportDownloader({
                 yearGroups[year].push(entry);
             });
             
-            const sortedYears = Object.keys(yearGroups).map(Number).sort((a, b) => a - b);
+            const sortedYears = Object.keys(yearGroups).map(Number).sort((a, b) => b - a);
             
             const yearlyCounts = sortedYears.map(year => ({
                 year,
@@ -329,24 +337,27 @@ export function createMonthlyReportDownloader({
                     group.sort((a, b) => {
                         const aTime = a.dateObj ? a.dateObj.getTime() : 0;
                         const bTime = b.dateObj ? b.dateObj.getTime() : 0;
-                        return aTime - bTime;
+                        return bTime - aTime;
                     });
                 });
                 
-                monthGroupsForYear.forEach((entries, idx) => {
-                    if (!entries.length) return;
+                for (let idx = monthGroupsForYear.length - 1; idx >= 0; idx -= 1) {
+                    const entries = monthGroupsForYear[idx];
+                    if (!entries.length) continue;
                     printedAnyDetails = true;
                     
                     const firstEntry = entries[0];
                     const firstHasNotes = Boolean((firstEntry?.donation?.notes ?? '').toString().trim());
                     const firstHasComment = Boolean((firstEntry?.donation?.publicComment ?? '').toString().trim());
-                    const firstEntryHeight = 24 + 12 + (firstHasNotes ? 8 : 0) + (firstHasComment ? 8 : 0) + 10;
+                    const firstHasPhone = Boolean((firstEntry?.donation?.phone ?? '').toString().trim());
+                    const firstEntryHeight = 24 + (firstHasPhone ? 18 : 12) + (firstHasNotes ? 8 : 0) + (firstHasComment ? 8 : 0) + 10;
                     
                     drawMonthHeader(chartLabels.months[idx], String(year), entries.length, firstEntryHeight);
                     entries.forEach(({ donation, dateObj }, entryIdx) => {
                         const hasNotes = Boolean((donation?.notes ?? '').toString().trim());
                         const hasComment = Boolean((donation?.publicComment ?? '').toString().trim());
-                        const estimated = 24 + 12 + (hasNotes ? 8 : 0) + (hasComment ? 8 : 0) + 10;
+                        const hasPhone = Boolean((donation?.phone ?? '').toString().trim());
+                        const estimated = 24 + (hasPhone ? 18 : 12) + (hasNotes ? 8 : 0) + (hasComment ? 8 : 0) + 10;
                         if (entryIdx > 0) {
                             ensureEntrySpace(estimated);
                         }
@@ -362,12 +373,14 @@ export function createMonthlyReportDownloader({
                             notes: '',
                             comment: ''
                         };
+                        const rawPhone = donation?.phone;
+                        detail.phone = rawPhone == null ? '' : String(rawPhone).trim();
                         writeDonationEntry(entryIdx + 1, detail);
                         addGap(4);
                         drawDivider();
                     });
                     addGap(6);
-                });
+                }
             });
             if (undated.length) {
                 drawSectionTitle(`No Date Provided (${undated.length})`);
@@ -384,6 +397,8 @@ export function createMonthlyReportDownloader({
                         notes: '',
                         comment: ''
                     };
+                    const rawPhone = donation?.phone;
+                    detail.phone = rawPhone == null ? '' : String(rawPhone).trim();
                     writeDonationEntry(entryIdx + 1, detail);
                     addGap(2);
                     drawDivider();

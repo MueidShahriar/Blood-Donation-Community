@@ -306,6 +306,36 @@ const KNOWLEDGE_BASE = [
       answer: 'Many medications are fine. Blood thinners (aspirin — wait 48 hrs), antibiotics (wait till course ends), Accutane (1 month wait) may require deferral. Always disclose all medications.',
       answerBn: 'অনেক ওষুধ চলাকালীন দান করা যায়। রক্ত পাতলা করার ওষুধ (অ্যাসপিরিন — ৪৮ ঘণ্টা অপেক্ষা), অ্যান্টিবায়োটিক (কোর্স শেষ হওয়া পর্যন্ত অপেক্ষা) বাধা হতে পারে। সব ওষুধের কথা জানান।' },
 
+        // Blood pressure
+        { keywords: ['blood pressure', 'high bp', 'low bp', 'hypertension', 'hypotension', 'pressure', 'bp', 'রক্তচাপ', 'প্রেশার', 'উচ্চ রক্তচাপ', 'লো রক্তচাপ', 'হাই প্রেসার', 'লো প্রেসার'],
+            answer: 'If your blood pressure is well controlled and you feel fine, you can usually donate. Very high or very low BP, dizziness, or recent medication changes mean you should wait. Always tell the staff about your BP history and medicines.',
+            answerBn: 'রক্তচাপ নিয়ন্ত্রণে থাকলে এবং আপনি ভালো বোধ করলে সাধারণত রক্তদান করা যায়। খুব বেশি বা খুব কম চাপ, মাথা ঘোরা বা নতুন ওষুধ শুরু করলে অপেক্ষা করা ভালো। স্টাফকে অবশ্যই BP ইতিহাস ও ওষুধ জানান।' },
+
+        // Menstruation
+        { keywords: ['period', 'menstruation', 'mens', 'monthly cycle', 'মাসিক', 'পিরিয়ড', 'মাসিক চলছে', 'মেনস্ট্রুয়েশন'],
+            answer: 'You can donate during your period if you feel well and your hemoglobin is okay. If you have heavy bleeding, severe pain, or feel weak, wait until you recover.',
+            answerBn: 'মাসিক চলাকালীন ভালো লাগলে এবং হিমোগ্লোবিন ঠিক থাকলে রক্তদান করা যায়। বেশি রক্তপাত, তীব্র ব্যথা বা দুর্বলতা থাকলে সেরে ওঠার পরে দিন।' },
+
+        // Fever / infection
+        { keywords: ['fever', 'infection', 'flu', 'cold', 'viral', 'dengue', 'typhoid', 'malaria', 'hepatitis', 'jaundice', 'জ্বর', 'ইনফেকশন', 'ডেঙ্গু', 'টাইফয়েড', 'ম্যালেরিয়া', 'হেপাটাইটিস', 'জন্ডিস', 'ভাইরাল'],
+            answer: 'Do not donate while you have fever or infection. Donate only after you are fully recovered and off antibiotics. For dengue, typhoid, malaria, or hepatitis, blood banks often require a longer wait — check with your local blood bank.',
+            answerBn: 'জ্বর/ইনফেকশন থাকলে রক্তদান করবেন না। সম্পূর্ণ সুস্থ হয়ে এবং অ্যান্টিবায়োটিক শেষ হওয়ার পরে দান করুন। ডেঙ্গু/টাইফয়েড/ম্যালেরিয়া/হেপাটাইটিস হলে অনেক ক্ষেত্রে দীর্ঘ বিরতি লাগে — স্থানীয় ব্লাড ব্যাংকের নিয়ম জেনে নিন।' },
+
+        // Surgery / dental procedures
+        { keywords: ['surgery', 'operation', 'dental', 'tooth extraction', 'procedure', 'অপারেশন', 'সার্জারি', 'ডেন্টাল', 'দাঁত তোলা', 'প্রসিডিউর'],
+            answer: 'After surgery or dental procedures, wait until the wound is fully healed and you are off antibiotics or pain medicines. The waiting period depends on the procedure — ask your doctor or blood bank.',
+            answerBn: 'অপারেশন বা ডেন্টাল কাজের পরে ক্ষত সম্পূর্ণ শুকানো এবং অ্যান্টিবায়োটিক/পেইনকিলার শেষ হলে দান করুন। অপেক্ষার সময় অপারেশনের ধরন অনুযায়ী ভিন্ন — ডাক্তার বা ব্লাড ব্যাংকে জেনে নিন।' },
+
+        // Amount of blood taken
+        { keywords: ['how much blood', 'how many ml', 'amount of blood', 'blood volume', 'কত মিলি', 'কত রক্ত', 'পরিমাণ', 'রক্তের পরিমাণ'],
+            answer: 'A typical donation is about 350–450 ml depending on your weight and local guidelines. It is safe for healthy donors, and your body replaces the volume quickly.',
+            answerBn: 'সাধারণত ৩৫০–৪৫০ মি.লি. রক্ত নেওয়া হয় (ওজন ও নিয়ম অনুযায়ী)। সুস্থ দাতার জন্য এটি নিরাপদ এবং শরীর দ্রুত পূরণ করে।' },
+
+        // Safety / infection risk
+        { keywords: ['safe', 'risk', 'infection risk', 'needle safety', 'sterile', 'নিরাপদ', 'ঝুঁকি', 'ইনফেকশন ঝুঁকি', 'সুই', 'নিডল'],
+            answer: 'Blood donation is very safe. Single-use sterile needles are used and cannot be reused. Most people feel fine; minor dizziness can happen and goes away with rest and fluids.',
+            answerBn: 'রক্তদান অত্যন্ত নিরাপদ। একবার ব্যবহারযোগ্য জীবাণুমুক্ত সূঁচ ব্যবহার করা হয় এবং পুনঃব্যবহার হয় না। বেশিরভাগ মানুষ ঠিক থাকেন; সামান্য মাথা ঘোরা হলে বিশ্রাম ও পানি পান করলে ঠিক হয়ে যায়।' },
+
     // Diabetes
     { keywords: ['diabetes', 'diabetic', 'sugar', 'ডায়াবেটিস', 'সুগার', 'বহুমূত্র'],
       answer: 'Diabetics can usually donate if their condition is well-controlled. Both Type 1 and Type 2 may be eligible. Blood sugar should be normal at donation time. Insulin alone doesn\'t disqualify.',

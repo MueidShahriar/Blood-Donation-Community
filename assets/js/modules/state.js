@@ -2,6 +2,7 @@ const state = {
     donorsList: [],
     donorsByGroup: new Map(),
     eventsList: [],
+    feedbackList: [],
     memberSearchName: '',
     memberSearchBlood: '',
     memberSearchRole: '',
