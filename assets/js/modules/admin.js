@@ -63,7 +63,6 @@ export function renderAdminRecentDonationsList(deleteRecentFn) {
                 const batchF = document.getElementById('donor-batch'); if (batchF) batchF.value = data.batch || '';
                 const ageF = document.getElementById('donor-age'); if (ageF) ageF.value = data.age || '';
                 const numberF = document.getElementById('donor-number'); if (numberF) numberF.value = data.phone || '';
-                const heightF = document.getElementById('donor-height'); if (heightF) heightF.value = data.height || '';
                 const weightF = document.getElementById('donor-weight'); if (weightF) weightF.value = data.weight || '';
                 const dateF = document.getElementById('donation-date'); if (dateF) dateF.value = data.date || '';
                 document.getElementById('admin-recent-donor-form')?.scrollIntoView({ behavior: 'smooth' });
@@ -124,6 +123,8 @@ function renderDonorCardAdmin(d) {
                     <span><i class="fa-solid fa-envelope"></i> ${getTextValue(d.email, '—')}</span>
                     <span><i class="fa-solid fa-phone"></i> ${phone}</span>
                     <span><i class="fa-solid fa-location-dot"></i> Current Location: ${getTextValue(d.location, '—')}</span>
+                    <span><i class="fa-solid fa-building-columns"></i> Department: ${getTextValue(d.department, '—')}</span>
+                    <span><i class="fa-solid fa-layer-group"></i> Batch: ${getTextValue(d.batch, '—')}</span>
                     <span><i class="fa-solid fa-calendar-check"></i> Last: ${lastDate}</span>
                     ${noteRow}
                 </div>
@@ -322,6 +323,8 @@ export function renderAdminMembersList(deleteMemberFn, promoteMemberFn, demoteMe
                 document.getElementById('admin-member-phone').value = memberData.phone || '';
                 document.getElementById('admin-member-bloodGroup').value = memberData.bloodGroup || '';
                 document.getElementById('admin-member-location').value = memberData.location || '';
+                document.getElementById('admin-member-department').value = memberData.department || '';
+                document.getElementById('admin-member-batch').value = memberData.batch || '';
                 document.getElementById('admin-member-lastDonateDate').value = memberData.lastDonateDate || '';
                 document.getElementById('admin-member-hide-phone').checked = memberData.isPhoneHidden || false;
                 document.getElementById('admin-member-comment').value = memberData.publicComment || '';

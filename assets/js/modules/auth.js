@@ -39,9 +39,20 @@ function hideAuthRedirectOverlay() {
     document.body.classList.remove('auth-redirecting');
 }
 
+function getProfileHref() {
+    const path = window.location.pathname || '';
+    return path.includes('/pages/') ? 'profile.html' : 'pages/profile.html';
+}
+
+function getAdminHref() {
+    const path = window.location.pathname || '';
+    return path.includes('/pages/') ? 'admin.html' : 'pages/admin.html';
+}
+
 export function updateLoginButtonState(database, ref, onValue, renderAdminMembersList, renderAdminEventsList, deleteMemberFn, deleteEventFn, afterRoleResolvedFn, promoteMemberFn, demoteMemberFn) {
     if (state.isAuthRedirecting) return;
     const assetPrefix = window.location.pathname.includes('/pages/') ? '../' : '';
+    const isAdminPage = /\/(pages\/)?admin\.html$/i.test(window.location.pathname || '');
     const loginBtn = document.getElementById('login-btn');
     const mobileLoginBtn = document.getElementById('mobile-login-btn');
     const profileUserId = document.getElementById('profile-userId');
@@ -55,24 +66,36 @@ export function updateLoginButtonState(database, ref, onValue, renderAdminMember
     const mobileNavIds = ['mobile-home-link','mobile-about-link','mobile-how-link','mobile-events-link','mobile-join-link','mobile-search-link','mobile-contact-link'];
     if (!loginBtn && !mobileLoginBtn) return;
     if (state.currentUser) {
-        if (loginBtn) {
-            loginBtn.innerHTML = '<img src="' + assetPrefix + 'image/login.png" alt="Profile" class="inline-icon"><span class="sr-only">' + t('btnProfile') + '</span>';
-            loginBtn.setAttribute('aria-label', t('btnProfile'));
-            loginBtn.setAttribute('title', t('btnProfile'));
-            loginBtn.dataset.state = 'loggedin';
-            loginBtn.removeAttribute('data-i18n');
-        }
-        if (mobileLoginBtn) {
-            mobileLoginBtn.innerHTML = '<img src="' + assetPrefix + 'image/login.png" alt="Profile" class="inline-icon"> ' + t('btnProfile');
-            mobileLoginBtn.setAttribute('aria-label', t('btnProfile'));
-            mobileLoginBtn.setAttribute('title', t('btnProfile'));
-            mobileLoginBtn.removeAttribute('data-i18n');
-        }
         if (mobileLogoutBtn) { mobileLogoutBtn.classList.remove('hidden'); mobileLogoutBtn.classList.add('block'); }
         if (profileUserId) profileUserId.textContent = `User ID: ${state.currentUser.uid}`;
-        const userRef = ref(database, `donors/${state.currentUser.uid}/role`);
+        const userRef = ref(database, `donors/${state.currentUser.uid}`);
         onValue(userRef, (snapshot) => {
-            state.currentUserRole = snapshot.val() || 'member';
+            const userData = snapshot.val() || {};
+            state.currentUserRole = userData.role || 'member';
+            const photoUrl = userData.profilePhoto || '';
+            if (loginBtn) {
+                if (photoUrl) {
+                    loginBtn.innerHTML = '<img src="' + photoUrl + '" alt="' + t('btnProfile') + '" class="nav-avatar"><span class="sr-only">' + t('btnProfile') + '</span>';
+                    loginBtn.classList.add('nav-avatar-btn');
+                } else {
+                    loginBtn.innerHTML = '<img src="' + assetPrefix + 'image/login.png" alt="Profile" class="inline-icon"><span class="sr-only">' + t('btnProfile') + '</span>';
+                    loginBtn.classList.remove('nav-avatar-btn');
+                }
+                loginBtn.setAttribute('aria-label', t('btnProfile'));
+                loginBtn.setAttribute('title', t('btnProfile'));
+                loginBtn.dataset.state = 'loggedin';
+                loginBtn.removeAttribute('data-i18n');
+            }
+            if (mobileLoginBtn) {
+                if (photoUrl) {
+                    mobileLoginBtn.innerHTML = '<img src="' + photoUrl + '" alt="' + t('btnProfile') + '" class="nav-avatar nav-avatar--sm"> ' + t('btnProfile');
+                } else {
+                    mobileLoginBtn.innerHTML = '<img src="' + assetPrefix + 'image/login.png" alt="Profile" class="inline-icon"> ' + t('btnProfile');
+                }
+                mobileLoginBtn.setAttribute('aria-label', t('btnProfile'));
+                mobileLoginBtn.setAttribute('title', t('btnProfile'));
+                mobileLoginBtn.removeAttribute('data-i18n');
+            }
             if (state.currentUserRole === 'admin') {
                 adminPanel?.classList.remove('hidden');
                 document.body.classList.add('admin-mode');
@@ -97,12 +120,16 @@ export function updateLoginButtonState(database, ref, onValue, renderAdminMember
             }
             hideAuthRedirectOverlay();
             if (typeof afterRoleResolvedFn === 'function') afterRoleResolvedFn(state.currentUserRole);
+            if (isAdminPage && state.currentUserRole !== 'admin') {
+                window.location.assign(getProfileHref());
+            }
         }, { onlyOnce: true });
     } else {
         if (loginBtn) {
             loginBtn.innerHTML = '<img src="' + assetPrefix + 'image/login.png" alt="Login" class="inline-icon"> ' + t('btnLogin');
             loginBtn.dataset.state = 'loggedout';
             loginBtn.setAttribute('data-i18n', 'btnLogin');
+            loginBtn.classList.remove('nav-avatar-btn');
         }
         if (mobileLoginBtn) {
             mobileLoginBtn.innerHTML = '<img src="' + assetPrefix + 'image/login.png" alt="Login" class="inline-icon"> ' + t('btnLogin');
@@ -119,6 +146,9 @@ export function updateLoginButtonState(database, ref, onValue, renderAdminMember
         navLinkIds.forEach(id => document.getElementById(id)?.classList.remove('hidden'));
         mobileNavIds.forEach(id => document.getElementById(id)?.classList.remove('hidden'));
         hideAuthRedirectOverlay();
+        if (isAdminPage) {
+            window.location.assign(assetPrefix ? '../index.html' : 'index.html');
+        }
     }
 }
 
@@ -131,11 +161,6 @@ export function initAuth({
     const mobileLoginBtn = document.getElementById('mobile-login-btn');
     const loginForm = document.getElementById('login-form');
     const mobileMenu = document.getElementById('mobile-menu');
-
-    function getProfileHref() {
-        const path = window.location.pathname || '';
-        return path.includes('/pages/') ? 'profile.html' : 'pages/profile.html';
-    }
 
     function handleLoginClick() {
         if (state.currentUser) {
@@ -176,8 +201,12 @@ export function initAuth({
                 showAuthRedirectOverlay();
                 if (typeof updateLoginFn === 'function') updateLoginFn();
                 closeModal(loginModal);
-                // Ensure users land directly on profile after a successful login.
-                window.location.assign(getProfileHref());
+                const roleRef = ref(database, `donors/${state.currentUser.uid}/role`);
+                onValue(roleRef, (snapshot) => {
+                    const role = snapshot.val() || 'member';
+                    const target = role === 'admin' ? getAdminHref() : getProfileHref();
+                    window.location.assign(target);
+                }, { onlyOnce: true });
             })
             .catch((error) => {
                 showModalMessage('success-modal', `Login failed: ${error.message}`, 'Login Failed');

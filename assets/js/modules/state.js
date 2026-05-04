@@ -21,6 +21,7 @@ const state = {
     recentLoaderState: true,
     ageGroupChart: null,
     bloodGroupChart: null,
+    monthlyDonationsChart: null,
     publicEventsListEl: null,
     eventsEmptyStateEl: null,
     joinFeedbackEl: null,

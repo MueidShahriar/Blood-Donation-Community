@@ -3347,3 +3347,12 @@ header.scrolled {
     }
 }
 
+/* Full width admin dashboard */
+#admin-panel {
+    margin-left: calc(-50vw + 50%);
+    margin-right: calc(-50vw + 50%);
+    padding-left: calc(50vw - 50%);
+    padding-right: calc(50vw - 50%);
+    width: 100vw;
+}
+

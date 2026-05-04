@@ -51,6 +51,8 @@ const fEmail = document.getElementById('profile-email');
 const fPhone = document.getElementById('profile-phone');
 const fBloodGroup = document.getElementById('profile-bloodGroup');
 const fLocation = document.getElementById('profile-location');
+const fDepartment = document.getElementById('profile-department');
+const fBatch = document.getElementById('profile-batch');
 const fLastDonate = document.getElementById('profile-lastDonateDate');
 const fDateOfBirth = document.getElementById('profile-dateOfBirth');
 const fGender = document.getElementById('profile-gender');
@@ -59,6 +61,7 @@ const fNotes = document.getElementById('profile-notes');
 const fRole = document.getElementById('profile-role');
 const profilePhotoInput = document.getElementById('profile-photo-input');
 const profileAvatarImg = document.getElementById('profile-avatar-img');
+const profilePhotoRemoveBtn = document.getElementById('profile-photo-remove');
 
 const recentGrid = document.getElementById('profile-recent-grid');
 const recentEmpty = document.getElementById('profile-recent-empty');
@@ -68,7 +71,6 @@ const recentLocation = document.getElementById('profile-recent-location');
 const recentDepartment = document.getElementById('profile-recent-department');
 const recentBatch = document.getElementById('profile-recent-batch');
 const recentAge = document.getElementById('profile-recent-age');
-const recentHeight = document.getElementById('profile-recent-height');
 const recentWeight = document.getElementById('profile-recent-weight');
 
 const logoutHeaderBtn = document.getElementById('pf-logout-header');
@@ -164,9 +166,11 @@ function populateProfile(data, email) {
         profileAvatarImg.src = data.profilePhoto;
         profileAvatarImg.style.display = 'block';
         if (avatarText) avatarText.style.display = 'none';
+        if (profilePhotoRemoveBtn) profilePhotoRemoveBtn.style.display = 'flex';
     } else if (profileAvatarImg) {
         profileAvatarImg.style.display = 'none';
         if (avatarText) avatarText.style.display = '';
+        if (profilePhotoRemoveBtn) profilePhotoRemoveBtn.style.display = 'none';
     }
     if (displayName) displayName.textContent = name;
     if (displayBlood) displayBlood.querySelector('span:last-child').textContent = blood;
@@ -195,21 +199,22 @@ function populateProfile(data, email) {
         }
     }
 
+    const recentInfo = (data.lastDonationInfo && typeof data.lastDonationInfo === 'object')
+        ? data.lastDonationInfo
+        : null;
     if (fFullName) fFullName.value = data.fullName || '';
     if (fEmail) fEmail.value = email || '';
     if (fPhone) fPhone.value = data.phone || '';
     if (fBloodGroup) fBloodGroup.value = data.bloodGroup || '';
     if (fLocation) fLocation.value = data.location || '';
+    if (fDepartment) fDepartment.value = data.department || recentInfo?.department || '';
+    if (fBatch) fBatch.value = data.batch || recentInfo?.batch || '';
     if (fLastDonate) fLastDonate.value = data.lastDonateDate || '';
     if (fDateOfBirth) fDateOfBirth.value = data.dateOfBirth || '';
     if (fGender) fGender.value = data.gender || '';
 
     if (fNotes) fNotes.value = data.notes || '';
     if (fRole) fRole.value = role;
-
-    const recentInfo = (data.lastDonationInfo && typeof data.lastDonationInfo === 'object')
-        ? data.lastDonationInfo
-        : null;
     const hasRecent = Boolean(
         recentInfo && Object.keys(recentInfo).some(key => recentInfo[key])
     );
@@ -224,7 +229,6 @@ function populateProfile(data, email) {
         if (recentDepartment) recentDepartment.textContent = recentInfo.department || '—';
         if (recentBatch) recentBatch.textContent = recentInfo.batch || '—';
         if (recentAge) recentAge.textContent = recentInfo.age || '—';
-        if (recentHeight) recentHeight.textContent = recentInfo.height ? `${recentInfo.height} cm` : '—';
         if (recentWeight) recentWeight.textContent = recentInfo.weight ? `${recentInfo.weight} kg` : '—';
     }
 }
@@ -353,6 +357,8 @@ profileForm?.addEventListener('submit', (e) => {
         phone: fd.get('phone')?.toString().trim() || '',
         bloodGroup: fd.get('bloodGroup')?.toString().trim() || '',
         location: fd.get('location')?.toString().trim() || '',
+        department: fd.get('department')?.toString().trim() || currentDonorData.department || '',
+        batch: fd.get('batch')?.toString().trim() || currentDonorData.batch || '',
         lastDonateDate: fd.get('lastDonateDate')?.toString() || '',
         notes: fd.get('notes')?.toString() || '',
         dateOfBirth: fd.get('dateOfBirth')?.toString() || currentDonorData.dateOfBirth || '',
@@ -406,6 +412,27 @@ profilePhotoInput?.addEventListener('change', async (e) => {
         showToast('Failed to upload photo.', 'error');
     }
     profilePhotoInput.value = '';
+});
+
+profilePhotoRemoveBtn?.addEventListener('click', async () => {
+    if (!currentUser) {
+        showToast('You must be logged in.', 'error');
+        return;
+    }
+    try {
+        await remove(ref(database, 'donors/' + currentUser.uid + '/profilePhoto'));
+        if (profileAvatarImg) {
+            profileAvatarImg.src = '';
+            profileAvatarImg.style.display = 'none';
+        }
+        if (avatarText) avatarText.style.display = '';
+        if (profilePhotoRemoveBtn) profilePhotoRemoveBtn.style.display = 'none';
+        currentDonorData.profilePhoto = null;
+        showToast('Profile photo removed.', 'success');
+    } catch (err) {
+        console.error('Photo remove failed:', err);
+        showToast('Failed to remove photo.', 'error');
+    }
 });
 
 function getDataUrlSize(dataUrl) {

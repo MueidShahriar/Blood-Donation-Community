@@ -7,7 +7,9 @@ const CHART_RETRY_DELAY_MS = 350;
 
 function scheduleDashboardChartRetry() {
     if (state.dashboardChartRetryTimer) return;
-    const hasChartCanvas = document.getElementById('ageGroupChart') || document.getElementById('bloodGroupChart');
+    const hasChartCanvas = document.getElementById('ageGroupChart')
+        || document.getElementById('bloodGroupChart')
+        || document.getElementById('monthlyDonationsChart');
     if (!hasChartCanvas) return;
     state.dashboardChartRetryTimer = window.setTimeout(() => {
         state.dashboardChartRetryTimer = null;
@@ -88,7 +90,25 @@ export function ensureDashboardCharts() {
             });
         }
     }
-    return Boolean(state.ageGroupChart || state.bloodGroupChart);
+    if (!state.monthlyDonationsChart) {
+        const ctx = document.getElementById('monthlyDonationsChart');
+        if (ctx) {
+            state.monthlyDonationsChart = new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: chartLabels.months,
+                    datasets: [{
+                        data: chartLabels.months.map(() => 0),
+                        backgroundColor: chartColors.months,
+                        borderWidth: 0,
+                        hoverOffset: 6
+                    }]
+                },
+                options: getPieChartOptions()
+            });
+        }
+    }
+    return Boolean(state.ageGroupChart || state.bloodGroupChart || state.monthlyDonationsChart);
 }
 
 export function computeAgeGroupCounts() {
@@ -131,6 +151,29 @@ export function computeBloodGroupCounts() {
     return counts;
 }
 
+export function computeMonthlyDonationsCounts() {
+    const counts = chartLabels.months.map(() => 0);
+    const years = [];
+    state.recentDonationsList.forEach(entry => {
+        const rawDate = entry?.date || entry?.donationDate;
+        const dateObj = rawDate ? new Date(rawDate) : null;
+        if (!dateObj || Number.isNaN(dateObj.getTime())) return;
+        years.push(dateObj.getFullYear());
+    });
+    const fallbackYear = new Date().getFullYear();
+    const targetYear = years.length ? Math.max(...years) : fallbackYear;
+    state.recentDonationsList.forEach(entry => {
+        const rawDate = entry?.date || entry?.donationDate;
+        const dateObj = rawDate ? new Date(rawDate) : null;
+        if (!dateObj || Number.isNaN(dateObj.getTime())) return;
+        if (dateObj.getFullYear() !== targetYear) return;
+        const monthIndex = dateObj.getMonth();
+        if (monthIndex >= 0 && monthIndex < counts.length) counts[monthIndex] += 1;
+    });
+    const total = counts.reduce((sum, value) => sum + value, 0);
+    return { counts, year: targetYear, total };
+}
+
 export function updateAgeGroupChart() {
     const counts = computeAgeGroupCounts();
     ensureDashboardCharts();
@@ -161,8 +204,25 @@ export function updateBloodGroupChart() {
     toggleEmptyState('bloodGroupChartEmpty', total > 0);
 }
 
+export function updateMonthlyDonationsChart() {
+    const { counts, year, total } = computeMonthlyDonationsCounts();
+    const yearEl = document.getElementById('monthly-donations-year');
+    if (yearEl) yearEl.textContent = total > 0 ? String(year) : '';
+    ensureDashboardCharts();
+    if (!state.monthlyDonationsChart) {
+        toggleEmptyState('monthlyDonationsChartEmpty', total > 0);
+        return;
+    }
+    state.monthlyDonationsChart.data.labels = chartLabels.months;
+    state.monthlyDonationsChart.data.datasets[0].data = counts;
+    state.monthlyDonationsChart.data.datasets[0].backgroundColor = chartColors.months;
+    state.monthlyDonationsChart.update();
+    toggleEmptyState('monthlyDonationsChartEmpty', total > 0);
+}
+
 export function refreshDashboardCharts() {
     updateAgeGroupChart();
+    updateMonthlyDonationsChart();
     updateBloodGroupChart();
 }
 

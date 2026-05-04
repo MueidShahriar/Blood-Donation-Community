@@ -7,6 +7,30 @@
     object-fit: contain;
 }
 
+.nav-avatar {
+    width: 34px;
+    height: 34px;
+    border-radius: 999px;
+    object-fit: cover;
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.15);
+    border: 2px solid #ffffff;
+}
+
+.nav-avatar--sm {
+    width: 26px;
+    height: 26px;
+}
+
+.nav-avatar-btn {
+    background: transparent !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+}
+
+.nav-avatar-btn:hover {
+    background: transparent !important;
+}
+
 /* ===== Logo Fill Preloader ===== */
 #page-loader {
     position: fixed;

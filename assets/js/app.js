@@ -631,7 +631,7 @@ window.onload = function () {
             name: fd.get('donor-name'), bloodGroup: fd.get('donor-blood-group'),
             location: fd.get('donor-location'), department: fd.get('donor-department'),
             batch: fd.get('donor-batch'), age: fd.get('donor-age'),
-            weight: fd.get('donor-weight'), height: fd.get('donor-height'),
+            weight: fd.get('donor-weight'),
             phone: fd.get('donor-number'), date: fd.get('donation-date'),
             donorId: donorIdInput || normalizeDonorId(matchedDonor?.donorId)
         };
@@ -643,7 +643,6 @@ window.onload = function () {
             if (!donorData.department) donorData.department = matchedDonor.department || lastInfo.department || '';
             if (!donorData.batch) donorData.batch = matchedDonor.batch || lastInfo.batch || '';
             if (!donorData.phone) donorData.phone = matchedDonor.phone || '';
-            if (!donorData.height) donorData.height = matchedDonor.height || lastInfo.height || '';
             if (!donorData.weight) donorData.weight = matchedDonor.weight || lastInfo.weight || '';
         }
         if (!donorData.name || !donorData.bloodGroup || !donorData.location || !donorData.date) {
@@ -654,7 +653,6 @@ window.onload = function () {
             lastDonateDate: donorData.date || matchedDonor.lastDonateDate || '',
             department: donorData.department || matchedDonor.department || '',
             batch: donorData.batch || matchedDonor.batch || '',
-            height: donorData.height || matchedDonor.height || '',
             weight: donorData.weight || matchedDonor.weight || '',
             lastDonationInfo: {
                 date: donorData.date || '',
@@ -663,7 +661,6 @@ window.onload = function () {
                 department: donorData.department || '',
                 batch: donorData.batch || '',
                 age: donorData.age || '',
-                height: donorData.height || '',
                 weight: donorData.weight || '',
                 donorId: donorData.donorId || normalizeDonorId(matchedDonor.donorId)
             }
@@ -723,7 +720,6 @@ window.onload = function () {
         const deptF = document.getElementById('donor-department');
         const batchF = document.getElementById('donor-batch');
         const numberF = document.getElementById('donor-number');
-        const heightF = document.getElementById('donor-height');
         const weightF = document.getElementById('donor-weight');
         if (nameF && !nameF.value) nameF.value = match.fullName || '';
         if (bgF && !bgF.value) bgF.value = match.bloodGroup || '';
@@ -731,7 +727,6 @@ window.onload = function () {
         if (deptF && !deptF.value) deptF.value = match.department || lastInfo.department || '';
         if (batchF && !batchF.value) batchF.value = match.batch || lastInfo.batch || '';
         if (numberF && !numberF.value) numberF.value = match.phone || '';
-        if (heightF && !heightF.value) heightF.value = match.height || lastInfo.height || '';
         if (weightF && !weightF.value) weightF.value = match.weight || lastInfo.weight || '';
     };
     recentDonorIdField?.addEventListener('input', fillRecentDonorFromId);
@@ -745,7 +740,7 @@ window.onload = function () {
         const memberId = fd.get('id');
         const updatedData = {
             fullName: fd.get('fullName'), email: fd.get('email') || '', phone: fd.get('phone'), bloodGroup: fd.get('bloodGroup'),
-            location: fd.get('location'), lastDonateDate: fd.get('lastDonateDate'),
+            location: fd.get('location'), department: fd.get('department'), batch: fd.get('batch'), lastDonateDate: fd.get('lastDonateDate'),
             isPhoneHidden: fd.get('isPhoneHidden') === 'on', publicComment: fd.get('publicComment')
         };
         if (memberId) {
