@@ -392,8 +392,8 @@ const KNOWLEDGE_BASE = [
       answerBn: 'রক্তদান হলো অন্যের জীবন বাঁচাতে স্বেচ্ছায় নিজের রক্ত দেওয়ার মহৎ কাজ। দান করা রক্ত রক্ত সংযোজন, অস্ত্রোপচার, দুর্ঘটনার শিকার, ক্যান্সার রোগী এবং রক্তের রোগে আক্রান্তদের জন্য ব্যবহার হয়। এটি সবচেয়ে মূল্যবান উপহারগুলোর একটি! 🩸' },
 
     // This website / community
-    { keywords: ['this website', 'this site', 'blood donation community', 'your community', 'এই ওয়েবসাইট', 'এই সাইট', 'তোমাদের কমিউনিটি'],
-      answer: 'Blood Donation Community is a volunteer-driven platform that connects blood donors with patients in need. You can join as a donor, search for donors by blood group, view events, and get your donor card! Visit our Search page to find donors near you.',
+        { keywords: ['this website', 'this site', 'blood donation community', 'your community', 'এই ওয়েবসাইট', 'এই সাইট', 'তোমাদের কমিউনিটি'],
+            answer: 'BAUET BDC is a volunteer-driven platform that connects blood donors with patients in need. You can join as a donor, search for donors by blood group, view events, and get your donor card! Visit our Search page to find donors near you.',
       answerBn: 'ব্লাড ডোনেশন কমিউনিটি একটি স্বেচ্ছাসেবী প্ল্যাটফর্ম যা রক্তদাতা ও রোগীদের সংযুক্ত করে। আপনি দাতা হিসেবে যোগ দিতে পারেন, রক্তের গ্রুপ অনুযায়ী দাতা খুঁজতে পারেন, ইভেন্ট দেখতে পারেন এবং ডোনার কার্ড পেতে পারেন! আমাদের সার্চ পেজে দাতা খুঁজুন।' },
 
         { keywords: ['contact', 'email', 'phone', 'whatsapp', 'contact info', 'যোগাযোগ', 'ইমেইল', 'ফোন', 'হোয়াটসঅ্যাপ'],
@@ -553,7 +553,7 @@ Do NOT use Bengali script. Do NOT reply in pure English. Reply in casual, natura
     const systemPrompt = {
         role: 'user',
         parts: [{
-            text: `You are "Blood Donation Assistant" — a highly intelligent, deeply knowledgeable medical AI assistant for the "Blood Donation Community" website. You have extensive expertise in:
+            text: `You are "Blood Donation Assistant" — a highly intelligent, deeply knowledgeable medical AI assistant for the "BAUET BDC" website. You have extensive expertise in:
 
 🩸 BLOOD DONATION (your primary domain):
 - All aspects of blood donation: eligibility, types (whole blood, platelets, plasma, double red cells), preparation, aftercare, frequency, safety

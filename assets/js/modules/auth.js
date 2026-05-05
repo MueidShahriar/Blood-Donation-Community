@@ -1,6 +1,7 @@
 import state from './state.js';
 import { openModal, closeModal, showModalMessage } from './modals.js';
 import { t } from './language-ui.js';
+import { getInitials, getTextValue } from './utils.js';
 
 function getAuthRedirectOverlay() {
     let overlay = document.getElementById('auth-redirect-overlay');
@@ -61,6 +62,7 @@ export function updateLoginButtonState(database, ref, onValue, renderAdminMember
     const adminMobileLink = document.getElementById('admin-mobile-link');
     const adminDesktopLink = document.getElementById('nav-dashboard-link');
     const mobileLogoutBtn = document.getElementById('mobile-logout-btn');
+    const mobileProfileBtn = document.getElementById('mobile-profile-btn');
     // All regular nav link IDs (desktop + mobile) to hide for admin
     const navLinkIds = ['nav-home-link','nav-about-link','nav-how-link','nav-events-link','nav-join-link','nav-search-link','nav-contact-link'];
     const mobileNavIds = ['mobile-home-link','mobile-about-link','mobile-how-link','mobile-events-link','mobile-join-link','mobile-search-link','mobile-contact-link'];
@@ -73,6 +75,8 @@ export function updateLoginButtonState(database, ref, onValue, renderAdminMember
             const userData = snapshot.val() || {};
             state.currentUserRole = userData.role || 'member';
             const photoUrl = userData.profilePhoto || '';
+            const displayName = getTextValue(userData.fullName || userData.name, 'User');
+            const initials = getInitials(displayName, 'U');
             if (loginBtn) {
                 if (photoUrl) {
                     loginBtn.innerHTML = '<img src="' + photoUrl + '" alt="' + t('btnProfile') + '" class="nav-avatar"><span class="sr-only">' + t('btnProfile') + '</span>';
@@ -86,15 +90,18 @@ export function updateLoginButtonState(database, ref, onValue, renderAdminMember
                 loginBtn.dataset.state = 'loggedin';
                 loginBtn.removeAttribute('data-i18n');
             }
-            if (mobileLoginBtn) {
+            if (mobileProfileBtn) {
                 if (photoUrl) {
-                    mobileLoginBtn.innerHTML = '<img src="' + photoUrl + '" alt="' + t('btnProfile') + '" class="nav-avatar nav-avatar--sm"> ' + t('btnProfile');
+                    mobileProfileBtn.innerHTML = '<img src="' + photoUrl + '" alt="' + t('btnProfile') + '">';
                 } else {
-                    mobileLoginBtn.innerHTML = '<img src="' + assetPrefix + 'image/login.png" alt="Profile" class="inline-icon"> ' + t('btnProfile');
+                    mobileProfileBtn.innerHTML = '<span class="mobile-profile-btn__initials">' + initials + '</span>';
                 }
-                mobileLoginBtn.setAttribute('aria-label', t('btnProfile'));
-                mobileLoginBtn.setAttribute('title', t('btnProfile'));
-                mobileLoginBtn.removeAttribute('data-i18n');
+                mobileProfileBtn.classList.remove('hidden');
+                mobileProfileBtn.setAttribute('aria-label', t('btnProfile'));
+                mobileProfileBtn.setAttribute('title', t('btnProfile'));
+            }
+            if (mobileLoginBtn) {
+                mobileLoginBtn.classList.add('hidden');
             }
             if (state.currentUserRole === 'admin') {
                 adminPanel?.classList.remove('hidden');
@@ -131,7 +138,12 @@ export function updateLoginButtonState(database, ref, onValue, renderAdminMember
             loginBtn.setAttribute('data-i18n', 'btnLogin');
             loginBtn.classList.remove('nav-avatar-btn');
         }
+        if (mobileProfileBtn) {
+            mobileProfileBtn.classList.add('hidden');
+            mobileProfileBtn.innerHTML = '<span class="mobile-profile-btn__initials">U</span>';
+        }
         if (mobileLoginBtn) {
+            mobileLoginBtn.classList.remove('hidden');
             mobileLoginBtn.innerHTML = '<img src="' + assetPrefix + 'image/login.png" alt="Login" class="inline-icon"> ' + t('btnLogin');
             mobileLoginBtn.setAttribute('data-i18n', 'btnLogin');
         }
@@ -159,6 +171,7 @@ export function initAuth({
     const loginModal = document.getElementById('login-modal');
     const loginBtn = document.getElementById('login-btn');
     const mobileLoginBtn = document.getElementById('mobile-login-btn');
+    const mobileProfileBtn = document.getElementById('mobile-profile-btn');
     const loginForm = document.getElementById('login-form');
     const mobileMenu = document.getElementById('mobile-menu');
 
@@ -174,6 +187,7 @@ export function initAuth({
         if (mobileMenu) closeModal(mobileMenu);
         handleLoginClick();
     });
+    mobileProfileBtn?.addEventListener('click', handleLoginClick);
 
     const mobileLogoutBtn = document.getElementById('mobile-logout-btn');
 

@@ -5,7 +5,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#e11d48" />
-    <title>Visitor Statistics - Blood Donation Community</title>
+    <title>Visitor Statistics - BAUET BDC</title>
     <link rel="shortcut icon" href="../image/blood-drop.png" type="image/x-icon">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -15,7 +15,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
         crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="../assets/css/common.css">
-    <meta name="description" content="Real-time visitor statistics for Blood Donation Community website.">
+    <meta name="description" content="Real-time visitor statistics for BAUET BDC website.">
     <style>
         #page-loader{position:fixed;top:0;left:0;width:100%;height:100%;background:#fff;z-index:9999;display:flex;justify-content:center;align-items:center}
         #page-loader.fade-out{opacity:0;visibility:hidden;transition:opacity .5s,visibility .5s}
@@ -142,7 +142,7 @@
                 <a href="../index.html" class="flex items-center gap-3 text-decoration-none">
                     <img src="../image/blood-drop.png" alt="logo" class="h-10 w-10 header-logo border-red-600" />
                     <span class="text-2xl font-extrabold text-red-700 tracking-tight site-title"
-                        data-i18n="siteTitle">Blood Donation Community</span>
+                        data-i18n="siteTitle">BAUET BDC</span>
                 </a>
                 <span id="admin-badge"
                     class="hidden items-center gap-1 text-xs font-bold px-2 py-1 rounded bg-red-600 text-white shadow"
@@ -220,7 +220,7 @@
                 Visitor <span class="bg-gradient-to-r from-red-600 to-red-500 bg-clip-text text-transparent">Statistics</span>
             </h1>
             <p class="mt-4 text-gray-500 max-w-lg mx-auto text-sm leading-relaxed">
-                Real-time visitor tracking powered by Firebase. See how many people are visiting and browsing the Blood Donation Community website.
+                Real-time visitor tracking powered by Firebase. See how many people are visiting and browsing the BAUET BDC website.
             </p>
         </div>
 
@@ -366,6 +366,53 @@
             <div class="mt-4 text-right">
                 <button id="success-close" class="px-4 py-2 bg-red-600 text-white rounded">Close</button>
             </div>
+        </div>
+    </div>
+
+    <div id="feedback-modal" class="fixed inset-0 hidden items-center justify-center z-50">
+        <div class="absolute inset-0 bg-black opacity-40"></div>
+        <div class="bg-white rounded-lg shadow-xl p-6 max-w-md mx-4 z-10 w-full">
+            <div class="flex items-start justify-between mb-3">
+                <div>
+                    <h3 class="text-lg font-bold text-red-700" data-i18n="feedbackTitle">Share Your Feedback</h3>
+                    <p class="text-sm text-gray-600" data-i18n="feedbackDesc">Let us know how we can improve the BAUET BDC.</p>
+                </div>
+                <button type="button" id="feedback-close" class="text-gray-400 hover:text-gray-600"
+                    aria-label="Close feedback form">
+                    <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+                </button>
+            </div>
+            <form id="feedback-form" class="grid gap-4">
+                <div class="field-icon-left">
+                    <i class="fi fa-solid fa-user"></i>
+                    <input name="name" id="feedback-name" type="text" placeholder=" "
+                        class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
+                    <label for="feedback-name"
+                        class="absolute left-4 top-3 text-gray-400 transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-focus:-top-3.5 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3.5 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Name</label>
+                </div>
+                <div class="field-icon-left">
+                    <i class="fi fa-solid fa-envelope"></i>
+                    <input name="email" id="feedback-email" type="email" placeholder=" " autocomplete="email"
+                        class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
+                    <label for="feedback-email"
+                        class="absolute left-4 top-3 text-gray-400 transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-focus:-top-3.5 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3.5 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Email (optional)</label>
+                </div>
+                <div class="field-icon-left">
+                    <i class="fi fa-solid fa-comment"></i>
+                    <textarea name="message" id="feedback-message" placeholder=" " required rows="4"
+                        class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none"></textarea>
+                    <label for="feedback-message"
+                        class="absolute left-4 top-3 text-gray-400 transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-focus:-top-3 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Your feedback</label>
+                </div>
+                <div class="flex justify-end gap-3">
+                    <button type="button" id="feedback-cancel" class="px-4 py-2 rounded-lg border border-gray-200" data-i18n="modalCancel">Cancel</button>
+                    <button type="submit"
+                        class="px-5 py-2 rounded-lg bg-red-600 text-white font-semibold hover:bg-red-700 flex items-center gap-2">
+                        <i class="fa-solid fa-paper-plane" aria-hidden="true"></i>
+                        <span data-i18n="feedbackSend">Send</span>
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 

@@ -38,8 +38,8 @@ export function initVisitorTracker(database, isHomePage = false) {
     /* ── Cache DOM elements once ── */
     const onlineEls = document.querySelectorAll('.online-users-count');
     const onlineSingle = document.getElementById('online-users-count');
-    const viewEls = isHomePage ? document.querySelectorAll('.total-views-count') : null;
-    const viewSingle = isHomePage ? document.getElementById('total-views-count') : null;
+    const viewEls = document.querySelectorAll('.total-views-count');
+    const viewSingle = document.getElementById('total-views-count');
 
     /* ── Presence System ── */
     const myPresenceRef = ref(database, `visitorTracking/presence/${sessionId}`);
@@ -61,11 +61,11 @@ export function initVisitorTracker(database, isHomePage = false) {
     });
 
     /* ── Total Views (Home page only) ── */
-    if (isHomePage) {
+    if (viewEls.length || viewSingle) {
         const VIEW_FLAG = 'bdc_home_view_counted';
         const viewsRef = ref(database, 'visitorTracking/totalViews');
 
-        if (!sessionStorage.getItem(VIEW_FLAG)) {
+        if (isHomePage && !sessionStorage.getItem(VIEW_FLAG)) {
             runTransaction(viewsRef, (current) => {
                 return (current || 0) + 1;
             }).then(() => {
@@ -76,7 +76,7 @@ export function initVisitorTracker(database, isHomePage = false) {
         onValue(viewsRef, (snap) => {
             const views = snap.val() || 0;
             const text = views.toLocaleString();
-            if (viewEls) viewEls.forEach(el => { el.textContent = text; });
+            viewEls.forEach(el => { el.textContent = text; });
             if (viewSingle) viewSingle.textContent = text;
         });
     }

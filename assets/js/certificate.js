@@ -70,7 +70,7 @@ function drawCertificate(canvas, ctx, donorData, signImg) {
 
     ctx.fillStyle = '#374151';
     ctx.font = 'italic 22px Georgia, serif';
-    ctx.fillText('Blood Donation Community', canvas.width / 2, 185);
+    ctx.fillText('BAUET BDC', canvas.width / 2, 185);
 
     ctx.fillStyle = '#dc2626';
     ctx.fillRect(350, 205, 500, 2);
@@ -320,7 +320,7 @@ export function shareCertificate(canvas, donorName) {
         if (navigator.share && navigator.canShare({ files: [file] })) {
             navigator.share({
                 title: 'Blood Donation Certificate',
-                text: `I donated blood and received this certificate from Blood Donation Community! 🩸 #BloodDonation #SaveLives`,
+                text: `I donated blood and received this certificate from BAUET BDC! 🩸 #BloodDonation #SaveLives`,
                 files: [file]
             }).catch((error) => {
                 console.error('Error sharing:', error);

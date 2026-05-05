@@ -19,8 +19,8 @@ const FOOTER_HTML = (isHomePage, inPagesDir) => {
         <div class="footer-grid">
             <div class="footer-brand">
                 <div class="footer-brand-title">
-                    <img src="${assetPrefix}image/blood-drop.png" alt="Blood Donation Community" loading="lazy" />
-                    <span data-i18n="siteTitle">Blood Donation Community</span>
+                    <img src="${assetPrefix}image/blood-drop.png" alt="BAUET BDC" loading="lazy" />
+                    <span data-i18n="siteTitle">BAUET BDC</span>
                 </div>
                 <p data-i18n="footerBrandDesc">A passionate, volunteer-driven organization dedicated to saving lives through the power of blood
                     donation. We connect donors with patients in urgent need.</p>
@@ -76,7 +76,7 @@ const FOOTER_HTML = (isHomePage, inPagesDir) => {
         <hr class="footer-divider" />
         <div class="footer-bottom">
             <p class="footer-copy">
-                &copy; ${year} <a href="${homeHref}">Blood Donation Community</a> &mdash; All rights reserved.
+                &copy; ${year} <a href="${homeHref}">BAUET BDC</a> &mdash; All rights reserved.
             </p>
             <p class="footer-copy">
                 <span data-i18n="footerDeveloper">Developed by Md. Mueid Shahriar, </span> CSE-16th, BAUET

@@ -1,7 +1,7 @@
 
 export const translations = {
     en: {
-        siteTitle: "Blood Donation Community",
+        siteTitle: "BAUET BDC",
         adminBadge: "Admin",
         navAbout: "About",
         navHow: "Donation Guide",
@@ -48,7 +48,7 @@ export const translations = {
 
         aboutTitle: "About Us",
         aboutBadge: "Community",
-        aboutName: "Blood Donation Community",
+        aboutName: "BAUET BDC",
         aboutDescription: "is a passionate, volunteer-driven organization dedicated to saving lives through the power of blood donation. We connect willing donors with patients in urgent need, organize regular blood drives and partner with hospitals and local groups to ensure a safe and reliable blood supply for all.",
         aboutMission: "Our Mission:",
         aboutMissionText: "To eliminate blood shortages and make lifesaving blood accessible to everyone, everywhere.",
@@ -223,7 +223,7 @@ export const translations = {
         adminMemberID: "ID:",
 
         feedbackTitle: "Share Your Feedback",
-        feedbackDescription: "Let us know how we can improve the Blood Donation Community.",
+        feedbackDescription: "Let us know how we can improve the BAUET BDC.",
         feedbackName: "Name",
         feedbackEmail: "Email (optional)",
         feedbackMessage: "Your feedback",
@@ -265,7 +265,7 @@ export const translations = {
         validationRequiredFields: "Please fill all required fields: Donor Name, Blood Group, Location, and Donation Date.",
     },
     bn: {
-        siteTitle: "রক্তদান কমিউনিটি",
+        siteTitle: "বাউয়েট বিডিসি",
         adminBadge: "অ্যাডমিন",
         navAbout: "পরিচিতি",
         navHow: "রক্তদান নির্দেশিকা",
@@ -312,7 +312,7 @@ export const translations = {
 
         aboutTitle: "আমাদের সম্পর্কে",
         aboutBadge: "কমিউনিটি",
-        aboutName: "রক্তদান কমিউনিটি",
+        aboutName: "বাউয়েট বিডিসি",
         aboutDescription: "একটি উত্সাহী, স্বেচ্ছাসেবক-চালিত সংস্থা যা রক্তদানের শক্তির মাধ্যমে জীবন বাঁচাতে নিবেদিত। আমরা ইচ্ছুক দাতাদের জরুরী প্রয়োজনীয় রোগীদের সাথে সংযুক্ত করি, নিয়মিত রক্ত ড্রাইভ আয়োজন করি এবং সবার জন্য একটি নিরাপদ এবং নির্ভরযোগ্য রক্ত সরবরাহ নিশ্চিত করতে হাসপাতাল এবং স্থানীয় গ্রুপগুলির সাথে অংশীদারিত্ব করি।",
         aboutMission: "আমাদের মিশন:",
         aboutMissionText: "রক্তের ঘাটতি দূর করা এবং সবার জন্য, সর্বত্র জীবন রক্ষাকারী রক্ত সহজলভ্য করা।",
@@ -489,7 +489,7 @@ export const translations = {
         adminMemberID: "আইডি:",
 
         feedbackTitle: "আপনার প্রতিক্রিয়া শেয়ার করুন",
-        feedbackDescription: "রক্তদান কমিউনিটি কীভাবে উন্নত করতে পারি তা আমাদের জানান।",
+        feedbackDescription: "বাউয়েট বিডিসি কীভাবে উন্নত করতে পারি তা আমাদের জানান।",
         feedbackName: "নাম",
         feedbackEmail: "ইমেইল (ঐচ্ছিক)",
         feedbackMessage: "আপনার প্রতিক্রিয়া",

@@ -77,7 +77,7 @@ function drawCertificate(canvas, ctx, donorData, signImg) {
 
     ctx.fillStyle = '#374151';
     ctx.font = 'italic 22px Georgia, serif';
-    ctx.fillText('Blood Donation Community', canvas.width / 2, 185);
+    ctx.fillText('BAUET BDC', canvas.width / 2, 185);
 
     ctx.fillStyle = '#dc2626';
     ctx.fillRect(350, 205, 500, 2);
@@ -319,7 +319,7 @@ export function shareCertificate(canvas, donorName) {
         if (navigator.share && navigator.canShare({ files: [file] })) {
             navigator.share({
                 title: 'Blood Donation Certificate',
-                text: `I donated blood and received this certificate from Blood Donation Community! 🩸 #BloodDonation #SaveLives`,
+                text: `I donated blood and received this certificate from BAUET BDC! 🩸 #BloodDonation #SaveLives`,
                 files: [file]
             }).catch((error) => {
                 console.error('Error sharing:', error);
@@ -454,7 +454,7 @@ export function showDonorCardModal(donorData, containerEl) {
                             <div style="position:absolute;top:-40px;right:-40px;width:140px;height:140px;border-radius:50%;background:rgba(255,255,255,0.06)"></div>
                             <div style="position:absolute;bottom:-20px;left:-20px;width:80px;height:80px;border-radius:50%;background:rgba(255,255,255,0.04)"></div>
                             <div style="display:flex;align-items:center;justify-content:center">
-                                <span style="font-size:0.58rem;letter-spacing:0.2em;text-transform:uppercase;color:rgba(255,255,255,0.85);font-weight:700">Blood Donation Community</span>
+                                <span style="font-size:0.58rem;letter-spacing:0.2em;text-transform:uppercase;color:rgba(255,255,255,0.85);font-weight:700">BAUET BDC</span>
                             </div>
                             <div style="font-size:1.1rem;font-weight:900;color:#fff;letter-spacing:0.12em;margin-top:4px;text-shadow:0 2px 8px rgba(0,0,0,0.1)">DONOR CARD</div>
                         </div>
@@ -677,7 +677,7 @@ function _renderDonorCardCanvas(donorData, photoSrc) {
         ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
 
         ctx.fillStyle = 'rgba(255,255,255,0.85)'; ctx.font = '700 9px Arial, sans-serif';
-        ctx.fillText('BLOOD DONATION COMMUNITY', W / 2, 24);
+        ctx.fillText('BAUET BDC', W / 2, 24);
         ctx.fillStyle = '#ffffff'; ctx.font = '900 18px Arial, sans-serif';
         ctx.shadowColor = 'rgba(0,0,0,0.08)'; ctx.shadowBlur = 8; ctx.shadowOffsetY = 2;
         ctx.fillText('DONOR CARD', W / 2, 46);

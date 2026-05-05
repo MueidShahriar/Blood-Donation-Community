@@ -1,5 +1,15 @@
 export function initHeader() {
     const header = document.querySelector('header');
+    const menuToggle = document.getElementById('menu-toggle');
+    if (menuToggle && !document.getElementById('mobile-profile-btn')) {
+        const btn = document.createElement('button');
+        btn.id = 'mobile-profile-btn';
+        btn.type = 'button';
+        btn.className = 'mobile-profile-btn hidden';
+        btn.setAttribute('aria-label', 'Profile');
+        btn.innerHTML = '<span class="mobile-profile-btn__initials">U</span>';
+        menuToggle.parentElement?.insertBefore(btn, menuToggle);
+    }
     function setHeaderOffset() {
         const h = header ? header.offsetHeight : 0;
         document.documentElement.style.setProperty('--header-height', h + 'px');

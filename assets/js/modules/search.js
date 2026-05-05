@@ -84,6 +84,7 @@ function renderDonorCardPublic(d) {
                         <span class="font-bold">Current Location:</span>
                         <span>${location}</span>
                     </div>
+                    
                 </div>
             </div>
             <div class="flex-shrink-0 hidden sm:flex flex-col items-start md:items-end justify-end text-xs text-gray-500 mt-2 sm:mt-0 whitespace-nowrap">

@@ -10,7 +10,7 @@ import {
     onAuthStateChanged, sendPasswordResetEmail
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import {
-    getDatabase, ref, onValue
+    getDatabase, ref, onValue, push
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
 import { firebaseConfig } from "../modules/firebase-config.js";
@@ -29,6 +29,7 @@ import state from "../modules/state.js";
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const database = getDatabase(app);
+const feedbackRef = ref(database, 'feedback');
 
 function callUpdateLogin() {
     updateLoginButtonState(database, ref, onValue,
@@ -43,7 +44,7 @@ window.addEventListener('load', () => {
     initBackToTop();
     initLanguageSystem();
     initFooter();
-    initFeedback(database);
+    initFeedback(feedbackRef, push);
     initVisitorTracker(database, false);
 
     window.addEventListener('languageChanged', () => callUpdateLogin());

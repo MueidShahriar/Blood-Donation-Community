@@ -1,5 +1,5 @@
 import state from './state.js';
-import { sortEventsByDate, normalizeDonorId, getInitials, getTextValue } from './utils.js';
+import { sortEventsByDate, normalizeDonorId, getInitials, getTextValue, getDonorIdNumber } from './utils.js';
 import { openModal, closeModal, showModalMessage, attachConfirmHandler } from './modals.js';
 
 function renderRecentDonationCardAdmin(d) {
@@ -83,6 +83,8 @@ function renderDonorCardAdmin(d) {
     const phone = getTextValue(d.phone, '—');
     const note = getTextValue(d.notes, '');
     const noteRow = note ? `<span style="color:#dc2626"><i class="fa-solid fa-note-sticky"></i> Additional Notes: ${note}</span>` : '';
+    const ageValue = getTextValue(d.age ?? d.lastDonationInfo?.age, '');
+    const ageRow = ageValue ? `<span><i class="fa-solid fa-user"></i> Age: ${ageValue}</span>` : '';
     const initials = getInitials(donorName, '?');
     const isEligible = d.lastDonateDate
         ? (Math.floor((new Date() - new Date(d.lastDonateDate + 'T00:00:00')) / (1000*60*60*24)) >= 90)
@@ -126,6 +128,7 @@ function renderDonorCardAdmin(d) {
                     <span><i class="fa-solid fa-building-columns"></i> Department: ${getTextValue(d.department, '—')}</span>
                     <span><i class="fa-solid fa-layer-group"></i> Batch: ${getTextValue(d.batch, '—')}</span>
                     <span><i class="fa-solid fa-calendar-check"></i> Last: ${lastDate}</span>
+                    ${ageRow}
                     ${noteRow}
                 </div>
                 <div class="admin-member-card__id">ID: ${donorId}</div>
@@ -265,7 +268,7 @@ function getFilteredAdminMembers() {
     const nameFilter = state.memberSearchName.trim();
     const bloodFilter = state.memberSearchBlood.trim().toUpperCase();
     const roleFilter = state.memberSearchRole || '';
-    return state.donorsList.filter(member => {
+    const filtered = state.donorsList.filter(member => {
         const memberName = getTextValue(member.fullName || member.name, '');
         const memberBloodGroup = getTextValue(member.bloodGroup, '').toUpperCase();
         const memberRole = member.role || 'member';
@@ -273,6 +276,14 @@ function getFilteredAdminMembers() {
         const matchesBlood = !bloodFilter || memberBloodGroup === bloodFilter;
         const matchesRole = !roleFilter || memberRole === roleFilter;
         return matchesName && matchesBlood && matchesRole;
+    });
+    return [...filtered].sort((a, b) => {
+        const aId = getDonorIdNumber(a.donorId ?? a.rawDonorId) || 0;
+        const bId = getDonorIdNumber(b.donorId ?? b.rawDonorId) || 0;
+        if (aId !== bId) return bId - aId;
+        const aName = getTextValue(a.fullName || a.name, '');
+        const bName = getTextValue(b.fullName || b.name, '');
+        return aName.localeCompare(bName);
     });
 }
 
@@ -326,8 +337,10 @@ export function renderAdminMembersList(deleteMemberFn, promoteMemberFn, demoteMe
                 document.getElementById('admin-member-department').value = memberData.department || '';
                 document.getElementById('admin-member-batch').value = memberData.batch || '';
                 document.getElementById('admin-member-lastDonateDate').value = memberData.lastDonateDate || '';
-                document.getElementById('admin-member-hide-phone').checked = memberData.isPhoneHidden || false;
-                document.getElementById('admin-member-comment').value = memberData.publicComment || '';
+                const hidePhoneField = document.getElementById('admin-member-hide-phone');
+                if (hidePhoneField) hidePhoneField.checked = memberData.isPhoneHidden || false;
+                const commentField = document.getElementById('admin-member-comment');
+                if (commentField) commentField.value = memberData.publicComment || '';
                 document.getElementById('admin-member-form').scrollIntoView({ behavior: 'smooth' });
             }
         });

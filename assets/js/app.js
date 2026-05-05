@@ -654,6 +654,7 @@ window.onload = function () {
             department: donorData.department || matchedDonor.department || '',
             batch: donorData.batch || matchedDonor.batch || '',
             weight: donorData.weight || matchedDonor.weight || '',
+            age: donorData.age || matchedDonor.age || '',
             lastDonationInfo: {
                 date: donorData.date || '',
                 location: donorData.location || '',
