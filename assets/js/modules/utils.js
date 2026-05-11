@@ -195,6 +195,6 @@ export function isDonorEligible(lastDonationDate) {
     if (!lastDonationDate) return true;
     const today = new Date();
     const lastDonation = new Date(lastDonationDate);
-    const threeMonthsAgo = new Date(new Date().setMonth(today.getMonth() - 3));
-    return lastDonation <= threeMonthsAgo;
+    const fourMonthsAgo = new Date(new Date().setMonth(today.getMonth() - 4));
+    return lastDonation <= fourMonthsAgo;
 }

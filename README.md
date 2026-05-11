@@ -1,4 +1,4 @@
-# 🩸 Blood Donation Community
+# 🩸 BAUET Blood Donation Club
 
 **A Community-Powered Blood Donation Management Platform**
 
@@ -13,7 +13,7 @@ Live Site: [blood-donation-community.vercel.app](https://blood-donation-communit
 ### Donor Registration & Authentication
 - Secure email/password registration & login
 - Profile management with personal details, blood group, location
-- Last donation tracking with automatic eligibility indicator (90-day rule)
+- Last donation tracking with automatic eligibility indicator (120-day rule)
 - Change password from profile page
 - Account deletion option
 
@@ -30,6 +30,7 @@ Live Site: [blood-donation-community.vercel.app](https://blood-donation-communit
 - Promote or demote admins
 - Log verified recent donations (auto-syncs to donor profile)
 - Download Monthly PDF report with charts and donation data (includes donor contact when available)
+- Feedback inbox for community messages
 
 ### Recent Donation Tracking
 - Admin records recent donations by donor ID or manual entry
@@ -48,6 +49,9 @@ Live Site: [blood-donation-community.vercel.app](https://blood-donation-communit
 - Real-time online users count using Firebase presence system
 - Displayed above the footer on every page
 - Dedicated Visitor Statistics page with full details
+
+### PWA Ready
+- Web manifest support for installable experience
 
 ### Certificates & Donor Card
 - Generate personalized blood donation certificates
@@ -76,11 +80,13 @@ Live Site: [blood-donation-community.vercel.app](https://blood-donation-communit
 ## Project Structure
 
 ```
-Blood Donation Community/
+BAUET Blood Donation Club/
 ├── index.html
+├── manifest.webmanifest
 ├── pages/
 │   ├── 404.html
 │   ├── about.html
+│   ├── admin.html
 │   ├── certificate.html
 │   ├── donationGuide.html
 │   ├── donor-card.html
@@ -104,7 +110,13 @@ Blood Donation Community/
 │   │   └── profile.css
 │   └── js/
 │       ├── app.js
+│       ├── certificate.js
+│       ├── chart-config.js
+│       ├── firebase-config.js
+│       ├── language-config.js
+│       ├── language-ui.js
 │       ├── page-common.js
+│       ├── pdf-report.js
 │       ├── profile.js
 │       ├── viewport.js
 │       ├── pages/
@@ -229,11 +241,11 @@ Blood Donation Community/
     - Create a project at [Firebase Console](https://console.firebase.google.com)
     - Enable Authentication (Email/Password)
     - Create a Realtime Database
-    - Copy your config into `assets/js/modules/firebase-config.js`
+   - Copy your config into `assets/js/modules/firebase-config.js`
 
 3. Run locally
-    - Use a local server (ES Modules require it)
-    - Then open `index.html` in the browser
+   - Use a local server (ES Modules require it)
+   - Then open `index.html` in the browser
 
 ---
 

@@ -66,7 +66,7 @@ export const translations = {
         recentNext: "Next",
 
         howEligibilityTitle: "Check Eligibility",
-        howEligibilityText: "Be 18–60 years old, 50kg+, feeling well and fever‑free, with at least 90 days since your last donation. Certain medicines, recent travel and illnesses may defer donation.",
+        howEligibilityText: "Be 18–60 years old, 50kg+, feeling well and fever‑free, with at least 120 days since your last donation. Certain medicines, recent travel and illnesses may defer donation.",
         howRegisterTitle: "Register",
         howRegisterText: "Create your donor profile in minutes and keep your details up to date. Choose privacy options (e.g., hide phone), track donations and get notified about nearby needs and events.",
         howDonateTitle: "Donate & Save",
@@ -128,7 +128,7 @@ export const translations = {
         joinClear: "Clear",
 
         howEligibilityTitle: "Check Eligibility",
-        howEligibilityDesc: "Be 18–60 years old, 50kg+, feeling well and fever‑free, with at least 90 days since your last donation. Certain medicines, recent travel and illnesses may defer donation.",
+        howEligibilityDesc: "Be 18–60 years old, 50kg+, feeling well and fever‑free, with at least 120 days since your last donation. Certain medicines, recent travel and illnesses may defer donation.",
         howEligibilityLink: "Learn more →",
         howRegisterTitle: "Register",
         howRegisterDesc: "Create your donor profile in minutes and keep your details up to date. Choose privacy options (e.g., hide phone), track donations and get notified about nearby needs and events.",
@@ -299,7 +299,7 @@ export const translations = {
         guideElig1: "You are between 18 and 60 years old",
         guideElig2: "You weigh at least 50 kg (110 lbs)",
         guideElig3: "You are in good general health and feeling well",
-        guideElig4: "At least 90 days have passed since your last whole blood donation",
+        guideElig4: "At least 120 days have passed since your last whole blood donation",
         guideElig5: "Your hemoglobin level is above 12.5 g/dL (female) or 13.0 g/dL (male)",
         guideElig6: "You have no fever, cold, or flu symptoms",
         guideShouldWait: "You Should Wait If",
