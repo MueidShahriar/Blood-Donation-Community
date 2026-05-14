@@ -50,6 +50,7 @@ import { initJoinForm } from "./modules/join-form.js";
 import { initFeedback } from "./modules/feedback.js";
 import { initVisitorTracker } from "./modules/visitor-tracker.js";
 import { initChatbot } from "./modules/chatbot.js";
+import { initLeaderboardFilters, renderDonorLeaderboard, renderDonorTicker } from "./modules/leaderboard.js";
 
 const app = initializeApp(firebaseConfig);
 try { analyticsIsSupported().then(ok => { if (ok) getAnalytics(app); }); } catch (_) {}
@@ -83,6 +84,21 @@ function updateAdminOverviewCounts({ donors, donations, events, admins } = {}) {
     if (adminsEl && admins != null) adminsEl.textContent = String(admins);
     if (donationsEl && donations != null) donationsEl.textContent = String(donations);
     if (eventsEl && events != null) eventsEl.textContent = String(events);
+}
+
+function refreshLeaderboard() {
+    const container = document.getElementById('leaderboard-list');
+    const rawLimit = container?.dataset?.limit || '';
+    let limit = 5;
+    if (rawLimit === 'all') {
+        limit = Math.max(0, state.donorsList?.length || 0);
+    } else if (rawLimit) {
+        const parsed = Number(rawLimit);
+        if (Number.isFinite(parsed) && parsed > 0) limit = parsed;
+    }
+    renderDonorLeaderboard(state.donorsList || [], state.recentDonationsList || [], { limit });
+    renderDonorTicker(state.donorsList || [], state.recentDonationsList || []);
+    initLeaderboardFilters(state.donorsList || [], state.recentDonationsList || []);
 }
 
 function switchAdminTab(tabName) {
@@ -418,6 +434,7 @@ onValue(donorsRef, (snapshot) => {
         refreshDashboardCharts();
         setCountTarget('donor-count', state.donorsList.length);
         updateAdminOverviewCounts({ donors: memberCount, admins: adminCount });
+        refreshLeaderboard();
         ensureUniqueDonorIds();
     } catch (error) {
         console.error('Failed to process donors:', error);
@@ -482,17 +499,20 @@ onValue(recentDonationsRef, (snapshot) => {
             updateAdminOverviewCounts({ donations: list.length });
         }
         setRecentLoading(false);
+        refreshLeaderboard();
     } catch (error) {
         console.error('Failed to process recent donations:', error);
         state.recentDonationsList = [];
         renderRecentDonorsCarousel([]);
         setRecentLoading(false);
+        refreshLeaderboard();
     }
 }, err => {
     console.error("Failed to load recent donations:", err);
     state.recentDonationsList = [];
     renderRecentDonorsCarousel([]);
     setRecentLoading(false);
+    refreshLeaderboard();
 });
 
 onValue(feedbackRef, (snapshot) => {

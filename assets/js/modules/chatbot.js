@@ -144,6 +144,15 @@ function findEligibleDonors(bloodGroup) {
     });
 }
 
+function findDonorsByGroup(bloodGroup) {
+    if (!state.donorsList || state.donorsList.length === 0) return [];
+    const normalized = normalizeBloodGroup(bloodGroup);
+    return state.donorsList.filter(d => {
+        const dGroup = normalizeBloodGroup(d.bloodGroup || d.blood || d.blood_group);
+        return dGroup === normalized;
+    });
+}
+
 /** Format donor results into a pretty chat message */
 function formatDonorResults(donors, bloodGroup, lang) {
     const searchHref = getSearchHref();
@@ -192,6 +201,47 @@ function formatDonorResults(donors, bloodGroup, lang) {
     else tip = `<div style="margin-top:0.5rem;font-size:0.75rem;color:#059669">✅ All donors are eligible (90+ days since last donation)</div>`;
 
     return header + list + footer + tip;
+}
+
+function formatFallbackDonorResults(donors, bloodGroup, lang) {
+    const searchHref = getSearchHref();
+    const count = donors.length;
+    const header = lang === 'bangla'
+        ? `⚠️ এই মুহূর্তে <strong>${bloodGroup}</strong> গ্রুপে যোগ্য দাতা পাওয়া যায়নি। তবে ${count} জন দাতা পাওয়া গেছে (সম্ভবত অপেক্ষার সময় চলছে):`
+        : lang === 'banglish'
+            ? `⚠️ Ekhon <strong>${bloodGroup}</strong> group e eligible donor nai. Kintu ${count} jon donor paoa gese (waiting period thakte pare):`
+            : `⚠️ No eligible <strong>${bloodGroup}</strong> donors right now, but ${count} donors were found (they may be in the waiting period):`;
+
+    const list = donors.slice(0, 5).map((d, i) => {
+        const name = d.fullName || d.name || 'Unknown';
+        const phone = d.phone || d.contact || 'N/A';
+        const loc = d.location || d.area || '';
+        let row = `<div style="background:#fff1f2;border-radius:0.5rem;padding:0.5rem 0.65rem;margin-top:0.35rem;border-left:3px solid #f97316">`;
+        row += `<div style="font-weight:600;color:#111827">${i + 1}. ${name}</div>`;
+        row += `<div style="font-size:0.75rem;color:#6b7280;margin-top:2px">📞 ${phone}`;
+        if (loc) row += ` &nbsp;•&nbsp; 📍 ${loc}`;
+        row += `</div></div>`;
+        return row;
+    }).join('');
+
+    const footer = lang === 'bangla'
+        ? `<div style="margin-top:0.5rem;font-size:0.78rem;color:#6b7280">সম্পূর্ণ তালিকার জন্য <a href="${searchHref}" style="color:#dc2626;font-weight:600">সার্চ পেজ</a> দেখুন বা অ্যাডমিনের সাথে যোগাযোগ করুন।</div>`
+        : lang === 'banglish'
+            ? `<div style="margin-top:0.5rem;font-size:0.78rem;color:#6b7280">Full list er jonno <a href="${searchHref}" style="color:#dc2626;font-weight:600">Search page</a> e jan ba admin er sathe jogajog korun.</div>`
+            : `<div style="margin-top:0.5rem;font-size:0.78rem;color:#6b7280">See the full list on the <a href="${searchHref}" style="color:#dc2626;font-weight:600">Search page</a> or contact admin.</div>`;
+
+    return header + list + footer;
+}
+
+function getDonorListLoadingMessage(lang) {
+    const searchHref = getSearchHref();
+    if (lang === 'bangla') {
+        return `ডোনার তালিকা লোড হচ্ছে... একটু পর আবার চেষ্টা করুন। 📋 আপনি চাইলে <a href="${searchHref}" style="color:#dc2626;font-weight:600">ডোনার সার্চ পেজ</a> এও দেখতে পারেন।`;
+    }
+    if (lang === 'banglish') {
+        return `Donor list load hocche... ektu pore abar try korun. 📋 Chaile <a href="${searchHref}" style="color:#dc2626;font-weight:600">Donor Search page</a> e dekhe nite পারেন।`;
+    }
+    return `Donor list is loading... please try again in a moment. 📋 You can also check the <a href="${searchHref}" style="color:#dc2626;font-weight:600">Donor Search page</a>.`;
 }
 
 /* ── Knowledge Base (bilingual) ── */
@@ -679,7 +729,14 @@ async function getAnswer(question) {
     const wantsDonor = isDonorIntent(question);
 
     if (bloodGroup && wantsDonor) {
+        if (!state.donorsList || state.donorsList.length === 0) {
+            return getDonorListLoadingMessage(lang);
+        }
         const eligible = findEligibleDonors(bloodGroup);
+        if (!eligible.length) {
+            const fallback = findDonorsByGroup(bloodGroup);
+            if (fallback.length) return formatFallbackDonorResults(fallback, bloodGroup, lang);
+        }
         return formatDonorResults(eligible, bloodGroup, lang);
     }
 
@@ -690,7 +747,14 @@ async function getAnswer(question) {
         const t = question.toLowerCase();
         const softDonor = ['donor', 'rokto', 'blood', 'lagbe', 'dorkar', 'chai', 'রক্ত', 'দাতা', 'ডোনার'].some(w => t.includes(w));
         if (softDonor) {
+            if (!state.donorsList || state.donorsList.length === 0) {
+                return getDonorListLoadingMessage(lang);
+            }
             const eligible = findEligibleDonors(bloodGroup);
+            if (!eligible.length) {
+                const fallback = findDonorsByGroup(bloodGroup);
+                if (fallback.length) return formatFallbackDonorResults(fallback, bloodGroup, lang);
+            }
             return formatDonorResults(eligible, bloodGroup, lang);
         }
     }

@@ -24,7 +24,7 @@ import { initFeedback } from "./modules/feedback.js";
 import { initHeader, initMobileMenu } from "./modules/header.js";
 import { initVisitorTracker } from "./modules/visitor-tracker.js";
 import { initChatbot } from "./modules/chatbot.js";
-import { normalizeDonorId } from "./modules/utils.js";
+import { getDonationCountForDonor, normalizeDonorId } from "./modules/utils.js";
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
@@ -43,6 +43,7 @@ const displayEmail = document.getElementById('profile-display-email');
 const displayDonorId = document.getElementById('profile-display-id');
 const statLast = document.getElementById('profile-stat-last');
 const statEligible = document.getElementById('profile-stat-eligible');
+const statDonations = document.getElementById('profile-stat-donations');
 const statRole = document.getElementById('profile-stat-role');
 const statMemberSince = document.getElementById('profile-stat-member-since');
 
@@ -183,6 +184,10 @@ function populateProfile(data, email) {
         statEligible.textContent = elig;
         statEligible.style.color = elig === 'Eligible' ? '#059669' : elig === 'Unknown' ? '#6b7280' : '#d97706';
     }
+    if (statDonations) {
+        const count = getDonationCountForDonor({ ...data, donorId: data.donorId || data.rawDonorId }, recentDonationsList);
+        statDonations.textContent = String(count);
+    }
     if (statRole) statRole.textContent = role.charAt(0).toUpperCase() + role.slice(1);
 
     if (statMemberSince) {
@@ -244,9 +249,16 @@ function closeModal(m) {
     m.classList.remove('flex');
 }
 
+function refreshDonationCount() {
+    if (!statDonations) return;
+    const count = getDonationCountForDonor(currentDonorData, recentDonationsList);
+    statDonations.textContent = String(count);
+}
+
 let currentUser = null;
 let currentDonorData = {};
 let authStateResolved = false;
+let recentDonationsList = [];
 
 // Fallback for slow mobile networks: never keep the page loader forever.
 setTimeout(() => {
@@ -277,6 +289,7 @@ onAuthStateChanged(auth, (user) => {
         const data = snapshot.val() || {};
         currentDonorData = { ...data, uid: user.uid };
         populateProfile(data, user.email);
+        refreshDonationCount();
         hideLoader();
         notLoggedIn?.classList.add('hidden');
         profileContent?.classList.remove('hidden');
@@ -315,6 +328,21 @@ onAuthStateChanged(auth, (user) => {
         profileContent?.classList.add('hidden');
         showToast('Failed to load profile data. Please try again.', 'error');
     }, { onlyOnce: true });
+});
+
+const recentDonationsRef = ref(database, 'recentDonations');
+onValue(recentDonationsRef, (snapshot) => {
+    const data = snapshot.val();
+    const list = [];
+    if (data && typeof data === 'object') {
+        for (const key in data) {
+            if (Object.prototype.hasOwnProperty.call(data, key)) {
+                list.push({ id: key, ...data[key] });
+            }
+        }
+    }
+    recentDonationsList = list;
+    refreshDonationCount();
 });
 
 // Gmail-only regex (same as join form)

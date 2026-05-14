@@ -1,5 +1,13 @@
 import state from './state.js';
-import { sortEventsByDate, normalizeDonorId, getInitials, getTextValue, getDonorIdNumber } from './utils.js';
+import { t } from './language-ui.js';
+import {
+    sortEventsByDate,
+    normalizeDonorId,
+    getInitials,
+    getTextValue,
+    getDonorIdNumber,
+    computeDonorReputation
+} from './utils.js';
 import { openModal, closeModal, showModalMessage, attachConfirmHandler } from './modals.js';
 
 function renderRecentDonationCardAdmin(d) {
@@ -86,6 +94,9 @@ function renderDonorCardAdmin(d) {
     const ageValue = getTextValue(d.age ?? d.lastDonationInfo?.age, '');
     const ageRow = ageValue ? `<span><i class="fa-solid fa-user"></i> Age: ${ageValue}</span>` : '';
     const initials = getInitials(donorName, '?');
+    const reputation = computeDonorReputation(d, state.recentDonationsList || []);
+    const repBadgeLabel = t(reputation.badge.key);
+    const repBadge = `<span class="donor-badge ${reputation.badge.className}">${reputation.badge.icon} ${repBadgeLabel}</span>`;
     const isEligible = d.lastDonateDate
         ? (Math.floor((new Date() - new Date(d.lastDonateDate + 'T00:00:00')) / (1000*60*60*24)) >= 90)
         : null;
@@ -120,6 +131,7 @@ function renderDonorCardAdmin(d) {
                     <span class="admin-member-card__blood"><i class="fa-solid fa-droplet"></i> ${getTextValue(d.bloodGroup, '—')}</span>
                     ${eligibleBadge}
                     ${roleBadge}
+                    ${repBadge}
                 </div>
                 <div class="admin-member-card__info">
                     <span><i class="fa-solid fa-envelope"></i> ${getTextValue(d.email, '—')}</span>
@@ -128,6 +140,9 @@ function renderDonorCardAdmin(d) {
                     <span><i class="fa-solid fa-building-columns"></i> Department: ${getTextValue(d.department, '—')}</span>
                     <span><i class="fa-solid fa-layer-group"></i> Batch: ${getTextValue(d.batch, '—')}</span>
                     <span><i class="fa-solid fa-calendar-check"></i> Last: ${lastDate}</span>
+                    <span><i class="fa-solid fa-medal"></i> ${t('leaderboardReputation')}: ${repBadgeLabel}</span>
+                    <span><i class="fa-solid fa-chart-line"></i> ${t('leaderboardScore')}: ${reputation.score}</span>
+                    <span><i class="fa-solid fa-hand-holding-droplet"></i> ${t('leaderboardDonations')}: ${reputation.donationCount}</span>
                     ${ageRow}
                     ${noteRow}
                 </div>

@@ -238,6 +238,28 @@
             </div>
         </section>
 
+        <section id="donor-leaderboard" class="py-12">
+            <div class="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
+                <div class="text-left">
+                    <h2 class="text-2xl font-extrabold text-red-700" data-i18n="leaderboardTitle">Top donors of BAUET</h2>
+                    <p class="mt-1 text-sm text-gray-600 max-w-2xl" data-i18n="leaderboardSubtitle">Gamified donor reputation based on donations, activity, and response speed.</p>
+                </div>
+                <div class="leaderboard-legend">
+                    <span class="donor-badge donor-badge--gold"><span class="badge-emoji">🥇</span><span data-i18n="badgeGold">Gold donor</span></span>
+                    <span class="donor-badge donor-badge--silver"><span class="badge-emoji">🥈</span><span data-i18n="badgeSilver">Silver donor</span></span>
+                    <span class="donor-badge donor-badge--bronze"><span class="badge-emoji">🥉</span><span data-i18n="badgeBronze">Bronze donor</span></span>
+                </div>
+                <a class="leaderboard-viewall" href="pages/leaderboard.html" data-i18n="leaderboardViewAll">View all</a>
+            </div>
+            <div class="donor-ticker mt-6" aria-label="Donor leaderboard ticker">
+                <div class="donor-ticker__mask" role="group" aria-roledescription="ticker">
+                    <div id="donor-ticker-track" class="donor-ticker__track" data-limit="10" data-speed="0.045"></div>
+                </div>
+                <div class="donor-ticker__hint">Drag to explore</div>
+            </div>
+            <div id="donor-ticker-empty" class="leaderboard-empty" data-i18n="leaderboardEmpty">No donor leaderboard data yet.</div>
+        </section>
+
         <section id="community-stats" class="py-10">
             <div
                 class="how-card tint-rose rounded-xl shadow-lg p-6 transform transition hover:scale-105 float-in flex flex-col md:flex-row items-center justify-between gap-6">

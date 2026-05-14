@@ -198,3 +198,130 @@ export function isDonorEligible(lastDonationDate) {
     const fourMonthsAgo = new Date(new Date().setMonth(today.getMonth() - 4));
     return lastDonation <= fourMonthsAgo;
 }
+
+function getNumeric(value) {
+    const num = Number(value);
+    return Number.isFinite(num) ? num : null;
+}
+
+export function getDonorLastDonationDate(donor, recentDonations = []) {
+    if (!donor) return '';
+    if (donor.lastDonateDate) return donor.lastDonateDate;
+    const donorId = normalizeDonorId(donor.donorId || donor.rawDonorId);
+    let latest = '';
+    recentDonations.forEach(entry => {
+        const entryId = normalizeDonorId(entry?.donorId);
+        if (donorId && entryId && donorId !== entryId) return;
+        const date = entry?.date || entry?.donationDate || '';
+        if (date && (!latest || new Date(date) > new Date(latest))) {
+            latest = date;
+        }
+    });
+    return latest;
+}
+
+export function getDonationCountForDonor(donor, recentDonations = []) {
+    if (!donor) return 0;
+    const explicitTotal = getNumeric(donor.totalDonations);
+    if (explicitTotal != null && explicitTotal > 0) return explicitTotal;
+
+    const donorId = normalizeDonorId(donor.donorId || donor.rawDonorId);
+    let count = 0;
+    recentDonations.forEach(entry => {
+        if (!entry) return;
+        const entryId = normalizeDonorId(entry.donorId);
+        if (donorId && entryId && donorId === entryId) count += 1;
+    });
+    return count;
+}
+
+function getRecencyScore(lastDonationDate) {
+    if (!lastDonationDate) return 0;
+    const dateObj = new Date(lastDonationDate);
+    if (Number.isNaN(dateObj.getTime())) return 0;
+    const days = Math.floor((Date.now() - dateObj.getTime()) / (1000 * 60 * 60 * 24));
+    if (days <= 30) return 24;
+    if (days <= 90) return 16;
+    if (days <= 180) return 8;
+    return 0;
+}
+
+function getActivityScore(donor) {
+    if (!donor) return 0;
+    const activityDate = donor.lastActiveAt || donor.lastLoginAt || donor.updatedAt || donor.createdAt;
+    if (!activityDate) return 0;
+    const dateObj = new Date(activityDate);
+    if (Number.isNaN(dateObj.getTime())) return 0;
+    const days = Math.floor((Date.now() - dateObj.getTime()) / (1000 * 60 * 60 * 24));
+    if (days <= 7) return 18;
+    if (days <= 30) return 10;
+    if (days <= 90) return 4;
+    return 0;
+}
+
+function getResponseSpeedScore(donor) {
+    if (!donor) return 0;
+    const responseRate = getNumeric(donor.responseRate || donor.response_rate);
+    if (responseRate != null) {
+        const normalized = responseRate > 1 ? Math.min(responseRate, 100) / 100 : Math.max(responseRate, 0);
+        return Math.round(normalized * 30);
+    }
+    const minutes = getNumeric(donor.responseTimeMinutes || donor.avgResponseMinutes || donor.responseSpeedMinutes);
+    if (minutes != null) {
+        if (minutes <= 15) return 26;
+        if (minutes <= 60) return 16;
+        if (minutes <= 180) return 8;
+        return 0;
+    }
+    const hours = getNumeric(donor.responseTimeHours || donor.avgResponseHours);
+    if (hours != null) {
+        if (hours <= 1) return 20;
+        if (hours <= 4) return 12;
+        if (hours <= 12) return 6;
+    }
+    return 0;
+}
+
+export function getReputationBadge(score, donationCount) {
+    if (donationCount >= 8) {
+        return { key: 'badgeGold', icon: '🥇', className: 'donor-badge--gold', tier: 'gold' };
+    }
+    if (donationCount >= 4) {
+        return { key: 'badgeSilver', icon: '🥈', className: 'donor-badge--silver', tier: 'silver' };
+    }
+    return { key: 'badgeBronze', icon: '🥉', className: 'donor-badge--bronze', tier: 'bronze' };
+}
+
+export function computeDonorReputation(donor, recentDonations = []) {
+    const donationCount = getDonationCountForDonor(donor, recentDonations);
+    const lastDonationDate = getDonorLastDonationDate(donor, recentDonations);
+    const recencyScore = getRecencyScore(lastDonationDate);
+    const activityScore = getActivityScore(donor);
+    const responseScore = getResponseSpeedScore(donor);
+    const score = Math.min(200, donationCount * 12 + recencyScore + activityScore + responseScore);
+    const badge = getReputationBadge(score, donationCount);
+    return {
+        score,
+        donationCount,
+        lastDonationDate,
+        recencyScore,
+        activityScore,
+        responseScore,
+        badge
+    };
+}
+
+export function buildDonorLeaderboard(donors = [], recentDonations = [], limit = 6) {
+    const ranked = donors.map(donor => {
+        const reputation = computeDonorReputation(donor, recentDonations);
+        return { donor, ...reputation };
+    });
+    ranked.sort((a, b) => {
+        if (b.donationCount !== a.donationCount) return b.donationCount - a.donationCount;
+        if (b.score !== a.score) return b.score - a.score;
+        const aTime = a.lastDonationDate ? new Date(a.lastDonationDate).getTime() : 0;
+        const bTime = b.lastDonationDate ? new Date(b.lastDonationDate).getTime() : 0;
+        return bTime - aTime;
+    });
+    return ranked.slice(0, limit);
+}

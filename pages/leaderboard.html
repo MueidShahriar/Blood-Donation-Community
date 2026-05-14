@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en" class="antialiased scroll-smooth">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#e11d48" />
+    <title>Leaderboard - BAUET BDC</title>
+    <link rel="shortcut icon" href="../image/blood-drop.png" type="image/x-icon">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="../assets/css/common.css">
+    <link rel="stylesheet" href="../assets/css/index.css">
+
+    <meta name="description" content="Top donors leaderboard for BAUET BDC.">
+</head>
+
+<body class="bg-white text-gray-900 loading">
+    <div id="page-loader">
+        <div class="logo-wrapper">
+            <div class="logo-base">
+                <img src="../image/blood-drop.png" alt="" />
+            </div>
+            <div class="logo-fill">
+                <img src="../image/blood-drop.png" alt="Loading" />
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" defer></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" defer></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.6/dist/chart.umd.min.js" defer></script>
+    <script src="../assets/js/viewport.js" defer></script>
+    <script type="module" src="../assets/js/app.js"></script>
+
+    <header class="fixed top-0 left-0 right-0 z-40 bg-white/90 backdrop-blur shadow-lg rounded-b-xl">
+        <nav class="max-w-6xl mx-auto flex items-center justify-between px-4 sm:px-5 lg:px-6 py-2">
+            <div class="flex items-center gap-3">
+                <a href="../index.html" class="flex items-center gap-3 text-decoration-none">
+                    <img src="../image/blood-drop.png" alt="logo" class="h-10 w-10 header-logo border-red-600" />
+                    <span class="text-2xl font-extrabold text-red-700 tracking-tight site-title" data-i18n="siteTitle">BAUET BDC</span>
+                </a>
+                <span id="admin-badge"
+                    class="hidden items-center gap-1 text-xs font-bold px-2 py-1 rounded bg-red-600 text-white shadow"
+                    data-i18n="adminBadge">Admin</span>
+            </div>
+            <div class="hidden md:flex items-center gap-1 text-base font-medium flex-1">
+                <a id="nav-about-link" href="about.html" class="px-3 py-2 rounded hover:bg-red-50 text-red-700"
+                    data-i18n="navAbout">About</a>
+                <a id="nav-how-link" href="donationGuide.html" class="px-3 py-2 rounded hover:bg-red-50 text-red-700"
+                    data-i18n="navHow">Donation Guide</a>
+                <a id="nav-events-link" href="events.html" class="px-3 py-2 rounded hover:bg-red-50 text-red-700"
+                    data-i18n="navEvents">Events</a>
+                <a id="nav-join-link" href="join.html" class="px-3 py-2 rounded hover:bg-red-50 text-red-700"
+                    data-i18n="navJoin">Join</a>
+                <a id="nav-search-link" href="search.html" class="px-3 py-2 rounded hover:bg-red-50 text-red-700"
+                    data-i18n="navSearch">Search</a>
+                <a id="nav-contact-link" href="../index.html#contact" class="px-3 py-2 rounded hover:bg-red-50 text-red-700"
+                    data-i18n="navContact">Contact</a>
+                <a id="nav-dashboard-link" href="admin.html" class="hidden px-3 py-2 rounded hover:bg-red-50 text-red-700 font-bold"
+                    data-i18n="navDashboard"><i class="fa-solid fa-gauge-high" style="margin-right:4px"></i>Dashboard</a>
+            </div>
+            <div class="flex items-center gap-4">
+                <button id="login-btn"
+                    class="desktop-only inline-flex bg-red-600 text-white px-4 py-2 rounded-lg font-semibold shadow hover:bg-red-700 transition items-center justify-center"
+                    data-i18n="btnLogin"><img src="../image/login.png" alt="Login" class="inline-icon"> Login</button>
+            </div>
+
+            <div class="flex items-center gap-2">
+                <button id="menu-toggle" class="md:hidden p-2 rounded-lg bg-red-100 text-red-700 hover:bg-red-200"
+                    aria-label="Open menu" aria-controls="mobile-menu" aria-expanded="false" type="button">
+                    <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M4 6h16M4 12h16M4 18h16" />
+                    </svg>
+                </button>
+            </div>
+        </nav>
+        <div id="mobile-menu" class="md:hidden hidden bg-white/95 shadow-lg rounded-b-xl">
+            <div class="px-4 py-4 flex flex-col gap-2 text-red-700">
+                <a id="mobile-about-link" href="about.html" class="block px-3 py-2 rounded hover:bg-red-50"
+                    data-i18n="navAbout">About</a>
+                <a id="mobile-how-link" href="donationGuide.html" class="block px-3 py-2 rounded hover:bg-red-50"
+                    data-i18n="navHow">Donation Guide</a>
+                <a id="mobile-events-link" href="events.html" class="block px-3 py-2 rounded hover:bg-red-50"
+                    data-i18n="navEvents">Events</a>
+                <a id="mobile-join-link" href="join.html" class="block px-3 py-2 rounded hover:bg-red-50"
+                    data-i18n="navJoin">Join</a>
+                <a id="mobile-search-link" href="search.html" class="block px-3 py-2 rounded hover:bg-red-50"
+                    data-i18n="navSearch">Search</a>
+                <a id="mobile-contact-link" href="../index.html#contact" class="block px-3 py-2 rounded hover:bg-red-50"
+                    data-i18n="navContact">Contact</a>
+                <a id="admin-mobile-link" href="admin.html" class="hidden px-3 py-2 rounded hover:bg-red-50"
+                    data-i18n="navDashboard">Dashboard</a>
+                <hr class="border-t border-red-200 my-1">
+                <button id="mobile-login-btn"
+                    class="block text-left px-3 py-2 rounded hover:bg-red-50 text-red-700 font-medium"
+                    data-i18n="btnLogin"><img src="../image/login.png" alt="Login" class="inline-icon"> Login</button>
+                <button id="mobile-logout-btn"
+                    class="hidden text-left px-3 py-2 rounded hover:bg-red-50 text-red-600 font-medium">
+                    <img src="../image/logout.png" alt="Logout" class="inline-icon"> Logout
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-6xl mx-auto px-4 sm:px-4 lg:px-6">
+        <section id="donor-leaderboard" class="py-12 pt-10">
+            <div class="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
+                <div class="text-left">
+                    <h1 class="text-3xl font-extrabold text-red-700" data-i18n="leaderboardTitle">Top donors of BAUET</h1>
+                    <p class="mt-2 text-sm text-gray-600 max-w-2xl" data-i18n="leaderboardSubtitle">Gamified donor reputation based on donations, activity, and response speed.</p>
+                </div>
+                <div class="leaderboard-legend">
+                    <span class="donor-badge donor-badge--gold"><span class="badge-emoji">🥇</span><span data-i18n="badgeGold">Gold donor</span></span>
+                    <span class="donor-badge donor-badge--silver"><span class="badge-emoji">🥈</span><span data-i18n="badgeSilver">Silver donor</span></span>
+                    <span class="donor-badge donor-badge--bronze"><span class="badge-emoji">🥉</span><span data-i18n="badgeBronze">Bronze donor</span></span>
+                </div>
+            </div>
+            <div id="leaderboard-filters" class="leaderboard-filters" aria-label="Leaderboard filters">
+                <div class="leaderboard-filters__field">
+                    <label for="leaderboard-filter-input">Search</label>
+                    <div class="leaderboard-filters__input">
+                        <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+                        <input id="leaderboard-filter-input" type="search" placeholder="Search by name or location" />
+                    </div>
+                </div>
+                <div class="leaderboard-filters__field">
+                    <label for="leaderboard-filter-blood">Blood group</label>
+                    <div class="leaderboard-filters__select">
+                        <i class="fa-solid fa-droplet" aria-hidden="true"></i>
+                        <select id="leaderboard-filter-blood">
+                            <option value="">All groups</option>
+                            <option value="A+">A+</option>
+                            <option value="A-">A-</option>
+                            <option value="B+">B+</option>
+                            <option value="B-">B-</option>
+                            <option value="O+">O+</option>
+                            <option value="O-">O-</option>
+                            <option value="AB+">AB+</option>
+                            <option value="AB-">AB-</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="leaderboard-filters__field">
+                    <label for="leaderboard-filter-badge">Badge</label>
+                    <div class="leaderboard-filters__select">
+                        <i class="fa-solid fa-medal" aria-hidden="true"></i>
+                        <select id="leaderboard-filter-badge">
+                            <option value="">All tiers</option>
+                            <option value="gold">Gold</option>
+                            <option value="silver">Silver</option>
+                            <option value="bronze">Bronze</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="leaderboard-filters__field">
+                    <label for="leaderboard-filter-sort">Sort</label>
+                    <div class="leaderboard-filters__select">
+                        <i class="fa-solid fa-arrow-down-wide-short" aria-hidden="true"></i>
+                        <select id="leaderboard-filter-sort">
+                            <option value="rank">Top ranked</option>
+                            <option value="score">AI score</option>
+                            <option value="donations">Donations</option>
+                            <option value="recent">Most recent</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="leaderboard-filters__actions">
+                    <button id="leaderboard-filter-reset" type="button" class="leaderboard-filters__reset">
+                        <i class="fa-solid fa-rotate-left" aria-hidden="true"></i>
+                        Reset
+                    </button>
+                    <span id="leaderboard-filter-count" class="leaderboard-filters__count"></span>
+                </div>
+            </div>
+            <div id="leaderboard-list" class="leaderboard-grid mt-6" data-limit="all"></div>
+            <div id="leaderboard-empty" class="leaderboard-empty" data-i18n="leaderboardEmpty">No donor leaderboard data yet.</div>
+        </section>
+    </main>
+</body>
+
+</html>
