@@ -222,9 +222,6 @@ export function getDonorLastDonationDate(donor, recentDonations = []) {
 
 export function getDonationCountForDonor(donor, recentDonations = []) {
     if (!donor) return 0;
-    const explicitTotal = getNumeric(donor.totalDonations);
-    if (explicitTotal != null && explicitTotal > 0) return explicitTotal;
-
     const donorId = normalizeDonorId(donor.donorId || donor.rawDonorId);
     let count = 0;
     recentDonations.forEach(entry => {
@@ -232,7 +229,9 @@ export function getDonationCountForDonor(donor, recentDonations = []) {
         const entryId = normalizeDonorId(entry.donorId);
         if (donorId && entryId && donorId === entryId) count += 1;
     });
-    return count;
+    if (count > 0) return count;
+    const explicitTotal = getNumeric(donor.totalDonations);
+    return explicitTotal != null && explicitTotal > 0 ? explicitTotal : 0;
 }
 
 function getRecencyScore(lastDonationDate) {
