@@ -127,15 +127,19 @@ function initDonorTickerScroll(track, options = {}) {
         width: 0
     };
 
+    let resizeObserver;
+
     const syncWidth = () => {
         state.width = Math.max(0, Math.floor(track.scrollWidth / 2));
         state.offset = normalizeTickerOffset(state.offset, state.width);
         track.style.transform = `translate3d(${state.offset}px, 0, 0)`;
     };
 
+    const scheduleSync = () => requestAnimationFrame(syncWidth);
+
     const step = (ts) => {
         if (!state.lastTs) state.lastTs = ts;
-        const delta = ts - state.lastTs;
+        const delta = Math.min(ts - state.lastTs, 32);
         state.lastTs = ts;
         if (!state.isDragging) {
             state.offset -= speed * delta;
@@ -149,6 +153,7 @@ function initDonorTickerScroll(track, options = {}) {
         state.isDragging = true;
         state.startX = event.clientX;
         state.startOffset = state.offset;
+        state.lastTs = performance.now();
         track.classList.add('is-dragging');
         mask?.setPointerCapture?.(event.pointerId);
     };
@@ -170,11 +175,21 @@ function initDonorTickerScroll(track, options = {}) {
     syncWidth();
     state.rafId = requestAnimationFrame(step);
 
+    if (typeof ResizeObserver !== 'undefined') {
+        resizeObserver = new ResizeObserver(scheduleSync);
+        resizeObserver.observe(track);
+        if (mask) resizeObserver.observe(mask);
+    }
+
+    track.querySelectorAll('img').forEach((img) => {
+        img.addEventListener('load', scheduleSync, { once: true });
+    });
+
     mask?.addEventListener('pointerdown', onPointerDown);
     window.addEventListener('pointermove', onPointerMove);
     window.addEventListener('pointerup', onPointerUp);
     window.addEventListener('pointercancel', onPointerUp);
-    window.addEventListener('resize', syncWidth);
+    window.addEventListener('resize', scheduleSync);
 
     tickerControllers.set(trackId, {
         destroy: () => {
@@ -183,7 +198,8 @@ function initDonorTickerScroll(track, options = {}) {
             window.removeEventListener('pointermove', onPointerMove);
             window.removeEventListener('pointerup', onPointerUp);
             window.removeEventListener('pointercancel', onPointerUp);
-            window.removeEventListener('resize', syncWidth);
+            window.removeEventListener('resize', scheduleSync);
+            resizeObserver?.disconnect();
         }
     });
 }
@@ -279,7 +295,10 @@ export function renderDonorTicker(donors = [], recentDonations = [], options = {
 
     const container = document.getElementById(containerId);
     if (!container) return;
+    const section = container.closest('#donor-leaderboard');
     const emptyEl = document.getElementById(emptyId);
+
+    section?.classList.remove('hidden');
 
     if (!donors.length) {
         container.innerHTML = '';

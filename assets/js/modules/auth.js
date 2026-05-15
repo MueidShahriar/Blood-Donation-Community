@@ -61,6 +61,7 @@ export function updateLoginButtonState(database, ref, onValue, renderAdminMember
     const adminBadge = document.getElementById('admin-badge');
     const adminMobileLink = document.getElementById('admin-mobile-link');
     const adminDesktopLink = document.getElementById('nav-dashboard-link');
+    const leaderboardSection = document.getElementById('donor-leaderboard');
     const mobileLogoutBtn = document.getElementById('mobile-logout-btn');
     const mobileProfileBtn = document.getElementById('mobile-profile-btn');
     // All regular nav link IDs (desktop + mobile) to hide for admin
@@ -106,6 +107,7 @@ export function updateLoginButtonState(database, ref, onValue, renderAdminMember
             if (state.currentUserRole === 'admin') {
                 adminPanel?.classList.remove('hidden');
                 document.body.classList.add('admin-mode');
+                if (adminPanel && leaderboardSection) leaderboardSection.classList.add('hidden');
                 // Admin badge hidden in navbar (only shown in profile page)
                 if (adminBadge) { adminBadge.classList.add('hidden'); adminBadge.classList.remove('inline-flex'); }
                 // Admin sees only Profile (login-btn) + Dashboard — hide all other nav links
@@ -119,6 +121,7 @@ export function updateLoginButtonState(database, ref, onValue, renderAdminMember
             } else {
                 adminPanel?.classList.add('hidden');
                 document.body.classList.remove('admin-mode');
+                leaderboardSection?.classList.remove('hidden');
                 if (adminBadge) { adminBadge.classList.add('hidden'); adminBadge.classList.remove('inline-flex'); }
                 adminMobileLink?.classList.add('hidden');
                 if (adminDesktopLink) { adminDesktopLink.classList.add('hidden'); }
@@ -151,6 +154,7 @@ export function updateLoginButtonState(database, ref, onValue, renderAdminMember
         if (profileUserId) profileUserId.textContent = '';
         adminPanel?.classList.add('hidden');
         document.body.classList.remove('admin-mode');
+        leaderboardSection?.classList.remove('hidden');
         adminBadge?.classList.add('hidden');
         adminMobileLink?.classList.add('hidden');
         if (adminDesktopLink) { adminDesktopLink.classList.add('hidden'); }

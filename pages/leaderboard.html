@@ -61,6 +61,8 @@
                     data-i18n="navJoin">Join</a>
                 <a id="nav-search-link" href="search.html" class="px-3 py-2 rounded hover:bg-red-50 text-red-700"
                     data-i18n="navSearch">Search</a>
+                <a id="nav-leaderboard-link" href="leaderboard.html" class="px-3 py-2 rounded bg-red-50 text-red-700 font-bold"
+                    data-i18n="navLeaderboard">Leaderboard</a>
                 <a id="nav-contact-link" href="../index.html#contact" class="px-3 py-2 rounded hover:bg-red-50 text-red-700"
                     data-i18n="navContact">Contact</a>
                 <a id="nav-dashboard-link" href="admin.html" class="hidden px-3 py-2 rounded hover:bg-red-50 text-red-700 font-bold"
@@ -94,6 +96,8 @@
                     data-i18n="navJoin">Join</a>
                 <a id="mobile-search-link" href="search.html" class="block px-3 py-2 rounded hover:bg-red-50"
                     data-i18n="navSearch">Search</a>
+                <a id="mobile-leaderboard-link" href="leaderboard.html" class="block px-3 py-2 rounded bg-red-50 font-bold"
+                    data-i18n="navLeaderboard">Leaderboard</a>
                 <a id="mobile-contact-link" href="../index.html#contact" class="block px-3 py-2 rounded hover:bg-red-50"
                     data-i18n="navContact">Contact</a>
                 <a id="admin-mobile-link" href="admin.html" class="hidden px-3 py-2 rounded hover:bg-red-50"
@@ -184,6 +188,68 @@
             <div id="leaderboard-empty" class="leaderboard-empty" data-i18n="leaderboardEmpty">No donor leaderboard data yet.</div>
         </section>
     </main>
+
+    <div id="login-modal" class="fixed inset-0 hidden items-center justify-center z-50">
+        <div class="absolute inset-0 bg-black opacity-40"></div>
+        <div class="bg-white modal-panel p-6 max-w-md mx-4 z-10">
+            <div class="modal-title">
+                <span class="icon-circle-sm"><i class="fa-solid fa-right-to-bracket" aria-hidden="true"></i></span>
+                <h3 class="text-lg font-extrabold text-red-700" data-i18n="loginTitle">Login</h3>
+            </div>
+            <form id="login-form" class="mt-4">
+                <div class="mb-3 field-icon-left">
+                    <label for="login-email" class="block text-sm text-gray-600 mb-1" data-i18n="loginEmail">Email</label>
+                    <div class="input-wrap">
+                        <i class="fi fa-solid fa-at"></i>
+                        <input id="login-email" type="email" required
+                            class="w-full rounded-lg border-2 border-gray-100 bg-white p-3 shadow-sm focus:border-red-300 focus:outline-none" />
+                    </div>
+                </div>
+                <div class="mb-3 field-icon-left field-icon-right">
+                    <label for="login-password" class="block text-sm text-gray-600 mb-1" data-i18n="loginPassword">Password</label>
+                    <div class="input-wrap">
+                        <i class="fi fa-solid fa-key"></i>
+                        <input id="login-password" type="password" required
+                            class="w-full rounded-lg border-2 border-gray-100 bg-white p-3 shadow-sm focus:border-red-300 focus:outline-none" />
+                        <button type="button" id="toggle-password" aria-label="Show password" title="Show password"
+                            class="fr">
+                            <i class="fa-solid fa-eye"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="flex items-center justify-end gap-4 mt-2">
+                    <div class="flex gap-2 items-center">
+                        <button type="submit"
+                            class="bg-gradient-to-r from-red-600 to-red-500 text-white px-4 py-2 rounded font-semibold shadow hover:from-red-700 hover:to-red-600 transition inline-flex items-center gap-2">
+                            <i class="fa-solid fa-right-to-bracket"></i>
+                            <span data-i18n="loginSignIn">Sign in</span>
+                        </button>
+                        <button id="login-cancel" type="button"
+                            class="border border-gray-300 text-gray-700 px-4 py-2 rounded font-semibold shadow hover:bg-gray-100 transition inline-flex items-center gap-2">
+                            <i class="fa-solid fa-xmark"></i>
+                            <span data-i18n="modalCancel">Cancel</span>
+                        </button>
+                    </div>
+                </div>
+                <a id="forgot-password-link" href="#"
+                    class="block text-center mt-2 text-xs text-red-700 hover:underline hover:text-red-900 transition-colors duration-200 inline-flex items-center justify-center gap-1 w-full">
+                    <i class="fa-solid fa-circle-question"></i>
+                    <span data-i18n="loginForgotPassword">Forgot Password?</span>
+                </a>
+            </form>
+        </div>
+    </div>
+
+    <div id="success-modal" class="fixed inset-0 hidden items-center justify-center z-[60]">
+        <div class="absolute inset-0 bg-black opacity-40"></div>
+        <div class="bg-white rounded-lg shadow-xl p-6 max-w-md mx-4 z-10">
+            <h3 class="text-lg font-bold text-red-700">Success!</h3>
+            <p class="mt-2 text-gray-700"></p>
+            <div class="mt-4 text-right">
+                <button id="success-close" class="px-4 py-2 bg-red-600 text-white rounded">Close</button>
+            </div>
+        </div>
+    </div>
 </body>
 
 </html>
