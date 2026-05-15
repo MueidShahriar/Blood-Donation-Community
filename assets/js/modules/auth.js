@@ -74,7 +74,74 @@ export function updateLoginButtonState(database, ref, onValue, renderAdminMember
         const userRef = ref(database, `donors/${state.currentUser.uid}`);
         onValue(userRef, (snapshot) => {
             const userData = snapshot.val() || {};
-            state.currentUserRole = userData.role || 'member';
+            // authoritative admin flag comes from /admins/{uid}
+            const adminRef = ref(database, `admins/${state.currentUser.uid}`);
+            onValue(adminRef, (adminSnap) => {
+                const isAdminFlag = !!adminSnap.val();
+                state.currentUserRole = isAdminFlag ? 'admin' : (userData.role || 'member');
+
+                // proceed with UI updates after role resolution
+                applyUserUiUpdates(userData);
+            }, { onlyOnce: true });
+            // fallback UI update if admin check delayed
+            function applyUserUiUpdates(resolvedUserData) {
+                const photoUrl = resolvedUserData.profilePhoto || '';
+                const displayName = getTextValue(resolvedUserData.fullName || resolvedUserData.name, 'User');
+                const initials = getInitials(displayName, 'U');
+                if (loginBtn) {
+                    if (photoUrl) {
+                        loginBtn.innerHTML = '<img src="' + photoUrl + '" alt="' + t('btnProfile') + '" class="nav-avatar"><span class="sr-only">' + t('btnProfile') + '</span>';
+                        loginBtn.classList.add('nav-avatar-btn');
+                    } else {
+                        loginBtn.innerHTML = '<img src="' + assetPrefix + 'image/login.png" alt="Profile" class="inline-icon"><span class="sr-only">' + t('btnProfile') + '</span>';
+                        loginBtn.classList.remove('nav-avatar-btn');
+                    }
+                    loginBtn.setAttribute('aria-label', t('btnProfile'));
+                    loginBtn.setAttribute('title', t('btnProfile'));
+                    loginBtn.dataset.state = 'loggedin';
+                    loginBtn.removeAttribute('data-i18n');
+                }
+                if (mobileProfileBtn) {
+                    if (photoUrl) {
+                        mobileProfileBtn.innerHTML = '<img src="' + photoUrl + '" alt="' + t('btnProfile') + '">';
+                    } else {
+                        mobileProfileBtn.innerHTML = '<span class="mobile-profile-btn__initials">' + initials + '</span>';
+                    }
+                    mobileProfileBtn.classList.remove('hidden');
+                    mobileProfileBtn.setAttribute('aria-label', t('btnProfile'));
+                    mobileProfileBtn.setAttribute('title', t('btnProfile'));
+                }
+                if (mobileLoginBtn) {
+                    mobileLoginBtn.classList.add('hidden');
+                }
+
+                if (state.currentUserRole === 'admin') {
+                    adminPanel?.classList.remove('hidden');
+                    document.body.classList.add('admin-mode');
+                    if (adminPanel && leaderboardSection) leaderboardSection.classList.add('hidden');
+                    if (adminBadge) { adminBadge.classList.add('hidden'); adminBadge.classList.remove('inline-flex'); }
+                    navLinkIds.forEach(id => document.getElementById(id)?.classList.add('hidden'));
+                    mobileNavIds.forEach(id => document.getElementById(id)?.classList.add('hidden'));
+                    adminMobileLink?.classList.remove('hidden');
+                    if (adminDesktopLink) { adminDesktopLink.classList.remove('hidden'); }
+                    renderAdminMembersList(deleteMemberFn, promoteMemberFn, demoteMemberFn);
+                    renderAdminEventsList(deleteEventFn);
+                } else {
+                    adminPanel?.classList.add('hidden');
+                    document.body.classList.remove('admin-mode');
+                    leaderboardSection?.classList.remove('hidden');
+                    if (adminBadge) { adminBadge.classList.add('hidden'); adminBadge.classList.remove('inline-flex'); }
+                    adminMobileLink?.classList.add('hidden');
+                    if (adminDesktopLink) { adminDesktopLink.classList.add('hidden'); }
+                    navLinkIds.forEach(id => document.getElementById(id)?.classList.remove('hidden'));
+                    mobileNavIds.forEach(id => document.getElementById(id)?.classList.remove('hidden'));
+                }
+                hideAuthRedirectOverlay();
+                if (typeof afterRoleResolvedFn === 'function') afterRoleResolvedFn(state.currentUserRole);
+                if (isAdminPage && state.currentUserRole !== 'admin') {
+                    window.location.assign(getProfileHref());
+                }
+            }
             const photoUrl = userData.profilePhoto || '';
             const displayName = getTextValue(userData.fullName || userData.name, 'User');
             const initials = getInitials(displayName, 'U');
@@ -101,38 +168,7 @@ export function updateLoginButtonState(database, ref, onValue, renderAdminMember
                 mobileProfileBtn.setAttribute('aria-label', t('btnProfile'));
                 mobileProfileBtn.setAttribute('title', t('btnProfile'));
             }
-            if (mobileLoginBtn) {
-                mobileLoginBtn.classList.add('hidden');
-            }
-            if (state.currentUserRole === 'admin') {
-                adminPanel?.classList.remove('hidden');
-                document.body.classList.add('admin-mode');
-                if (adminPanel && leaderboardSection) leaderboardSection.classList.add('hidden');
-                // Admin badge hidden in navbar (only shown in profile page)
-                if (adminBadge) { adminBadge.classList.add('hidden'); adminBadge.classList.remove('inline-flex'); }
-                // Admin sees only Profile (login-btn) + Dashboard — hide all other nav links
-                navLinkIds.forEach(id => document.getElementById(id)?.classList.add('hidden'));
-                mobileNavIds.forEach(id => document.getElementById(id)?.classList.add('hidden'));
-                // Show Dashboard in mobile menu for admin
-                adminMobileLink?.classList.remove('hidden');
-                if (adminDesktopLink) { adminDesktopLink.classList.remove('hidden'); }
-                renderAdminMembersList(deleteMemberFn, promoteMemberFn, demoteMemberFn);
-                renderAdminEventsList(deleteEventFn);
-            } else {
-                adminPanel?.classList.add('hidden');
-                document.body.classList.remove('admin-mode');
-                leaderboardSection?.classList.remove('hidden');
-                if (adminBadge) { adminBadge.classList.add('hidden'); adminBadge.classList.remove('inline-flex'); }
-                adminMobileLink?.classList.add('hidden');
-                if (adminDesktopLink) { adminDesktopLink.classList.add('hidden'); }
-                navLinkIds.forEach(id => document.getElementById(id)?.classList.remove('hidden'));
-                mobileNavIds.forEach(id => document.getElementById(id)?.classList.remove('hidden'));
-            }
-            hideAuthRedirectOverlay();
-            if (typeof afterRoleResolvedFn === 'function') afterRoleResolvedFn(state.currentUserRole);
-            if (isAdminPage && state.currentUserRole !== 'admin') {
-                window.location.assign(getProfileHref());
-            }
+            // Handled by admin check callback (applyUserUiUpdates)
         }, { onlyOnce: true });
     } else {
         if (loginBtn) {

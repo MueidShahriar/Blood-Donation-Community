@@ -6,6 +6,8 @@ A fully client-side web application designed to **connect voluntary blood donors
 
 Live Site: [blood-donation-community.vercel.app](https://blood-donation-community.vercel.app)
 
+Install the web app: [Open the live app](https://blood-donation-community.vercel.app) and use your browser's "Install app" or "Add to Home Screen" option.
+
 ---
 
 ## Key Features

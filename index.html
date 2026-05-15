@@ -5,15 +5,20 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#e11d48" />
+    <meta name="color-scheme" content="light" />
     <title>Home - BAUET BDC</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="shortcut icon" href="image/blood-drop.png" type="image/x-icon">
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://cdn.jsdelivr.net">
+    <link rel="preconnect" href="https://stackpath.bootstrapcdn.com">
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
         crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="manifest" href="manifest.webmanifest">
     <link rel="stylesheet" href="assets/css/common.css">
     <link rel="stylesheet" href="assets/css/index.css">
 
@@ -142,7 +147,7 @@
             <div class="flex-1 flex justify-center items-center">
                 <div class="relative">
                     <img src="image/blood-drop.png" alt="blood drop"
-                        class="w-56 h-56 object-contain drop-shadow-xl animate-bounce-slow" />
+                        class="w-56 h-56 object-contain drop-shadow-xl animate-bounce-slow" loading="eager" fetchpriority="high" decoding="async" />
                     <div
                         class="absolute bottom-0 left-1/2 -translate-x-1/2 w-40 h-8 bg-red-200 rounded-full blur-xl opacity-60">
                     </div>
@@ -821,7 +826,7 @@
             <div class="footer-grid">
                 <div class="footer-brand">
                     <div class="footer-brand-title">
-                        <img src="image/blood-drop.png" alt="BAUET BDC" />
+                        <img src="image/blood-drop.png" alt="BAUET BDC" loading="lazy" decoding="async" />
                         <span data-i18n="siteTitle">BAUET BDC</span>
                     </div>
                     <p data-i18n="footerBrandDesc">A passionate, volunteer-driven organization dedicated to saving lives through the power of blood
@@ -1024,6 +1029,15 @@
             </svg>
         </a>
     </div>
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/service-worker.js')
+                    .then(reg => console.log('Service worker registered:', reg.scope))
+                    .catch(err => console.warn('Service worker registration failed:', err));
+            });
+        }
+    </script>
 
 </body>
 

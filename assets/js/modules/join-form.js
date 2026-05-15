@@ -1,6 +1,5 @@
 import state from './state.js';
 import { showModalMessage } from './modals.js';
-import { ADMIN_EMAIL } from './firebase-config.js';
 import { normalizeDonorId, getDonorIdNumber, getMaxDonorIdNumber, DONOR_ID_COUNTER_SEED } from './utils.js';
 
 export function initJoinForm({ auth, database, ref, set, runTransaction, createUserWithEmailAndPassword }) {
@@ -38,7 +37,7 @@ export function initJoinForm({ auth, database, ref, set, runTransaction, createU
             bloodGroup: fd.get('bloodGroup')?.toString().trim(),
             location: fd.get('location')?.toString().trim(),
             lastDonateDate: fd.get('lastDonateDate')?.toString() || '',
-            role: email === ADMIN_EMAIL ? 'admin' : 'member',
+            role: 'member',
             gender: gender || 'Other',
             isPhoneHidden: isPhoneHidden
         };

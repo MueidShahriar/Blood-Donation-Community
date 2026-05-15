@@ -9,7 +9,7 @@ import {
     getDatabase, ref, push, set, onValue, remove, update, query, limitToLast, runTransaction
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
-import { firebaseConfig, ADMIN_EMAIL } from "./modules/firebase-config.js";
+import { firebaseConfig } from "./modules/firebase-config.js";
 import { chartLabels, chartColors, getPieChartOptions } from "./modules/chart-config.js";
 import { initLanguageSystem, t } from "./modules/language-ui.js";
 import { createMonthlyReportDownloader } from "./modules/pdf-report.js";
