@@ -95,8 +95,10 @@ function renderDonorCardAdmin(d) {
     const ageRow = ageValue ? `<span><i class="fa-solid fa-user"></i> Age: ${ageValue}</span>` : '';
     const initials = getInitials(donorName, '?');
     const reputation = computeDonorReputation(d, state.recentDonationsList || []);
-    const repBadgeLabel = t(reputation.badge.key);
-    const repBadge = `<span class="donor-badge ${reputation.badge.className}">${reputation.badge.icon} ${repBadgeLabel}</span>`;
+    const repBadgeLabel = reputation.badge ? t(reputation.badge.key) : '—';
+    const repBadge = reputation.badge
+        ? `<span class="donor-badge ${reputation.badge.className}">${reputation.badge.icon} ${repBadgeLabel}</span>`
+        : '';
     const isEligible = d.lastDonateDate
         ? (Math.floor((new Date() - new Date(d.lastDonateDate + 'T00:00:00')) / (1000*60*60*24)) >= 90)
         : null;

@@ -282,6 +282,7 @@ function getResponseSpeedScore(donor) {
 }
 
 export function getReputationBadge(score, donationCount) {
+    if (donationCount < 1) return null;
     if (donationCount >= 8) {
         return { key: 'badgeGold', icon: '🥇', className: 'donor-badge--gold', tier: 'gold' };
     }
@@ -314,7 +315,7 @@ export function buildDonorLeaderboard(donors = [], recentDonations = [], limit =
     const ranked = donors.map(donor => {
         const reputation = computeDonorReputation(donor, recentDonations);
         return { donor, ...reputation };
-    });
+    }).filter(entry => entry.donationCount >= 1);
     ranked.sort((a, b) => {
         if (b.donationCount !== a.donationCount) return b.donationCount - a.donationCount;
         if (b.score !== a.score) return b.score - a.score;
